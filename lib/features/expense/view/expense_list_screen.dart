@@ -5,9 +5,6 @@ class ExpenseListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Expense List')),
-      body: Center(child: Text('Expense List Screen')),
-    );
+    return Scaffold(body: Center(child: Text('Expense List Screen')));
   }
 }

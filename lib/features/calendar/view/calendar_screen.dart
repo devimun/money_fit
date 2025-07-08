@@ -5,9 +5,6 @@ class CalendarScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Calendar')),
-      body: Center(child: Text('Calendar Screen')),
-    );
+    return Scaffold(body: Center(child: Text('Calendar Screen')));
   }
 }

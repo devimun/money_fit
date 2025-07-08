@@ -30,22 +30,10 @@ class MainBottomNavBar extends ConsumerWidget {
         }
       },
       items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.calendar_today),
-          label: 'Calendar',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.receipt_long),
-          label: 'Expense List',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.settings),
-          label: 'Settings',
-        ),
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: '홈'),
+        BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: '캘린더'),
+        BottomNavigationBarItem(icon: Icon(Icons.receipt_long), label: '지출 내역'),
+        BottomNavigationBarItem(icon: Icon(Icons.settings), label: '설정'),
       ],
     );
   }

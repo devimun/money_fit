@@ -8,6 +8,7 @@ class AppTheme {
       brightness: Brightness.light,
       scaffoldBackgroundColor: LightAppColors.background,
       primaryColor: LightAppColors.primary,
+
       fontFamily: 'Pretendard Variable',
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +9,9 @@ import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dar
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
+  FlutterError.onError = (e) {
+    log(e.toString());
+  };
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
   await Supabase.initialize(
@@ -31,13 +36,15 @@ class MyApp extends ConsumerWidget {
           error: (err, st) => false,
         );
 
-    return MaterialApp.router(
-      title: 'MoneyFit',
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      debugShowCheckedModeBanner: false,
-      routerConfig: router,
+    return SafeArea(
+      child: MaterialApp.router(
+        title: 'MoneyFit',
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+        debugShowCheckedModeBanner: false,
+        routerConfig: router,
+      ),
     );
   }
 }

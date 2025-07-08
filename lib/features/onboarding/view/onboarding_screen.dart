@@ -16,46 +16,44 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
+      body: Column(
         children: [
-          PageView(
-            controller: _pageController,
-            onPageChanged: (int page) {
-              setState(() {
-                _currentPage = page;
-              });
-            },
-            children: const [
-              OnboardingPage(
-                imagePath: 'assets/images/onboarding_1.png',
-                title: '복잡한 가계부는 이제 그만',
-                description: '매일의 지출을 간편하게 관리하고,\n건강한 소비 습관을 만들어보세요.',
-              ),
-              OnboardingPage(
-                imagePath: 'assets/images/onboarding_2.png',
-                title: '한 눈에 확인 가능한 하루 예산',
-                description: '오늘 남은 예산을 파악하고,\n계획적인 소비를 시작하세요.',
-              ),
-              OnboardingPage(
-                imagePath: 'assets/images/onboarding_3.png',
-                title: '성취의 기록이 꾸준한 습관으로',
-                description: '매일의 도전을 성취로 채우고,\n돈 관리의 재미를 느껴보세요.',
-                isLastPage: true,
-              ),
-            ],
-          ),
-          Positioned(
-            bottom: 80.0,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                3, // Total number of onboarding pages
-                (index) => buildDot(index, context),
-              ),
+          Expanded(
+            child: PageView(
+              controller: _pageController,
+              onPageChanged: (int page) {
+                setState(() {
+                  _currentPage = page;
+                });
+              },
+              children: const [
+                OnboardingPage(
+                  imagePath: 'assets/images/onboarding_1.png',
+                  title: '복잡한 가계부는 이제 그만',
+                  description: '매일의 지출을 간편하게 관리하고,\n건강한 소비 습관을 만들어보세요.',
+                ),
+                OnboardingPage(
+                  imagePath: 'assets/images/onboarding_2.png',
+                  title: '한 눈에 확인 가능한 하루 예산',
+                  description: '오늘 남은 예산을 파악하고,\n계획적인 소비를 시작하세요.',
+                ),
+                OnboardingPage(
+                  imagePath: 'assets/images/onboarding_3.png',
+                  title: '성취의 기록이 꾸준한 습관으로',
+                  description: '매일의 도전을 성취로 채우고,\n돈 관리의 재미를 느껴보세요.',
+                  isLastPage: true,
+                ),
+              ],
             ),
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              3, // Total number of onboarding pages
+              (index) => buildDot(index, context),
+            ),
+          ),
+          SizedBox(height: 50),
         ],
       ),
     );

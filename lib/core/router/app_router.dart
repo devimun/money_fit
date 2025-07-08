@@ -14,20 +14,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/',
     routes: [
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const SplashScreen(),
-      ),
+      GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
       GoRoute(
         path: '/onboarding',
-        pageBuilder: (context, state) => _buildPageWithTransition(
+        pageBuilder: (context, state) => NoTransitionPage(
           key: state.pageKey,
           child: const OnboardingScreen(),
         ),
       ),
       GoRoute(
         path: '/daily_budget_setup',
-        pageBuilder: (context, state) => _buildPageWithTransition(
+        pageBuilder: (context, state) => NoTransitionPage(
           key: state.pageKey,
           child: const DailyBudgetSetupScreen(),
         ),
@@ -39,28 +36,26 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(
             path: '/home',
-            pageBuilder: (context, state) => _buildPageWithTransition(
-              key: state.pageKey,
-              child: const HomeScreen(),
-            ),
+            pageBuilder: (context, state) =>
+                NoTransitionPage(key: state.pageKey, child: const HomeScreen()),
           ),
           GoRoute(
             path: '/calendar',
-            pageBuilder: (context, state) => _buildPageWithTransition(
+            pageBuilder: (context, state) => NoTransitionPage(
               key: state.pageKey,
               child: const CalendarScreen(),
             ),
           ),
           GoRoute(
             path: '/expense_list',
-            pageBuilder: (context, state) => _buildPageWithTransition(
+            pageBuilder: (context, state) => NoTransitionPage(
               key: state.pageKey,
               child: const ExpenseListScreen(),
             ),
           ),
           GoRoute(
             path: '/settings',
-            pageBuilder: (context, state) => _buildPageWithTransition(
+            pageBuilder: (context, state) => NoTransitionPage(
               key: state.pageKey,
               child: const SettingsScreen(),
             ),
@@ -70,24 +65,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     ],
   );
 });
-
-CustomTransitionPage<T> _buildPageWithTransition<T>({
-  required LocalKey key,
-  required Widget child,
-}) {
-  return CustomTransitionPage<T>(
-    key: key,
-    child: child,
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      const begin = Offset(1.0, 0.0);
-      const end = Offset.zero;
-      const curve = Curves.easeInOut;
-      final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-      final offsetAnimation = animation.drive(tween);
-      return SlideTransition(position: offsetAnimation, child: child);
-    },
-  );
-}
 
 class ScaffoldWithNavBar extends StatelessWidget {
   const ScaffoldWithNavBar({required this.child, super.key});
@@ -99,4 +76,3 @@ class ScaffoldWithNavBar extends StatelessWidget {
     return Scaffold(body: child, bottomNavigationBar: const MainBottomNavBar());
   }
 }
-

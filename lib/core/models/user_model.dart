@@ -68,8 +68,8 @@ class User {
       'email': email,
       'display_name': displayName,
       'daily_budget': dailyBudget,
-      'is_dark_mode': isDarkMode,
-      'notifications_enabled': notificationsEnabled,
+      'is_dark_mode': isDarkMode ? 1 : 0,
+      'notifications_enabled': notificationsEnabled ? 1 : 0,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };

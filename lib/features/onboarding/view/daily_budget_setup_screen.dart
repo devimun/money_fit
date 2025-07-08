@@ -25,20 +25,15 @@ class _DailyBudgetSetupScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          '예산 설정하기',
-          style: Theme.of(context).textTheme.displayMedium,
-        ),
-        automaticallyImplyLeading: false, // 온보딩 과정이므로 뒤로가기 버튼 제거
-      ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Form(
           key: _formKey,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              Text('예산 설정하기', style: Theme.of(context).textTheme.displayMedium),
+              SizedBox(height: 20),
               Text(
                 '하루 자유 지출 예산을 설정해주세요.\n자유 지출이란, 공과금,의료비,주거비,보험 등 필수 지출을 제외한 자유롭게 사용할 수 있는 금액을 말해요.',
                 style: Theme.of(context).textTheme.bodyLarge,

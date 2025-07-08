@@ -79,7 +79,6 @@ class UserSettingsNotifier extends StateNotifier<AsyncValue<User>> {
       state = AsyncValue.data(updatedUser);
       try {
         await _userRepository.updateUser(updatedUser);
-        _ref.invalidate(userSettingsProvider); // 변경 후 프로바이더 무효화
       } catch (e, st) {
         state = AsyncValue.error(e, st);
         // 업데이트 실패 시 이전 상태로 되돌릴 수 있습니다.
@@ -99,7 +98,6 @@ class UserSettingsNotifier extends StateNotifier<AsyncValue<User>> {
       state = AsyncValue.data(updatedUser);
       try {
         await _userRepository.updateUser(updatedUser);
-        _ref.invalidate(userSettingsProvider); // 변경 후 프로바이더 무효화
       } catch (e, st) {
         state = AsyncValue.error(e, st);
         state = AsyncValue.data(currentUser);
@@ -118,7 +116,6 @@ class UserSettingsNotifier extends StateNotifier<AsyncValue<User>> {
       state = AsyncValue.data(updatedUser);
       try {
         await _userRepository.updateUser(updatedUser);
-        _ref.invalidate(userSettingsProvider); // 변경 후 프로바이더 무효화
       } catch (e, st) {
         state = AsyncValue.error(e, st);
         state = AsyncValue.data(currentUser);
