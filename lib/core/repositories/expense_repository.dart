@@ -1,4 +1,3 @@
-
 import 'package:money_fit/core/database/database_helper.dart';
 import 'package:money_fit/core/models/expense_model.dart';
 
@@ -7,6 +6,8 @@ abstract class IExpenseRepository {
   Future<void> createExpense(Expense expense);
   Future<List<Expense>> getExpensesByDate(String userId, DateTime date);
   Future<List<Expense>> getExpensesByMonth(String userId, int year, int month);
+  Future<List<Expense>> getExpensesByUserId(String userId);
+
   Future<void> updateExpense(Expense expense);
   Future<void> deleteExpense(String id);
 }
@@ -20,6 +21,18 @@ class ExpenseRepository implements IExpenseRepository {
   Future<void> createExpense(Expense expense) async {
     final db = await _dbHelper.database;
     await db.insert('expenses', expense.toJson());
+  }
+
+  @override
+  Future<List<Expense>> getExpensesByUserId(String userId) async {
+    final db = await _dbHelper.database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'expenses',
+      where: 'user_id = ?',
+      whereArgs: [userId],
+      orderBy: 'date DESC, created_at DESC',
+    );
+    return List.generate(maps.length, (i) => Expense.fromJson(maps[i]));
   }
 
   /// 특정 날짜의 모든 지출 내역을 가져옵니다.
@@ -40,7 +53,11 @@ class ExpenseRepository implements IExpenseRepository {
 
   /// 특정 월의 모든 지출 내역을 가져옵니다.
   @override
-  Future<List<Expense>> getExpensesByMonth(String userId, int year, int month) async {
+  Future<List<Expense>> getExpensesByMonth(
+    String userId,
+    int year,
+    int month,
+  ) async {
     final db = await _dbHelper.database;
     // YYYY-MM 형식으로 시작하는 날짜를 찾습니다.
     final monthString = '$year-${month.toString().padLeft(2, '0')}';
@@ -69,10 +86,6 @@ class ExpenseRepository implements IExpenseRepository {
   @override
   Future<void> deleteExpense(String id) async {
     final db = await _dbHelper.database;
-    await db.delete(
-      'expenses',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    await db.delete('expenses', where: 'id = ?', whereArgs: [id]);
   }
 }

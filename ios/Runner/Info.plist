@@ -4,6 +4,8 @@
 	<dict>
 		<key>GADApplicationIdentifier</key>
 		<string>ca-app-pub-4769455621618933~9250094002</string>
+		<key>NSUserNotificationUsageDescription</key>
+		<string>앱에서 알림을 보내기 위해 알림 권한이 필요합니다.</string>
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>

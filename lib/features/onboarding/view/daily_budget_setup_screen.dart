@@ -1,7 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:money_fit/core/services/notification_service.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
+import 'package:money_fit/features/onboarding/widgets/daily_budget_setup_form.dart';
+import 'package:money_fit/widgets/custom_notification_dialog.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class DailyBudgetSetupScreen extends ConsumerStatefulWidget {
   const DailyBudgetSetupScreen({super.key});
@@ -22,63 +28,77 @@ class _DailyBudgetSetupScreenState
     super.dispose();
   }
 
+  Future<void> _submitBudget() async {
+    if (_formKey.currentState!.validate()) {
+      final newBudget = double.parse(_budgetController.text);
+      await ref
+          .read(userSettingsProvider.notifier)
+          .updateDailyBudget(newBudget);
+      if (mounted) {
+        await _showNotificationDialog();
+      }
+    }
+  }
+
+  Future<void> _showNotificationDialog() async {
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return CustomNotificationDialog(
+          onConfirm: () async {
+            Navigator.of(context).pop();
+            log('User confirmed notification setup.');
+            await setupNotifications().then((r) {
+              if (context.mounted) {
+                context.go('/home');
+              }
+            });
+          },
+          onDeny: () {
+            Navigator.of(context).pop();
+            context.go('/home');
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> setupNotifications() async {
+    log('Requesting notification permission...');
+    final permissionStatus = await Permission.notification.request();
+    log('Notification permission status: ${permissionStatus.toString()}');
+
+    if (permissionStatus.isGranted) {
+      log('Notification permission granted. Scheduling daily notifications...');
+      await ref.read(notificationServiceProvider).scheduleDailyNotifications();
+      log('Daily notifications scheduled.');
+      await ref.read(userSettingsProvider.notifier).enableNotifications();
+    } else if (permissionStatus.isDenied) {
+      log('Notification permission denied by user.');
+    } else if (permissionStatus.isPermanentlyDenied) {
+      log(
+        'Notification permission permanently denied. User needs to enable it from settings.',
+      );
+      await openAppSettings();
+    } else if (permissionStatus.isRestricted) {
+      log('Notification permission restricted.');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text('예산 설정하기', style: Theme.of(context).textTheme.displayMedium),
-              SizedBox(height: 20),
-              Text(
-                '하루 자유 지출 예산을 설정해주세요.\n자유 지출이란, 공과금,의료비,주거비,보험 등 필수 지출을 제외한 자유롭게 사용할 수 있는 금액을 말해요.',
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              const SizedBox(height: 30),
-              TextFormField(
-                controller: _budgetController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: '일일 예산 (원)',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return '예산을 입력해주세요.';
-                  }
-                  if (double.tryParse(value) == null) {
-                    return '유효한 숫자를 입력해주세요.';
-                  }
-                  if (double.parse(value) <= 0) {
-                    return '예산은 0보다 커야 합니다.';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 40),
-              ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    final newBudget = double.parse(_budgetController.text);
-                    await ref
-                        .read(userSettingsProvider.notifier)
-                        .updateDailyBudget(newBudget);
-                    if (context.mounted) {
-                      context.go('/home');
-                    }
-                  }
-                },
-
-                child: Text(
-                  '설정 완료',
-                  style: Theme.of(context).textTheme.labelLarge,
-                ),
-              ),
-            ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: DailyBudgetSetupForm(
+              formKey: _formKey,
+              budgetController: _budgetController,
+              onSubmitted: _submitBudget,
+            ),
           ),
         ),
       ),

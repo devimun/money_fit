@@ -2,6 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:money_fit/core/theme/design_palette.dart';
 
 class AppTheme {
+  static BoxDecoration boxDecoration = BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(16),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withValues(alpha: 0.25),
+        blurRadius: 4,
+        offset: const Offset(1, 1),
+      ),
+    ],
+  );
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
@@ -35,13 +46,16 @@ class AppTheme {
       textTheme: _textTheme(
         LightAppColors.textPrimary,
         LightAppColors.textSecondary,
+        LightAppColors.textOnSecondary,
       ),
 
       appBarTheme: AppBarTheme(
-        backgroundColor: LightAppColors.backgroundComponent,
-        elevation: 0,
+        backgroundColor: Colors.white,
+        centerTitle: false,
+        elevation: 1,
+        shadowColor: Colors.white,
         titleTextStyle: AppTextStyles.h3.copyWith(
-          color: LightAppColors.textPrimary,
+          color: LightAppColors.primary,
         ),
         iconTheme: const IconThemeData(color: LightAppColors.textPrimary),
       ),
@@ -104,11 +118,13 @@ class AppTheme {
       textTheme: _textTheme(
         DarkAppColors.textPrimary,
         DarkAppColors.textSecondary,
+        DarkAppColors.textOnSecondary,
       ),
 
       appBarTheme: AppBarTheme(
-        backgroundColor: DarkAppColors.backgroundComponent,
-        elevation: 0,
+        backgroundColor: DarkAppColors.background,
+        elevation: 1,
+        shadowColor: Colors.black,
         titleTextStyle: AppTextStyles.h3.copyWith(
           color: DarkAppColors.textPrimary,
         ),
@@ -151,7 +167,11 @@ class AppTheme {
     );
   }
 
-  static TextTheme _textTheme(Color primaryColor, Color secondaryColor) {
+  static TextTheme _textTheme(
+    Color primaryColor,
+    Color secondaryColor,
+    Color textOnSecondaryColor,
+  ) {
     return TextTheme(
       // displayLarge: Onboarding main titles, Home circular progress bar amount
       displayLarge: AppTextStyles.h1.copyWith(color: primaryColor),
@@ -162,7 +182,7 @@ class AppTheme {
       // headlineMedium: Home greeting, Settings modal titles
       headlineMedium: AppTextStyles.h4.copyWith(color: primaryColor),
       // bodyLarge: Onboarding descriptions, Settings menu items
-      bodyLarge: AppTextStyles.bodyL.copyWith(color: secondaryColor),
+      bodyLarge: AppTextStyles.bodyL.copyWith(color: textOnSecondaryColor),
       // bodyMedium: Home card titles, Expense list item titles, Calendar summary values, Buttons
       bodyMedium: AppTextStyles.bodyM.copyWith(color: primaryColor),
       // bodySmall: Home date, card subtitles, Expense list item subtitles, Calendar day of the week
@@ -171,8 +191,9 @@ class AppTheme {
       labelLarge: AppTextStyles.bodyM.copyWith(
         color: LightAppColors.textOnPrimary,
       ),
+      labelMedium: AppTextStyles.bodyMM.copyWith(color: textOnSecondaryColor),
       // caption: Calendar price under the date
-      labelSmall: AppTextStyles.caption.copyWith(color: secondaryColor),
+      labelSmall: AppTextStyles.caption.copyWith(color: textOnSecondaryColor),
     );
   }
 }

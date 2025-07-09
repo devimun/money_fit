@@ -1,25 +1,13 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/router/app_router.dart';
+import 'package:money_fit/core/services/app_initializer.dart';
 import 'package:money_fit/core/theme/app_theme.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
-  FlutterError.onError = (e) {
-    log(e.toString());
-  };
-  WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load();
-  await Supabase.initialize(
-    url: dotenv.env['SUPABASE_URL']!,
-    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
-  );
-
-  runApp(const ProviderScope(child: MyApp()));
+  final container = await AppInitializer.initialize();
+  runApp(UncontrolledProviderScope(container: container, child: const MyApp()));
 }
 
 class MyApp extends ConsumerWidget {

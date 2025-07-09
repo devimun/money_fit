@@ -48,7 +48,7 @@ class LightAppColors {
 
   // ** Background Colors **
   // Used for screen and component backgrounds.
-  static const Color background = Color(0xFFF9FAFB); // Main background color
+  static const Color background = Color(0xFFF8F8F8); // Main background color
   static const Color backgroundComponent = Color(
     0xFFFFFFFF,
   ); // White background for cards and modals
@@ -163,7 +163,7 @@ class AppTextStyles {
   static const TextStyle h4 = TextStyle(
     fontFamily: _fontFamily,
     fontSize: 16,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
   );
 
   /// **bodyL (16pt, regular)**
@@ -171,7 +171,7 @@ class AppTextStyles {
   static const TextStyle bodyL = TextStyle(
     fontFamily: _fontFamily,
     fontSize: 16,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w500,
     color: LightAppColors.secondaryLight,
   );
 
@@ -193,6 +193,11 @@ class AppTextStyles {
     fontSize: 14,
     fontWeight: FontWeight.w600,
   );
+  static const TextStyle bodyMM = TextStyle(
+    fontFamily: _fontFamily,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
 
   /// **bodyS (12pt, regular)**
   /// - **Home:** Date "2025.07.04 금요일", card subtitles "총 3건의 지출이 있어요"
@@ -209,7 +214,7 @@ class AppTextStyles {
   /// - **Calendar:** Price under the date "₩12,500"
   static const TextStyle caption = TextStyle(
     fontFamily: _fontFamily,
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: FontWeight.w400,
   );
 

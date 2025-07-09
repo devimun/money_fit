@@ -121,7 +121,7 @@ class OnboardingPage extends ConsumerWidget {
               },
               style: ElevatedButton.styleFrom(),
               child: Text(
-                '시작하기',
+                '다음으로',
                 style: Theme.of(context).textTheme.labelLarge,
               ),
             ),

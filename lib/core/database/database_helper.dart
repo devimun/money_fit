@@ -80,8 +80,20 @@ class DatabaseHelper {
     ''');
   }
 
+  Future<void> resetDatabase() async {
+    if (_database != null && _database!.isOpen) {
+      await _database!.close();
+    }
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, _dbName);
+    await deleteDatabase(path);
+    _database = null;
+  }
+
   // 기본 데이터(Seed) 삽입
   void _seedDatabase(Batch batch) {
+    // Method to reset the database
+
     final defaultCategories = [
       // 필수 지출
       Category(

@@ -73,6 +73,10 @@ class ScaffoldWithNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: child, bottomNavigationBar: const MainBottomNavBar());
+    return Scaffold(
+      appBar: AppBar(title: const Text('MoneyFit'), centerTitle: false),
+      body: child,
+      bottomNavigationBar: const MainBottomNavBar(),
+    );
   }
 }
