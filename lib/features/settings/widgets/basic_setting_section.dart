@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:money_fit/core/theme/design_palette.dart';
+import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -53,6 +54,9 @@ class BasicSettingsSectionState extends ConsumerState<BasicSettingsSection> {
                 final newBudget = double.tryParse(_budgetController.text);
                 if (newBudget != null) {
                   notifier.updateDailyBudget(newBudget);
+                  ref
+                      .read(homeViewModelProvider.notifier)
+                      .updateDailyBudget(newBudget);
                 }
                 Navigator.of(context).pop();
               },

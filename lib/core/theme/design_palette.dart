@@ -210,11 +210,19 @@ class AppTextStyles {
     color: LightAppColors.secondaryLight,
   );
 
-  /// **caption (10pt, regular)**
+  /// **caption (12pt, regular)**
   /// - **Calendar:** Price under the date "₩12,500"
   static const TextStyle caption = TextStyle(
     fontFamily: _fontFamily,
     fontSize: 12,
+    fontWeight: FontWeight.w400,
+  );
+
+  /// **caption (10pt, regular)**
+  /// - **Calendar:** Price under the date "₩12,500"
+  static const TextStyle captionOnDate = TextStyle(
+    fontFamily: _fontFamily,
+    fontSize: 10,
     fontWeight: FontWeight.w400,
   );
 

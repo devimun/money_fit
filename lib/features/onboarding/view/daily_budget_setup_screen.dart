@@ -1,9 +1,7 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:money_fit/core/services/notification_service.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 import 'package:money_fit/features/onboarding/widgets/daily_budget_setup_form.dart';
 import 'package:money_fit/widgets/custom_notification_dialog.dart';
@@ -50,11 +48,10 @@ class _DailyBudgetSetupScreenState
           onConfirm: () async {
             Navigator.of(context).pop();
             log('User confirmed notification setup.');
-            await setupNotifications().then((r) {
-              if (context.mounted) {
-                context.go('/home');
-              }
-            });
+            await setupNotifications();
+            if (context.mounted) {
+              context.go('/home');
+            }
           },
           onDeny: () {
             Navigator.of(context).pop();
@@ -69,11 +66,8 @@ class _DailyBudgetSetupScreenState
     log('Requesting notification permission...');
     final permissionStatus = await Permission.notification.request();
     log('Notification permission status: ${permissionStatus.toString()}');
-
     if (permissionStatus.isGranted) {
       log('Notification permission granted. Scheduling daily notifications...');
-      await ref.read(notificationServiceProvider).scheduleDailyNotifications();
-      log('Daily notifications scheduled.');
       await ref.read(userSettingsProvider.notifier).enableNotifications();
     } else if (permissionStatus.isDenied) {
       log('Notification permission denied by user.');

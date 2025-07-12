@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/features/auth/view/splash_screen.dart';
 import 'package:money_fit/widgets/bottom_nav_bar.dart';
 import 'package:money_fit/features/home/view/home_screen.dart';
@@ -36,8 +39,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(
             path: '/home',
-            pageBuilder: (context, state) =>
-                NoTransitionPage(key: state.pageKey, child: const HomeScreen()),
+            pageBuilder: (context, state) {
+              return NoTransitionPage(
+                key: state.pageKey,
+                child: const HomeScreen(),
+              );
+            },
           ),
           GoRoute(
             path: '/calendar',
@@ -73,10 +80,6 @@ class ScaffoldWithNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('MoneyFit'), centerTitle: false),
-      body: child,
-      bottomNavigationBar: const MainBottomNavBar(),
-    );
+    return Scaffold(body: child, bottomNavigationBar: const MainBottomNavBar());
   }
 }

@@ -50,7 +50,15 @@ class DataManagementSection extends ConsumerWidget {
 
               if (confirmed == true) {
                 await DataResetService.resetAllData();
+                // 초기화 후 사용자 설정도 리셋
                 ref.read(userSettingsProvider.notifier).reset();
+                // 각 스크린 뷰모델 초기화
+                // ref.read(userSettingsProvider);
+                // ref.read(homeViewModelProvider);
+                // ref.read(calendarDataProvider);
+                // ref.read(expenseListProvider);
+                // ref.read(navigationIndexProvider);
+                // 초기화 후 온보딩 화면으로 이동
                 if (context.mounted) {
                   context.go('/onboarding');
                 }

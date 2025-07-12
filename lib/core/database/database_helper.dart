@@ -97,49 +97,49 @@ class DatabaseHelper {
     final defaultCategories = [
       // 필수 지출
       Category(
-        id: 'req-food',
+        id: 'food',
         name: '식사',
         type: CategoryType.required,
         isDeletable: false,
       ),
       Category(
-        id: 'req-traffic',
+        id: 'traffic',
         name: '교통',
         type: CategoryType.required,
         isDeletable: false,
       ),
       Category(
-        id: 'req-communication',
+        id: 'communication',
         name: '통신',
         type: CategoryType.required,
         isDeletable: false,
       ),
       Category(
-        id: 'req-housing',
+        id: 'housing',
         name: '주거/공과금',
         type: CategoryType.required,
         isDeletable: false,
       ),
       Category(
-        id: 'req-medical',
+        id: 'medical',
         name: '의료',
         type: CategoryType.required,
         isDeletable: false,
       ),
       Category(
-        id: 'req-insurance',
+        id: 'insurance',
         name: '보험',
         type: CategoryType.required,
         isDeletable: false,
       ),
       Category(
-        id: 'req-finance',
+        id: 'finance',
         name: '금융',
         type: CategoryType.required,
         isDeletable: false,
       ),
       Category(
-        id: 'req-necessities',
+        id: 'necessities',
         name: '생필품',
         type: CategoryType.required,
         isDeletable: false,
@@ -153,43 +153,43 @@ class DatabaseHelper {
 
       // 자율 지출 (변동 지출)
       Category(
-        id: 'var-eating-out',
+        id: 'eating-out',
         name: '외식',
         type: CategoryType.variable,
         isDeletable: false,
       ),
       Category(
-        id: 'var-cafe',
+        id: 'cafe',
         name: '카페/간식',
         type: CategoryType.variable,
         isDeletable: false,
       ),
       Category(
-        id: 'var-shopping',
+        id: 'shopping',
         name: '쇼핑',
         type: CategoryType.variable,
         isDeletable: false,
       ),
       Category(
-        id: 'var-hobby',
+        id: 'hobby',
         name: '취미/여가',
         type: CategoryType.variable,
         isDeletable: false,
       ),
       Category(
-        id: 'var-travel',
+        id: 'travel',
         name: '여행/휴식',
         type: CategoryType.variable,
         isDeletable: false,
       ),
       Category(
-        id: 'var-subscribe',
+        id: 'subscribe',
         name: '구독',
         type: CategoryType.variable,
         isDeletable: false,
       ),
       Category(
-        id: 'var-beauty',
+        id: 'beauty',
         name: '미용',
         type: CategoryType.variable,
         isDeletable: false,

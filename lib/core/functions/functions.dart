@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-String numberFormatting(double number) {
-  return NumberFormat('#,###').format(number);
-}
-
 Widget buildCircleWidget(bool needPrimaryColor, BuildContext context) {
   return Container(
     width: MediaQuery.of(context).size.width * 0.03,
@@ -16,4 +12,15 @@ Widget buildCircleWidget(bool needPrimaryColor, BuildContext context) {
           : Theme.of(context).colorScheme.secondaryContainer,
     ),
   );
+}
+
+String numberFormatting(double number) {
+  return NumberFormat('#,###').format(number);
+}
+
+String dateFormatting(DateTime dateTime) =>
+    DateFormat('yyyy.MM.dd EEEE', 'ko_KR').format(dateTime);
+
+DateTime normalizedDate(DateTime date) {
+  return DateTime(date.year, date.month, date.day);
 }

@@ -1,11 +1,14 @@
 // home_view_model.dart
+import 'dart:async';
+
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/models/user_model.dart';
-import 'package:money_fit/core/providers/repository_providers.dart';
-import 'package:money_fit/core/repositories/expense_repository.dart';
-import 'package:flutter/material.dart';
+import 'package:money_fit/core/providers/expenses_provider.dart';
+import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/core/theme/design_palette.dart';
+import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 
 /// 💡 뷰에서 사용할 계산된 값들 묶음
 class SpendingStatus {
@@ -65,7 +68,7 @@ class HomeState {
   SpendingStatus get spendingStatus {
     final spent = todayVariableSpending;
     final remaining = dailyBudget - spent;
-    final ratio = remaining / dailyBudget;
+    final ratio = dailyBudget > 0 ? remaining / dailyBudget : 0.0;
 
     late String message;
     late Color color;
@@ -96,107 +99,98 @@ class HomeState {
   }
 }
 
-/// 🔧 ViewModel
-class HomeViewModel extends StateNotifier<HomeState> {
-  final ExpenseRepository expenseRepository;
+class HomeViewModel extends AsyncNotifier<HomeState> {
+  @override
+  Future<HomeState> build() async {
+    final userAsyncValue = ref.watch(userSettingsProvider);
 
-  HomeViewModel({required this.expenseRepository})
-    : super(
-        const HomeState(
-          dailyBudget: 0,
-          todayExpenseList: [],
-          monthlyVariableExpenseAvg: 0,
-          consecutiveAchievementDays: 0,
-        ),
-      );
+    return await userAsyncValue.when(
+      data: (user) async {
+        final expensesByDate = await ref.watch(coreExpensesProvider.future);
+        final today = ref.watch(dateManager);
+        final todayExpenses = expensesByDate[today] ?? [];
+        final variableExpenses = expensesByDate.entries
+            .expand((entry) => entry.value)
+            .where((e) => e.type == ExpenseType.variable)
+            .toList();
 
-  /// 📦 초기 데이터 로딩
-  Future<bool> initialize(User user) async {
-    try {
-      final today = DateTime.now();
-      final expenses = await expenseRepository.getExpensesByDate(
-        user.id,
-        today,
-      );
+        final totalAmount = variableExpenses.fold<double>(
+          0,
+          (sum, e) => sum + e.amount,
+        );
 
-      final monthlyExpenses = await expenseRepository.getExpensesByMonth(
-        user.id,
-        today.year,
-        today.month,
-      );
+        final count = variableExpenses.length;
+        final average = count > 0 ? totalAmount / count : 0.0;
 
-      final variableExpenses = monthlyExpenses.where(
-        (e) => e.type == ExpenseType.variable,
-      );
+        final consecutiveDays = _calculateConsecutiveAchievementDays(
+          user,
+          expensesByDate,
+        );
 
-      final variableTotal = variableExpenses.fold<double>(
-        0,
-        (sum, e) => sum + e.amount,
-      );
-
-      final daysInMonth = DateTime(today.year, today.month + 1, 0).day;
-      final monthlyAvg = variableTotal / daysInMonth;
-
-      final consecutiveDays = await _calculateConsecutiveAchievementDays(
-        user,
-        expenseRepository,
-      );
-
-      state = state.copyWith(
-        dailyBudget: user.dailyBudget,
-        todayExpenseList: expenses,
-        monthlyVariableExpenseAvg: monthlyAvg,
-        consecutiveAchievementDays: consecutiveDays,
-        hasError: false,
-      );
-
-      return true;
-    } catch (_) {
-      state = state.copyWith(hasError: true);
-      return false;
-    }
+        return HomeState(
+          dailyBudget: user.dailyBudget,
+          todayExpenseList: todayExpenses,
+          monthlyVariableExpenseAvg: average,
+          consecutiveAchievementDays: consecutiveDays,
+        );
+      },
+      loading: () {
+        return Completer<HomeState>().future;
+      },
+      error: (e, s) {
+        throw e;
+      },
+    );
   }
 
-  /// ➕ 지출 등록
   Future<void> addExpense(Expense expense) async {
-    await expenseRepository.createExpense(expense);
-    final updated = [...state.todayExpenseList, expense];
-    state = state.copyWith(todayExpenseList: updated);
+    await ref.read(coreExpensesProvider.notifier).addExpense(expense);
   }
 
-  /// ✏️ 지출 수정
   Future<void> updateExpense(Expense expense) async {
-    await expenseRepository.updateExpense(expense);
-    final updated = state.todayExpenseList
-        .map((e) => e.id == expense.id ? expense : e)
-        .toList();
-    state = state.copyWith(todayExpenseList: updated);
+    await ref.read(coreExpensesProvider.notifier).updateExpense(expense);
   }
 
-  /// ❌ 지출 삭제
-  Future<void> deleteExpense(String id) async {
-    await expenseRepository.deleteExpense(id);
-    final updated = state.todayExpenseList.where((e) => e.id != id).toList();
-    state = state.copyWith(todayExpenseList: updated);
+  Future<void> deleteExpense(Expense expense) async {
+    await ref.read(coreExpensesProvider.notifier).deleteExpense(expense);
   }
 
-  /// ⚙️ 예산 변경
-  void updateDailyBudget(double newBudget) {
-    state = state.copyWith(dailyBudget: newBudget);
+  Future<void> updateDailyBudget(double newBudget) async {
+    await ref.read(userSettingsProvider.notifier).updateDailyBudget(newBudget);
   }
 
-  /// 🔁 연속 성취일 계산 (dailyBudget 이하 소비)
-  Future<int> _calculateConsecutiveAchievementDays(
+  /// 오늘부터 역순으로 이번 달 안에서 연속 성취일 계산
+  int _calculateConsecutiveAchievementDays(
     User user,
-    ExpenseRepository repo,
-  ) async {
-    // 실제 구현 필요. 아래는 예시로 고정값 반환.
-    return 6;
+    Map<DateTime, List<Expense>> expensesByDate,
+  ) {
+    final dailyBudget = user.dailyBudget;
+    final now = DateTime.now();
+    final todayKey = DateTime(now.year, now.month, now.day);
+
+    int streak = 0;
+
+    for (int i = 0; ; i++) {
+      final date = todayKey.subtract(Duration(days: i));
+      if (date.month != now.month) break; // 이번 달만 체크
+
+      final expenses = expensesByDate[date] ?? [];
+      final totalVariable = expenses
+          .where((e) => e.type == ExpenseType.variable)
+          .fold(0.0, (sum, e) => sum + e.amount);
+
+      if (totalVariable <= dailyBudget && totalVariable != 0) {
+        streak += 1;
+      } else {
+        break;
+      }
+    }
+
+    return streak;
   }
 }
 
 /// 💡 Provider
-final homeViewModelProvider = StateNotifierProvider<HomeViewModel, HomeState>(
-  (ref) =>
-      HomeViewModel(expenseRepository: ref.read(expenseRepositoryProvider)),
+final homeViewModelProvider = AsyncNotifierProvider<HomeViewModel, HomeState>(
+  () => HomeViewModel(),
 );

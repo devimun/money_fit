@@ -35,18 +35,19 @@ class AppTheme {
       colorScheme: const ColorScheme.light(
         primary: LightAppColors.primary,
         secondary: LightAppColors.secondary,
+        onSecondaryContainer: Color.fromARGB(255, 236, 236, 239),
         surface: LightAppColors.backgroundComponent,
         error: LightAppColors.accentRed,
         onPrimary: LightAppColors.textOnPrimary,
         onSecondary: LightAppColors.textOnSecondary,
         onSurface: LightAppColors.textPrimary,
         onError: LightAppColors.textOnPrimary,
+        onSecondaryFixed: LightAppColors.textSecondary,
       ),
 
       textTheme: _textTheme(
         LightAppColors.textPrimary,
         LightAppColors.textSecondary,
-        LightAppColors.textOnSecondary,
       ),
 
       appBarTheme: AppBarTheme(
@@ -118,7 +119,6 @@ class AppTheme {
       textTheme: _textTheme(
         DarkAppColors.textPrimary,
         DarkAppColors.textSecondary,
-        DarkAppColors.textOnSecondary,
       ),
 
       appBarTheme: AppBarTheme(
@@ -167,11 +167,7 @@ class AppTheme {
     );
   }
 
-  static TextTheme _textTheme(
-    Color primaryColor,
-    Color secondaryColor,
-    Color textOnSecondaryColor,
-  ) {
+  static TextTheme _textTheme(Color primaryColor, Color secondaryColor) {
     return TextTheme(
       // displayLarge: Onboarding main titles, Home circular progress bar amount
       displayLarge: AppTextStyles.h1.copyWith(color: primaryColor),
@@ -182,7 +178,7 @@ class AppTheme {
       // headlineMedium: Home greeting, Settings modal titles
       headlineMedium: AppTextStyles.h4.copyWith(color: primaryColor),
       // bodyLarge: Onboarding descriptions, Settings menu items
-      bodyLarge: AppTextStyles.bodyL.copyWith(color: textOnSecondaryColor),
+      bodyLarge: AppTextStyles.bodyL.copyWith(color: secondaryColor),
       // bodyMedium: Home card titles, Expense list item titles, Calendar summary values, Buttons
       bodyMedium: AppTextStyles.bodyM.copyWith(color: primaryColor),
       // bodySmall: Home date, card subtitles, Expense list item subtitles, Calendar day of the week
@@ -191,9 +187,11 @@ class AppTheme {
       labelLarge: AppTextStyles.bodyM.copyWith(
         color: LightAppColors.textOnPrimary,
       ),
-      labelMedium: AppTextStyles.bodyMM.copyWith(color: textOnSecondaryColor),
+      labelMedium: AppTextStyles.bodyMM.copyWith(color: secondaryColor),
       // caption: Calendar price under the date
-      labelSmall: AppTextStyles.caption.copyWith(color: textOnSecondaryColor),
+      labelSmall: AppTextStyles.caption.copyWith(color: secondaryColor),
+      titleSmall: AppTextStyles.captionOnDate.copyWith(color: secondaryColor),
+      // titleMedium: AppTextStyles
     );
   }
 }

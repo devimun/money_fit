@@ -34,7 +34,8 @@ class BaseBottomSheet extends StatelessWidget {
                 IconButton(icon: const Icon(Icons.close), onPressed: onClose),
               ],
             ),
-            const SizedBox(height: 8),
+            Divider(color: Colors.grey[300], height: 1),
+            const SizedBox(height: 20),
 
             /// 본문
             Expanded(child: child),

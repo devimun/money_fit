@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:money_fit/core/providers/navigation_provider.dart';
+import 'package:money_fit/core/providers/select_date_provider.dart';
 
 class MainBottomNavBar extends ConsumerWidget {
   const MainBottomNavBar({super.key});
@@ -16,6 +17,7 @@ class MainBottomNavBar extends ConsumerWidget {
         ref.read(navigationIndexProvider.notifier).state = index;
         switch (index) {
           case 0:
+            ref.read(dateManager.notifier).changeDate(DateTime.now());
             context.go('/home');
             break;
           case 1:
