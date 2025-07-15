@@ -35,7 +35,7 @@ class AppTheme {
       colorScheme: const ColorScheme.light(
         primary: LightAppColors.primary,
         secondary: LightAppColors.secondary,
-        onSecondaryContainer: Color.fromARGB(255, 236, 236, 239),
+        onSecondaryContainer: LightAppColors.calendarCellColor,
         surface: LightAppColors.backgroundComponent,
         error: LightAppColors.accentRed,
         onPrimary: LightAppColors.textOnPrimary,
@@ -191,6 +191,7 @@ class AppTheme {
       // caption: Calendar price under the date
       labelSmall: AppTextStyles.caption.copyWith(color: secondaryColor),
       titleSmall: AppTextStyles.captionOnDate.copyWith(color: secondaryColor),
+      titleMedium: AppTextStyles.bodyL2.copyWith(color: primaryColor),
       // titleMedium: AppTextStyles
     );
   }

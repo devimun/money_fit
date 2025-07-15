@@ -52,7 +52,7 @@ class LightAppColors {
   static const Color backgroundComponent = Color(
     0xFFFFFFFF,
   ); // White background for cards and modals
-
+  static const Color calendarCellColor = Color(0xffF3F4F6);
   // ** Border Colors **
   // Used for borders and dividers.
   static const Color border = Color(0xFFE5E7EB); // Default border color
@@ -180,7 +180,7 @@ class AppTextStyles {
   static const TextStyle bodyL2 = TextStyle(
     fontFamily: _fontFamily,
     fontSize: 16,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w500,
   );
 
   /// **bodyM (14pt, medium)**

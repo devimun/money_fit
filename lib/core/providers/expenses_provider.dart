@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/providers/repository_providers.dart';
+import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 
 // 앱 전역에서 지출 데이터를 관리하기 위한 프로버이더.
@@ -12,12 +15,12 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
   @override
   Future<Map<DateTime, List<Expense>>> build() async {
     final userSettings = ref.read(userSettingsProvider).requireValue;
-    final now = DateTime.now();
-    return await _loadMonthlyExpenses(userSettings.id, now.year, now.month);
+    final now = ref.watch(dateManager);
+    return await loadMonthlyExpenses(userSettings.id, now.year, now.month);
   }
 
   // 특정 월의 데이터를 가져오며, 이미 캐시된 데이터가 있다면 캐시를 사용하며 없다면 조회 후 캐시데이터에 저장합니다
-  Future<Map<DateTime, List<Expense>>> _loadMonthlyExpenses(
+  Future<Map<DateTime, List<Expense>>> loadMonthlyExpenses(
     String userId,
     int year,
     int month,
@@ -38,28 +41,28 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
     return currentState[dateKey] ?? [];
   }
 
-  Future<void> loadMonth(int year, int month) async {
-    final userSettings = ref.read(userSettingsProvider).valueOrNull;
-    if (userSettings == null) return;
-
-    state = const AsyncLoading();
-    final result = await _loadMonthlyExpenses(userSettings.id, year, month);
-    state = AsyncData(result);
-  }
-
   ///  지출 추가
   Future<void> addExpense(Expense expense) async {
     final repo = ref.read(expenseRepositoryProvider);
     await repo.createExpense(expense);
 
-    final expenseDate = _stripTime(expense.date);
+    final dateKey = _stripTime(expense.date);
     final currentState = state.value ?? {};
     final List<Expense> updatedList = [
-      ...(currentState[expenseDate] ?? []),
       expense,
+      ...(currentState[dateKey] ?? []),
     ];
 
-    state = AsyncData({...currentState, expenseDate: updatedList});
+    final Map<DateTime, List<Expense>> newState = {
+      ...currentState,
+      dateKey: updatedList,
+    };
+
+    final cacheKey = '${expense.date.year}-${expense.date.month}';
+    _cache[cacheKey] = newState;
+    log(newState.toString());
+
+    state = AsyncData(newState);
   }
 
   ///  지출 수정
@@ -67,15 +70,20 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
     final repo = ref.read(expenseRepositoryProvider);
     await repo.updateExpense(updated);
 
-    final currentState = state.value ?? {};
     final dateKey = _stripTime(updated.date);
+    final currentState = state.value ?? {};
 
-    // 수정 전 데이터를 제거하고 다시 추가
     final List<Expense> updatedList = (currentState[dateKey] ?? [])
         .map((e) => e.id == updated.id ? updated : e)
         .toList();
 
-    state = AsyncData({...currentState, dateKey: updatedList});
+    final Map<DateTime, List<Expense>> newState = {
+      ...currentState,
+      dateKey: updatedList,
+    };
+    final cacheKey = '${updated.date.year}-${updated.date.month}';
+    _cache[cacheKey] = newState;
+    state = AsyncData(newState);
   }
 
   ///  지출 삭제
@@ -83,38 +91,43 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
     final repo = ref.read(expenseRepositoryProvider);
     await repo.deleteExpense(deleted.id);
 
-    final currentState = state.value ?? {};
     final dateKey = _stripTime(deleted.date);
+    final currentState = state.value ?? {};
 
     final oldList = currentState[dateKey] ?? [];
     final newList = oldList.where((e) => e.id != deleted.id).toList();
 
-    final newState = Map<DateTime, List<Expense>>.from(currentState);
+    final Map<DateTime, List<Expense>> newState =
+        Map<DateTime, List<Expense>>.from(currentState);
 
     if (newList.isEmpty) {
       newState.remove(dateKey);
     } else {
       newState[dateKey] = newList;
     }
+    final cacheKey = '${deleted.date.year}-${deleted.date.month}';
+    _cache[cacheKey] = newState;
 
     state = AsyncData(newState);
   }
 
   ///  특정 월 갱신 (예: 달 바뀜, 전체 새로고침 시)
-  Future<void> refreshExpensesFor(DateTime date) async {
-    final repo = ref.read(expenseRepositoryProvider);
+  Future<bool> refreshExpensesFor(DateTime date) async {
     final userSettings = ref.read(userSettingsProvider).valueOrNull;
-    if (userSettings == null) return;
+    if (userSettings == null) return false;
 
-    final newMap = await repo.getExpensesByMonth(
+    final newMap = await loadMonthlyExpenses(
       userSettings.id,
       date.year,
       date.month,
     );
-
-    // 기존 데이터와 병합
-    final currentState = state.value ?? {};
-    state = AsyncData({...currentState, ...newMap});
+    if (newMap.isEmpty) {
+      return false;
+    } else {
+      ref.read(dateManager.notifier).changeDate(date);
+      state = AsyncData(newMap);
+      return true;
+    }
   }
 
   /// 날짜의 시간 정보 제거 (날짜별 그룹핑용)

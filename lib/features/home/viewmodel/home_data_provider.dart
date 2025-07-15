@@ -119,7 +119,7 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
           (sum, e) => sum + e.amount,
         );
 
-        final count = variableExpenses.length;
+        final count = expensesByDate.keys.length;
         final average = count > 0 ? totalAmount / count : 0.0;
 
         final consecutiveDays = _calculateConsecutiveAchievementDays(

@@ -1,4 +1,3 @@
-
 import 'package:flutter/foundation.dart';
 
 // "필수", "변동" 타입을 나타내는 enum
@@ -75,7 +74,6 @@ class Expense {
       'user_id': userId,
       'name': name,
       'amount': amount,
-      // "YYYY-MM-DD" 형식으로 저장
       'date': date.toIso8601String().substring(0, 10),
       'category_id': categoryId,
       'type': type == ExpenseType.required ? '필수' : '변동',

@@ -101,27 +101,37 @@ class HomeScreen extends ConsumerWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Column(
-                                children: [
-                                  Text(
-                                    '월평균 자율 지출',
-                                    style: Theme.of(context).textTheme.labelMedium,
-                                  ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    '${numberFormatting(state.monthlyVariableExpenseAvg)}원',
-                                  ),
-                                ],
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      '월평균 일일 자율 지출',
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.labelMedium,
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      '${numberFormatting(state.monthlyVariableExpenseAvg)}원',
+                                    ),
+                                  ],
+                                ),
                               ),
-                              Column(
-                                children: [
-                                  Text(
-                                    '연속 목표 달성일',
-                                    style: Theme.of(context).textTheme.labelMedium,
-                                  ),
-                                  SizedBox(height: 4),
-                                  Text('${state.consecutiveAchievementDays}일'),
-                                ],
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      '연속 목표 달성일',
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.labelMedium,
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      '${state.consecutiveAchievementDays}일',
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
@@ -143,10 +153,12 @@ class HomeScreen extends ConsumerWidget {
                               showModalBottomSheet(
                                 isDismissible: false,
                                 context: context,
-                                builder: (context) => TodayExpenseListBottomSheet(
-                                  onClose: () => Navigator.of(context).pop(),
-                                  isHome: true,
-                                ),
+                                builder: (context) =>
+                                    TodayExpenseListBottomSheet(
+                                      onClose: () =>
+                                          Navigator.of(context).pop(),
+                                      isHome: true,
+                                    ),
                               );
                             },
                           ),
@@ -162,16 +174,19 @@ class HomeScreen extends ConsumerWidget {
                                 backgroundColor: Colors.transparent,
                                 builder: (context) => LayoutBuilder(
                                   builder: (context, constraints) {
-                                    final height = constraints.maxHeight; // 최대 80%
+                                    final height =
+                                        constraints.maxHeight; // 최대 80%
 
                                     return SizedBox(
                                       height: height * 0.9,
                                       child: ExpenseAddForm(
                                         uid: user!.id,
-                                        onSubmit: (expense) {
+                                        onSubmit: (expense) async {
                                           // 지출 등록 후 상태 업데이트
-                                          ref
-                                              .read(homeViewModelProvider.notifier)
+                                          await ref
+                                              .read(
+                                                homeViewModelProvider.notifier,
+                                              )
                                               .addExpense(expense);
                                         },
                                       ),
@@ -191,12 +206,10 @@ class HomeScreen extends ConsumerWidget {
           ),
         );
       },
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      ),
-      error: (error, stackTrace) => Scaffold(
-        body: Center(child: Text('오류가 발생했습니다: $error')),
-      ),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (error, stackTrace) =>
+          Scaffold(body: Center(child: Text('오류가 발생했습니다: $error'))),
     );
   }
 }

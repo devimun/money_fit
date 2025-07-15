@@ -21,9 +21,11 @@ class MainBottomNavBar extends ConsumerWidget {
             context.go('/home');
             break;
           case 1:
+            ref.read(dateManager.notifier).changeDate(DateTime.now());
             context.go('/calendar');
             break;
           case 2:
+            ref.read(dateManager.notifier).changeDate(DateTime.now());
             context.go('/expense_list');
             break;
           case 3:
