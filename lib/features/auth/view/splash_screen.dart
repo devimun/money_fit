@@ -10,16 +10,17 @@ class SplashScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen<AsyncValue<HomeState>>(homeViewModelProvider, (previous, next) {
       next.when(
-        data: (_) {
-          if (context.mounted) {
+        data: (home) {
+          if (home.dailyBudget == 0) {
+            context.go('/onboarding');
+          } else {
             context.go('/home');
           }
         },
         error: (err, stack) {
           // 에러 발생 시 (예: 사용자 설정 누락) 온보딩 화면으로 이동
-          if (context.mounted) {
-            context.go('/onboarding');
-          }
+
+          context.go('/onboarding');
         },
         loading: () {
           // 로딩 중에는 아무것도 하지 않음 (계속 스피너 표시)

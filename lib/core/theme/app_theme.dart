@@ -2,7 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:money_fit/core/theme/design_palette.dart';
 
 class AppTheme {
-  static BoxDecoration boxDecoration = BoxDecoration(
+  static BoxDecoration getBoxDecoration(BuildContext context) {
+    return BoxDecoration(
+      color: Theme.of(context).colorScheme.surface,
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.black.withValues(alpha: 0.3)
+              : Colors.black.withValues(alpha: 0.25),
+          blurRadius: 4,
+          offset: const Offset(1, 1),
+        ),
+      ],
+    );
+  }
+
+  // 기존 코드와의 호환성을 위한 deprecated getter
+  @Deprecated("Use getBoxDecoration(context) instead")
+  static BoxDecoration get boxDecoration => BoxDecoration(
     color: Colors.white,
     borderRadius: BorderRadius.circular(16),
     boxShadow: [
@@ -51,10 +69,10 @@ class AppTheme {
       ),
 
       appBarTheme: AppBarTheme(
-        backgroundColor: Colors.white,
+        backgroundColor: LightAppColors.backgroundComponent,
         centerTitle: false,
         elevation: 1,
-        shadowColor: Colors.white,
+        shadowColor: LightAppColors.backgroundComponent,
         titleTextStyle: AppTextStyles.h3.copyWith(
           color: LightAppColors.primary,
         ),
@@ -114,6 +132,8 @@ class AppTheme {
         onSecondary: DarkAppColors.textOnSecondary,
         onSurface: DarkAppColors.textPrimary,
         onError: DarkAppColors.textOnPrimary,
+        outline: DarkAppColors.borderLight,
+        onSecondaryContainer: DarkAppColors.border,
       ),
 
       textTheme: _textTheme(

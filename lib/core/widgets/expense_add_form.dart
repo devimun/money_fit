@@ -243,10 +243,33 @@ class _ExpenseAddFormState extends State<ExpenseAddForm> {
                                     final isSelected =
                                         entry.key == _selectedCategoryId;
                                     return ChoiceChip(
-                                      side: BorderSide.none,
-                                      backgroundColor: Theme.of(
-                                        context,
-                                      ).colorScheme.onSecondaryContainer,
+                                      side: BorderSide(
+                                        width: 0.5,
+                                        color: isSelected
+                                            ? Theme.of(
+                                                context,
+                                              ).colorScheme.primary
+                                            : Theme.of(context).brightness ==
+                                                  Brightness.dark
+                                            ? Theme.of(context)
+                                                      .inputDecorationTheme
+                                                      .enabledBorder
+                                                      ?.borderSide
+                                                      .color ??
+                                                  Colors.grey
+                                            : Colors.black.withValues(
+                                                alpha: 0.15,
+                                              ),
+                                      ),
+                                      backgroundColor:
+                                          Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Theme.of(context)
+                                                .colorScheme
+                                                .surfaceContainerHighest
+                                          : Theme.of(
+                                              context,
+                                            ).colorScheme.onSecondaryContainer,
                                       selectedColor: Theme.of(
                                         context,
                                       ).colorScheme.primary,

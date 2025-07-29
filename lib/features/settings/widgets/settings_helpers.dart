@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 Widget buildSectionTitle(String title, TextTheme textTheme) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 8.0, left: 4.0),
-    child: Text(
-      title,
-      style: textTheme.titleSmall?.copyWith(color: const Color(0xFF6B7280)),
-    ),
+    child: Text(title, style: textTheme.labelMedium, textAlign: TextAlign.left),
   );
 }
 
@@ -42,6 +39,7 @@ Widget buildSwitchItem({
   required String title,
   required bool value,
   required ValueChanged<bool> onChanged,
+  required BuildContext context,
 }) {
   return buildSettingsItem(
     icon: icon,
@@ -50,8 +48,10 @@ Widget buildSwitchItem({
     trailing: Switch(
       value: value,
       onChanged: onChanged,
-      activeColor: const Color(0xFF825A3D),
-      inactiveTrackColor: const Color(0xFFD1D5DB),
+      activeColor: Theme.of(context).colorScheme.primary,
+      inactiveTrackColor: Theme.of(context).brightness == Brightness.dark
+          ? Theme.of(context).colorScheme.surfaceContainerHighest
+          : Colors.grey[300],
     ),
   );
 }

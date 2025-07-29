@@ -5,6 +5,8 @@ import 'package:money_fit/core/models/expense_model.dart';
 
 import 'package:money_fit/core/repositories/category.dart';
 import 'package:money_fit/features/expense/viewmodel/expense_list_provider.dart';
+import 'package:money_fit/features/expense/view/widgets/expense_filter_bottom_sheet.dart';
+import 'package:money_fit/core/widgets/ads/ad_banner_widget.dart';
 
 // 날짜별 지출 내역을 리스트 형식으로 보여주는 뷰
 // 월별 데이터를 기본으로 제공하며, 특정 월, 카테고리별, 지출별로 조회할 수 있도록 필터링 기능을 제공한다.
@@ -19,27 +21,37 @@ class ExpenseListScreen extends ConsumerWidget {
       body: expensesState.when(
         data: (data) {
           final entries = data.expenses.entries.toList();
+          // sortType에 따라 날짜(key)를 기준으로 오름차순/내림차순 정렬
+          entries.sort((a, b) {
+            return data.sortType == SortType.asc
+                ? a.key.compareTo(b.key)
+                : b.key.compareTo(a.key);
+          });
 
-          return Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              children: [
-                _buildHeader(data, ref),
-                const SizedBox(height: 12),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: entries.length,
-                    itemBuilder: (context, index) {
-                      return _buildDayExpenses(
-                        entries[index].key,
-                        entries[index].value,
-                        context,
-                      );
-                    },
-                  ),
+          return Column(
+            children: [
+              _buildHeader(data, ref, context),
+              // 최상단에 배너 광고 항상 표시
+              const AdBannerWidget(screenType: ScreenType.expenses),
+
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: entries.isEmpty
+                      ? _buildEmptyState(context)
+                      : ListView.builder(
+                          itemCount: entries.length,
+                          itemBuilder: (context, index) {
+                            return _buildDayExpenses(
+                              entries[index].key,
+                              entries[index].value,
+                              context,
+                            );
+                          },
+                        ),
                 ),
-              ],
-            ),
+              ),
+            ],
           );
         },
         error: (error, stackTrace) =>
@@ -50,7 +62,11 @@ class ExpenseListScreen extends ConsumerWidget {
   }
 
   // 날짜 헤더와 필터 상태 보여주는 위젯
-  Widget _buildHeader(ExpensesListState data, WidgetRef ref) {
+  Widget _buildHeader(
+    ExpensesListState data,
+    WidgetRef ref,
+    BuildContext context,
+  ) {
     final year = data.searchDate.year.toString().substring(2); // e.g. 25
     final month = data.searchDate.month.toString().padLeft(2, '0'); // e.g. 07
 
@@ -70,17 +86,45 @@ class ExpenseListScreen extends ConsumerWidget {
 
     final sortLabel = data.sortType == SortType.asc ? '오름차순' : '내림차순';
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text('$year년 $month월 · $typeLabel · $categoryLabel · $sortLabel'),
-        IconButton(
-          icon: const Icon(Icons.manage_search),
-          onPressed: () {
-            // TODO: 바텀시트 열기 (필터 변경)
-          },
-        ),
-      ],
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 1,
+            offset: const Offset(1, 1),
+          ),
+        ],
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            '$year년 $month월 · $typeLabel · $categoryLabel · $sortLabel',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.manage_search,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                builder: (context) => SizedBox(
+                  height: MediaQuery.sizeOf(context).height * 0.7,
+                  child: ExpenseFilterBottomSheet(currentState: data),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -95,11 +139,11 @@ class ExpenseListScreen extends ConsumerWidget {
       children: [
         Text(
           dateFormatting(date),
-          style: Theme.of(context).textTheme.labelMedium,
+          style: Theme.of(context).textTheme.labelSmall,
         ),
-        const SizedBox(height: 4),
+        Divider(color: Theme.of(context).colorScheme.primary, thickness: 0.5),
         for (Expense e in expenses) _buildExpenseWidget(e, context),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
       ],
     );
   }
@@ -121,6 +165,37 @@ class ExpenseListScreen extends ConsumerWidget {
       trailing: Text(
         '-${numberFormatting(e.amount)}원',
         style: Theme.of(context).textTheme.bodyMedium,
+      ),
+    );
+  }
+
+  // 데이터가 없을 때 보여줄 위젯
+  Widget _buildEmptyState(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.receipt_long_outlined,
+            size: 64,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            '지출 내역이 없습니다',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '필터 조건을 변경하거나\n새로운 지출을 추가해보세요',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
       ),
     );
   }

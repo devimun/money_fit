@@ -144,12 +144,6 @@ class DatabaseHelper {
         type: CategoryType.required,
         isDeletable: false,
       ),
-      Category(
-        id: 'req-etc',
-        name: '기타',
-        type: CategoryType.required,
-        isDeletable: false,
-      ),
 
       // 자율 지출 (변동 지출)
       Category(
@@ -191,12 +185,6 @@ class DatabaseHelper {
       Category(
         id: 'beauty',
         name: '미용',
-        type: CategoryType.variable,
-        isDeletable: false,
-      ),
-      Category(
-        id: 'var-etc',
-        name: '기타',
         type: CategoryType.variable,
         isDeletable: false,
       ),

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:money_fit/core/services/data_reset_service.dart';
 import 'package:money_fit/core/theme/design_palette.dart';
-import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
+import 'package:restart_app/restart_app.dart';
 
 /// "데이터 관리" 섹션
 class DataManagementSection extends ConsumerWidget {
@@ -31,7 +30,7 @@ class DataManagementSection extends ConsumerWidget {
                   return AlertDialog(
                     title: Text('정보 초기화', style: textTheme.displaySmall),
                     content: Text(
-                      '모든 데이터를 초기화하고 앱을 다시 시작하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
+                      '모든 데이터를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
                       style: textTheme.bodyLarge,
                     ),
                     actions: <Widget>[
@@ -48,20 +47,14 @@ class DataManagementSection extends ConsumerWidget {
                 },
               );
 
-              if (confirmed == true) {
+              if (confirmed == true && context.mounted) {
+                // 데이터 초기화
                 await DataResetService.resetAllData();
-                // 초기화 후 사용자 설정도 리셋
-                ref.read(userSettingsProvider.notifier).reset();
-                // 각 스크린 뷰모델 초기화
-                // ref.read(userSettingsProvider);
-                // ref.read(homeViewModelProvider);
-                // ref.read(calendarDataProvider);
-                // ref.read(expenseListProvider);
-                // ref.read(navigationIndexProvider);
-                // 초기화 후 온보딩 화면으로 이동
-                if (context.mounted) {
-                  context.go('/onboarding');
-                }
+                // 앱 재시작
+                Restart.restartApp(
+                  notificationTitle: 'MoneyFit',
+                  notificationBody: '머니핏을 이용해주셔서 감사합ㄴ다.',
+                );
               }
             },
             trailing: const Icon(

@@ -10,9 +10,6 @@
 // 날짜 컨테이너 좌측 상단 날짜 우측 상단 성공/실패 표시
 // 하단 자율 지출 금액과 필수 지출 금액 표시
 // 컨테이너 클릭하면 해당 일의 지출 내역 전부 볼 수 있게함
-
-import 'dart:developer';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/providers/expenses_provider.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';

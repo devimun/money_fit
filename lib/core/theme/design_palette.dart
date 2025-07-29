@@ -70,8 +70,8 @@ class LightAppColors {
 class DarkAppColors {
   // ** Primary Colors **
   static const Color primary = Color(
-    0xFF9D7F6A,
-  ); // A slightly lighter brown for better contrast
+    0xFFB8956B,
+  ); // Lighter brown with better contrast for dark mode
   static const Color primaryLight = Color(
     0xFF374151,
   ); // Darker shade for highlights

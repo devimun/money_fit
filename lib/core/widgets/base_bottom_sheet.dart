@@ -19,9 +19,9 @@ class BaseBottomSheet extends StatelessWidget {
     return SafeArea(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -34,7 +34,10 @@ class BaseBottomSheet extends StatelessWidget {
                 IconButton(icon: const Icon(Icons.close), onPressed: onClose),
               ],
             ),
-            Divider(color: Colors.grey[300], height: 1),
+            Divider(
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12), 
+              height: 1
+            ),
             const SizedBox(height: 20),
 
             /// 본문

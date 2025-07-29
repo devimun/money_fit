@@ -56,7 +56,7 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
           : ListView.separated(
               shrinkWrap: true,
               itemCount: expenses.length,
-              separatorBuilder: (_, __) => const Divider(),
+              separatorBuilder: (_, __) => const Divider(thickness: 0.3),
               itemBuilder: (_, index) {
                 final e = expenses[index];
                 final categoryName = e.type == ExpenseType.required

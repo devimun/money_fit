@@ -79,8 +79,8 @@ class HomeState {
     } else if (ratio > 0.69) {
       message = '좋아요! 오늘은 아직 여유 있어요 🌿';
       color = LightAppColors.primary;
-    } else if (ratio > 0.3) {
-      message = '절반 넘게 사용했어요! 조심해서 써봐요 🔔';
+    } else if (ratio > 0.5) {
+      message = '절반 가까이 사용했어요!\n이제 조금만 신경써볼까요? 🔔';
       color = Colors.green;
     } else if (ratio > 0.0) {
       message = '조금만 더 쓰면 오늘 예산을 초과해요! ⚠️';
