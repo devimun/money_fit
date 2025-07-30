@@ -14,7 +14,7 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
   // 초기 빌드시 현재 월의 데이터를 가져옵니다.
   @override
   Future<Map<DateTime, List<Expense>>> build() async {
-    final userSettings = ref.read(userSettingsProvider).requireValue;
+    final userSettings = await ref.read(userSettingsProvider.future);
     final now = ref.watch(dateManager);
     return await loadMonthlyExpenses(userSettings.id, now.year, now.month);
   }
@@ -113,8 +113,7 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
 
   ///  특정 월 갱신 (예: 달 바뀜, 전체 새로고침 시)
   Future<bool> refreshExpensesFor(DateTime date) async {
-    final userSettings = ref.read(userSettingsProvider).valueOrNull;
-    if (userSettings == null) return false;
+    final userSettings = await ref.read(userSettingsProvider.future);
 
     final newMap = await loadMonthlyExpenses(
       userSettings.id,

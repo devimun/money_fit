@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:money_fit/core/providers/category_providers.dart';
 import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
 
 class SplashScreen extends ConsumerWidget {
@@ -30,6 +31,7 @@ class SplashScreen extends ConsumerWidget {
 
     // homeViewModelProvider를 구독하여 로딩을 시작하도록 합니다.
     ref.watch(homeViewModelProvider);
+    ref.watch(categoryProvider);
 
     return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }

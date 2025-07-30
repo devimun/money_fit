@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/models/expense_model.dart';
+import 'package:money_fit/core/providers/category_providers.dart';
 import 'package:money_fit/core/providers/expenses_provider.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/core/repositories/category.dart';
@@ -23,6 +24,11 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncState = ref.watch(coreExpensesProvider);
     final selectedDate = ref.watch(dateManager);
+    final categoryState = ref.watch(categoryProvider);
+    if (categoryState.isLoading || categoryState.hasError) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     final expenses = asyncState.when(
       data: (_) => ref
           .watch(coreExpensesProvider.notifier)
@@ -59,9 +65,9 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
               separatorBuilder: (_, __) => const Divider(thickness: 0.3),
               itemBuilder: (_, index) {
                 final e = expenses[index];
-                final categoryName = e.type == ExpenseType.required
-                    ? requiredCategoryMap[e.categoryId]
-                    : variableCategoryMap[e.categoryId];
+                final categoryName = ref
+                    .read(categoryProvider.notifier)
+                    .getCategoryName(e.categoryId);
                 final typeLabel = e.type == ExpenseType.required
                     ? '필수 지출'
                     : '자율 지출';

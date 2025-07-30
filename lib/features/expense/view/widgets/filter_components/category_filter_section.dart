@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/models/expense_model.dart';
-import 'package:money_fit/core/repositories/category.dart';
+import 'package:money_fit/core/providers/category_providers.dart';
 
-class CategoryFilterSection extends StatelessWidget {
+class CategoryFilterSection extends ConsumerWidget {
   final ExpenseType? selectedExpenseType;
   final String? selectedCategoryId;
   final Function(String?) onCategoryChanged;
@@ -15,49 +16,74 @@ class CategoryFilterSection extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final categoryMap = selectedExpenseType == ExpenseType.required
-        ? requiredCategoryMap
-        : selectedExpenseType == ExpenseType.variable
-            ? variableCategoryMap
-            : <String, String>{...requiredCategoryMap, ...variableCategoryMap};
+  Widget build(BuildContext context, WidgetRef ref) {
+    final categoryState = ref.watch(categoryProvider);
+
+    if (selectedExpenseType == null) {
+      return _buildFormSection(
+        label: '카테고리',
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            '지출 유형을 먼저 선택해주세요',
+            style: Theme.of(context).textTheme.labelSmall,
+          ),
+        ),
+        context: context,
+      );
+    }
+
+    if (categoryState.isLoading) {
+      return _buildFormSection(
+        label: '카테고리',
+        child: const Center(child: CircularProgressIndicator()),
+        context: context,
+      );
+    }
+
+    if (categoryState.hasError || categoryState.value == null) {
+      return _buildFormSection(
+        label: '카테고리',
+        child: Text(
+          '카테고리를 불러오는 중 오류 발생',
+          style: Theme.of(context).textTheme.labelSmall,
+        ),
+        context: context,
+      );
+    }
+
+    final filteredCategories = categoryState.value!
+        .where((c) => c.type == selectedExpenseType)
+        .toList();
 
     return _buildFormSection(
       label: '카테고리',
-      child: selectedExpenseType != null
-          ? Wrap(
-              alignment: WrapAlignment.start,
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                _buildCategoryChip(
-                  context,
-                  '모든 카테고리',
-                  selectedCategoryId == null,
-                  () => onCategoryChanged(null),
-                ),
-                ...categoryMap.entries.map((entry) {
-                  final isSelected = selectedCategoryId == entry.key;
-                  return _buildCategoryChip(
-                    context,
-                    entry.value,
-                    isSelected,
-                    () => onCategoryChanged(entry.key),
-                  );
-                }),
-              ],
-            )
-          : Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                '지출 유형을 먼저 선택해주세요',
-                style: Theme.of(context).textTheme.labelSmall,
-              ),
-            ),
+      child: Wrap(
+        alignment: WrapAlignment.start,
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          _buildCategoryChip(
+            context,
+            '모든 카테고리',
+            selectedCategoryId == null,
+            () => onCategoryChanged(null),
+          ),
+          ...filteredCategories.map((c) {
+            final isSelected = selectedCategoryId == c.id;
+            return _buildCategoryChip(
+              context,
+              c.name,
+              isSelected,
+              () => onCategoryChanged(c.id),
+            );
+          }),
+        ],
+      ),
       context: context,
     );
   }
@@ -75,10 +101,8 @@ class CategoryFilterSection extends StatelessWidget {
           : Theme.of(context).colorScheme.onSecondaryContainer,
       selectedColor: Theme.of(context).colorScheme.primary,
       labelStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
-            color: isSelected
-                ? Theme.of(context).colorScheme.onPrimary
-                : null,
-          ),
+        color: isSelected ? Theme.of(context).colorScheme.onPrimary : null,
+      ),
       showCheckmark: false,
       label: Text(label),
       selected: isSelected,

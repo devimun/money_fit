@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 // "필수", "변동" 타입을 나타내는 enum
-enum ExpenseType { required, variable }
+enum ExpenseType { required, variable, n }
 
 @immutable
 class Expense {

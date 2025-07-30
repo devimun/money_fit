@@ -1,4 +1,3 @@
-
 import 'package:money_fit/core/database/database_helper.dart';
 import 'package:money_fit/core/models/category_model.dart';
 
@@ -23,9 +22,11 @@ class CategoryRepository implements ICategoryRepository {
     // userId가 제공된 경우, 기본 카테고리와 해당 사용자의 카테고리를 모두 조회합니다.
     final List<Map<String, dynamic>> maps = await db.query(
       'categories',
-      where: userId == null ? 'user_id IS NULL' : 'user_id IS NULL OR user_id = ?',
+      where: userId == null
+          ? 'user_id IS NULL'
+          : 'user_id IS NULL OR user_id = ?',
       whereArgs: userId == null ? null : [userId],
-      orderBy: 'type, name',
+      orderBy: 'type',
     );
 
     return List.generate(maps.length, (i) {
@@ -45,10 +46,7 @@ class CategoryRepository implements ICategoryRepository {
     }
 
     final db = await _dbHelper.database;
-    await db.insert(
-      'categories',
-      category.toJson(),
-    );
+    await db.insert('categories', category.toJson());
   }
 
   @override

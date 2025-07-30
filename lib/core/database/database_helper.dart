@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:money_fit/core/models/category_model.dart';
+import 'package:money_fit/core/models/expense_model.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -92,56 +93,54 @@ class DatabaseHelper {
 
   // 기본 데이터(Seed) 삽입
   void _seedDatabase(Batch batch) {
-    // Method to reset the database
-
     final defaultCategories = [
       // 필수 지출
       Category(
         id: 'food',
         name: '식사',
-        type: CategoryType.required,
+        type: ExpenseType.required,
         isDeletable: false,
       ),
       Category(
         id: 'traffic',
         name: '교통',
-        type: CategoryType.required,
+        type: ExpenseType.required,
         isDeletable: false,
       ),
       Category(
         id: 'communication',
         name: '통신',
-        type: CategoryType.required,
+        type: ExpenseType.required,
         isDeletable: false,
       ),
       Category(
         id: 'housing',
         name: '주거/공과금',
-        type: CategoryType.required,
+        type: ExpenseType.required,
         isDeletable: false,
       ),
       Category(
         id: 'medical',
         name: '의료',
-        type: CategoryType.required,
+        type: ExpenseType.required,
         isDeletable: false,
       ),
       Category(
         id: 'insurance',
         name: '보험',
-        type: CategoryType.required,
+        type: ExpenseType.required,
         isDeletable: false,
       ),
       Category(
         id: 'finance',
         name: '금융',
-        type: CategoryType.required,
+        type: ExpenseType.required,
         isDeletable: false,
       ),
       Category(
         id: 'necessities',
         name: '생필품',
-        type: CategoryType.required,
+        type: ExpenseType.required,
         isDeletable: false,
       ),
 
@@ -149,43 +148,43 @@ class DatabaseHelper {
       Category(
         id: 'eating-out',
         name: '외식',
-        type: CategoryType.variable,
+        type: ExpenseType.variable,
         isDeletable: false,
       ),
       Category(
         id: 'cafe',
         name: '카페/간식',
-        type: CategoryType.variable,
+        type: ExpenseType.variable,
         isDeletable: false,
       ),
       Category(
         id: 'shopping',
         name: '쇼핑',
-        type: CategoryType.variable,
+        type: ExpenseType.variable,
         isDeletable: false,
       ),
       Category(
         id: 'hobby',
         name: '취미/여가',
-        type: CategoryType.variable,
+        type: ExpenseType.variable,
         isDeletable: false,
       ),
       Category(
         id: 'travel',
         name: '여행/휴식',
-        type: CategoryType.variable,
+        type: ExpenseType.variable,
         isDeletable: false,
       ),
       Category(
         id: 'subscribe',
         name: '구독',
-        type: CategoryType.variable,
+        type: ExpenseType.variable,
         isDeletable: false,
       ),
       Category(
         id: 'beauty',
         name: '미용',
-        type: CategoryType.variable,
+        type: ExpenseType.variable,
         isDeletable: false,
       ),
     ];

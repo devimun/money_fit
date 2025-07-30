@@ -20,8 +20,8 @@ class CalendarViewModel extends AsyncNotifier<CalendarState> {
   @override
   Future<CalendarState> build() async {
     final expensesMap = await ref.watch(coreExpensesProvider.future);
-    final userAsync = ref.watch(userSettingsProvider);
-    final user = userAsync.value!;
+    final user = await ref.watch(userSettingsProvider.future);
+
     final today = ref.watch(dateManager);
 
     final calendarCells = <DateTime, CalendarCellData>{};

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/functions/functions.dart';
+import 'package:money_fit/core/models/category_model.dart';
 import 'package:money_fit/core/models/expense_model.dart';
+import 'package:money_fit/core/providers/category_providers.dart';
 
 import 'package:money_fit/core/repositories/category.dart';
 import 'package:money_fit/features/expense/viewmodel/expense_list_provider.dart';
@@ -16,7 +18,11 @@ class ExpenseListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final expensesState = ref.watch(expenseListProvider);
+    final categoryState = ref.watch(categoryProvider);
 
+    if (categoryState.isLoading || categoryState.hasError) {
+      return const Center(child: CircularProgressIndicator());
+    }
     return Scaffold(
       body: expensesState.when(
         data: (data) {
@@ -30,7 +36,7 @@ class ExpenseListScreen extends ConsumerWidget {
 
           return Column(
             children: [
-              _buildHeader(data, ref, context),
+              _buildHeader(data, ref, context, categoryState.value!),
               // 최상단에 배너 광고 항상 표시
               const AdBannerWidget(screenType: ScreenType.expenses),
 
@@ -45,6 +51,7 @@ class ExpenseListScreen extends ConsumerWidget {
                             return _buildDayExpenses(
                               entries[index].key,
                               entries[index].value,
+                              categoryState.value!,
                               context,
                             );
                           },
@@ -66,6 +73,7 @@ class ExpenseListScreen extends ConsumerWidget {
     ExpensesListState data,
     WidgetRef ref,
     BuildContext context,
+    List<Category> category,
   ) {
     final year = data.searchDate.year.toString().substring(2); // e.g. 25
     final month = data.searchDate.month.toString().padLeft(2, '0'); // e.g. 07
@@ -78,10 +86,16 @@ class ExpenseListScreen extends ConsumerWidget {
 
     final categoryLabel = () {
       if (data.categoryId == null) return '모든 카테고리';
-      final map = data.expenseType == ExpenseType.required
-          ? requiredCategoryMap
-          : variableCategoryMap;
-      return map[data.categoryId] ?? '알 수 없음';
+      final categoryElement = category.firstWhere(
+        (c) => c.id == data.categoryId,
+        orElse: () => Category(
+          id: '',
+          name: '알 수 없음',
+          type: ExpenseType.n,
+          isDeletable: false,
+        ),
+      );
+      return categoryElement.name;
     }();
 
     final sortLabel = data.sortType == SortType.asc ? '오름차순' : '내림차순';
@@ -132,6 +146,7 @@ class ExpenseListScreen extends ConsumerWidget {
   Widget _buildDayExpenses(
     DateTime date,
     List<Expense> expenses,
+    List<Category> categories,
     BuildContext context,
   ) {
     return Column(
@@ -142,17 +157,29 @@ class ExpenseListScreen extends ConsumerWidget {
           style: Theme.of(context).textTheme.labelSmall,
         ),
         Divider(color: Theme.of(context).colorScheme.primary, thickness: 0.5),
-        for (Expense e in expenses) _buildExpenseWidget(e, context),
+        for (Expense e in expenses) _buildExpenseWidget(e, context, categories),
         const SizedBox(height: 8),
       ],
     );
   }
 
   // 개별 지출 위젯
-  Widget _buildExpenseWidget(Expense e, BuildContext context) {
-    final categoryName = e.type == ExpenseType.required
-        ? requiredCategoryMap[e.categoryId]
-        : variableCategoryMap[e.categoryId];
+  Widget _buildExpenseWidget(
+    Expense e,
+    BuildContext context,
+    List<Category> categories,
+  ) {
+    final categoryName = categories
+        .firstWhere(
+          (c) => c.id == e.categoryId,
+          orElse: () => Category(
+            id: '',
+            name: '알 수 없음',
+            type: ExpenseType.n,
+            isDeletable: false,
+          ),
+        )
+        .name;
     final typeLabel = e.type == ExpenseType.required ? '필수 지출' : '자율 지출';
 
     return ListTile(

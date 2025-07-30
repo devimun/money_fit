@@ -81,7 +81,7 @@ class ExpensesListViewModel extends AsyncNotifier<ExpensesListState> {
     required SortType sortType,
   }) async {
     state = AsyncLoading();
-    final user = ref.watch(userSettingsProvider).value!;
+    final user = await ref.read(userSettingsProvider.future);
     // coreExpensesProvider 에서 원본 데이터 조회
     final rawData = await ref
         .read(coreExpensesProvider.notifier)

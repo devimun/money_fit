@@ -96,6 +96,7 @@ class OnboardingPage extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset(
+            filterQuality: FilterQuality.high,
             imagePath,
             height: MediaQuery.of(context).size.height * 0.4,
           ),

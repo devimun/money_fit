@@ -7,23 +7,23 @@ import 'package:money_fit/core/repositories/user_repository.dart';
 import 'package:money_fit/core/services/notification_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
-/// 사용자 설정을 관리하는 StateNotifier입니다.
-class UserSettingsNotifier extends StateNotifier<AsyncValue<User>> {
-  final UserRepository _userRepository;
-  final NotificationService _notificationService;
-  final sb.SupabaseClient _supabaseClient;
+/// 사용자 설정을 관리하는 AsyncNotifier입니다.
+class UserSettingsNotifier extends AsyncNotifier<User> {
+  late final UserRepository _userRepository;
+  late final NotificationService _notificationService;
+  late final sb.SupabaseClient _supabaseClient;
 
-  UserSettingsNotifier(
-    this._userRepository,
-    this._notificationService,
-    this._supabaseClient,
-  ) : super(const AsyncValue.loading()) {
-    _loadUser();
+  @override
+  Future<User> build() async {
+    _userRepository = ref.read(userRepositoryProvider);
+    _notificationService = ref.read(notificationServiceProvider);
+    _supabaseClient = sb.Supabase.instance.client;
+
+    return await _loadUser();
   }
 
-  Future<void> _loadUser() async {
+  Future<User> _loadUser() async {
     log('Attempting to load user...');
-    state = const AsyncValue.loading();
     try {
       final supabaseUser = await _getSupabaseUser();
       final currentUserId = supabaseUser.id;
@@ -32,11 +32,11 @@ class UserSettingsNotifier extends StateNotifier<AsyncValue<User>> {
       User? user = await _userRepository.getUser(currentUserId);
       user ??= await _createNewUser(currentUserId);
 
-      state = AsyncValue.data(user);
       log('User loaded successfully: ${user.toJson()}');
+      return user;
     } catch (e, st) {
       log('Error in _loadUser: $e', error: e, stackTrace: st);
-      state = AsyncValue.error(e, st);
+      throw e;
     }
   }
 
@@ -64,7 +64,7 @@ class UserSettingsNotifier extends StateNotifier<AsyncValue<User>> {
       displayName: null,
       dailyBudget: 0.0,
       isDarkMode: false,
-      notificationsEnabled: false, // 기본값 false로 변경
+      notificationsEnabled: false,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
@@ -73,52 +73,92 @@ class UserSettingsNotifier extends StateNotifier<AsyncValue<User>> {
     return newUser;
   }
 
-  /// 일일 예산을 업데이트합니다.
   Future<void> updateDailyBudget(double newBudget) async {
-    await _updateUserState((user) => user.copyWith(dailyBudget: newBudget));
-  }
+    final currentUser = state.value;
+    if (currentUser == null) return;
 
-  /// 다크 모드 설정을 토글합니다.
-  Future<void> toggleDarkMode() async {
-    await _updateUserState(
-      (user) => user.copyWith(isDarkMode: !user.isDarkMode),
+    final updatedUser = currentUser.copyWith(
+      dailyBudget: newBudget,
+      updatedAt: DateTime.now(),
     );
-  }
+    state = AsyncValue.data(updatedUser);
 
-  Future<void> enableNotifications() async {
-    await _notificationService.scheduleDailyNotifications();
-    await _updateUserState((u) => u.copyWith(notificationsEnabled: true));
-  }
-
-  Future<void> disableNotifications() async {
-    await _notificationService.cancelAllNotifications();
-    await _updateUserState((u) => u.copyWith(notificationsEnabled: false));
-  }
-
-  Future<void> _updateUserState(User Function(User) updater) async {
-    if (state.hasValue) {
-      final currentUser = state.value!;
-      final updatedUser = updater(
-        currentUser,
-      ).copyWith(updatedAt: DateTime.now());
-      state = AsyncValue.data(updatedUser);
-      try {
-        await _userRepository.updateUser(updatedUser);
-      } catch (e, st) {
-        log('Failed to update user: $e', stackTrace: st);
-        state = AsyncValue.error(e, st);
-        state = AsyncValue.data(currentUser); // Rollback on failure
-      }
+    try {
+      await _userRepository.updateUser(updatedUser);
+    } catch (e, st) {
+      log('Failed to update user: $e', stackTrace: st);
+      state = AsyncValue.error(e, st);
+      state = AsyncValue.data(currentUser); // rollback
     }
   }
 
-  /// Resets the user settings and re-initializes the user.
+  Future<void> toggleDarkMode() async {
+    final currentUser = state.value;
+    if (currentUser == null) return;
+
+    final updatedUser = currentUser.copyWith(
+      isDarkMode: !currentUser.isDarkMode,
+      updatedAt: DateTime.now(),
+    );
+    state = AsyncValue.data(updatedUser);
+
+    try {
+      await _userRepository.updateUser(updatedUser);
+    } catch (e, st) {
+      log('Failed to toggle dark mode: $e', stackTrace: st);
+      state = AsyncValue.error(e, st);
+      state = AsyncValue.data(currentUser);
+    }
+  }
+
+  Future<void> enableNotifications() async {
+    final currentUser = state.value;
+    if (currentUser == null) return;
+
+    await _notificationService.scheduleDailyNotifications();
+    final updatedUser = currentUser.copyWith(
+      notificationsEnabled: true,
+      updatedAt: DateTime.now(),
+    );
+
+    state = AsyncValue.data(updatedUser);
+    try {
+      await _userRepository.updateUser(updatedUser);
+    } catch (e, st) {
+      log('Failed to enable notifications: $e', stackTrace: st);
+      state = AsyncValue.error(e, st);
+      state = AsyncValue.data(currentUser);
+    }
+  }
+
+  Future<void> disableNotifications() async {
+    final currentUser = state.value;
+    if (currentUser == null) return;
+
+    await _notificationService.cancelAllNotifications();
+    final updatedUser = currentUser.copyWith(
+      notificationsEnabled: false,
+      updatedAt: DateTime.now(),
+    );
+
+    state = AsyncValue.data(updatedUser);
+    try {
+      await _userRepository.updateUser(updatedUser);
+    } catch (e, st) {
+      log('Failed to disable notifications: $e', stackTrace: st);
+      state = AsyncValue.error(e, st);
+      state = AsyncValue.data(currentUser);
+    }
+  }
+
+  /// 사용자 설정을 초기화합니다.
   Future<void> reset() async {
     log('Resetting user settings...');
     try {
       await _supabaseClient.auth.signOut();
       state = const AsyncValue.loading();
-      await _loadUser();
+      final user = await _loadUser();
+      state = AsyncValue.data(user);
       log('User settings reset successfully.');
     } catch (e, st) {
       log('Error resetting user settings: $e', error: e, stackTrace: st);
@@ -128,14 +168,8 @@ class UserSettingsNotifier extends StateNotifier<AsyncValue<User>> {
 }
 
 /// UserSettingsNotifier를 제공하는 StateNotifierProvider입니다.
-final userSettingsProvider =
-    StateNotifierProvider<UserSettingsNotifier, AsyncValue<User>>((ref) {
-      final userRepository = ref.watch(userRepositoryProvider);
-      final notificationService = ref.watch(notificationServiceProvider);
-      final supabaseClient = sb.Supabase.instance.client;
-      return UserSettingsNotifier(
-        userRepository,
-        notificationService,
-        supabaseClient,
-      );
-    });
+final userSettingsProvider = AsyncNotifierProvider<UserSettingsNotifier, User>(
+  () {
+    return UserSettingsNotifier();
+  },
+);

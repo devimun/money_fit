@@ -1,1 +1,63 @@
+import 'dart:async';
+import 'dart:developer';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_fit/core/models/category_model.dart';
+import 'package:money_fit/core/models/expense_model.dart';
+import 'package:money_fit/core/providers/repository_providers.dart';
+import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
+
+class CategoryProviders extends AsyncNotifier<List<Category>> {
+  // 처음 로드될 시 db에서 카테고리를 전부 가져오게 한다.
+  @override
+  FutureOr<List<Category>> build() async {
+    final user = await ref.read(userSettingsProvider.future);
+    List<Category> userCategory = await ref
+        .read(categoryRepositoryProvider)
+        .getAllCategories(user.id);
+    userCategory.forEach((c) {
+      log(c.id);
+    });
+    return userCategory;
+  }
+
+  // 카테고리를 추가하는 메서드
+  Future<void> createCategory(Category newCategory) async {
+    await ref.read(categoryRepositoryProvider).createCategory(newCategory);
+    List<Category> currentState = state.value ?? [];
+    List<Category> newState = List<Category>.from(currentState);
+    newState.add(newCategory);
+    state = AsyncData(newState);
+  }
+
+  // 카테고리를 삭제하는 메서드
+  Future<void> deleteCategory(Category deleteCategory) async {
+    await ref
+        .read(categoryRepositoryProvider)
+        .deleteCategory(deleteCategory.id);
+    List<Category> currentState = state.value ?? [];
+    List<Category> newState = List<Category>.from(currentState);
+    newState.remove(deleteCategory);
+    state = AsyncData(newState);
+  }
+
+  //카테고리를 매핑해주는 메서드
+  String getCategoryName(String categoryId) {
+    final value = state.value ?? [];
+    final category = value.firstWhere(
+      (c) => c.id == categoryId,
+      orElse: () => Category(
+        id: '',
+        name: '알 수 없음',
+        type: ExpenseType.n,
+        isDeletable: false,
+      ),
+    );
+    return category.name;
+  }
+}
+
+final categoryProvider =
+    AsyncNotifierProvider<CategoryProviders, List<Category>>(
+      () => CategoryProviders(),
+    );

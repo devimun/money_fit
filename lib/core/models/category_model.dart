@@ -1,16 +1,14 @@
-
 import 'package:flutter/foundation.dart';
+import 'package:money_fit/core/models/expense_model.dart';
 
 // 지출/카테고리 타입을 나타내는 enum
-// expense_model.dart와 중복되므로, 향후 별도 파일로 분리하는 것을 고려할 수 있습니다.
-enum CategoryType { required, variable }
 
 @immutable
 class Category {
   final String id;
   final String? userId; // NULL이면 기본 카테고리
   final String name;
-  final CategoryType type;
+  final ExpenseType type;
   final bool isDeletable;
 
   const Category({
@@ -25,7 +23,7 @@ class Category {
     String? id,
     String? userId,
     String? name,
-    CategoryType? type,
+    ExpenseType? type,
     bool? isDeletable,
   }) {
     return Category(
@@ -45,8 +43,8 @@ class Category {
       userId: json['user_id'] as String?,
       name: json['name'] as String,
       type: (json['type'] as String) == '필수'
-          ? CategoryType.required
-          : CategoryType.variable,
+          ? ExpenseType.required
+          : ExpenseType.variable,
       isDeletable: json['is_deletable'] is bool
           ? json['is_deletable']
           : json['is_deletable'] == 1,
@@ -58,7 +56,7 @@ class Category {
       'id': id,
       'user_id': userId,
       'name': name,
-      'type': type == CategoryType.required ? '필수' : '변동',
+      'type': type == ExpenseType.required ? '필수' : '변동',
       // 로컬 DB는 INTEGER 타입을 사용하므로 1 또는 0으로 변환
       'is_deletable': isDeletable ? 1 : 0,
     };
