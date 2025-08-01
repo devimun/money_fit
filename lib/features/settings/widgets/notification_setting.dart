@@ -14,7 +14,7 @@ class NotificationSetting extends ConsumerWidget {
     return userSettings.when(
       data: (user) {
         return buildSwitchItem(
-          icon: Icons.notifications,
+          icon: Icons.notifications_active_outlined,
           iconColor: Theme.of(context).colorScheme.primary,
           title: '알림 설정',
           value: user.notificationsEnabled,

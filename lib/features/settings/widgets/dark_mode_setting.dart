@@ -13,7 +13,7 @@ class DarkModeSetting extends ConsumerWidget {
     return userSettings.when(
       data: (user) {
         return buildSwitchItem(
-          icon: Icons.dark_mode,
+          icon: Icons.dark_mode_outlined,
           iconColor: Theme.of(context).colorScheme.primary,
           title: '다크 모드',
           value: user.isDarkMode,

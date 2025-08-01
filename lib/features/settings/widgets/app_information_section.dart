@@ -1,7 +1,5 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:money_fit/core/theme/design_palette.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -33,9 +31,8 @@ class _AppInformationSectionState extends State<AppInformationSection> {
 
   // 스토어 리뷰를 위한 URL 실행 함수
   void _launchReviewURL() async {
-    // TODO: 앱 출시 후 실제 ID로 교체해야 합니다.
     const androidAppId = 'com.moneyfit.app'; // 예시 ID
-    const iOSAppId = '1234567890'; // 예시 ID
+    const iOSAppId = '6749406182';
 
     final Uri url;
 
@@ -70,18 +67,18 @@ class _AppInformationSectionState extends State<AppInformationSection> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final iconColor = LightAppColors.primary;
+    final iconColor = Theme.of(context).colorScheme.primary;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildSectionTitle('기타', textTheme),
+        buildSectionTitle('정보', textTheme),
         buildSettingsCard([
           // buildSettingsItem(
           //   icon: Icons.campaign_outlined,
           //   iconColor: iconColor,
           //   title: '공지사항',
           //   onTap: () {
-          //     // TODO: 공지사항 페이지로 이동
+
           //   },
           //   trailing: const Icon(
           //     Icons.arrow_forward_ios,
@@ -115,8 +112,10 @@ class _AppInformationSectionState extends State<AppInformationSection> {
             icon: Icons.privacy_tip_outlined,
             iconColor: iconColor,
             title: '개인정보 처리방침',
-            onTap: () {
-              launchUrl(Uri.parse('https://lucky-dev.notion.site/moneyfit-pp'));
+            onTap: () async {
+              await launchUrl(
+                Uri.parse('https://lucky-dev.notion.site/moneyfit-pp'),
+              );
             },
             trailing: const Icon(
               Icons.arrow_forward_ios,

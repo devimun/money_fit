@@ -27,7 +27,7 @@ class _DailyBudgetSettingState extends ConsumerState<DailyBudgetSetting> {
     return userSettings.when(
       data: (user) {
         return buildSettingsItem(
-          icon: Icons.account_balance_wallet,
+          icon: Icons.account_balance_wallet_outlined,
           iconColor: Theme.of(context).colorScheme.primary,
           title: '일일 예산 설정',
           trailing: Text(

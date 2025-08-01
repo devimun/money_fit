@@ -36,7 +36,7 @@ class UserSettingsNotifier extends AsyncNotifier<User> {
       return user;
     } catch (e, st) {
       log('Error in _loadUser: $e', error: e, stackTrace: st);
-      throw e;
+      rethrow;
     }
   }
 

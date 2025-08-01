@@ -61,6 +61,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.6
 
 flutter:
   uses-material-design: true
@@ -74,3 +76,14 @@ flutter:
     - family: Pretendard Variable
       fonts:
         - asset: assets/fonts/PretendardVariable.ttf
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/icon.png"
+
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/images/icon.png
+  android: true
+  ios: true

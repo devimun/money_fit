@@ -427,7 +427,9 @@ class CategoryList extends ConsumerWidget {
                   await ref
                       .read(categoryProvider.notifier)
                       .createCategory(newCategory);
-                  Navigator.of(context).pop();
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
                 }
               },
               child: const Text('추가'),
@@ -461,7 +463,9 @@ class CategoryList extends ConsumerWidget {
                 await ref
                     .read(categoryProvider.notifier)
                     .deleteCategory(category);
-                Navigator.of(context).pop();
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                }
               },
               child: const Text('삭제'),
             ),

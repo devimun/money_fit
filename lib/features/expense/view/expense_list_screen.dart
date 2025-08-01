@@ -4,8 +4,6 @@ import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/models/category_model.dart';
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/providers/category_providers.dart';
-
-import 'package:money_fit/core/repositories/category.dart';
 import 'package:money_fit/features/expense/viewmodel/expense_list_provider.dart';
 import 'package:money_fit/features/expense/view/widgets/expense_filter_bottom_sheet.dart';
 import 'package:money_fit/core/widgets/ads/ad_banner_widget.dart';
@@ -37,7 +35,6 @@ class ExpenseListScreen extends ConsumerWidget {
           return Column(
             children: [
               _buildHeader(data, ref, context, categoryState.value!),
-              // 최상단에 배너 광고 항상 표시
               const AdBannerWidget(screenType: ScreenType.expenses),
 
               Expanded(
@@ -202,25 +199,17 @@ class ExpenseListScreen extends ConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.receipt_long_outlined,
-            size: 64,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
+          Icon(Icons.receipt_long_outlined, size: 64),
           const SizedBox(height: 16),
           Text(
-            '지출 내역이 없습니다',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
+            '지출 내역이 존재하지 않습니다',
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
           Text(
             '필터 조건을 변경하거나\n새로운 지출을 추가해보세요',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
+            style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
       ),

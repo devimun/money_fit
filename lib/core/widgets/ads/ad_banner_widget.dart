@@ -61,15 +61,18 @@ class _AdBannerWidgetState extends State<AdBannerWidget> {
   @override
   Widget build(BuildContext context) {
     if (!_isAdLoaded || _bannerAd == null) {
-      return const SizedBox(height: 50); // 광고 공간 확보
+      return const SizedBox(height: 58); // 광고 공간 확보
     }
 
-    return Container(
-      padding: EdgeInsets.all(4.0),
-      alignment: Alignment.center,
-      width: _bannerAd!.size.width.toDouble(),
-      height: _bannerAd!.size.height.toDouble(),
-      child: AdWidget(ad: _bannerAd!),
+    return Column(
+      children: [
+        SizedBox(height: 8),
+        SizedBox(
+          width: _bannerAd!.size.width.toDouble(),
+          height: _bannerAd!.size.height.toDouble(),
+          child: AdWidget(ad: _bannerAd!),
+        ),
+      ],
     );
   }
 }

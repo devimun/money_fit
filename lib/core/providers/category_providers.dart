@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/models/category_model.dart';
@@ -15,9 +14,6 @@ class CategoryProviders extends AsyncNotifier<List<Category>> {
     List<Category> userCategory = await ref
         .read(categoryRepositoryProvider)
         .getAllCategories(user.id);
-    userCategory.forEach((c) {
-      log(c.id);
-    });
     return userCategory;
   }
 

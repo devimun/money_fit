@@ -27,7 +27,7 @@ class CircleProgressPainter extends CustomPainter {
     canvas.drawCircle(center, radius, backgroundPaint);
 
     const double fullCircle = 2 * 3.141592;
-    const double gapRatio = 0.04; // 빈 공간 비율 (예: 2%)
+    const double gapRatio = 0.06; // 빈 공간 비율 (예: 2%)
     final gap = fullCircle * gapRatio;
 
     double startAngle = -3.141592 / 2 + gap / 2;

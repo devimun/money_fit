@@ -48,10 +48,7 @@ class _DailyBudgetSetupScreenState
           onConfirm: () async {
             Navigator.of(context).pop();
             log('User confirmed notification setup.');
-            await setupNotifications();
-            if (context.mounted) {
-              context.go('/home');
-            }
+            await setupNotifications(context);
           },
           onDeny: () {
             Navigator.of(context).pop();
@@ -62,7 +59,7 @@ class _DailyBudgetSetupScreenState
     );
   }
 
-  Future<void> setupNotifications() async {
+  Future<void> setupNotifications(BuildContext conTEXT) async {
     log('Requesting notification permission...');
     final permissionStatus = await Permission.notification.request();
     log('Notification permission status: ${permissionStatus.toString()}');
@@ -78,6 +75,9 @@ class _DailyBudgetSetupScreenState
       await openAppSettings();
     } else if (permissionStatus.isRestricted) {
       log('Notification permission restricted.');
+    }
+    if (conTEXT.mounted) {
+      conTEXT.go('/home');
     }
   }
 

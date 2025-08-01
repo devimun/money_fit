@@ -9,11 +9,7 @@ class CalendarCell extends ConsumerWidget {
   final CalendarCellData? cellData;
   final DateTime day;
 
-  const CalendarCell({
-    super.key,
-    required this.cellData,
-    required this.day,
-  });
+  const CalendarCell({super.key, required this.cellData, required this.day});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -41,7 +37,7 @@ class CalendarCell extends ConsumerWidget {
               borderRadius: BorderRadius.circular(12.0),
               border: Border.all(
                 color: Theme.of(context).colorScheme.onSecondaryFixed,
-                width: 0.2,
+                width: 0.4,
               ),
             ),
             child: Column(
@@ -99,8 +95,8 @@ class CalendarCell extends ConsumerWidget {
             child: Text(
               '₩${numberFormatting(cellData!.variableTotal)}',
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
           ),
           const SizedBox(height: 2),

@@ -33,6 +33,19 @@ class NotificationService {
     tzdata.initializeTimeZones();
   }
 
+  // // 알림 등록 여부 확인을 위한 디버깅용 메서드
+  // Future<void> getNotiList() async {
+  //   final List<PendingNotificationRequest> pendingNotifications =
+  //       await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+
+  //   for (var notification in pendingNotifications) {
+  //     log('알림 ID: ${notification.id}');
+  //     log('제목: ${notification.title}');
+  //     log('본문: ${notification.body}');
+  //     log('페이로드: ${notification.payload}');
+  //   }
+  // }
+
   /// 매일 세 번 알림 예약 (오전 10시, 오후 2시, 오후 8시)
   Future<void> scheduleDailyNotifications() async {
     await _scheduleNotification(

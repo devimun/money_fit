@@ -7,12 +7,8 @@ import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dar
 
 Future<void> main() async {
   final container = await AppInitializer.initialize();
-  runApp(
-    UncontrolledProviderScope(
-      container: container,
-      child: const MyApp(),
-    ),
-  );
+
+  runApp(UncontrolledProviderScope(container: container, child: const MyApp()));
 }
 
 class MyApp extends ConsumerWidget {

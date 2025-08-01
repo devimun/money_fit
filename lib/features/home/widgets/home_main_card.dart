@@ -7,10 +7,7 @@ import 'package:money_fit/features/home/widgets/animate_circular_budget.dart';
 class HomeMainCard extends StatelessWidget {
   final HomeState homeState;
 
-  const HomeMainCard({
-    super.key,
-    required this.homeState,
-  });
+  const HomeMainCard({super.key, required this.homeState});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +21,6 @@ class HomeMainCard extends StatelessWidget {
       decoration: AppTheme.getBoxDecoration(context),
       child: Column(
         children: [
-          /// 🎯 동기부여 문구
           FittedBox(
             fit: BoxFit.scaleDown,
             child: Text(
@@ -37,7 +33,6 @@ class HomeMainCard extends StatelessWidget {
           ),
           SizedBox(height: heightSpace),
 
-          /// ⭕ 원형 프로그레스바
           AnimatedCircularBudget(
             ratio: status.spendingRatio,
             color: status.color,
