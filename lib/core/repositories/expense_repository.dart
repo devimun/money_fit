@@ -134,4 +134,59 @@ class ExpenseRepository implements IExpenseRepository {
     final db = await _dbHelper.database;
     await db.delete('expenses', where: 'id = ?', whereArgs: [id]);
   }
+
+  // /// 테스트용으로 7월 한 달 간 더미 지출 데이터를 삽입합니다.
+  // Future<void> seedJulyExpenses() async {
+  //   final random = math.Random();
+  //   final year = 2025;
+  //   final month = 7;
+
+  //   final categoryMap = {
+  //     // 필수
+  //     'food': ['식사', ExpenseType.required],
+  //     'traffic': ['교통', ExpenseType.required],
+  //     'communication': ['통신', ExpenseType.required],
+  //     'housing': ['주거/공과금', ExpenseType.required],
+  //     'medical': ['의료', ExpenseType.required],
+  //     'insurance': ['보험', ExpenseType.required],
+  //     'finance': ['금융', ExpenseType.required],
+  //     'necessities': ['생필품', ExpenseType.required],
+  //     // 변동
+  //     'eating-out': ['외식', ExpenseType.variable],
+  //     'cafe': ['카페/간식', ExpenseType.variable],
+  //     'shopping': ['쇼핑', ExpenseType.variable],
+  //     'hobby': ['취미/여가', ExpenseType.variable],
+  //     'travel': ['여행/휴식', ExpenseType.variable],
+  //     'subscribe': ['구독', ExpenseType.variable],
+  //     'beauty': ['미용', ExpenseType.variable],
+  //   };
+
+  //   final categoryIds = categoryMap.keys.toList();
+
+  //   for (int day = 1; day <= 31; day++) {
+  //     final date = DateTime(year, month, day);
+  //     final expenseCount = random.nextInt(3) + 1;
+
+  //     for (int i = 0; i < expenseCount; i++) {
+  //       final categoryId = categoryIds[random.nextInt(categoryIds.length)];
+  //       final name = categoryMap[categoryId]![0] as String;
+  //       final type = categoryMap[categoryId]![1] as ExpenseType;
+  //       final amount = (random.nextInt(9) + 1) * 1000 + random.nextInt(500);
+
+  //       final expense = Expense(
+  //         id: Uuid().v4(),
+  //         userId: 'c8b33616-00b5-4ece-9fdd-bbc232f7b61f',
+  //         name: '$name 지출',
+  //         amount: amount.toDouble(),
+  //         date: date,
+  //         categoryId: categoryId,
+  //         type: type,
+  //         createdAt: date,
+  //         updatedAt: date,
+  //       );
+
+  //       await createExpense(expense);
+  //     }
+  //   }
+  // }
 }

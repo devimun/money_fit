@@ -14,7 +14,7 @@ class CalendarCell extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: const EdgeInsets.all(3.0),
+      padding: const EdgeInsets.all(2.0),
       child: Material(
         borderRadius: BorderRadius.circular(12.0),
         child: InkWell(
@@ -33,12 +33,12 @@ class CalendarCell extends ConsumerWidget {
           child: Container(
             padding: const EdgeInsets.all(2.0),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onPrimary,
+              color: Theme.of(context).colorScheme.onSecondaryContainer,
               borderRadius: BorderRadius.circular(12.0),
-              border: Border.all(
-                color: Theme.of(context).colorScheme.onSecondaryFixed,
-                width: 0.4,
-              ),
+              // border: Border.all(
+              //   color: Theme.of(context).colorScheme.onSecondaryFixed,
+              //   width: 0.4,
+              // ),
             ),
             child: Column(
               children: [
@@ -53,34 +53,37 @@ class CalendarCell extends ConsumerWidget {
   }
 
   Widget _buildDayHeader(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: Text(
-            '${day.day}',
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: cellData != null && cellData!.isSuccess
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-        ),
-        if (cellData != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 2.5),
-            child: Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: cellData!.isSuccess
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 2.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Text(
+              '${day.day}',
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: cellData != null && cellData!.isSuccess
                     ? Theme.of(context).colorScheme.primary
-                    : Colors.grey,
+                    : Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ),
-      ],
+          if (cellData != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 3.0),
+              child: Container(
+                width: 7,
+                height: 7,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: cellData!.isSuccess
+                      ? Theme.of(context).colorScheme.primary
+                      : Colors.grey,
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 
@@ -92,18 +95,26 @@ class CalendarCell extends ConsumerWidget {
         children: [
           FittedBox(
             fit: BoxFit.scaleDown,
-            child: Text(
-              '₩${numberFormatting(cellData!.variableTotal)}',
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-              ),
+            child: Row(
+              children: [
+                Text(
+                  '₩${numberFormatting(cellData!.variableTotal)}',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 2),
-          Text(
-            '₩${numberFormatting(cellData!.essentialTotal)}',
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              '₩${numberFormatting(cellData!.essentialTotal)}',
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),
             ),
           ),
         ],

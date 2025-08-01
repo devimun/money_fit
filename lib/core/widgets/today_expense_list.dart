@@ -37,7 +37,7 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
     );
 
     return BaseBottomSheet(
-      title: '오늘의 지출',
+      title: '일일 지출 내역',
       onClose: onClose,
       child: expenses == null
           ? const Center(child: CircularProgressIndicator())
@@ -61,7 +61,10 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
           : ListView.separated(
               shrinkWrap: true,
               itemCount: expenses.length,
-              separatorBuilder: (_, __) => const Divider(thickness: 0.3),
+              separatorBuilder: (_, __) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: const Divider(thickness: 0.1),
+              ),
               itemBuilder: (_, index) {
                 final e = expenses[index];
                 final categoryName = ref

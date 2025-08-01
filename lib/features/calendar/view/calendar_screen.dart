@@ -29,6 +29,7 @@ class CalendarScreen extends ConsumerWidget {
                     leftChevronVisible: false,
                   ),
                   calendarStyle: CalendarStyle(
+                    outsideDaysVisible: false,
                     tablePadding: EdgeInsets.fromLTRB(2, 0, 2, 0),
                   ),
                   daysOfWeekHeight: 40,

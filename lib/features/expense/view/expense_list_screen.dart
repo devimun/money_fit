@@ -35,8 +35,8 @@ class ExpenseListScreen extends ConsumerWidget {
           return Column(
             children: [
               _buildHeader(data, ref, context, categoryState.value!),
-              const AdBannerWidget(screenType: ScreenType.expenses),
 
+              const AdBannerWidget(screenType: ScreenType.expenses),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -128,7 +128,7 @@ class ExpenseListScreen extends ConsumerWidget {
                 context: context,
                 isScrollControlled: true,
                 builder: (context) => SizedBox(
-                  height: MediaQuery.sizeOf(context).height * 0.7,
+                  height: MediaQuery.sizeOf(context).height * 0.65,
                   child: ExpenseFilterBottomSheet(currentState: data),
                 ),
               );

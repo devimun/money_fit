@@ -8,7 +8,6 @@
 //   'insurance': '보험',
 //   'finance': '금융',
 //   'necessities': '생필품',
-//   'req-etc': '기타',
 // };
 
 // final Map<String, String> variableCategoryMap = {
@@ -20,5 +19,4 @@
 //   'travel': '여행/휴식',
 //   'subscribe': '구독',
 //   'beauty': '미용',
-//   'var-etc': '기타',
 // };
