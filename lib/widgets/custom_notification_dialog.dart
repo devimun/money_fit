@@ -48,7 +48,7 @@ class CustomNotificationDialog extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            '지출 기록,어렵진 않지만 잊어버리기 쉽죠.\n잊지 않도록 매일 알림으로 도와드릴게요. \n알림을 받아 보시겠어요?',
+            '지출 기록 , 어렵진 않지만 잊어버리기 쉽죠.\n잊지 않도록 매일 알림으로 도와드릴게요. \n알림을 받아 보시겠어요?',
             style: theme.textTheme.bodyLarge?.copyWith(
               color: LightAppColors.textSecondary,
             ),

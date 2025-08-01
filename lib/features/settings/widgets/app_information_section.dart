@@ -31,8 +31,8 @@ class _AppInformationSectionState extends State<AppInformationSection> {
 
   // 스토어 리뷰를 위한 URL 실행 함수
   void _launchReviewURL() async {
-    const androidAppId = 'com.moneyfit.app'; // 예시 ID
-    const iOSAppId = '6749406182';
+    const androidAppId = 'com.moneyfitapp.app'; // 예시 ID
+    const iOSAppId = '6749416452';
 
     final Uri url;
 

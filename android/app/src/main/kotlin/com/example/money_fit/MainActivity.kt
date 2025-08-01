@@ -1,4 +1,4 @@
-package com.moneyfit.app
+package com.moneyfitapp.app
 
 import io.flutter.embedding.android.FlutterActivity
 

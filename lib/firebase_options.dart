@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAe49tCHuW3Xvk7N7gaOXRy6WC2nkkpKBE',
-    appId: '1:662206024135:android:8ddc32c3c16c2bd20331e2',
+    appId: '1:662206024135:android:4bd22876b8f281860331e2',
     messagingSenderId: '662206024135',
     projectId: 'money-fit-2b3f7',
     storageBucket: 'money-fit-2b3f7.firebasestorage.app',
@@ -59,10 +59,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBoHPW-aQx3oW52LiXDhvAEbWeivDvjpRA',
-    appId: '1:662206024135:ios:5794db350a0e65f80331e2',
+    appId: '1:662206024135:ios:0e874f04ea6a87550331e2',
     messagingSenderId: '662206024135',
     projectId: 'money-fit-2b3f7',
     storageBucket: 'money-fit-2b3f7.firebasestorage.app',
-    iosBundleId: 'com.moneyfit.app',
+    iosBundleId: 'com.moneyfitapp.app',
   );
+
 }

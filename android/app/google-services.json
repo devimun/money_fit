@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:662206024135:android:8ddc32c3c16c2bd20331e2",
+        "mobilesdk_app_id": "1:662206024135:android:4bd22876b8f281860331e2",
         "android_client_info": {
-          "package_name": "com.moneyfit.app"
+          "package_name": "com.moneyfitapp.app"
         }
       },
       "oauth_client": [],

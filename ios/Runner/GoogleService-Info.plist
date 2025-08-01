@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.moneyfit.app</string>
+	<string>com.moneyfitapp.app</string>
 	<key>PROJECT_ID</key>
 	<string>money-fit-2b3f7</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:662206024135:ios:5794db350a0e65f80331e2</string>
+	<string>1:662206024135:ios:0e874f04ea6a87550331e2</string>
 </dict>
 </plist>
