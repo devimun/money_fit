@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/widgets/ads/ad_banner_widget.dart';
@@ -6,27 +7,78 @@ import 'package:money_fit/features/home/widgets/home_date_header.dart';
 import 'package:money_fit/features/home/widgets/home_main_card.dart';
 import 'package:money_fit/features/home/widgets/home_action_buttons.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
+import 'package:money_fit/widgets/custom_notification_dialog.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-class HomeScreen extends ConsumerWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends ConsumerStatefulWidget {
+  const HomeScreen({super.key, required this.showNotificationPrompt});
+  final bool showNotificationPrompt;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  bool _hasShownDialog = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (widget.showNotificationPrompt && !_hasShownDialog) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _hasShownDialog = true;
+        _showNotificationDialog();
+      });
+    }
+  }
+
+  Future<void> _showNotificationDialog() async {
+    if (!mounted) return;
+
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return CustomNotificationDialog(
+          onConfirm: () async {
+            Navigator.of(context).pop();
+            await setupNotifications();
+          },
+          onDeny: () {
+            Navigator.of(context).pop();
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> setupNotifications() async {
+    log('Requesting notification permission...');
+    final permissionStatus = await Permission.notification.request();
+    log('Notification permission status: ${permissionStatus.toString()}');
+
+    if (permissionStatus.isGranted) {
+      await ref.read(userSettingsProvider.notifier).enableNotifications();
+    } else if (permissionStatus.isPermanentlyDenied) {
+      await openAppSettings();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final homeStateAsync = ref.watch(homeViewModelProvider);
     final userAsync = ref.watch(userSettingsProvider);
 
-    // 모든 로딩 상태
     if (homeStateAsync.isLoading || userAsync.isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    // 오류 처리
     if (homeStateAsync.hasError || userAsync.hasError) {
       final error = homeStateAsync.error ?? userAsync.error;
       return Scaffold(body: Center(child: Text('오류가 발생했습니다: $error')));
     }
 
-    // 값이 있을 때
     final homeState = homeStateAsync.value!;
     final user = userAsync.value!;
 

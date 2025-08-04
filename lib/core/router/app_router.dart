@@ -38,9 +38,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/home',
             pageBuilder: (context, state) {
+              bool showNoti = false;
+              final extras = state.extra as Map<String, dynamic>?;
+              if (extras != null) {
+                showNoti = extras['showNotificationPrompt'] == true;
+              }
+
               return NoTransitionPage(
                 key: state.pageKey,
-                child: const HomeScreen(),
+                child: HomeScreen(showNotificationPrompt: showNoti),
               );
             },
           ),
