@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:money_fit/features/expense/view/widgets/filter_components/month_year_picker_dialog.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
 class DateFilterSection extends StatelessWidget {
   final DateTime selectedDate;
@@ -13,8 +15,10 @@ class DateFilterSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).toString();
     return _buildFormSection(
-      label: '조회 월',
+      label: l10n.queryMonth,
       child: InkWell(
         onTap: () => _showMonthYearPicker(context),
         child: Container(
@@ -30,7 +34,10 @@ class DateFilterSection extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${selectedDate.year}년 ${selectedDate.month.toString().padLeft(2, '0')}월',
+                l10n.yearMonth(
+                  DateFormat.MMM(locale).format(selectedDate),
+                  DateFormat.y(locale).format(selectedDate),
+                ),
                 style: Theme.of(context).textTheme.labelMedium,
               ),
               const Icon(Icons.calendar_today),

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:money_fit/core/functions/functions.dart';
+import 'package:intl/intl.dart';
 import 'package:money_fit/core/theme/design_palette.dart';
 import 'package:money_fit/features/home/widgets/circle_progress_painter.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
 class AnimatedCircularBudget extends StatelessWidget {
   final double ratio; // 0.0 ~ 1.0
@@ -17,6 +18,7 @@ class AnimatedCircularBudget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final size = MediaQuery.of(context).size.width * 0.55;
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0, end: ratio.clamp(0.0, 1.0)),
@@ -43,13 +45,13 @@ class AnimatedCircularBudget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        '남은 금액',
+                        l10n.remainingAmount,
                         style: Theme.of(context).textTheme.displaySmall
                             ?.copyWith(color: LightAppColors.textSecondary),
                       ),
                       SizedBox(height: 8),
                       Text(
-                        '${numberFormatting(remainingAmount)}원',
+                        '${l10n.currency}${NumberFormat.currency(locale: Localizations.localeOf(context).toString(), symbol: '').format(remainingAmount)}',
                         style: Theme.of(context).textTheme.displayLarge,
                       ),
                     ],

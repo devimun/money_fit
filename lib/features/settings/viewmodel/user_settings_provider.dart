@@ -8,6 +8,8 @@ import 'package:money_fit/core/services/notification_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
 /// 사용자 설정을 관리하는 AsyncNotifier입니다.
+import 'package:money_fit/l10n/app_localizations.dart';
+
 class UserSettingsNotifier extends AsyncNotifier<User> {
   late final UserRepository _userRepository;
   late final NotificationService _notificationService;
@@ -44,8 +46,8 @@ class UserSettingsNotifier extends AsyncNotifier<User> {
     sb.User? supabaseUser = _supabaseClient.auth.currentUser;
     if (supabaseUser == null) {
       log('No existing Supabase user. Attempting anonymous sign-in...');
-      final sb.AuthResponse response = await _supabaseClient.auth
-          .signInAnonymously();
+      final sb.AuthResponse response =
+          await _supabaseClient.auth.signInAnonymously();
       supabaseUser = response.user;
       if (supabaseUser == null) {
         log('Anonymous sign-in failed.');
@@ -111,11 +113,11 @@ class UserSettingsNotifier extends AsyncNotifier<User> {
     }
   }
 
-  Future<void> enableNotifications() async {
+  Future<void> enableNotifications(AppLocalizations l10n) async {
     final currentUser = state.value;
     if (currentUser == null) return;
 
-    await _notificationService.scheduleDailyNotifications();
+    await _notificationService.scheduleDailyNotifications(l10n);
     final updatedUser = currentUser.copyWith(
       notificationsEnabled: true,
       updatedAt: DateTime.now(),
@@ -168,8 +170,7 @@ class UserSettingsNotifier extends AsyncNotifier<User> {
 }
 
 /// UserSettingsNotifier를 제공하는 StateNotifierProvider입니다.
-final userSettingsProvider = AsyncNotifierProvider<UserSettingsNotifier, User>(
-  () {
-    return UserSettingsNotifier();
-  },
-);
+final userSettingsProvider =
+    AsyncNotifierProvider<UserSettingsNotifier, User>(() {
+  return UserSettingsNotifier();
+});

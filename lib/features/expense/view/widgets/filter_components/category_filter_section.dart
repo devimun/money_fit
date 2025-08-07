@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/providers/category_providers.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
 class CategoryFilterSection extends ConsumerWidget {
   final ExpenseType? selectedExpenseType;
@@ -17,11 +18,12 @@ class CategoryFilterSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final categoryState = ref.watch(categoryProvider);
 
     if (selectedExpenseType == null) {
       return _buildFormSection(
-        label: '카테고리',
+        label: l10n.category,
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
@@ -29,7 +31,7 @@ class CategoryFilterSection extends ConsumerWidget {
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
-            '지출 유형을 먼저 선택해주세요',
+            l10n.selectExpenseTypeFirst,
             style: Theme.of(context).textTheme.labelSmall,
           ),
         ),
@@ -39,7 +41,7 @@ class CategoryFilterSection extends ConsumerWidget {
 
     if (categoryState.isLoading) {
       return _buildFormSection(
-        label: '카테고리',
+        label: l10n.category,
         child: const Center(child: CircularProgressIndicator()),
         context: context,
       );
@@ -47,9 +49,9 @@ class CategoryFilterSection extends ConsumerWidget {
 
     if (categoryState.hasError || categoryState.value == null) {
       return _buildFormSection(
-        label: '카테고리',
+        label: l10n.category,
         child: Text(
-          '카테고리를 불러오는 중 오류 발생',
+          l10n.errorLoadingCategories,
           style: Theme.of(context).textTheme.labelSmall,
         ),
         context: context,
@@ -61,7 +63,7 @@ class CategoryFilterSection extends ConsumerWidget {
         .toList();
 
     return _buildFormSection(
-      label: '카테고리',
+      label: l10n.category,
       child: Wrap(
         alignment: WrapAlignment.start,
         spacing: 8,
@@ -69,7 +71,7 @@ class CategoryFilterSection extends ConsumerWidget {
         children: [
           _buildCategoryChip(
             context,
-            '모든 카테고리',
+            l10n.allCategories,
             selectedCategoryId == null,
             () => onCategoryChanged(null),
           ),

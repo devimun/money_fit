@@ -12,7 +12,7 @@ class DatabaseHelper {
 
   static Database? _database;
   static const _dbName = 'money_fit.db';
-  static const _dbVersion = 1;
+  static const _dbVersion = 2;
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -29,7 +29,7 @@ class DatabaseHelper {
       path,
       version: _dbVersion,
       onCreate: _onCreate,
-      // onUpgrade, onDowngrade 등 마이그레이션 로직은 향후 필요시 추가
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -39,6 +39,23 @@ class DatabaseHelper {
     _createTables(batch);
     _seedDatabase(batch);
     await batch.commit();
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute(
+        "UPDATE expenses SET type = 'essential' WHERE type = 'essential'",
+      );
+      await db.execute(
+        "UPDATE expenses SET type = 'discretionary' WHERE type = 'discretionary'",
+      );
+      await db.execute(
+        "UPDATE categories SET type = 'essential' WHERE type = 'essential'",
+      );
+      await db.execute(
+        "UPDATE categories SET type = 'discretionary' WHERE type = 'discretionary'",
+      );
+    }
   }
 
   // 테이블 생성 스크립트
@@ -97,94 +114,94 @@ class DatabaseHelper {
       // 필수 지출
       Category(
         id: 'food',
-        name: '식사',
-        type: ExpenseType.required,
+        name: 'food',
+        type: ExpenseType.essential,
         isDeletable: false,
       ),
       Category(
         id: 'traffic',
-        name: '교통',
-        type: ExpenseType.required,
+        name: 'traffic',
+        type: ExpenseType.essential,
         isDeletable: false,
       ),
       Category(
         id: 'communication',
-        name: '통신',
-        type: ExpenseType.required,
+        name: 'communication',
+        type: ExpenseType.essential,
         isDeletable: false,
       ),
       Category(
         id: 'housing',
-        name: '주거/공과금',
-        type: ExpenseType.required,
+        name: 'housing',
+        type: ExpenseType.essential,
         isDeletable: false,
       ),
       Category(
         id: 'medical',
-        name: '의료',
-        type: ExpenseType.required,
+        name: 'medical',
+        type: ExpenseType.essential,
         isDeletable: false,
       ),
       Category(
         id: 'insurance',
-        name: '보험',
-        type: ExpenseType.required,
+        name: 'insurance',
+        type: ExpenseType.essential,
         isDeletable: false,
       ),
       Category(
         id: 'finance',
-        name: '금융',
-        type: ExpenseType.required,
+        name: 'finance',
+        type: ExpenseType.essential,
         isDeletable: false,
       ),
       Category(
         id: 'necessities',
-        name: '생필품',
-        type: ExpenseType.required,
+        name: 'necessities',
+        type: ExpenseType.essential,
         isDeletable: false,
       ),
 
       // 자율 지출 (변동 지출)
       Category(
         id: 'eating-out',
-        name: '외식',
-        type: ExpenseType.variable,
+        name: 'eating-out',
+        type: ExpenseType.discretionary,
         isDeletable: false,
       ),
       Category(
         id: 'cafe',
-        name: '카페/간식',
-        type: ExpenseType.variable,
+        name: 'cafe',
+        type: ExpenseType.discretionary,
         isDeletable: false,
       ),
       Category(
         id: 'shopping',
-        name: '쇼핑',
-        type: ExpenseType.variable,
+        name: 'shopping',
+        type: ExpenseType.discretionary,
         isDeletable: false,
       ),
       Category(
         id: 'hobby',
-        name: '취미/여가',
-        type: ExpenseType.variable,
+        name: 'hobby',
+        type: ExpenseType.discretionary,
         isDeletable: false,
       ),
       Category(
         id: 'travel',
-        name: '여행/휴식',
-        type: ExpenseType.variable,
+        name: 'travel',
+        type: ExpenseType.discretionary,
         isDeletable: false,
       ),
       Category(
         id: 'subscribe',
-        name: '구독',
-        type: ExpenseType.variable,
+        name: 'subscribe',
+        type: ExpenseType.discretionary,
         isDeletable: false,
       ),
       Category(
         id: 'beauty',
-        name: '미용',
-        type: ExpenseType.variable,
+        name: 'beauty',
+        type: ExpenseType.discretionary,
         isDeletable: false,
       ),
     ];

@@ -1,18 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/theme/app_theme.dart';
 import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
 import 'package:money_fit/features/home/widgets/animate_circular_budget.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
 class HomeMainCard extends StatelessWidget {
   final HomeState homeState;
 
   const HomeMainCard({super.key, required this.homeState});
+  String getMessage(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final String message;
+    final spent = homeState.todayDiscretionarySpending;
+    final ratio = homeState.spendingStatus.spendingRatio;
+    if (spent == 0) {
+      message = l10n.todayExpenseMessageZero;
+    } else if (ratio > 0.69) {
+      message = l10n.todayExpenseMessageGood;
+    } else if (ratio > 0.5) {
+      message = l10n.todayExpenseMessageHalf;
+    } else if (ratio > 0.0) {
+      message = l10n.todayExpenseMessageNearLimit;
+    } else {
+      message = l10n.todayExpenseMessageOverLimit;
+    }
+
+    return message;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final status = homeState.spendingStatus;
-    final todaySpending = homeState.todayVariableSpending;
+    final todaySpending = homeState.todayDiscretionarySpending;
     final heightSpace = MediaQuery.of(context).size.height * 0.035;
 
     return Container(
@@ -24,7 +46,7 @@ class HomeMainCard extends StatelessWidget {
           FittedBox(
             fit: BoxFit.scaleDown,
             child: Text(
-              status.message,
+              getMessage(context),
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface,
               ),
@@ -42,17 +64,24 @@ class HomeMainCard extends StatelessWidget {
           SizedBox(height: heightSpace),
 
           /// 예산/사용 금액 텍스트
-          _buildBudgetInfo(context, todaySpending),
+          _buildBudgetInfo(context, todaySpending, l10n),
           SizedBox(height: heightSpace),
 
           /// 📈 통계 정보
-          _buildStatistics(context),
+          _buildStatistics(context, l10n),
         ],
       ),
     );
   }
 
-  Widget _buildBudgetInfo(BuildContext context, double todaySpending) {
+  Widget _buildBudgetInfo(
+    BuildContext context,
+    double todaySpending,
+    AppLocalizations l10n,
+  ) {
+    final locale = Localizations.localeOf(context).toString();
+    final currencyFormat = NumberFormat.currency(locale: locale, symbol: '');
+
     return Column(
       children: [
         Row(
@@ -61,7 +90,9 @@ class HomeMainCard extends StatelessWidget {
             buildCircleWidget(true, context),
             const SizedBox(width: 8),
             Text(
-              '일일 자율 지출 : ${numberFormatting(todaySpending)}원',
+              l10n.dailyDiscretionarySpending(
+                '${l10n.currency}${currencyFormat.format(todaySpending)}',
+              ),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface,
               ),
@@ -75,7 +106,9 @@ class HomeMainCard extends StatelessWidget {
             buildCircleWidget(false, context),
             const SizedBox(width: 8),
             Text(
-              '일일 예산 : ${numberFormatting(homeState.dailyBudget)}원',
+              l10n.dailyBudget(
+                '${l10n.currency}${currencyFormat.format(homeState.dailyBudget)}',
+              ),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface,
               ),
@@ -86,49 +119,60 @@ class HomeMainCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatistics(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Expanded(
-          child: Column(
-            children: [
-              Text(
-                '월평균 일일 자율 지출',
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface,
+  Widget _buildStatistics(BuildContext context, AppLocalizations l10n) {
+    final locale = Localizations.localeOf(context).toString();
+    final currencyFormat = NumberFormat.currency(locale: locale, symbol: '');
+
+    return IntrinsicHeight(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  l10n.monthlyAvgDiscSpending,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                '${numberFormatting(homeState.monthlyVariableExpenseAvg)}원',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface,
+                const SizedBox(height: 10),
+                Text(
+                  '${l10n.currency}${currencyFormat.format(homeState.monthlyDiscretionaryExpenseAvg)}',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        Expanded(
-          child: Column(
-            children: [
-              Text(
-                '연속 목표 달성일',
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface,
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  l10n.consecutiveDays,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                '${homeState.consecutiveAchievementDays}일',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface,
+                const SizedBox(height: 10),
+                Text(
+                  l10n.days(homeState.consecutiveAchievementDays),
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

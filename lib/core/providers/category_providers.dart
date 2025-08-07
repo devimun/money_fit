@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/models/category_model.dart';
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/providers/repository_providers.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
 class CategoryProviders extends AsyncNotifier<List<Category>> {
   // 처음 로드될 시 db에서 카테고리를 전부 가져오게 한다.
@@ -38,18 +40,52 @@ class CategoryProviders extends AsyncNotifier<List<Category>> {
   }
 
   //카테고리를 매핑해주는 메서드
-  String getCategoryName(String categoryId) {
-    final value = state.value ?? [];
-    final category = value.firstWhere(
-      (c) => c.id == categoryId,
-      orElse: () => Category(
-        id: '',
-        name: '알 수 없음',
-        type: ExpenseType.n,
-        isDeletable: false,
-      ),
-    );
-    return category.name;
+  String getCategoryName(BuildContext context, String categoryId) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (categoryId) {
+      case 'food':
+        return l10n.category_food;
+      case 'traffic':
+        return l10n.category_traffic;
+      case 'communication':
+        return l10n.category_communication;
+      case 'housing':
+        return l10n.category_housing;
+      case 'medical':
+        return l10n.category_medical;
+      case 'insurance':
+        return l10n.category_insurance;
+      case 'finance':
+        return l10n.category_finance;
+      case 'necessities':
+        return l10n.category_necessities;
+      case 'eating-out':
+        return l10n.categoryEatingOut;
+      case 'cafe':
+        return l10n.category_cafe;
+      case 'shopping':
+        return l10n.category_shopping;
+      case 'hobby':
+        return l10n.category_hobby;
+      case 'travel':
+        return l10n.category_travel;
+      case 'subscribe':
+        return l10n.category_subscribe;
+      case 'beauty':
+        return l10n.category_beauty;
+      default:
+        final value = state.value ?? [];
+        final category = value.firstWhere(
+          (c) => c.id == categoryId,
+          orElse: () => Category(
+            id: '',
+            name: AppLocalizations.of(context)!.unknown,
+            type: ExpenseType.n,
+            isDeletable: false,
+          ),
+        );
+        return category.name;
+    }
   }
 }
 

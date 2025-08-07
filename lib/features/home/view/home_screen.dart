@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/widgets/ads/ad_banner_widget.dart';
@@ -8,7 +7,9 @@ import 'package:money_fit/features/home/widgets/home_main_card.dart';
 import 'package:money_fit/features/home/widgets/home_action_buttons.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 import 'package:money_fit/widgets/custom_notification_dialog.dart';
-import 'package:permission_handler/permission_handler.dart';
+
+import 'package:money_fit/core/services/notification_service.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key, required this.showNotificationPrompt});
@@ -35,6 +36,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Future<void> _showNotificationDialog() async {
     if (!mounted) return;
+    final l10n = AppLocalizations.of(context)!;
 
     await showDialog(
       context: context,
@@ -43,7 +45,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         return CustomNotificationDialog(
           onConfirm: () async {
             Navigator.of(context).pop();
-            await setupNotifications();
+            await ref
+                .read(notificationServiceProvider)
+                .setupNotifications(l10n, ref);
           },
           onDeny: () {
             Navigator.of(context).pop();
@@ -53,22 +57,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Future<void> setupNotifications() async {
-    log('Requesting notification permission...');
-    final permissionStatus = await Permission.notification.request();
-    log('Notification permission status: ${permissionStatus.toString()}');
-
-    if (permissionStatus.isGranted) {
-      await ref.read(userSettingsProvider.notifier).enableNotifications();
-    } else if (permissionStatus.isPermanentlyDenied) {
-      await openAppSettings();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final homeStateAsync = ref.watch(homeViewModelProvider);
     final userAsync = ref.watch(userSettingsProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     if (homeStateAsync.isLoading || userAsync.isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -76,7 +69,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     if (homeStateAsync.hasError || userAsync.hasError) {
       final error = homeStateAsync.error ?? userAsync.error;
-      return Scaffold(body: Center(child: Text('오류가 발생했습니다: $error')));
+      return Scaffold(
+        body: Center(child: Text(l10n.errorOccurred(error.toString()))),
+      );
     }
 
     final homeState = homeStateAsync.value!;
@@ -96,6 +91,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 HomeMainCard(homeState: homeState),
                 const SizedBox(height: 20),
                 HomeActionButtons(homeState: homeState, userId: user.id),
+                const SizedBox(height: 10),
               ],
             ),
           ),

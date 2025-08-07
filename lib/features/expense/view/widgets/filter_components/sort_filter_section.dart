@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_fit/features/expense/viewmodel/expense_list_provider.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
 class SortFilterSection extends StatelessWidget {
   final SortType selectedSortType;
@@ -13,8 +14,9 @@ class SortFilterSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return _buildFormSection(
-      label: '정렬',
+      label: l10n.sort,
       child: Row(
         children: [
           Expanded(
@@ -36,7 +38,7 @@ class SortFilterSection extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
-                    '최신순',
+                    l10n.latest,
                     style: Theme.of(context).textTheme.labelMedium?.copyWith(
                       color: selectedSortType == SortType.desc
                           ? Theme.of(context).colorScheme.onPrimary
@@ -47,7 +49,7 @@ class SortFilterSection extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
-                    '오래된순',
+                    l10n.oldest,
                     style: Theme.of(context).textTheme.labelMedium?.copyWith(
                       color: selectedSortType == SortType.asc
                           ? Theme.of(context).colorScheme.onPrimary

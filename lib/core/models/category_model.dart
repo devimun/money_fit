@@ -42,9 +42,7 @@ class Category {
       id: json['id'] as String,
       userId: json['user_id'] as String?,
       name: json['name'] as String,
-      type: (json['type'] as String) == '필수'
-          ? ExpenseType.required
-          : ExpenseType.variable,
+      type: ExpenseType.values.firstWhere((e) => e.name == json['type'], orElse: () => ExpenseType.n),
       isDeletable: json['is_deletable'] is bool
           ? json['is_deletable']
           : json['is_deletable'] == 1,
@@ -56,7 +54,7 @@ class Category {
       'id': id,
       'user_id': userId,
       'name': name,
-      'type': type == ExpenseType.required ? '필수' : '변동',
+      'type': type.name,
       // 로컬 DB는 INTEGER 타입을 사용하므로 1 또는 0으로 변환
       'is_deletable': isDeletable ? 1 : 0,
     };

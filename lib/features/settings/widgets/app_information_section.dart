@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
 class AppInformationSection extends StatefulWidget {
   const AppInformationSection({super.key});
@@ -66,12 +67,13 @@ class _AppInformationSectionState extends State<AppInformationSection> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
     final iconColor = Theme.of(context).colorScheme.primary;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildSectionTitle('정보', textTheme),
+        buildSectionTitle(l10n.information, textTheme),
         buildSettingsCard([
           // buildSettingsItem(
           //   icon: Icons.campaign_outlined,
@@ -89,7 +91,7 @@ class _AppInformationSectionState extends State<AppInformationSection> {
           buildSettingsItem(
             icon: Icons.rate_review_outlined,
             iconColor: iconColor,
-            title: '리뷰 작성',
+            title: l10n.writeReview,
             onTap: _launchReviewURL,
             trailing: const Icon(
               Icons.arrow_forward_ios,
@@ -100,7 +102,7 @@ class _AppInformationSectionState extends State<AppInformationSection> {
           buildSettingsItem(
             icon: Icons.info_outline,
             iconColor: iconColor,
-            title: '앱 버전',
+            title: l10n.appVersion,
             trailing: Text(
               _appVersion, // 동적으로 가져온 버전 표시
               style: textTheme.bodyLarge?.copyWith(
@@ -111,11 +113,29 @@ class _AppInformationSectionState extends State<AppInformationSection> {
           buildSettingsItem(
             icon: Icons.privacy_tip_outlined,
             iconColor: iconColor,
-            title: '개인정보 처리방침',
+            title: l10n.privacyPolicy,
+
             onTap: () async {
-              await launchUrl(
-                Uri.parse('https://lucky-dev.notion.site/moneyfit-pp'),
-              );
+              final locale = Localizations.localeOf(context);
+              final languageCode = locale.languageCode;
+              final countryCode = locale.countryCode ?? '';
+
+              String url;
+
+              if (languageCode == 'ko' || countryCode == 'KR') {
+                url = 'https://lucky-dev.notion.site/money-fit-pp-kr';
+              } else if (languageCode == 'en') {
+                url = 'https://lucky-dev.notion.site/money-fit-pp-en';
+              } else if (languageCode == 'fil' || countryCode == 'PH') {
+                url = 'https://lucky-dev.notion.site/money-fit-pp-fil';
+              } else if (languageCode == 'ms' || countryCode == 'MY') {
+                url = 'https://lucky-dev.notion.site/money-fit-pp-ms';
+              } else {
+                // 기본 fallback (예: 영어)
+                url = 'https://lucky-dev.notion.site/money-fit-pp-en';
+              }
+
+              await launchUrl(Uri.parse(url));
             },
             trailing: const Icon(
               Icons.arrow_forward_ios,

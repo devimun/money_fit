@@ -8,6 +8,7 @@ import 'package:money_fit/features/expense/view/widgets/filter_components/expens
 import 'package:money_fit/features/expense/view/widgets/filter_components/category_filter_section.dart';
 import 'package:money_fit/features/expense/view/widgets/filter_components/sort_filter_section.dart';
 import 'package:money_fit/features/expense/view/widgets/filter_components/filter_action_buttons.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
 class ExpenseFilterBottomSheet extends ConsumerStatefulWidget {
   final ExpensesListState currentState;
@@ -37,8 +38,9 @@ class _ExpenseFilterBottomSheetState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return BaseBottomSheet(
-      title: '필터 설정',
+      title: l10n.filterSettings,
       onClose: () => Navigator.pop(context),
       footer: FilterActionButtons(
         selectedDate: _selectedDate,

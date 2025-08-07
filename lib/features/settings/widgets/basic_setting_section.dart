@@ -3,6 +3,7 @@ import 'package:money_fit/features/settings/widgets/daily_budget_setting.dart';
 import 'package:money_fit/features/settings/widgets/notification_setting.dart';
 import 'package:money_fit/features/settings/widgets/dark_mode_setting.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
 /// "기본 설정" 섹션을 구성하는 위젯
 class BasicSettingsSection extends StatelessWidget {
@@ -10,10 +11,11 @@ class BasicSettingsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildSectionTitle('기본 설정', Theme.of(context).textTheme),
+        buildSectionTitle(l10n.basicSettings, Theme.of(context).textTheme),
         buildSettingsCard([
           const DailyBudgetSetting(),
           const NotificationSetting(),

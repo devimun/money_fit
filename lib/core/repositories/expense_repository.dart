@@ -107,7 +107,7 @@ class ExpenseRepository implements IExpenseRepository {
   @override
   Future<void> updateExpense(Expense expense) async {
     final db = await _dbHelper.database;
-    log('들어온 지출 : ${expense.toJson()}');
+    log('Updating expense: ${expense.toJson()}');
     try {
       final data = await db.update(
         'expenses',
@@ -115,14 +115,14 @@ class ExpenseRepository implements IExpenseRepository {
         where: 'id = ? AND user_id = ?',
         whereArgs: [expense.id, expense.userId],
       );
-      log('영향 받은 로우 : $data');
+      log('Rows affected: $data');
       if (data == 0) {
         final check = await db.query(
           'expenses',
           where: 'id = ? AND user_id = ?',
           whereArgs: [expense.id, expense.userId],
         );
-        log('🔍 존재하는 row: $check');
+        log('🔍 Existing row check: $check');
       }
     } catch (e) {
       log('$e');
@@ -143,22 +143,22 @@ class ExpenseRepository implements IExpenseRepository {
 
   //   final categoryMap = {
   //     // 필수
-  //     'food': ['식사', ExpenseType.required],
-  //     'traffic': ['교통', ExpenseType.required],
-  //     'communication': ['통신', ExpenseType.required],
-  //     'housing': ['주거/공과금', ExpenseType.required],
-  //     'medical': ['의료', ExpenseType.required],
-  //     'insurance': ['보험', ExpenseType.required],
-  //     'finance': ['금융', ExpenseType.required],
-  //     'necessities': ['생필품', ExpenseType.required],
+  //     'food': ['식사', ExpenseType.essential],
+  //     'traffic': ['교통', ExpenseType.essential],
+  //     'communication': ['통신', ExpenseType.essential],
+  //     'housing': ['주거/공과금', ExpenseType.essential],
+  //     'medical': ['의료', ExpenseType.essential],
+  //     'insurance': ['보험', ExpenseType.essential],
+  //     'finance': ['금융', ExpenseType.essential],
+  //     'necessities': ['생필품', ExpenseType.essential],
   //     // 변동
-  //     'eating-out': ['외식', ExpenseType.variable],
-  //     'cafe': ['카페/간식', ExpenseType.variable],
-  //     'shopping': ['쇼핑', ExpenseType.variable],
-  //     'hobby': ['취미/여가', ExpenseType.variable],
-  //     'travel': ['여행/휴식', ExpenseType.variable],
-  //     'subscribe': ['구독', ExpenseType.variable],
-  //     'beauty': ['미용', ExpenseType.variable],
+  //     'eating-out': ['외식', ExpenseType.discretionary],
+  //     'cafe': ['카페/간식', ExpenseType.discretionary],
+  //     'shopping': ['쇼핑', ExpenseType.discretionary],
+  //     'hobby': ['취미/여가', ExpenseType.discretionary],
+  //     'travel': ['여행/휴식', ExpenseType.discretionary],
+  //     'subscribe': ['구독', ExpenseType.discretionary],
+  //     'beauty': ['미용', ExpenseType.discretionary],
   //   };
 
   //   final categoryIds = categoryMap.keys.toList();

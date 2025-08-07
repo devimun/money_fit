@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:money_fit/core/functions/functions.dart';
-import 'package:money_fit/core/models/expense_model.dart';
+
 import 'package:money_fit/core/providers/category_providers.dart';
 import 'package:money_fit/core/providers/expenses_provider.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/core/widgets/base_bottom_sheet.dart';
 import 'package:money_fit/core/widgets/expense_add_form.dart';
 import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
 class TodayExpenseListBottomSheet extends ConsumerWidget {
   final VoidCallback onClose;
@@ -21,6 +23,13 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).toString();
+    final currencyFormat = NumberFormat.currency(
+      locale: locale,
+      symbol: l10n.currency,
+    );
+
     final asyncState = ref.watch(coreExpensesProvider);
     final selectedDate = ref.watch(dateManager);
     final categoryState = ref.watch(categoryProvider);
@@ -37,7 +46,7 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
     );
 
     return BaseBottomSheet(
-      title: '일일 지출 내역',
+      title: l10n.dailyExpenseHistory,
       onClose: onClose,
       child: expenses == null
           ? const Center(child: CircularProgressIndicator())
@@ -51,7 +60,7 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
                     Icon(Icons.receipt_long, size: 64, color: Colors.grey[400]),
                     const SizedBox(height: 16),
                     Text(
-                      '지출 내역이 존재하지 않습니다.',
+                      l10n.noExpenseHistory,
                       style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                     ),
                   ],
@@ -69,10 +78,8 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
                 final e = expenses[index];
                 final categoryName = ref
                     .read(categoryProvider.notifier)
-                    .getCategoryName(e.categoryId);
-                final typeLabel = e.type == ExpenseType.required
-                    ? '필수 지출'
-                    : '자율 지출';
+                    .getCategoryName(context, e.categoryId);
+                final typeLabel = getExpenseTypeName(context, e.type);
 
                 return Material(
                   child: InkWell(
@@ -82,8 +89,8 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
                         context: context,
                         builder: (context) {
                           return AlertDialog(
-                            title: Text('지출 수정/삭제'),
-                            content: Text('지출 "${e.name}"에 대해 어떤 작업을 하시겠습니까?'),
+                            title: Text(l10n.editDeleteExpense),
+                            content: Text(l10n.editDeleteExpensePrompt(e.name)),
                             actions: [
                               if (isHome)
                                 TextButton(
@@ -108,7 +115,7 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
                                       },
                                     );
                                   },
-                                  child: Text('수정'),
+                                  child: Text(l10n.edit),
                                 ),
                               TextButton(
                                 onPressed: () async {
@@ -125,7 +132,7 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
                                     Navigator.pop(context);
                                   }
                                 },
-                                child: Text('삭제'),
+                                child: Text(l10n.delete),
                               ),
                             ],
                           );
@@ -138,7 +145,7 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
                         '$typeLabel · $categoryName',
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
-                      trailing: Text('-${numberFormatting(e.amount)}원'),
+                      trailing: Text('-${currencyFormat.format(e.amount)}'),
                     ),
                   ),
                 );

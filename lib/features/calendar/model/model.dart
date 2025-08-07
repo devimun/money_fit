@@ -16,11 +16,11 @@ class CalendarCellData {
     List<Expense> expenses,
     double dailyBudget,
   ) {
-    double varTotal = expenses
-        .where((e) => e.type == ExpenseType.variable)
+    double discTotal = expenses
+        .where((e) => e.type == ExpenseType.discretionary)
         .fold(0.0, (sum, e) => sum + e.amount);
 
-    final isSuccess = varTotal > 0 && varTotal <= dailyBudget;
+    final isSuccess = discTotal > 0 && discTotal <= dailyBudget;
 
     return CalendarCellData(
       date: date,
@@ -29,12 +29,12 @@ class CalendarCellData {
     );
   }
 
-  double get variableTotal => expenses
-      .where((e) => e.type == ExpenseType.variable)
+  double get discretionaryTotal => expenses
+      .where((e) => e.type == ExpenseType.discretionary)
       .fold(0.0, (sum, e) => sum + e.amount);
 
   double get essentialTotal => expenses
-      .where((e) => e.type == ExpenseType.required)
+      .where((e) => e.type == ExpenseType.essential)
       .fold(0.0, (sum, e) => sum + e.amount);
 }
 
@@ -52,14 +52,14 @@ class CalendarState {
 
 // 상단 스테이터스바 전용 클래스
 class CalendarStat {
-  double monthlyVariableExpense; // 월간 자율 지출 총액
+  double monthlyDiscretionaryExpense; // 월간 자율 지출 총액
   double monthlyEssentialExpense; // 월간 필수 지출 총액
   int successfulDays; // 성공일 수
   int failedDays; // 실패일 수
   int consecutiveSuccessfulDays; // 연속 성공일 수
 
   CalendarStat({
-    required this.monthlyVariableExpense,
+    required this.monthlyDiscretionaryExpense,
     required this.monthlyEssentialExpense,
     required this.successfulDays,
     required this.failedDays,
@@ -70,8 +70,8 @@ class CalendarStat {
     Map<DateTime, List<Expense>> expensesMap,
     double dailyBudget,
   ) {
-    double varTotal = 0;
-    double reqTotal = 0;
+    double discTotal = 0;
+    double essTotal = 0;
     int success = 0;
     int fail = 0;
     int streak = 0;
@@ -81,27 +81,26 @@ class CalendarStat {
 
     for (final day in sortedDates) {
       final expenses = expensesMap[day]!;
-      double dayVar = 0;
-      double dayReq = 0;
+      double dayDisc = 0;
+      double dayEss = 0;
 
       for (final e in expenses) {
-        if (e.type == ExpenseType.variable) {
-          dayVar += e.amount;
+        if (e.type == ExpenseType.discretionary) {
+          dayDisc += e.amount;
         } else {
-          dayReq += e.amount;
+          dayEss += e.amount;
         }
       }
 
-      varTotal += dayVar;
-      reqTotal += dayReq;
+      discTotal += dayDisc;
+      essTotal += dayEss;
 
-      final isSuccess = (dayVar <= dailyBudget);
+      final isSuccess = (dayDisc <= dailyBudget);
       if (isSuccess) {
         success++;
         streak++;
         if (streak > maxStreak) maxStreak = streak;
-      }
-      if (dayVar >= 0 && dayVar > dailyBudget) {
+      } else if (dayDisc > 0 && dayDisc > dailyBudget) {
         fail++;
         streak = 0;
       } else {
@@ -110,8 +109,8 @@ class CalendarStat {
     }
 
     return CalendarStat(
-      monthlyVariableExpense: varTotal,
-      monthlyEssentialExpense: reqTotal,
+      monthlyDiscretionaryExpense: discTotal,
+      monthlyEssentialExpense: essTotal,
       successfulDays: success,
       failedDays: fail,
       consecutiveSuccessfulDays: maxStreak,

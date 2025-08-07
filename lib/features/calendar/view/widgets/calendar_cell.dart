@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:money_fit/core/functions/functions.dart';
+import 'package:intl/intl.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/core/widgets/today_expense_list.dart';
 import 'package:money_fit/features/calendar/model/model.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
 class CalendarCell extends ConsumerWidget {
   final CalendarCellData? cellData;
@@ -31,19 +32,21 @@ class CalendarCell extends ConsumerWidget {
             );
           },
           child: Container(
-            padding: const EdgeInsets.all(2.0),
+            padding: EdgeInsets.all(2.0),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.onSecondaryContainer,
               borderRadius: BorderRadius.circular(12.0),
-              // border: Border.all(
-              //   color: Theme.of(context).colorScheme.onSecondaryFixed,
-              //   width: 0.4,
-              // ),
             ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildDayHeader(context),
-                if (cellData != null) _buildExpenseInfo(context),
+                if (cellData != null)
+                  _buildExpenseInfo(
+                    context,
+                    AppLocalizations.of(context)!,
+                    Localizations.localeOf(context).toString(),
+                  ),
               ],
             ),
           ),
@@ -87,7 +90,11 @@ class CalendarCell extends ConsumerWidget {
     );
   }
 
-  Widget _buildExpenseInfo(BuildContext context) {
+  Widget _buildExpenseInfo(
+    BuildContext context,
+    AppLocalizations l10n,
+    String locale,
+  ) {
     return Expanded(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -95,23 +102,20 @@ class CalendarCell extends ConsumerWidget {
         children: [
           FittedBox(
             fit: BoxFit.scaleDown,
-            child: Row(
-              children: [
-                Text(
-                  '₩${numberFormatting(cellData!.variableTotal)}',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
+            child: Text(
+              '${l10n.currency}${NumberFormat.currency(locale: Localizations.localeOf(context).toString(), symbol: '').format(cellData!.discretionaryTotal)}',
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.start,
             ),
           ),
           const SizedBox(height: 2),
           FittedBox(
             fit: BoxFit.scaleDown,
             child: Text(
-              '₩${numberFormatting(cellData!.essentialTotal)}',
+              '${l10n.currency}${NumberFormat.currency(locale: Localizations.localeOf(context).toString(), symbol: '').format(cellData!.essentialTotal)}',
               style: Theme.of(
                 context,
               ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:money_fit/core/providers/navigation_provider.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
 class MainBottomNavBar extends ConsumerWidget {
   const MainBottomNavBar({super.key});
@@ -13,6 +14,7 @@ class MainBottomNavBar extends ConsumerWidget {
 
     return BottomNavigationBar(
       currentIndex: currentIndex,
+      type: BottomNavigationBarType.shifting,
       onTap: (index) {
         ref.read(navigationIndexProvider.notifier).state = index;
         switch (index) {
@@ -33,11 +35,23 @@ class MainBottomNavBar extends ConsumerWidget {
             break;
         }
       },
-      items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: '홈'),
-        BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: '캘린더'),
-        BottomNavigationBarItem(icon: Icon(Icons.receipt_long), label: '지출 내역'),
-        BottomNavigationBarItem(icon: Icon(Icons.settings), label: '설정'),
+      items: <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.home),
+          label: AppLocalizations.of(context)!.home,
+        ),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.calendar_today),
+          label: AppLocalizations.of(context)!.calendar,
+        ),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.receipt_long),
+          label: AppLocalizations.of(context)!.expense,
+        ),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.settings),
+          label: AppLocalizations.of(context)!.settings,
+        ),
       ],
     );
   }

@@ -8,6 +8,7 @@ import 'package:money_fit/core/models/category_model.dart' as category_model;
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/providers/category_providers.dart';
 import 'package:money_fit/core/widgets/base_bottom_sheet.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 import 'package:uuid/uuid.dart';
 
 class ExpenseAddForm extends ConsumerStatefulWidget {
@@ -30,7 +31,8 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
   final _amountController = TextEditingController();
   bool _isFormValid = false;
   String? _selectedCategoryId;
-  ExpenseType _selectedType = ExpenseType.required;
+  ExpenseType _selectedType = ExpenseType.essential;
+
   @override
   void initState() {
     super.initState();
@@ -38,7 +40,7 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
     if (widget.initExpense != null) {
       final expense = widget.initExpense!;
       _nameController.text = expense.name;
-      _amountController.text = numberFormatting(expense.amount);
+      _amountController.text = numberFormatting(context, expense.amount);
       _selectedCategoryId = expense.categoryId;
       _selectedType = expense.type;
       _isFormValid = true;
@@ -56,11 +58,13 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
     String? error;
 
     if (name.isEmpty) {
-      error = '이름이 비어 있습니다.';
+      error = 'Name is empty';
     } else if (rawAmount.isEmpty || amount <= 0) {
-      error = '금액이 올바르지 않거나 0 이하입니다.';
+      error = 'Amount is invalid';
     } else if (_selectedCategoryId == null) {
-      error = '카테고리를 선택하지 않았습니다.';
+      error = 'Category is not selected';
+    } else {
+      error = null; // 모든 필드가 유효한 경우
     }
 
     final isValid = error == null;
@@ -72,20 +76,21 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
     }
 
     if (error != null) {
-      debugPrint('폼 유효성 오류: $error');
+      debugPrint(error);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations l10n = AppLocalizations.of(context)!;
     return BaseBottomSheet(
-      title: '지출 등록',
+      title: l10n.registerExpense,
       onClose: () {
         //데이터 초기화
         _nameController.clear();
         _amountController.clear();
         _selectedCategoryId = null;
-        _selectedType = ExpenseType.required;
+        _selectedType = ExpenseType.essential;
         _isFormValid = false;
         _validateForm();
         Navigator.pop(context);
@@ -99,10 +104,10 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
                 : Theme.of(context).colorScheme.onSecondaryContainer,
           ),
           onPressed: () async {
-            await _handleSubmit(widget.uid);
+            await _handleSubmit(widget.uid, l10n);
           },
           child: Text(
-            '등록하기',
+            l10n.register,
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
               color: _isFormValid
                   ? null
@@ -116,49 +121,48 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildFormSection(
-              label: '날짜',
+              label: l10n.date,
               child: Text(
-                dateFormatting(DateTime.now()),
+                dateFormatting(context, DateTime.now()),
                 style: Theme.of(context).textTheme.labelMedium,
               ),
               context: context,
             ),
             _buildFormSection(
-              label: '지출명',
+              label: l10n.expenseName,
               child: TextField(
                 onChanged: (value) => _validateForm(),
                 controller: _nameController,
                 decoration: InputDecoration(
-                  hintText: '지출명을 입력해주세요',
+                  hintText: l10n.enterExpenseName,
                   hintStyle: Theme.of(context).textTheme.labelSmall,
                 ),
               ),
               context: context,
             ),
             _buildFormSection(
-              label: '금액',
+              label: l10n.amount,
               child: TextField(
                 onChanged: (value) {
                   value = value.replaceAll(' ', '');
                   if (value.isEmpty) {
                     _amountController.text = '';
                   } else {
-                    double pay = double.parse(value.replaceAll(',', ''));
-                    _amountController.text = numberFormatting(pay);
+                    // _amountController.text = numberFormatting(context, pay);
                   }
                   _validateForm();
                 },
                 controller: _amountController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  hintText: '지출 금액을 입력해주세요',
+                  hintText: l10n.enterExpenseAmount,
                   hintStyle: Theme.of(context).textTheme.labelSmall,
                 ),
               ),
               context: context,
             ),
             _buildFormSection(
-              label: '지출 유형',
+              label: l10n.expenseType,
               child: Column(
                 children: [
                   Row(
@@ -167,15 +171,15 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
                         child: ToggleButtons(
                           constraints: const BoxConstraints(minHeight: 36),
                           isSelected: [
-                            _selectedType == ExpenseType.required,
-                            _selectedType == ExpenseType.variable,
+                            _selectedType == ExpenseType.essential,
+                            _selectedType == ExpenseType.discretionary,
                           ],
                           onPressed: (index) {
                             setState(() {
                               _selectedCategoryId = null; // 카테고리 초기화
                               _selectedType = index == 0
-                                  ? ExpenseType.required
-                                  : ExpenseType.variable;
+                                  ? ExpenseType.essential
+                                  : ExpenseType.discretionary;
                             });
                           },
                           borderRadius: BorderRadius.circular(10),
@@ -193,11 +197,11 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
                                 horizontal: 8.0,
                               ),
                               child: Text(
-                                '필수 지출',
+                                l10n.essentialExpense,
                                 style: Theme.of(context).textTheme.labelMedium
                                     ?.copyWith(
                                       color:
-                                          _selectedType == ExpenseType.required
+                                          _selectedType == ExpenseType.essential
                                           ? Theme.of(
                                               context,
                                             ).colorScheme.onPrimary
@@ -210,11 +214,12 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
                                 horizontal: 8.0,
                               ),
                               child: Text(
-                                '자율 지출',
+                                l10n.discretionaryExpense,
                                 style: Theme.of(context).textTheme.labelMedium
                                     ?.copyWith(
                                       color:
-                                          _selectedType == ExpenseType.variable
+                                          _selectedType ==
+                                              ExpenseType.discretionary
                                           ? Theme.of(
                                               context,
                                             ).colorScheme.onPrimary
@@ -255,7 +260,7 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
     );
   }
 
-  Future<void> _handleSubmit(String uid) async {
+  Future<void> _handleSubmit(String uid, AppLocalizations l10n) async {
     final name = _nameController.text.trim();
     final amount =
         double.tryParse(_amountController.text.trim().replaceAll(',', '')) ?? 0;
@@ -263,7 +268,7 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
     if (name.isEmpty || amount <= 0 || categoryId == null) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('모든 항목을 올바르게 입력해주세요.')));
+      ).showSnackBar(SnackBar(content: Text(l10n.allFieldsRequired)));
       return;
     }
 
@@ -351,7 +356,11 @@ class CategoryList extends ConsumerWidget {
                         _showDeleteConfirmDialog(context, ref, e);
                       }
                     : null,
-                label: Text(e.name),
+                label: Text(
+                  ref
+                      .read(categoryProvider.notifier)
+                      .getCategoryName(context, e.id),
+                ),
                 selected: isSelected,
                 onSelected: (_) => onSelected(e.id),
                 showCheckmark: false,
@@ -400,18 +409,19 @@ class CategoryList extends ConsumerWidget {
     await showDialog(
       context: context,
       builder: (context) {
+        AppLocalizations l10n = AppLocalizations.of(context)!;
         return AlertDialog(
-          title: const Text('새 카테고리 추가'),
+          title: Text(l10n.addNewCategory),
           content: TextField(
             controller: categoryNameController,
-            decoration: const InputDecoration(labelText: '카테고리 이름'),
+            decoration: InputDecoration(labelText: l10n.categoryName),
           ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('취소'),
+              child: Text(l10n.cancel),
             ),
             TextButton(
               onPressed: () async {
@@ -432,7 +442,7 @@ class CategoryList extends ConsumerWidget {
                   }
                 }
               },
-              child: const Text('추가'),
+              child: Text(l10n.add),
             ),
           ],
         );
@@ -448,15 +458,16 @@ class CategoryList extends ConsumerWidget {
     await showDialog(
       context: context,
       builder: (context) {
+        AppLocalizations l10n = AppLocalizations.of(context)!;
         return AlertDialog(
-          title: const Text('카테고리 삭제'),
-          content: Text('\'${category.name}\' 카테고리를 삭제하시겠습니까?'),
+          title: Text(l10n.deleteCategory),
+          content: Text(l10n.deleteCategoryPrompt(category.name)),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('취소'),
+              child: Text(l10n.cancel),
             ),
             TextButton(
               onPressed: () async {
@@ -467,7 +478,7 @@ class CategoryList extends ConsumerWidget {
                   Navigator.of(context).pop();
                 }
               },
-              child: const Text('삭제'),
+              child: Text(l10n.delete),
             ),
           ],
         );

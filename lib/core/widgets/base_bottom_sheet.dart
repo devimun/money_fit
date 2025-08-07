@@ -26,7 +26,7 @@ class BaseBottomSheet extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            /// 제목 & 닫기
+            /// ${l10n.titleAndClose}
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

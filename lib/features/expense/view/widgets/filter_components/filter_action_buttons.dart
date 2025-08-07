@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/features/expense/viewmodel/expense_list_provider.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
 class FilterActionButtons extends ConsumerWidget {
   final DateTime selectedDate;
@@ -21,6 +22,7 @@ class FilterActionButtons extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
         Expanded(
@@ -31,7 +33,7 @@ class FilterActionButtons extends ConsumerWidget {
                   : Theme.of(context).colorScheme.onSecondaryContainer,
             ),
             onPressed: onReset,
-            child: Text('초기화', style: Theme.of(context).textTheme.labelMedium),
+            child: Text(l10n.reset, style: Theme.of(context).textTheme.labelMedium),
           ),
         ),
         const SizedBox(width: 12),
@@ -50,7 +52,7 @@ class FilterActionButtons extends ConsumerWidget {
               Navigator.pop(context);
             },
             child: Text(
-              '적용',
+              l10n.apply,
               style: Theme.of(context).textTheme.labelLarge?.copyWith(
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),

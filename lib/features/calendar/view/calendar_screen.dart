@@ -5,12 +5,14 @@ import 'package:money_fit/features/calendar/view/widgets/helper.dart';
 import 'package:money_fit/features/calendar/viewmodel/calendar_view_model.dart';
 import 'package:money_fit/core/widgets/ads/ad_banner_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
 class CalendarScreen extends ConsumerWidget {
   const CalendarScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final viewModel = ref.watch(calendarViewModel);
     return viewModel.when(
       data: (data) => Scaffold(
@@ -47,14 +49,14 @@ class CalendarScreen extends ConsumerWidget {
                       context,
                     ),
                     dowBuilder: (context, day) {
-                      const koreanWeekdays = [
-                        '일',
-                        '월',
-                        '화',
-                        '수',
-                        '목',
-                        '금',
-                        '토',
+                      final koreanWeekdays = [
+                        l10n.sunday,
+                        l10n.monday,
+                        l10n.tuesday,
+                        l10n.wednesday,
+                        l10n.thursday,
+                        l10n.friday,
+                        l10n.saturday,
                       ];
                       final weekdayIndex = day.weekday % 7;
                       final label = koreanWeekdays[weekdayIndex];
@@ -122,9 +124,10 @@ class CalendarScreen extends ConsumerWidget {
       ),
       loading: () => Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [CircularProgressIndicator(), Text('잠시만 기다려 주세요...')],
+        children: [CircularProgressIndicator(), Text(l10n.pleaseWait)],
       ),
-      error: (error, stackTrace) => Text('$error, $stackTrace'),
+      error: (error, stackTrace) =>
+          Center(child: Text(l10n.errorOccurred(error.toString()))),
     );
   }
 }

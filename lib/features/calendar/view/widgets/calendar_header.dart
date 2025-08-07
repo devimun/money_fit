@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:money_fit/core/functions/functions.dart';
+import 'package:intl/intl.dart';
 import 'package:money_fit/core/providers/expenses_provider.dart';
 import 'package:money_fit/features/calendar/model/model.dart';
 import 'package:money_fit/core/services/ad_service.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
 class CalendarHeader extends ConsumerWidget {
   final CalendarStat stat;
@@ -13,19 +14,26 @@ class CalendarHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).toString();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
         children: [
-          _buildNavigationHeader(context, ref),
+          _buildNavigationHeader(context, ref, l10n, locale),
           const SizedBox(height: 16),
-          _buildStatisticsCard(context),
+          _buildStatisticsCard(context, l10n),
         ],
       ),
     );
   }
 
-  Widget _buildNavigationHeader(BuildContext context, WidgetRef ref) {
+  Widget _buildNavigationHeader(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+    String locale,
+  ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -41,9 +49,9 @@ class CalendarHeader extends ConsumerWidget {
             if (!refreshAvailable) {
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('데이터가 존재하지 않습니다.'),
-                    duration: Duration(milliseconds: 800),
+                  SnackBar(
+                    content: Text(l10n.noDataExists),
+                    duration: const Duration(milliseconds: 800),
                   ),
                 );
               }
@@ -52,7 +60,10 @@ class CalendarHeader extends ConsumerWidget {
           icon: const Icon(Icons.arrow_back_ios),
         ),
         Text(
-          '${day.year}년 ${day.month}월',
+          l10n.yearMonth(
+            DateFormat.MMM(locale).format(day).toString(),
+            DateFormat.y(locale).format(day).toString(),
+          ),
           style: Theme.of(context).textTheme.displaySmall,
         ),
         IconButton(
@@ -67,9 +78,9 @@ class CalendarHeader extends ConsumerWidget {
             if (!refreshAvailable) {
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('데이터가 존재하지 않습니다.'),
-                    duration: Duration(milliseconds: 800),
+                  SnackBar(
+                    content: Text(l10n.noDataExists),
+                    duration: const Duration(milliseconds: 800),
                   ),
                 );
               }
@@ -81,7 +92,7 @@ class CalendarHeader extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatisticsCard(BuildContext context) {
+  Widget _buildStatisticsCard(BuildContext context, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
@@ -96,14 +107,16 @@ class CalendarHeader extends ConsumerWidget {
               Expanded(
                 child: _buildStatItem(
                   context,
-                  '월간 자율 지출',
-                  doubleValue: stat.monthlyVariableExpense,
+                  l10n,
+                  l10n.monthlyDiscretionarySpending,
+                  doubleValue: stat.monthlyDiscretionaryExpense,
                 ),
               ),
               Expanded(
                 child: _buildStatItem(
                   context,
-                  '월간 필수 지출',
+                  l10n,
+                  l10n.monthlyEssentialSpending,
                   doubleValue: stat.monthlyEssentialExpense,
                 ),
               ),
@@ -115,17 +128,24 @@ class CalendarHeader extends ConsumerWidget {
               Expanded(
                 child: _buildStatItem(
                   context,
-                  '성공',
+                  l10n,
+                  l10n.success,
                   intValue: stat.successfulDays,
                 ),
               ),
               Expanded(
-                child: _buildStatItem(context, '실패', intValue: stat.failedDays),
+                child: _buildStatItem(
+                  context,
+                  l10n,
+                  l10n.failure,
+                  intValue: stat.failedDays,
+                ),
               ),
               Expanded(
                 child: _buildStatItem(
                   context,
-                  '연속 성공',
+                  l10n,
+                  l10n.consecutiveSuccess,
                   intValue: stat.consecutiveSuccessfulDays,
                 ),
               ),
@@ -138,29 +158,34 @@ class CalendarHeader extends ConsumerWidget {
 
   Widget _buildStatItem(
     BuildContext context,
+    AppLocalizations l10n,
     String title, {
     int? intValue,
     double? doubleValue,
   }) {
     return Column(
       children: [
-        Text(title, style: Theme.of(context).textTheme.labelMedium),
+        Text(
+          title,
+          style: Theme.of(context).textTheme.labelMedium,
+          textAlign: TextAlign.center,
+        ),
         const SizedBox(height: 5),
         if (intValue != null)
           Text(
-            '$intValue일',
+            l10n.daysCount(intValue),
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
               color: Theme.of(context).colorScheme.onSecondaryFixed,
             ),
           ),
         if (doubleValue != null)
           Text(
-            '${numberFormatting(doubleValue)}원',
+            '${l10n.currency}${NumberFormat.currency(locale: Localizations.localeOf(context).toString(), symbol: '').format(doubleValue)}',
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: title == '월간 자율 지출'
+              color: title == l10n.monthlyDiscretionarySpending
                   ? Theme.of(context).colorScheme.primary
                   : Theme.of(context).colorScheme.onSecondaryFixed,
-              fontWeight: title == '월간 자율 지출'
+              fontWeight: title == l10n.monthlyDiscretionarySpending
                   ? FontWeight.w600
                   : FontWeight.w400,
             ),

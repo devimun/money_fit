@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
 class DailyBudgetSetupForm extends ConsumerWidget {
   final GlobalKey<FormState> formKey;
@@ -15,34 +16,41 @@ class DailyBudgetSetupForm extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Form(
       key: formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('예산 설정하기', style: Theme.of(context).textTheme.displayMedium),
+          Text(
+            l10n.dailyBudgetSetupTitle,
+            style: Theme.of(context).textTheme.displayMedium,
+          ),
           const SizedBox(height: 20),
           Text(
-            '하루 자유 지출 예산을 설정해주세요.\n자유 지출이란, 공과금,의료비,주거비,보험 등 필수 지출을 제외한 자유롭게 사용할 수 있는 금액을 말해요.',
+            l10n.dailyBudgetSetupDescription,
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: 30),
           TextFormField(
             controller: budgetController,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              labelText: '일일 예산 (원)',
-              border: OutlineInputBorder(),
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
+            decoration: InputDecoration(
+              suffixText: l10n.currency,
+              suffixStyle: Theme.of(context).textTheme.labelMedium,
+              labelText: l10n.dailyBudgetLabel,
+              border: const OutlineInputBorder(),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return '예산을 입력해주세요.';
+                return l10n.enterBudgetPrompt;
               }
               if (double.tryParse(value) == null) {
-                return '유효한 숫자를 입력해주세요.';
+                return l10n.enterValidNumberPrompt;
               }
               if (double.parse(value) <= 0) {
-                return '예산은 0보다 커야 합니다.';
+                return l10n.budgetGreaterThanZeroPrompt;
               }
               return null;
             },
@@ -57,7 +65,7 @@ class DailyBudgetSetupForm extends ConsumerWidget {
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
               child: Text(
-                '시작하기',
+                l10n.start,
                 style: Theme.of(context).textTheme.labelLarge,
               ),
             ),

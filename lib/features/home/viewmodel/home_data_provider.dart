@@ -14,13 +14,11 @@ import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dar
 class SpendingStatus {
   final double remainingAmount;
   final double spendingRatio; // 0.0 ~ 1.0 (초과 가능)
-  final String message;
   final Color color;
 
   SpendingStatus({
     required this.remainingAmount,
     required this.spendingRatio,
-    required this.message,
     required this.color,
   });
 }
@@ -29,14 +27,14 @@ class SpendingStatus {
 class HomeState {
   final double dailyBudget;
   final List<Expense> todayExpenseList;
-  final double monthlyVariableExpenseAvg;
+  final double monthlyDiscretionaryExpenseAvg;
   final int consecutiveAchievementDays;
   final bool hasError;
 
   const HomeState({
     required this.dailyBudget,
     required this.todayExpenseList,
-    required this.monthlyVariableExpenseAvg,
+    required this.monthlyDiscretionaryExpenseAvg,
     required this.consecutiveAchievementDays,
     this.hasError = false,
   });
@@ -44,15 +42,15 @@ class HomeState {
   HomeState copyWith({
     double? dailyBudget,
     List<Expense>? todayExpenseList,
-    double? monthlyVariableExpenseAvg,
+    double? monthlyDiscretionaryExpenseAvg,
     int? consecutiveAchievementDays,
     bool? hasError,
   }) {
     return HomeState(
       dailyBudget: dailyBudget ?? this.dailyBudget,
       todayExpenseList: todayExpenseList ?? this.todayExpenseList,
-      monthlyVariableExpenseAvg:
-          monthlyVariableExpenseAvg ?? this.monthlyVariableExpenseAvg,
+      monthlyDiscretionaryExpenseAvg:
+          monthlyDiscretionaryExpenseAvg ?? this.monthlyDiscretionaryExpenseAvg,
       consecutiveAchievementDays:
           consecutiveAchievementDays ?? this.consecutiveAchievementDays,
       hasError: hasError ?? this.hasError,
@@ -60,40 +58,33 @@ class HomeState {
   }
 
   /// 🎯 오늘 자율 지출 총합
-  double get todayVariableSpending => todayExpenseList
-      .where((e) => e.type == ExpenseType.variable)
+  double get todayDiscretionarySpending => todayExpenseList
+      .where((e) => e.type == ExpenseType.discretionary)
       .fold(0.0, (sum, e) => sum + e.amount);
 
   /// 📊 남은 금액, 비율, 색상, 메시지 계산 결과
   SpendingStatus get spendingStatus {
-    final spent = todayVariableSpending;
+    final spent = todayDiscretionarySpending;
     final remaining = dailyBudget - spent;
     final ratio = dailyBudget > 0 ? remaining / dailyBudget : 0.0;
 
-    late String message;
     late Color color;
 
     if (spent == 0) {
-      message = '오늘의 지출을 등록해 주세요 😊';
       color = LightAppColors.primary;
     } else if (ratio > 0.69) {
-      message = '좋아요! 오늘은 아직 여유 있어요 🌿';
       color = LightAppColors.primary;
     } else if (ratio > 0.5) {
-      message = '절반 가까이 사용했어요!\n이제 조금만 신경써볼까요? 🔔';
       color = Colors.green;
     } else if (ratio > 0.0) {
-      message = '조금만 더 쓰면 오늘 예산을 초과해요! ⚠️';
       color = Colors.orange;
     } else {
-      message = '오늘 예산을 초과했어요! 지출을 조절해봐요 ❗';
       color = Colors.red;
     }
 
     return SpendingStatus(
       remainingAmount: remaining,
       spendingRatio: ratio.clamp(0.0, 1.0),
-      message: message,
       color: color,
     );
   }
@@ -109,12 +100,12 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
         final expensesByDate = await ref.watch(coreExpensesProvider.future);
         final today = ref.watch(dateManager);
         final todayExpenses = expensesByDate[today] ?? [];
-        final variableExpenses = expensesByDate.entries
+        final discretionaryExpenses = expensesByDate.entries
             .expand((entry) => entry.value)
-            .where((e) => e.type == ExpenseType.variable)
+            .where((e) => e.type == ExpenseType.discretionary)
             .toList();
 
-        final totalAmount = variableExpenses.fold<double>(
+        final totalAmount = discretionaryExpenses.fold<double>(
           0,
           (sum, e) => sum + e.amount,
         );
@@ -130,7 +121,7 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
         return HomeState(
           dailyBudget: user.dailyBudget,
           todayExpenseList: todayExpenses,
-          monthlyVariableExpenseAvg: average,
+          monthlyDiscretionaryExpenseAvg: average,
           consecutiveAchievementDays: consecutiveDays,
         );
       },
@@ -175,11 +166,11 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
       if (date.month != now.month) break; // 이번 달만 체크
 
       final expenses = expensesByDate[date] ?? [];
-      final totalVariable = expenses
-          .where((e) => e.type == ExpenseType.variable)
+      final totalDiscretionary = expenses
+          .where((e) => e.type == ExpenseType.discretionary)
           .fold(0.0, (sum, e) => sum + e.amount);
 
-      if (totalVariable <= dailyBudget && totalVariable != 0) {
+      if (totalDiscretionary <= dailyBudget && totalDiscretionary != 0) {
         streak += 1;
       } else {
         break;

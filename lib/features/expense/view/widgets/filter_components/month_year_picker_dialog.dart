@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
 class MonthYearPickerDialog extends StatefulWidget {
   final DateTime initialDate;
@@ -29,8 +30,9 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: const Text('월 선택'),
+      title: Text(l10n.selectMonth),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -43,7 +45,10 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
                   widget.lastDate.year - widget.firstDate.year + 1,
                   (index) {
                     final year = widget.firstDate.year + index;
-                    return DropdownMenuItem(value: year, child: Text('$year년'));
+                    return DropdownMenuItem(
+                      value: year,
+                      child: Text(l10n.yearLabel(year)),
+                    );
                   },
                 ),
                 onChanged: (year) {
@@ -60,7 +65,9 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
                   final month = index + 1;
                   return DropdownMenuItem(
                     value: month,
-                    child: Text('${month.toString().padLeft(2, '0')}월'),
+                    child: Text(
+                      l10n.monthLabel(month.toString().padLeft(2, '0')),
+                    ),
                   );
                 }),
                 onChanged: (month) {
@@ -78,13 +85,13 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('취소'),
+          child: Text(l10n.cancel),
         ),
         TextButton(
           onPressed: () {
             Navigator.pop(context, DateTime(selectedYear, selectedMonth));
           },
-          child: const Text('확인'),
+          child: Text(l10n.confirm),
         ),
       ],
     );

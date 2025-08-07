@@ -4,6 +4,7 @@ import 'package:money_fit/core/widgets/expense_add_form.dart';
 import 'package:money_fit/core/widgets/today_expense_list.dart';
 import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
 import 'package:money_fit/features/home/widgets/home_button.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
 class HomeActionButtons extends ConsumerWidget {
   final HomeState homeState;
@@ -17,13 +18,17 @@ class HomeActionButtons extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Expanded(
           child: HomeButton(
-            title: '오늘 지출 보기',
-            subtitle: '총 ${homeState.todayExpenseList.length}건의 지출이 있어요',
+            title: l10n.viewTodaySpending,
+            subtitle: l10n.totalSpendingCount(
+              homeState.todayExpenseList.length,
+            ),
             onPressed: () {
               showModalBottomSheet(
                 isDismissible: false,
@@ -38,8 +43,8 @@ class HomeActionButtons extends ConsumerWidget {
         ),
         Expanded(
           child: HomeButton(
-            title: '지출 등록',
-            subtitle: '새로운 지출을 등록해 주세요',
+            title: l10n.addExpense,
+            subtitle: l10n.addNewExpensePrompt,
             onPressed: () {
               showModalBottomSheet(
                 context: context,

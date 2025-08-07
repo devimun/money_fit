@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 // "필수", "변동" 타입을 나타내는 enum
-enum ExpenseType { required, variable, n }
+enum ExpenseType { essential, discretionary, n }
 
 @immutable
 class Expense {
@@ -60,9 +60,7 @@ class Expense {
       // 날짜만 저장되므로, 자정(UTC)으로 파싱
       date: DateTime.parse(json['date'] as String),
       categoryId: json['category_id'] as String,
-      type: (json['type'] as String) == '필수'
-          ? ExpenseType.required
-          : ExpenseType.variable,
+      type: ExpenseType.values.firstWhere((e) => e.name == json['type'], orElse: () => ExpenseType.n),
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
@@ -76,7 +74,7 @@ class Expense {
       'amount': amount,
       'date': date.toIso8601String().substring(0, 10),
       'category_id': categoryId,
-      'type': type == ExpenseType.required ? '필수' : '변동',
+      'type': type.name,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };

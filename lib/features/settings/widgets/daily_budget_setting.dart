@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
 class DailyBudgetSetting extends ConsumerStatefulWidget {
   const DailyBudgetSetting({super.key});
@@ -22,6 +23,8 @@ class _DailyBudgetSettingState extends ConsumerState<DailyBudgetSetting> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).toString();
     final userSettings = ref.watch(userSettingsProvider);
 
     return userSettings.when(
@@ -29,41 +32,43 @@ class _DailyBudgetSettingState extends ConsumerState<DailyBudgetSetting> {
         return buildSettingsItem(
           icon: Icons.account_balance_wallet_outlined,
           iconColor: Theme.of(context).colorScheme.primary,
-          title: '일일 예산 설정',
+          title: l10n.dailyBudgetSetting,
           trailing: Text(
-            '${NumberFormat('#,###').format(user.dailyBudget)}원',
+            '${l10n.currency}${NumberFormat.currency(locale: locale, symbol: '').format(user.dailyBudget)}',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           onTap: () => _showDailyBudgetDialog(
             user.dailyBudget,
             ref.read(userSettingsProvider.notifier),
+            l10n,
           ),
         );
       },
       loading: () => const CircularProgressIndicator(),
-      error: (error, stack) => Text('오류: $error'),
+      error: (error, stack) => Text(l10n.errorWithMessage(error.toString())),
     );
   }
 
   Future<void> _showDailyBudgetDialog(
     double currentBudget,
     UserSettingsNotifier notifier,
+    AppLocalizations l10n,
   ) async {
     _budgetController.text = NumberFormat('#,###').format(currentBudget);
 
     final result = await showDialog<double>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('일일 예산 설정'),
+        title: Text(l10n.dailyBudgetSetting),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: _budgetController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: '일일 예산 (원)',
-                hintText: '예: 30000',
+              decoration: InputDecoration(
+                labelText: l10n.dailyBudgetLabel,
+                hintText: l10n.enterBudgetPrompt,
               ),
               onChanged: (value) {
                 // 쉼표 제거 후 숫자만 추출
@@ -86,7 +91,7 @@ class _DailyBudgetSettingState extends ConsumerState<DailyBudgetSetting> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('취소'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -96,7 +101,7 @@ class _DailyBudgetSettingState extends ConsumerState<DailyBudgetSetting> {
                 Navigator.pop(context, budget);
               }
             },
-            child: const Text('저장'),
+            child: Text(l10n.save),
           ),
         ],
       ),

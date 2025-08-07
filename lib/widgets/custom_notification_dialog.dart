@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_fit/core/theme/design_palette.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
 class CustomNotificationDialog extends StatelessWidget {
   final VoidCallback onConfirm;
@@ -14,15 +15,17 @@ class CustomNotificationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
       elevation: 0,
       backgroundColor: Colors.transparent,
-      child: contentBox(context, theme),
+      child: contentBox(context, theme, l10n),
     );
   }
 
-  Widget contentBox(BuildContext context, ThemeData theme) {
+  Widget contentBox(BuildContext context, ThemeData theme, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.fromLTRB(8, 24, 8, 24),
       decoration: BoxDecoration(
@@ -41,14 +44,14 @@ class CustomNotificationDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Text(
-            '지출 기록을 잊지 않게 도와드려요',
+            l10n.notificationDialogTitle,
             style: theme.textTheme.displaySmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 16),
           Text(
-            '지출 기록 , 어렵진 않지만 잊어버리기 쉽죠.\n잊지 않도록 매일 알림으로 도와드릴게요. \n알림을 받아 보시겠어요?',
+            l10n.notificationDialogDescription,
             style: theme.textTheme.bodyLarge?.copyWith(
               color: LightAppColors.textSecondary,
             ),
@@ -62,7 +65,7 @@ class CustomNotificationDialog extends StatelessWidget {
                 child: TextButton(
                   onPressed: onDeny,
                   child: Text(
-                    '괜찮아요',
+                    l10n.notificationDialogDeny,
                     style: TextStyle(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
@@ -72,7 +75,7 @@ class CustomNotificationDialog extends StatelessWidget {
               Expanded(
                 child: ElevatedButton(
                   onPressed: onConfirm,
-                  child: Text('네, 좋아요', style: theme.textTheme.labelLarge),
+                  child: Text(l10n.notificationDialogConfirm, style: theme.textTheme.labelLarge),
                 ),
               ),
             ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -15,6 +16,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: Column(
         children: [
@@ -26,21 +29,21 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   _currentPage = page;
                 });
               },
-              children: const [
+              children: [
                 OnboardingPage(
                   imagePath: 'assets/images/onboarding_1.png',
-                  title: '복잡한 가계부는 이제 그만',
-                  description: '매일의 지출을 간편하게 관리하고,\n건강한 소비 습관을 만들어보세요.',
+                  title: l10n.onboardingTitle1,
+                  description: l10n.onboardingDescription1,
                 ),
                 OnboardingPage(
                   imagePath: 'assets/images/onboarding_2.png',
-                  title: '한 눈에 확인 가능한 하루 예산',
-                  description: '오늘 남은 예산을 파악하고,\n계획적인 소비를 시작하세요.',
+                  title: l10n.onboardingTitle2,
+                  description: l10n.onboardingDescription2,
                 ),
                 OnboardingPage(
                   imagePath: 'assets/images/onboarding_3.png',
-                  title: '성취의 기록이 꾸준한 습관으로',
-                  description: '매일의 도전을 성취로 채우고,\n돈 관리의 재미를 느껴보세요.',
+                  title: l10n.onboardingTitle3,
+                  description: l10n.onboardingDescription3,
                   isLastPage: true,
                 ),
               ],
@@ -53,7 +56,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               (index) => buildDot(index, context),
             ),
           ),
-          SizedBox(height: 50),
+          const SizedBox(height: 50),
         ],
       ),
     );
@@ -90,6 +93,8 @@ class OnboardingPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
@@ -122,7 +127,7 @@ class OnboardingPage extends ConsumerWidget {
               },
               style: ElevatedButton.styleFrom(),
               child: Text(
-                '다음으로',
+                l10n.next,
                 style: Theme.of(context).textTheme.labelLarge,
               ),
             ),

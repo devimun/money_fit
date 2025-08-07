@@ -1,8 +1,13 @@
 import 'dart:developer';
-
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:timezone/data/latest_all.dart' as tzdata;
+import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
+import 'package:money_fit/widgets/custom_notification_dialog.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
@@ -16,21 +21,37 @@ class NotificationService {
 
     const DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings(
-          requestAlertPermission: false,
-          requestBadgePermission: false,
-          requestSoundPermission: false,
-        );
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
 
     final InitializationSettings initializationSettings =
         InitializationSettings(
-          android: initializationSettingsAndroid,
-          iOS: initializationSettingsIOS,
-        );
-
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
+    );
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(
+      const AndroidNotificationChannel(
+        'daily_notification_channel_id',
+        'Daily Notifications',
+        description: 'Channel for daily notifications',
+        importance: Importance.max,
+      ),
+    );
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
     // 시간대 초기화
-    tzdata.initializeTimeZones();
+    tz.initializeTimeZones();
+    await _configureLocalTimezone();
+  }
+
+  Future<void> _configureLocalTimezone() async {
+    final String localTimezone = await FlutterNativeTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(localTimezone));
   }
 
   // // 알림 등록 여부 확인을 위한 디버깅용 메서드
@@ -45,28 +66,62 @@ class NotificationService {
   //     log('페이로드: ${notification.payload}');
   //   }
   // }
+  Future<void> showNotificationDialog(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return CustomNotificationDialog(
+          onConfirm: () async {
+            Navigator.of(context).pop();
+            await setupNotifications(l10n, ref);
+          },
+          onDeny: () {
+            Navigator.of(context).pop();
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> setupNotifications(AppLocalizations l10n, WidgetRef ref) async {
+    log('Requesting notification permission...');
+    final permissionStatus = await Permission.notification.request();
+    log('Notification permission status: ${permissionStatus.toString()}');
+
+    if (permissionStatus.isGranted) {
+      await ref.read(userSettingsProvider.notifier).enableNotifications(l10n);
+      await ref
+          .read(notificationServiceProvider)
+          .scheduleDailyNotifications(l10n);
+    } else if (permissionStatus.isPermanentlyDenied) {
+      await openAppSettings();
+    }
+  }
 
   /// 매일 세 번 알림 예약 (오전 10시, 오후 2시, 오후 8시)
-  Future<void> scheduleDailyNotifications() async {
-    await _scheduleNotification(
-      0,
-      10,
-      '좋은 아침이에요 ☀️ 오늘의 첫 지출을 등록해볼까요? 작은 습관이 큰 변화를 만들어요!',
-    );
-    await _scheduleNotification(1, 14, '맛있는 점심 드셨나요? 🍱 이제 지출 내역을 간단히 정리해볼까요?');
-    await _scheduleNotification(
-      2,
-      20,
-      '하루가 벌써 지나갔네요 🌙 오늘의 지출을 차분히 정리하며 하루를 마무리해보세요.',
-    );
+  Future<void> scheduleDailyNotifications(AppLocalizations l10n) async {
+    await _scheduleNotification(0, 10, l10n.notificationBodyMorning, l10n);
+    await _scheduleNotification(1, 14, l10n.notificationBodyAfternoon, l10n);
+    await _scheduleNotification(2, 20, l10n.notificationBodyNight, l10n);
     log('message: Daily notifications scheduled successfully.');
   }
 
   /// 개별 알림 예약
-  Future<void> _scheduleNotification(int id, int hour, String body) async {
+  Future<void> _scheduleNotification(
+    int id,
+    int hour,
+    String body,
+    AppLocalizations l10n,
+  ) async {
     await flutterLocalNotificationsPlugin.zonedSchedule(
       id,
-      '일일 지출 알림',
+      l10n.notificationTitleDaily,
       body,
       _nextInstanceOfHour(hour),
       const NotificationDetails(

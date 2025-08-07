@@ -10,9 +10,9 @@
 //   'necessities': '생필품',
 // };
 
-// final Map<String, String> variableCategoryMap = {
-//   // 자율 지출 (variable)
-//   'eatingOut': '외식',
+// final Map<String, String> discretionaryCategoryMap = {
+//   // 자율 지출 (discretionary)
+//   'eating-out': '외식',
 //   'cafe': '카페/간식',
 //   'shopping': '쇼핑',
 //   'hobby': '취미/여가',

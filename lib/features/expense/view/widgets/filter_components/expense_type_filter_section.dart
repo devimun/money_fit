@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_fit/core/models/expense_model.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
 class ExpenseTypeFilterSection extends StatelessWidget {
   final ExpenseType? selectedExpenseType;
@@ -13,8 +14,9 @@ class ExpenseTypeFilterSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return _buildFormSection(
-      label: '지출 유형',
+      label: l10n.expenseType,
       child: Row(
         children: [
           Expanded(
@@ -22,8 +24,8 @@ class ExpenseTypeFilterSection extends StatelessWidget {
               constraints: const BoxConstraints(minHeight: 36),
               isSelected: [
                 selectedExpenseType == null,
-                selectedExpenseType == ExpenseType.required,
-                selectedExpenseType == ExpenseType.variable,
+                selectedExpenseType == ExpenseType.essential,
+                selectedExpenseType == ExpenseType.discretionary,
               ],
               onPressed: (index) {
                 switch (index) {
@@ -31,10 +33,10 @@ class ExpenseTypeFilterSection extends StatelessWidget {
                     onExpenseTypeChanged(null);
                     break;
                   case 1:
-                    onExpenseTypeChanged(ExpenseType.required);
+                    onExpenseTypeChanged(ExpenseType.essential);
                     break;
                   case 2:
-                    onExpenseTypeChanged(ExpenseType.variable);
+                    onExpenseTypeChanged(ExpenseType.discretionary);
                     break;
                 }
               },
@@ -47,7 +49,7 @@ class ExpenseTypeFilterSection extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
-                    '모든 지출',
+                    l10n.allExpenses,
                     style: Theme.of(context).textTheme.labelMedium?.copyWith(
                       color: selectedExpenseType == null
                           ? Theme.of(context).colorScheme.onPrimary
@@ -58,9 +60,9 @@ class ExpenseTypeFilterSection extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
-                    '필수 지출',
+                    l10n.essentialExpense,
                     style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: selectedExpenseType == ExpenseType.required
+                      color: selectedExpenseType == ExpenseType.essential
                           ? Theme.of(context).colorScheme.onPrimary
                           : null,
                     ),
@@ -69,9 +71,9 @@ class ExpenseTypeFilterSection extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
-                    '자율 지출',
+                    l10n.discretionaryExpense,
                     style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: selectedExpenseType == ExpenseType.variable
+                      color: selectedExpenseType == ExpenseType.discretionary
                           ? Theme.of(context).colorScheme.onPrimary
                           : null,
                     ),
