@@ -70,17 +70,6 @@ DateTime normalizedDate(DateTime date) {
   return DateTime(date.year, date.month, date.day);
 }
 
-String numberFormatting(BuildContext context, double number) {
-  final locale = Localizations.localeOf(context).toString();
-  final isKorean = locale.startsWith('ko');
-
-  final formatter = NumberFormat.currency(
-    locale: locale,
-    symbol: isKorean ? '₩' : null, // null이면 로케일 기본값 사용
-  );
-  return formatter.format(number);
-}
-
 String dateFormatting(BuildContext context, DateTime date) {
   final locale = Localizations.localeOf(context).toString();
   final formatter = DateFormat(
@@ -88,4 +77,27 @@ String dateFormatting(BuildContext context, DateTime date) {
     locale,
   );
   return formatter.format(date);
+}
+
+String formatCurrencyAdaptive(BuildContext context, double value) {
+  final locale = Localizations.localeOf(context).toString();
+  final l10n = AppLocalizations.of(context)!;
+  final currencySymbol = l10n.currency;
+  if (value == value.roundToDouble()) {
+    // 정수면 소수점 없이 포맷
+    final intFormat = NumberFormat.currency(
+      locale: locale,
+      symbol: '',
+      decimalDigits: 0,
+    );
+    return '$currencySymbol${intFormat.format(value)}';
+  } else {
+    // 소수점 있을 땐 2자리까지 표시
+    final decimalFormat = NumberFormat.currency(
+      locale: locale,
+      symbol: '',
+      decimalDigits: 2,
+    );
+    return '$currencySymbol${decimalFormat.format(value)}';
+  }
 }

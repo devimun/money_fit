@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/theme/design_palette.dart';
 import 'package:money_fit/features/home/widgets/circle_progress_painter.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
@@ -51,7 +51,7 @@ class AnimatedCircularBudget extends StatelessWidget {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        '${l10n.currency}${NumberFormat.currency(locale: Localizations.localeOf(context).toString(), symbol: '').format(remainingAmount)}',
+                        formatCurrencyAdaptive(context, remainingAmount),
                         style: Theme.of(context).textTheme.displayLarge,
                       ),
                     ],

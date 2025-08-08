@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/providers/expenses_provider.dart';
 import 'package:money_fit/features/calendar/model/model.dart';
 import 'package:money_fit/core/services/ad_service.dart';
@@ -180,7 +181,7 @@ class CalendarHeader extends ConsumerWidget {
           ),
         if (doubleValue != null)
           Text(
-            '${l10n.currency}${NumberFormat.currency(locale: Localizations.localeOf(context).toString(), symbol: '').format(doubleValue)}',
+            formatCurrencyAdaptive(context, doubleValue),
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
               color: title == l10n.monthlyDiscretionarySpending
                   ? Theme.of(context).colorScheme.primary

@@ -40,7 +40,7 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
     if (widget.initExpense != null) {
       final expense = widget.initExpense!;
       _nameController.text = expense.name;
-      _amountController.text = numberFormatting(context, expense.amount);
+      _amountController.text = expense.amount.toString();
       _selectedCategoryId = expense.categoryId;
       _selectedType = expense.type;
       _isFormValid = true;
@@ -147,8 +147,6 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
                   value = value.replaceAll(' ', '');
                   if (value.isEmpty) {
                     _amountController.text = '';
-                  } else {
-                    // _amountController.text = numberFormatting(context, pay);
                   }
                   _validateForm();
                 },

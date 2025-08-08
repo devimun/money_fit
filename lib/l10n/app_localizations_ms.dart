@@ -67,7 +67,7 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String dailyDiscretionarySpending(Object amount) {
-    return 'Belanja Fleksibel Harian: $amount';
+    return 'Fleksibel Harian: $amount';
   }
 
   @override

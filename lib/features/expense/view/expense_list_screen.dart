@@ -7,7 +7,6 @@ import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/providers/category_providers.dart';
 import 'package:money_fit/features/expense/viewmodel/expense_list_provider.dart';
 import 'package:money_fit/features/expense/view/widgets/expense_filter_bottom_sheet.dart';
-import 'package:money_fit/core/widgets/ads/ad_banner_widget.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 // 날짜별 지출 내역을 리스트 형식으로 보여주는 뷰
@@ -47,7 +46,7 @@ class ExpenseListScreen extends ConsumerWidget {
                 locale,
               ),
 
-              const AdBannerWidget(screenType: ScreenType.expenses),
+              // const AdBannerWidget(screenType: ScreenType.expenses),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -195,11 +194,6 @@ class ExpenseListScreen extends ConsumerWidget {
     List<Category> categories,
     AppLocalizations l10n,
   ) {
-    final locale = Localizations.localeOf(context).toString();
-    final currencyFormat = NumberFormat.currency(
-      locale: locale,
-      symbol: l10n.currency,
-    );
     final categoryName = ref
         .read(categoryProvider.notifier)
         .getCategoryName(context, e.categoryId);
@@ -213,7 +207,7 @@ class ExpenseListScreen extends ConsumerWidget {
         style: Theme.of(context).textTheme.labelSmall,
       ),
       trailing: Text(
-        '-${currencyFormat.format(e.amount)}',
+        '-${formatCurrencyAdaptive(context, e.amount)}',
         style: Theme.of(context).textTheme.bodyMedium,
       ),
     );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
+import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/core/widgets/today_expense_list.dart';
 import 'package:money_fit/features/calendar/model/model.dart';
@@ -103,7 +103,7 @@ class CalendarCell extends ConsumerWidget {
           FittedBox(
             fit: BoxFit.scaleDown,
             child: Text(
-              '${l10n.currency}${NumberFormat.currency(locale: Localizations.localeOf(context).toString(), symbol: '').format(cellData!.discretionaryTotal)}',
+              formatCurrencyAdaptive(context, cellData!.discretionaryTotal),
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.w600,
@@ -115,7 +115,7 @@ class CalendarCell extends ConsumerWidget {
           FittedBox(
             fit: BoxFit.scaleDown,
             child: Text(
-              '${l10n.currency}${NumberFormat.currency(locale: Localizations.localeOf(context).toString(), symbol: '').format(cellData!.essentialTotal)}',
+              formatCurrencyAdaptive(context, cellData!.essentialTotal),
               style: Theme.of(
                 context,
               ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),

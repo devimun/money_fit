@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/theme/app_theme.dart';
 import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
@@ -79,9 +78,6 @@ class HomeMainCard extends StatelessWidget {
     double todaySpending,
     AppLocalizations l10n,
   ) {
-    final locale = Localizations.localeOf(context).toString();
-    final currencyFormat = NumberFormat.currency(locale: locale, symbol: '');
-
     return Column(
       children: [
         Row(
@@ -91,7 +87,7 @@ class HomeMainCard extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               l10n.dailyDiscretionarySpending(
-                '${l10n.currency}${currencyFormat.format(todaySpending)}',
+                formatCurrencyAdaptive(context, todaySpending),
               ),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface,
@@ -107,7 +103,7 @@ class HomeMainCard extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               l10n.dailyBudget(
-                '${l10n.currency}${currencyFormat.format(homeState.dailyBudget)}',
+                formatCurrencyAdaptive(context, homeState.dailyBudget),
               ),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface,
@@ -120,9 +116,6 @@ class HomeMainCard extends StatelessWidget {
   }
 
   Widget _buildStatistics(BuildContext context, AppLocalizations l10n) {
-    final locale = Localizations.localeOf(context).toString();
-    final currencyFormat = NumberFormat.currency(locale: locale, symbol: '');
-
     return IntrinsicHeight(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -140,7 +133,10 @@ class HomeMainCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  '${l10n.currency}${currencyFormat.format(homeState.monthlyDiscretionaryExpenseAvg)}',
+                  formatCurrencyAdaptive(
+                    context,
+                    homeState.monthlyDiscretionaryExpenseAvg,
+                  ),
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Theme.of(context).colorScheme.onSurface,

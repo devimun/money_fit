@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
@@ -24,7 +25,6 @@ class _DailyBudgetSettingState extends ConsumerState<DailyBudgetSetting> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final locale = Localizations.localeOf(context).toString();
     final userSettings = ref.watch(userSettingsProvider);
 
     return userSettings.when(
@@ -34,7 +34,7 @@ class _DailyBudgetSettingState extends ConsumerState<DailyBudgetSetting> {
           iconColor: Theme.of(context).colorScheme.primary,
           title: l10n.dailyBudgetSetting,
           trailing: Text(
-            '${l10n.currency}${NumberFormat.currency(locale: locale, symbol: '').format(user.dailyBudget)}',
+            formatCurrencyAdaptive(context, user.dailyBudget),
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           onTap: () => _showDailyBudgetDialog(

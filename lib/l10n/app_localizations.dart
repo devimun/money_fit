@@ -7,6 +7,7 @@ import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart';
 import 'app_localizations_fil.dart';
+import 'app_localizations_id.dart';
 import 'app_localizations_ko.dart';
 import 'app_localizations_ms.dart';
 
@@ -100,6 +101,7 @@ abstract class AppLocalizations {
     Locale('en'),
     Locale('fil'),
     Locale('ms'),
+    Locale('id'),
   ];
 
   /// No description provided for @appName.
@@ -1014,7 +1016,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en', 'fil', 'ko', 'ms'].contains(locale.languageCode);
+      <String>['en', 'fil', 'id', 'ko', 'ms'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -1027,6 +1029,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsEn();
     case 'fil':
       return AppLocalizationsFil();
+    case 'id':
+      return AppLocalizationsId();
     case 'ko':
       return AppLocalizationsKo();
     case 'ms':

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:money_fit/core/widgets/ads/ad_banner_widget.dart';
 import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
 import 'package:money_fit/features/home/widgets/home_date_header.dart';
 import 'package:money_fit/features/home/widgets/home_main_card.dart';
@@ -84,7 +83,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                const AdBannerWidget(screenType: ScreenType.home),
+                // const AdBannerWidget(screenType: ScreenType.home),
                 const SizedBox(height: 10),
                 const HomeDateHeader(),
                 const SizedBox(height: 10),

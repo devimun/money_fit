@@ -116,11 +116,13 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
   Future<bool> refreshExpensesFor(DateTime date) async {
     final userSettings = await ref.read(userSettingsProvider.future);
 
+    log(date.toString());
     final newMap = await loadMonthlyExpenses(
       userSettings.id,
       date.year,
       date.month,
     );
+    log(newMap.toString());
     if (newMap.isEmpty) {
       return false;
     } else {

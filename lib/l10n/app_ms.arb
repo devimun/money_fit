@@ -17,7 +17,7 @@
   "start": "Mulakan",
   "errorOccurred": "Ralat berlaku: {error}",
   "dateFormat": "d MMMM yyyy, EEEE",
-  "dailyDiscretionarySpending": "Belanja Fleksibel Harian: {amount}",
+  "dailyDiscretionarySpending": "Fleksibel Harian: {amount}",
   "dailyBudget": "Bajet Harian: {amount}",
   "monthlyAvgDiscSpending": "Fleksibel/Hari (Bulanan)",
   "consecutiveDays": "Kejayaan Berturut-turut",

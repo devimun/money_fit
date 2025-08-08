@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:money_fit/core/functions/functions.dart';
 
 import 'package:money_fit/core/providers/category_providers.dart';
@@ -24,12 +23,6 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final locale = Localizations.localeOf(context).toString();
-    final currencyFormat = NumberFormat.currency(
-      locale: locale,
-      symbol: l10n.currency,
-    );
-
     final asyncState = ref.watch(coreExpensesProvider);
     final selectedDate = ref.watch(dateManager);
     final categoryState = ref.watch(categoryProvider);
@@ -46,7 +39,9 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
     );
 
     return BaseBottomSheet(
-      title: l10n.dailyExpenseHistory,
+      title: !isHome
+          ? dateFormatting(context, selectedDate)
+          : l10n.dailyExpenseHistory,
       onClose: onClose,
       child: expenses == null
           ? const Center(child: CircularProgressIndicator())
@@ -145,7 +140,9 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
                         '$typeLabel · $categoryName',
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
-                      trailing: Text('-${currencyFormat.format(e.amount)}'),
+                      trailing: Text(
+                        '-${formatCurrencyAdaptive(context, e.amount)}',
+                      ),
                     ),
                   ),
                 );

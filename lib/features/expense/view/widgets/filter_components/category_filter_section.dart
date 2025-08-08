@@ -77,9 +77,12 @@ class CategoryFilterSection extends ConsumerWidget {
           ),
           ...filteredCategories.map((c) {
             final isSelected = selectedCategoryId == c.id;
+            String label = ref
+                .read(categoryProvider.notifier)
+                .getCategoryName(context, c.id);
             return _buildCategoryChip(
               context,
-              c.name,
+              label,
               isSelected,
               () => onCategoryChanged(c.id),
             );
