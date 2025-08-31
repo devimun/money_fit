@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/models/expense_model.dart';
+import 'package:money_fit/core/services/ad_service.dart';
 import 'package:money_fit/features/expense/viewmodel/expense_list_provider.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
@@ -33,7 +34,10 @@ class FilterActionButtons extends ConsumerWidget {
                   : Theme.of(context).colorScheme.onSecondaryContainer,
             ),
             onPressed: onReset,
-            child: Text(l10n.reset, style: Theme.of(context).textTheme.labelMedium),
+            child: Text(
+              l10n.reset,
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
           ),
         ),
         const SizedBox(width: 12),
@@ -43,7 +47,10 @@ class FilterActionButtons extends ConsumerWidget {
               backgroundColor: Theme.of(context).colorScheme.primary,
             ),
             onPressed: () {
-              ref.read(expenseListProvider.notifier).applyFilters(
+              InterstitialAdManager.instance.logActionAndShowAd();
+              ref
+                  .read(expenseListProvider.notifier)
+                  .applyFilters(
                     searchDate: selectedDate,
                     expenseType: selectedExpenseType,
                     categoryId: selectedCategoryId,
@@ -54,8 +61,8 @@ class FilterActionButtons extends ConsumerWidget {
             child: Text(
               l10n.apply,
               style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
             ),
           ),
         ),

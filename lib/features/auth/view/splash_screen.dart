@@ -2,13 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:money_fit/core/providers/category_providers.dart';
+import 'package:money_fit/core/services/ad_service.dart';
 import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
 
-class SplashScreen extends ConsumerWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends ConsumerState<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // 첫 프레임 렌더링 직후 광고 시도 (레이아웃 안정화 후)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AppOpenAdManager.instance.showAdIfAvailable();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     ref.listen<AsyncValue<HomeState>>(homeViewModelProvider, (previous, next) {
       next.when(
         data: (home) {

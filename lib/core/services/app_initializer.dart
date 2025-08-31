@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter/material.dart';
@@ -29,11 +30,23 @@ class AppInitializer {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    // Remote Config 초기가능(선택)
+    try {
+      final rc = FirebaseRemoteConfig.instance;
+      await rc.setConfigSettings(
+        RemoteConfigSettings(
+          fetchTimeout: Duration(seconds: 10),
+          minimumFetchInterval: Duration(minutes: 30),
+        ),
+      );
+    } catch (_) {}
     // AdMob 초기화
     await AdService.initialize();
 
-    // 전면 광고 미리 로드
-    InterstitialAdManager.instance.loadAd();
+    // App Open Ad 선로딩
+    await AppOpenAdManager.instance.loadAd();
+
+    await InterstitialAdManager.instance.loadAd();
 
     final container = ProviderContainer();
     await container.read(notificationServiceProvider).init();
@@ -45,7 +58,7 @@ class AppInitializer {
       if (expenses.isEmpty) {
         final seeder = DatabaseSeeder(expenseRepository: expenseRepository);
         log('Seeding database with dummy data...');
-        await seeder.seedJulyExpenses(locale: 'id');
+        await seeder.seedJulyExpenses(locale: 'ms');
         log('Database seeding complete.');
       }
     }

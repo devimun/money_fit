@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:money_fit/core/services/ad_service.dart';
 
-enum ScreenType { home, calendar, expenses, settings }
+enum ScreenType { home, calendar, expenses, stats, settings }
 
 /// 배너 광고를 표시하는 위젯 (320x50)
 class AdBannerWidget extends StatefulWidget {

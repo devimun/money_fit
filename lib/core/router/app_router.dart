@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:money_fit/features/auth/view/splash_screen.dart';
+import 'package:money_fit/features/statistics/view/statistics.dart';
 import 'package:money_fit/widgets/bottom_nav_bar.dart';
 import 'package:money_fit/features/home/view/home_screen.dart';
 import 'package:money_fit/features/calendar/view/calendar_screen.dart';
@@ -10,11 +11,19 @@ import 'package:money_fit/features/expense/view/expense_list_screen.dart';
 import 'package:money_fit/features/settings/view/settings_screen.dart';
 import 'package:money_fit/features/onboarding/view/onboarding_screen.dart';
 import 'package:money_fit/features/onboarding/view/daily_budget_setup_screen.dart';
+import 'package:money_fit/core/widgets/update_check_screen.dart';
+
+final rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: '/',
+    navigatorKey: rootNavigatorKey,
+    initialLocation: '/update-check',
     routes: [
+      GoRoute(
+        path: '/update-check',
+        builder: (context, state) => const UpdateCheckScreen(),
+      ),
       GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
       GoRoute(
         path: '/onboarding',
@@ -56,6 +65,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               key: state.pageKey,
               child: const CalendarScreen(),
             ),
+          ),
+          GoRoute(
+            path: '/stats',
+            pageBuilder: (context, state) =>
+                NoTransitionPage(child: StatisticsScreen(), key: state.pageKey),
           ),
           GoRoute(
             path: '/expense_list',

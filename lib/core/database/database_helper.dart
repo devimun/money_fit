@@ -143,20 +143,8 @@ class DatabaseHelper {
         isDeletable: false,
       ),
       Category(
-        id: 'insurance',
-        name: 'insurance',
-        type: ExpenseType.essential,
-        isDeletable: false,
-      ),
-      Category(
         id: 'finance',
         name: 'finance',
-        type: ExpenseType.essential,
-        isDeletable: false,
-      ),
-      Category(
-        id: 'necessities',
-        name: 'necessities',
         type: ExpenseType.essential,
         isDeletable: false,
       ),

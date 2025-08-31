@@ -5,7 +5,7 @@ import 'package:money_fit/core/repositories/expense_repository.dart';
 import 'package:uuid/uuid.dart';
 
 class UserIDD {
-  static const String id = 'e91cacae-b187-4adb-b8f3-ebbda9fbeb2b';
+  static const String id = 'd909247e-5d98-49d5-ad45-c824573532f8';
 }
 
 class DatabaseSeeder {

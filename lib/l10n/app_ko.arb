@@ -36,9 +36,9 @@
   "category_communication": "통신",
   "category_housing": "주거/공과금",
   "category_medical": "의료",
-  "category_insurance": "보험",
+
   "category_finance": "금융",
-  "category_necessities": "생필품",
+
   "categoryEatingOut": "외식",
   "category_cafe": "카페/간식",
   "category_shopping": "쇼핑",
@@ -70,7 +70,7 @@
   "pleaseWait": "잠시만 기다려 주세요...",
   "noDataExists": "데이터가 존재하지 않습니다.",
   "reset": "초기화",
-  "selectMonth": "월 선택",
+  "selectDate": "날짜 선택",
   "yearLabel": "{year}년",
   "monthLabel": "{month}월",
   "confirm": "확인",
@@ -135,8 +135,12 @@
   "sort": "정렬",
   "latest": "최신순",
   "oldest": "오래된순",
+  "statistics": "통계",
+  "spendingByCategory": "카테고리별 지출 현황",
+  "top3ExpensesThisMonth": "이번 달 지출 TOP3",
   "home": "홈",
   "calendar": "캘린더",
+  "stats" : "통계",
   "expense": "지출 내역",
   "settings": "설정",
   "notificationTitleDaily": "일일 지출 알림",
@@ -149,5 +153,13 @@
   "upgraderPrompt": "지금 바로 업데이트하시겠어요?",
   "upgraderButtonLater": "나중에",
   "upgraderButtonUpdate": "업데이트",
-  "upgraderButtonIgnore": "무시"
+  "upgraderButtonIgnore": "무시",
+  "updateRequiredTitle": "업데이트가 필요해요",
+  "updateRequiredBody": "원활한 사용을 위해 최신 버전으로 업데이트 해주세요.",
+  "updateAvailableBody": "새 버전이 있어요. 최신 기능과 개선사항을 만나보세요.",
+  "updateChangelogTitle": "변경 내역",
+  "updateButton": "업데이트",
+  "updateDetails": "자세히",
+  "updateSheetTitle": "업데이트 안내",
+  "updateButtonGo": "업데이트 하러 가기"
 }

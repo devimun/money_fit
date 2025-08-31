@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/providers/expenses_provider.dart';
-import 'package:money_fit/features/calendar/model/model.dart';
 import 'package:money_fit/core/services/ad_service.dart';
+import 'package:money_fit/features/calendar/model/model.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 class CalendarHeader extends ConsumerWidget {
@@ -40,9 +40,6 @@ class CalendarHeader extends ConsumerWidget {
       children: [
         IconButton(
           onPressed: () async {
-            // 전면 광고 표시 (조건부)
-            InterstitialAdManager.instance.showAdIfReady();
-
             // 이전 달의 데이터를 조회한다.
             bool refreshAvailable = await ref
                 .read(coreExpensesProvider.notifier)
@@ -56,6 +53,8 @@ class CalendarHeader extends ConsumerWidget {
                   ),
                 );
               }
+            } else {
+              InterstitialAdManager.instance.logActionAndShowAd();
             }
           },
           icon: const Icon(Icons.arrow_back_ios),
@@ -69,9 +68,6 @@ class CalendarHeader extends ConsumerWidget {
         ),
         IconButton(
           onPressed: () async {
-            // 전면 광고 표시 (조건부)
-            InterstitialAdManager.instance.showAdIfReady();
-
             // 다음 달의 데이터를 조회한다.
             bool refreshAvailable = await ref
                 .read(coreExpensesProvider.notifier)
@@ -85,6 +81,8 @@ class CalendarHeader extends ConsumerWidget {
                   ),
                 );
               }
+            } else {
+              InterstitialAdManager.instance.logActionAndShowAd();
             }
           },
           icon: const Icon(Icons.arrow_forward_ios),

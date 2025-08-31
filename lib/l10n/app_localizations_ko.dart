@@ -129,13 +129,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get category_medical => '의료';
 
   @override
-  String get category_insurance => '보험';
-
-  @override
   String get category_finance => '금융';
-
-  @override
-  String get category_necessities => '생필품';
 
   @override
   String get categoryEatingOut => '외식';
@@ -235,7 +229,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get reset => '초기화';
 
   @override
-  String get selectMonth => '월 선택';
+  String get selectDate => '날짜 선택';
 
   @override
   String yearLabel(Object year) {
@@ -443,10 +437,22 @@ class AppLocalizationsKo extends AppLocalizations {
   String get oldest => '오래된순';
 
   @override
+  String get statistics => '통계';
+
+  @override
+  String get spendingByCategory => '카테고리별 지출 현황';
+
+  @override
+  String get top3ExpensesThisMonth => '이번 달 지출 TOP3';
+
+  @override
   String get home => '홈';
 
   @override
   String get calendar => '캘린더';
+
+  @override
+  String get stats => '통계';
 
   @override
   String get expense => '지출 내역';
@@ -489,4 +495,28 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get upgraderButtonIgnore => '무시';
+
+  @override
+  String get updateRequiredTitle => '업데이트가 필요해요';
+
+  @override
+  String get updateRequiredBody => '원활한 사용을 위해 최신 버전으로 업데이트 해주세요.';
+
+  @override
+  String get updateAvailableBody => '새 버전이 있어요. 최신 기능과 개선사항을 만나보세요.';
+
+  @override
+  String get updateChangelogTitle => '변경 내역';
+
+  @override
+  String get updateButton => '업데이트';
+
+  @override
+  String get updateDetails => '자세히';
+
+  @override
+  String get updateSheetTitle => '업데이트 안내';
+
+  @override
+  String get updateButtonGo => '업데이트 하러 가기';
 }

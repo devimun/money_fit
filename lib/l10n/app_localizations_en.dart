@@ -140,13 +140,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get category_medical => 'Medical';
 
   @override
-  String get category_insurance => 'Insurance';
-
-  @override
   String get category_finance => 'Finance';
-
-  @override
-  String get category_necessities => 'Necessities';
 
   @override
   String get categoryEatingOut => 'Eating Out';
@@ -247,7 +241,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reset => 'Reset';
 
   @override
-  String get selectMonth => 'Select Month';
+  String get selectDate => 'Select Date';
 
   @override
   String yearLabel(Object year) {
@@ -461,10 +455,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get oldest => 'Oldest';
 
   @override
+  String get statistics => 'Statistics';
+
+  @override
+  String get spendingByCategory => 'Spending by Category';
+
+  @override
+  String get top3ExpensesThisMonth => 'Top 3 Expenses This Month';
+
+  @override
   String get home => 'Home';
 
   @override
   String get calendar => 'Calendar';
+
+  @override
+  String get stats => 'Stats';
 
   @override
   String get expense => 'Expense';
@@ -508,4 +514,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get upgraderButtonIgnore => 'Ignore';
+
+  @override
+  String get updateRequiredTitle => 'Update Required';
+
+  @override
+  String get updateRequiredBody =>
+      'Please update to the latest version for the best experience.';
+
+  @override
+  String get updateAvailableBody =>
+      'A new version is available. Enjoy the latest features and improvements.';
+
+  @override
+  String get updateChangelogTitle => 'What\'s New';
+
+  @override
+  String get updateButton => 'Update';
+
+  @override
+  String get updateDetails => 'Details';
+
+  @override
+  String get updateSheetTitle => 'Update Info';
+
+  @override
+  String get updateButtonGo => 'Go to Update';
 }

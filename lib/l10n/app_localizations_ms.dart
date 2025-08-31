@@ -139,13 +139,7 @@ class AppLocalizationsMs extends AppLocalizations {
   String get category_medical => 'Perubatan';
 
   @override
-  String get category_insurance => 'Insurans';
-
-  @override
   String get category_finance => 'Kewangan';
-
-  @override
-  String get category_necessities => 'Keperluan Asas';
 
   @override
   String get categoryEatingOut => 'Makan Luar';
@@ -246,7 +240,7 @@ class AppLocalizationsMs extends AppLocalizations {
   String get reset => 'Tetap Semula';
 
   @override
-  String get selectMonth => 'Pilih Bulan';
+  String get selectDate => 'Pilih Tarikh';
 
   @override
   String yearLabel(Object year) {
@@ -459,10 +453,22 @@ class AppLocalizationsMs extends AppLocalizations {
   String get oldest => 'Terlama';
 
   @override
+  String get statistics => 'Statistics';
+
+  @override
+  String get spendingByCategory => 'Spending by Category';
+
+  @override
+  String get top3ExpensesThisMonth => 'Top 3 Expenses This Month';
+
+  @override
   String get home => 'Utama';
 
   @override
   String get calendar => 'Kalendar';
+
+  @override
+  String get stats => 'Stat';
 
   @override
   String get expense => 'Perbelanjaan';
@@ -506,4 +512,30 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get upgraderButtonIgnore => 'Abaikan';
+
+  @override
+  String get updateRequiredTitle => 'Kemas Kini Diperlukan';
+
+  @override
+  String get updateRequiredBody =>
+      'Sila kemas kini ke versi terkini untuk pengalaman terbaik.';
+
+  @override
+  String get updateAvailableBody =>
+      'Versi baharu tersedia. Nikmati ciri dan penambahbaikan terkini.';
+
+  @override
+  String get updateChangelogTitle => 'Apa Yang Baharu';
+
+  @override
+  String get updateButton => 'Kemas kini';
+
+  @override
+  String get updateDetails => 'Butiran';
+
+  @override
+  String get updateSheetTitle => 'Maklumat Kemas Kini';
+
+  @override
+  String get updateButtonGo => 'Pergi ke Kemas Kini';
 }

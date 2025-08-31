@@ -139,13 +139,7 @@ class AppLocalizationsFil extends AppLocalizations {
   String get category_medical => 'Medikal';
 
   @override
-  String get category_insurance => 'Insurance';
-
-  @override
   String get category_finance => 'Pananalapi';
-
-  @override
-  String get category_necessities => 'Pangangailangan';
 
   @override
   String get categoryEatingOut => 'Kain sa Labas';
@@ -246,7 +240,7 @@ class AppLocalizationsFil extends AppLocalizations {
   String get reset => 'I-reset';
 
   @override
-  String get selectMonth => 'Pumili ng Buwan';
+  String get selectDate => 'Pumili ng Petsa';
 
   @override
   String yearLabel(Object year) {
@@ -459,10 +453,22 @@ class AppLocalizationsFil extends AppLocalizations {
   String get oldest => 'Pinakaluma';
 
   @override
+  String get statistics => 'Statistics';
+
+  @override
+  String get spendingByCategory => 'Spending by Category';
+
+  @override
+  String get top3ExpensesThisMonth => 'Top 3 Expenses This Month';
+
+  @override
   String get home => 'Home';
 
   @override
   String get calendar => 'Kalendaryo';
+
+  @override
+  String get stats => 'Stats';
 
   @override
   String get expense => 'Gastos';
@@ -506,4 +512,30 @@ class AppLocalizationsFil extends AppLocalizations {
 
   @override
   String get upgraderButtonIgnore => 'Huwag pansinin';
+
+  @override
+  String get updateRequiredTitle => 'Kailangang Mag-update';
+
+  @override
+  String get updateRequiredBody =>
+      'Para sa pinakamainam na karanasan, mag-update sa pinakabagong bersyon.';
+
+  @override
+  String get updateAvailableBody =>
+      'May bagong bersyon. Subukan ang pinakabagong features at improvements.';
+
+  @override
+  String get updateChangelogTitle => 'Ano ang Bago';
+
+  @override
+  String get updateButton => 'I-update';
+
+  @override
+  String get updateDetails => 'Detalye';
+
+  @override
+  String get updateSheetTitle => 'Impormasyon sa Update';
+
+  @override
+  String get updateButtonGo => 'Pumunta sa Update';
 }

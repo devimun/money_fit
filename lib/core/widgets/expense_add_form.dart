@@ -7,6 +7,7 @@ import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/models/category_model.dart' as category_model;
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/providers/category_providers.dart';
+import 'package:money_fit/core/services/ad_service.dart';
 import 'package:money_fit/core/widgets/base_bottom_sheet.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 import 'package:uuid/uuid.dart';
@@ -259,6 +260,8 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
   }
 
   Future<void> _handleSubmit(String uid, AppLocalizations l10n) async {
+    // 지출 등록 액션 기록
+    await InterstitialAdManager.instance.logActionAndShowAd();
     final name = _nameController.text.trim();
     final amount =
         double.tryParse(_amountController.text.trim().replaceAll(',', '')) ?? 0;
@@ -284,6 +287,7 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
     );
 
     widget.onSubmit(expense);
+
     Navigator.pop(context);
   }
 }

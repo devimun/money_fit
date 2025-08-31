@@ -36,9 +36,9 @@
   "category_communication": "Komunikasi",
   "category_housing": "Perumahan/Utilitas",
   "category_medical": "Medis",
-  "category_insurance": "Asuransi",
+
   "category_finance": "Keuangan",
-  "category_necessities": "Kebutuhan Pokok",
+
   "categoryEatingOut": "Makan di Luar",
   "category_cafe": "Kafe/Camilan",
   "category_shopping": "Belanja",
@@ -70,7 +70,7 @@
   "pleaseWait": "Mohon tunggu...",
   "noDataExists": "Tidak ada data.",
   "reset": "Atur Ulang",
-  "selectMonth": "Pilih Bulan",
+  "selectDate": "Pilih Tanggal",
   "yearLabel": "{year}",
   "monthLabel": "{month}",
   "confirm": "Konfirmasi",
@@ -135,8 +135,12 @@
   "sort": "Urutkan",
   "latest": "Terbaru",
   "oldest": "Terlama",
+  "statistics": "Statistics",
+  "spendingByCategory": "Spending by Category",
+  "top3ExpensesThisMonth": "Top 3 Expenses This Month",
   "home": "Beranda",
   "calendar": "Kalender",
+  "stats" : "Stat",
   "expense": "Pengeluaran",
   "settings": "Pengaturan",
   "notificationTitleDaily": "Pengingat Pengeluaran Harian",
@@ -149,5 +153,13 @@
   "upgraderPrompt": "Apakah Anda ingin memperbarui sekarang?",
   "upgraderButtonLater": "Nanti",
   "upgraderButtonUpdate": "Perbarui Sekarang",
-  "upgraderButtonIgnore": "Abaikan"
+  "upgraderButtonIgnore": "Abaikan",
+  "updateRequiredTitle": "Pembaruan Diperlukan",
+  "updateRequiredBody": "Harap perbarui ke versi terbaru untuk pengalaman terbaik.",
+  "updateAvailableBody": "Versi baru tersedia. Nikmati fitur dan perbaikan terbaru.",
+  "updateChangelogTitle": "Yang Baru",
+  "updateButton": "Perbarui",
+  "updateDetails": "Detail",
+  "updateSheetTitle": "Info Pembaruan",
+  "updateButtonGo": "Pergi ke Pembaruan"
 }

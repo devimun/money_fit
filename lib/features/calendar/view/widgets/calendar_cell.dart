@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';
+import 'package:money_fit/core/services/ad_service.dart';
 import 'package:money_fit/core/widgets/today_expense_list.dart';
 import 'package:money_fit/features/calendar/model/model.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
@@ -21,6 +22,9 @@ class CalendarCell extends ConsumerWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(12.0),
           onTap: () {
+            // 캘린더 셀 선택 액션 기록
+            InterstitialAdManager.instance.logActionAndShowAd();
+            
             ref.read(dateManager.notifier).changeDate(day);
             showModalBottomSheet(
               isDismissible: false,

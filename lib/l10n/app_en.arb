@@ -36,9 +36,9 @@
   "category_communication": "Communication",
   "category_housing": "Housing/Utilities",
   "category_medical": "Medical",
-  "category_insurance": "Insurance",
+
   "category_finance": "Finance",
-  "category_necessities": "Necessities",
+ 
   "categoryEatingOut": "Eating Out",
   "category_cafe": "Cafe/Snacks",
   "category_shopping": "Shopping",
@@ -70,7 +70,7 @@
   "pleaseWait": "Please wait...",
   "noDataExists": "No data exists.",
   "reset": "Reset",
-  "selectMonth": "Select Month",
+  "selectDate": "Select Date",
   "yearLabel": "{year}",
   "monthLabel": "{month}",
   "confirm": "Confirm",
@@ -135,8 +135,12 @@
   "sort": "Sort",
   "latest": "Latest",
   "oldest": "Oldest",
+  "statistics": "Statistics",
+  "spendingByCategory": "Spending by Category",
+  "top3ExpensesThisMonth": "Top 3 Expenses This Month",
   "home": "Home",
   "calendar": "Calendar",
+  "stats" : "Stats",
   "expense": "Expense",
   "settings": "Settings",
   "notificationTitleDaily": "Daily Expense Reminder",
@@ -149,5 +153,13 @@
   "upgraderPrompt": "Would you like to update now?",
   "upgraderButtonLater": "Later",
   "upgraderButtonUpdate": "Update Now",
-  "upgraderButtonIgnore": "Ignore"
+  "upgraderButtonIgnore": "Ignore",
+  "updateRequiredTitle": "Update Required",
+  "updateRequiredBody": "Please update to the latest version for the best experience.",
+  "updateAvailableBody": "A new version is available. Enjoy the latest features and improvements.",
+  "updateChangelogTitle": "What's New",
+  "updateButton": "Update",
+  "updateDetails": "Details",
+  "updateSheetTitle": "Update Info",
+  "updateButtonGo": "Go to Update"
 }

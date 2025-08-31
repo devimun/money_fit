@@ -3,10 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/router/app_router.dart';
 import 'package:money_fit/core/services/app_initializer.dart';
 import 'package:money_fit/core/theme/app_theme.dart';
-import 'package:money_fit/core/widgets/custom_upgrader_messages.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
-import 'package:upgrader/upgrader.dart';
 
 Future<void> main() async {
   final container = await AppInitializer.initialize();
@@ -40,15 +38,7 @@ class MyApp extends ConsumerWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       builder: (context, child) {
-        return SafeArea(
-          child: UpgradeAlert(
-            upgrader: Upgrader(
-              durationUntilAlertAgain: const Duration(days: 1),
-              messages: CustomUpgraderMessages(context),
-            ),
-            child: child!,
-          ),
-        );
+        return SafeArea(child: child!);
       },
     );
   }

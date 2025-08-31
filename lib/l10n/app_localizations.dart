@@ -320,23 +320,11 @@ abstract class AppLocalizations {
   /// **'Medical'**
   String get category_medical;
 
-  /// No description provided for @category_insurance.
-  ///
-  /// In en, this message translates to:
-  /// **'Insurance'**
-  String get category_insurance;
-
   /// No description provided for @category_finance.
   ///
   /// In en, this message translates to:
   /// **'Finance'**
   String get category_finance;
-
-  /// No description provided for @category_necessities.
-  ///
-  /// In en, this message translates to:
-  /// **'Necessities'**
-  String get category_necessities;
 
   /// No description provided for @categoryEatingOut.
   ///
@@ -524,11 +512,11 @@ abstract class AppLocalizations {
   /// **'Reset'**
   String get reset;
 
-  /// No description provided for @selectMonth.
+  /// No description provided for @selectDate.
   ///
   /// In en, this message translates to:
-  /// **'Select Month'**
-  String get selectMonth;
+  /// **'Select Date'**
+  String get selectDate;
 
   /// No description provided for @yearLabel.
   ///
@@ -914,6 +902,24 @@ abstract class AppLocalizations {
   /// **'Oldest'**
   String get oldest;
 
+  /// No description provided for @statistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get statistics;
+
+  /// No description provided for @spendingByCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending by Category'**
+  String get spendingByCategory;
+
+  /// No description provided for @top3ExpensesThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Top 3 Expenses This Month'**
+  String get top3ExpensesThisMonth;
+
   /// No description provided for @home.
   ///
   /// In en, this message translates to:
@@ -925,6 +931,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Calendar'**
   String get calendar;
+
+  /// No description provided for @stats.
+  ///
+  /// In en, this message translates to:
+  /// **'Stats'**
+  String get stats;
 
   /// No description provided for @expense.
   ///
@@ -1003,6 +1015,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ignore'**
   String get upgraderButtonIgnore;
+
+  /// No description provided for @updateRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Required'**
+  String get updateRequiredTitle;
+
+  /// No description provided for @updateRequiredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Please update to the latest version for the best experience.'**
+  String get updateRequiredBody;
+
+  /// No description provided for @updateAvailableBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A new version is available. Enjoy the latest features and improvements.'**
+  String get updateAvailableBody;
+
+  /// No description provided for @updateChangelogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s New'**
+  String get updateChangelogTitle;
+
+  /// No description provided for @updateButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get updateButton;
+
+  /// No description provided for @updateDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get updateDetails;
+
+  /// No description provided for @updateSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Info'**
+  String get updateSheetTitle;
+
+  /// No description provided for @updateButtonGo.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Update'**
+  String get updateButtonGo;
 }
 
 class _AppLocalizationsDelegate

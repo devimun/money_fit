@@ -212,7 +212,6 @@ class AppTheme {
       labelSmall: AppTextStyles.caption.copyWith(color: secondaryColor),
       titleSmall: AppTextStyles.captionOnDate.copyWith(color: secondaryColor),
       titleMedium: AppTextStyles.bodyL2.copyWith(color: primaryColor),
-      // titleMedium: AppTextStyles
     );
   }
 }

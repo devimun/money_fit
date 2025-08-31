@@ -36,9 +36,9 @@
   "category_communication": "Komunikasyon",
   "category_housing": "Pabahay/Utility",
   "category_medical": "Medikal",
-  "category_insurance": "Insurance",
+
   "category_finance": "Pananalapi",
-  "category_necessities": "Pangangailangan",
+
   "categoryEatingOut": "Kain sa Labas",
   "category_cafe": "Cafe/Meryenda",
   "category_shopping": "Shopping",
@@ -70,7 +70,7 @@
   "pleaseWait": "Pakihintay...",
   "noDataExists": "Walang data.",
   "reset": "I-reset",
-  "selectMonth": "Pumili ng Buwan",
+  "selectDate": "Pumili ng Petsa",
   "yearLabel": "{year}",
   "monthLabel": "{month}",
   "confirm": "Kumpirmahin",
@@ -135,8 +135,12 @@
   "sort": "Pagbukud-bukurin",
   "latest": "Pinakabago",
   "oldest": "Pinakaluma",
+  "statistics": "Statistics",
+  "spendingByCategory": "Spending by Category",
+  "top3ExpensesThisMonth": "Top 3 Expenses This Month",
   "home": "Home",
   "calendar": "Kalendaryo",
+  "stats" : "Stats",
   "expense": "Gastos",
   "settings": "Mga Setting",
   "notificationTitleDaily": "Arawang Paalala sa Gastos",
@@ -149,5 +153,13 @@
   "upgraderPrompt": "Gusto mo bang mag-update ngayon?",
   "upgraderButtonLater": "Mamaya na",
   "upgraderButtonUpdate": "I-update Ngayon",
-  "upgraderButtonIgnore": "Huwag pansinin"
+  "upgraderButtonIgnore": "Huwag pansinin",
+  "updateRequiredTitle": "Kailangang Mag-update",
+  "updateRequiredBody": "Para sa pinakamainam na karanasan, mag-update sa pinakabagong bersyon.",
+  "updateAvailableBody": "May bagong bersyon. Subukan ang pinakabagong features at improvements.",
+  "updateChangelogTitle": "Ano ang Bago",
+  "updateButton": "I-update",
+  "updateDetails": "Detalye",
+  "updateSheetTitle": "Impormasyon sa Update",
+  "updateButtonGo": "Pumunta sa Update"
 }
