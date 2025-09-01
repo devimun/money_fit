@@ -33,6 +33,8 @@
   "notificationDialogConfirm": "네, 좋아요",
   "category_food": "식사",
   "category_traffic": "교통",
+  "category_insurance": "보험",
+  "category_necessities": "생필품",
   "category_communication": "통신",
   "category_housing": "주거/공과금",
   "category_medical": "의료",

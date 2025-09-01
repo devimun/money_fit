@@ -47,6 +47,10 @@ class CategoryProviders extends AsyncNotifier<List<Category>> {
         return l10n.category_food;
       case 'traffic':
         return l10n.category_traffic;
+      case 'insurance':
+        return l10n.category_insurance;
+      case 'necessities':
+        return l10n.category_necessities;
       case 'communication':
         return l10n.category_communication;
       case 'housing':

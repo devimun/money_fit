@@ -132,6 +132,12 @@ class AppLocalizationsId extends AppLocalizations {
   String get category_traffic => 'Transportasi';
 
   @override
+  String get category_insurance => 'Asuransi';
+
+  @override
+  String get category_necessities => 'Kebutuhan Pokok';
+
+  @override
   String get category_communication => 'Komunikasi';
 
   @override

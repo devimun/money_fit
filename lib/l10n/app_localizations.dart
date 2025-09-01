@@ -302,6 +302,18 @@ abstract class AppLocalizations {
   /// **'Traffic'**
   String get category_traffic;
 
+  /// No description provided for @category_insurance.
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance'**
+  String get category_insurance;
+
+  /// No description provided for @category_necessities.
+  ///
+  /// In en, this message translates to:
+  /// **'Necessities'**
+  String get category_necessities;
+
   /// No description provided for @category_communication.
   ///
   /// In en, this message translates to:

@@ -114,29 +114,37 @@ class StatisticsScreen extends ConsumerWidget {
     int index,
     int total,
   ) {
-    final Map<String, Color> defaultColors = {
-      'food': Colors.red,
-      'traffic': Colors.blue,
-      'communication': Colors.green,
-      'housing': Colors.brown,
-      'medical': Colors.deepPurple,
-      'finance': Colors.yellow.shade700,
-      'eating-out': Colors.orange,
-      'cafe': Colors.lime.shade800,
-      'shopping': Colors.pink,
-      'hobby': Colors.teal,
-      'travel': Colors.indigo,
-      'subscribe': Colors.purple,
-      'beauty': Colors.cyan,
-    };
+    // Generate harmonious, theme-driven colors for pie sections while avoiding whites.
+    // We derive hues from the app's primary color and vary them by index.
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    final HSLColor base = HSLColor.fromColor(scheme.primary);
 
-    if (defaultColors.containsKey(categoryId)) {
-      return defaultColors[categoryId]!;
-    } else {
-      final primaryColor = Theme.of(context).primaryColor;
-      return Color.lerp(primaryColor, Colors.white, index / total * 1.5) ??
-          primaryColor;
+    // Keep the number of distinct hue steps within a sensible range for visual harmony
+    final int steps = total < 3 ? 3 : (total > 12 ? 12 : total);
+    final double hueStep = 360.0 / steps;
+
+    // Rotate hue based on index, keep saturation high enough for vibrancy,
+    // and lightness in mid range to ensure no white-ish tones.
+    final double hue = (base.hue + hueStep * index) % 360.0;
+    final double satBase = base.saturation;
+    final double satTweaked = (satBase + 0.08 * ((index % 3) - 1)).clamp(
+      0.55,
+      0.90,
+    );
+
+    double light = 0.48 + ((index % 4) - 1) * 0.04; // 0.44 ~ 0.56
+    light = light.clamp(0.38, 0.60);
+
+    Color color = HSLColor.fromAHSL(1.0, hue, satTweaked, light).toColor();
+
+    // Final guard: ensure it's not too close to white; if so, darken slightly.
+    final double luminance = color.computeLuminance();
+    if (luminance > 0.82) {
+      final HSLColor c = HSLColor.fromColor(color);
+      color = c.withLightness((c.lightness - 0.12).clamp(0.35, 0.60)).toColor();
     }
+
+    return color;
   }
 
   Widget _buildCategorySpendingChart(
@@ -198,101 +206,105 @@ class StatisticsScreen extends ConsumerWidget {
               ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 300,
-                      child: PieChart(
-                        curve: Curves.easeInOut,
-                        duration: Duration(milliseconds: 900),
-                        PieChartData(
-                          sections: expenses.asMap().entries.map((entry) {
-                            final index = entry.key;
-                            final expense = entry.value;
-                            final percentage =
-                                (expense.totalAmount / totalAmount) * 100;
-                            final color = _getCategoryColor(
-                              context,
-                              expense.categoryId,
-                              index,
-                              expenses.length,
-                            );
-                            return PieChartSectionData(
-                              color: color,
-                              value: expense.totalAmount,
-                              title: '${percentage.toStringAsFixed(1)}%',
-                              radius: 80,
-                              titleStyle: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            );
-                          }).toList(),
-                          sectionsSpace: 1,
-                          centerSpaceRadius: 20,
-                        ),
-                      ),
-                    ),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: expenses.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 16,
-                            mainAxisSpacing: 8,
-                            childAspectRatio: 6,
-                          ),
-                      itemBuilder: (context, index) {
-                        final expense = expenses[index];
-                        final color = _getCategoryColor(
-                          context,
-                          expense.categoryId,
-                          index,
-                          expenses.length,
-                        );
-                        return Row(
-                          children: [
-                            Container(
-                              width: 12,
-                              height: 12,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: color,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Text(
-                                  categoryNotifier.getCategoryName(
+                child: expenses.isEmpty
+                    ? Text(l10n.noExpenseData)
+                    : Column(
+                        children: [
+                          SizedBox(
+                            height: 300,
+                            child: PieChart(
+                              curve: Curves.easeInOut,
+                              duration: Duration(milliseconds: 900),
+                              PieChartData(
+                                sections: expenses.asMap().entries.map((entry) {
+                                  final index = entry.key;
+                                  final expense = entry.value;
+                                  final percentage =
+                                      (expense.totalAmount / totalAmount) * 100;
+                                  final color = _getCategoryColor(
                                     context,
                                     expense.categoryId,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.labelMedium,
+                                    index,
+                                    expenses.length,
+                                  );
+                                  return PieChartSectionData(
+                                    color: color,
+                                    value: expense.totalAmount,
+                                    title: '${percentage.toStringAsFixed(1)}%',
+                                    radius: 80,
+                                    titleStyle: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  );
+                                }).toList(),
+                                sectionsSpace: 1,
+                                centerSpaceRadius: 20,
+                              ),
+                            ),
+                          ),
+                          GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: expenses.length,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 16,
+                                  mainAxisSpacing: 8,
+                                  childAspectRatio: 6,
                                 ),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Text(
-                              formatCurrencyAdaptive(
+                            itemBuilder: (context, index) {
+                              final expense = expenses[index];
+                              final color = _getCategoryColor(
                                 context,
-                                expense.totalAmount,
-                              ),
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ],
-                ),
+                                expense.categoryId,
+                                index,
+                                expenses.length,
+                              );
+                              return Row(
+                                children: [
+                                  Container(
+                                    width: 12,
+                                    height: 12,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: color,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Text(
+                                        categoryNotifier.getCategoryName(
+                                          context,
+                                          expense.categoryId,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.labelMedium,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    formatCurrencyAdaptive(
+                                      context,
+                                      expense.totalAmount,
+                                    ),
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodySmall,
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ],
+                      ),
               ),
             ],
           ),

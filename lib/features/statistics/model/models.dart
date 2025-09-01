@@ -86,15 +86,22 @@ class StatisticsModel {
         .map((e) => TotalCategory(categoryId: e.key, totalAmount: e.value))
         .toList();
 
-    // 사용자가 선택한 지출 유형에 따라 top3를 계산할 목록을 선택합니다.
-    final targetExpenses =
-        expenseType == ExpenseType.essential ? essentialExpenses : flexExpenses;
+    // 전체 지출을 기준으로 상위 3개 지출을 계산합니다.
+    final combinedTotals = Map<String, double>.from(essentialTotals);
+    flexTotals.forEach((categoryId, amount) {
+      combinedTotals.update(categoryId, (value) => value + amount,
+          ifAbsent: () => amount);
+    });
+
+    final totalExpenses = combinedTotals.entries
+        .map((e) => TotalCategory(categoryId: e.key, totalAmount: e.value))
+        .toList();
 
     // 지출액이 많은 순으로 목록을 정렬합니다.
-    targetExpenses.sort((a, b) => b.totalAmount.compareTo(a.totalAmount));
+    totalExpenses.sort((a, b) => b.totalAmount.compareTo(a.totalAmount));
 
     // 상위 3개의 지출 내역만 가져옵니다.
-    final top3Expenses = targetExpenses.take(3).toList();
+    final top3Expenses = totalExpenses.take(3).toList();
 
     // 계산된 데이터로 StatisticsModel 인스턴스를 생성하여 반환합니다.
     return StatisticsModel(

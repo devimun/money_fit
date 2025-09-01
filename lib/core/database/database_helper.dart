@@ -12,7 +12,7 @@ class DatabaseHelper {
 
   static Database? _database;
   static const _dbName = 'money_fit.db';
-  static const _dbVersion = 2;
+  static const _dbVersion = 3;
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -42,7 +42,7 @@ class DatabaseHelper {
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 2) {
+    if (oldVersion < 3) {
       await db.execute(
         "UPDATE expenses SET type = 'essential' WHERE type = 'essential'",
       );
@@ -54,6 +54,12 @@ class DatabaseHelper {
       );
       await db.execute(
         "UPDATE categories SET type = 'discretionary' WHERE type = 'discretionary'",
+      );
+      await db.execute(
+        "INSERT INTO categories (id, name, type, is_deletable) SELECT 'insurance', 'insurance', 'essential', 0 WHERE NOT EXISTS (SELECT 1 FROM categories WHERE id = 'insurance')",
+      );
+      await db.execute(
+        "INSERT INTO categories (id, name, type, is_deletable) SELECT 'necessities', 'necessities', 'essential', 0 WHERE NOT EXISTS (SELECT 1 FROM categories WHERE id = 'necessities')",
       );
     }
   }
@@ -139,6 +145,18 @@ class DatabaseHelper {
       Category(
         id: 'medical',
         name: 'medical',
+        type: ExpenseType.essential,
+        isDeletable: false,
+      ),
+      Category(
+        id: 'insurance',
+        name: 'insurance',
+        type: ExpenseType.essential,
+        isDeletable: false,
+      ),
+      Category(
+        id: 'necessities',
+        name: 'necessities',
         type: ExpenseType.essential,
         isDeletable: false,
       ),

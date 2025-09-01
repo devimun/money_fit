@@ -33,6 +33,8 @@
   "notificationDialogConfirm": "Yes, please",
   "category_food": "Food",
   "category_traffic": "Traffic",
+  "category_insurance": "Insurance",
+  "category_necessities": "Necessities",
   "category_communication": "Communication",
   "category_housing": "Housing/Utilities",
   "category_medical": "Medical",

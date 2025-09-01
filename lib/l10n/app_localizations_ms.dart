@@ -130,6 +130,12 @@ class AppLocalizationsMs extends AppLocalizations {
   String get category_traffic => 'Pengangkutan';
 
   @override
+  String get category_insurance => 'Insurans';
+
+  @override
+  String get category_necessities => 'Keperluan Asas';
+
+  @override
   String get category_communication => 'Komunikasi';
 
   @override

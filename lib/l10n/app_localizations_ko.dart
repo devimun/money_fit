@@ -120,6 +120,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get category_traffic => '교통';
 
   @override
+  String get category_insurance => '보험';
+
+  @override
+  String get category_necessities => '생필품';
+
+  @override
   String get category_communication => '통신';
 
   @override

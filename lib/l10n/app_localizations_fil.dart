@@ -130,6 +130,12 @@ class AppLocalizationsFil extends AppLocalizations {
   String get category_traffic => 'Transportasyon';
 
   @override
+  String get category_insurance => 'Insurance';
+
+  @override
+  String get category_necessities => 'Pangangailangan';
+
+  @override
   String get category_communication => 'Komunikasyon';
 
   @override

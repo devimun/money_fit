@@ -131,6 +131,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get category_traffic => 'Traffic';
 
   @override
+  String get category_insurance => 'Insurance';
+
+  @override
+  String get category_necessities => 'Necessities';
+
+  @override
   String get category_communication => 'Communication';
 
   @override
