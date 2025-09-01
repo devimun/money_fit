@@ -162,5 +162,16 @@
   "updateButton": "Kemas kini",
   "updateDetails": "Butiran",
   "updateSheetTitle": "Maklumat Kemas Kini",
-  "updateButtonGo": "Pergi ke Kemas Kini"
+  "updateButtonGo": "Pergi ke Kemas Kini",
+  "review_modal_binary_title": "Adakah anda berpuas hati dengan aplikasi setakat ini?",
+  "review_modal_button_good": "Baik",
+  "review_modal_button_bad": "Kurang baik",
+  "review_positive_title": "Boleh kongsi apa yang anda suka?",
+  "review_positive_button_yes": "Baik",
+  "review_button_later": "Nanti",
+  "review_button_never": "Jangan tunjuk lagi",
+  "review_negative_title": "Beritahu kami apa yang kurang memuaskan.",
+  "review_negative_hint": "Tulis perkara yang menyusahkan.",
+  "review_negative_button_send": "Hantar",
+  "review_thanks_message": "Terima kasih atas maklum balas anda. Kami akan perbaiki."
 }

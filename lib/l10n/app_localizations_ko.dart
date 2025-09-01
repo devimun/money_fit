@@ -525,4 +525,37 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get updateButtonGo => '업데이트 하러 가기';
+
+  @override
+  String get review_modal_binary_title => '지금까지 앱 사용이 만족스러우셨나요?';
+
+  @override
+  String get review_modal_button_good => '좋았어요';
+
+  @override
+  String get review_modal_button_bad => '별로였어요';
+
+  @override
+  String get review_positive_title => '어떤 점이 좋으셨는지 알려주실 수 있을까요?';
+
+  @override
+  String get review_positive_button_yes => '좋아요';
+
+  @override
+  String get review_button_later => '다음에 하기';
+
+  @override
+  String get review_button_never => '다시 보지 않기';
+
+  @override
+  String get review_negative_title => '어떤 점이 별로였는지 말씀해주세요.';
+
+  @override
+  String get review_negative_hint => '불편했던 점을 작성해 주세요.';
+
+  @override
+  String get review_negative_button_send => '보내기';
+
+  @override
+  String get review_thanks_message => '알려주셔서 감사합니다. 개선에 반영할 수 있도록 하겠습니다.';
 }

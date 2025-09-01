@@ -5,6 +5,7 @@ import 'package:money_fit/core/services/app_initializer.dart';
 import 'package:money_fit/core/theme/app_theme.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
+import 'package:money_fit/core/services/review_prompt_service.dart';
 
 Future<void> main() async {
   final container = await AppInitializer.initialize();
@@ -38,6 +39,10 @@ class MyApp extends ConsumerWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       builder: (context, child) {
+        // 최초 실행 후 2일 경과 시 리뷰 요청(광고 우선 정책: 광고 노출 시 쿨다운 갱신됨)
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ReviewPromptService.instance.maybePromptReview(context);
+        });
         return SafeArea(child: child!);
       },
     );

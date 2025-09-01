@@ -20,7 +20,7 @@ class CalendarCellData {
         .where((e) => e.type == ExpenseType.discretionary)
         .fold(0.0, (sum, e) => sum + e.amount);
 
-    final isSuccess = discTotal > 0 && discTotal <= dailyBudget;
+    final isSuccess = discTotal >= 0 && discTotal <= dailyBudget;
 
     return CalendarCellData(
       date: date,

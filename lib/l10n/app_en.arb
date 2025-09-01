@@ -163,5 +163,16 @@
   "updateButton": "Update",
   "updateDetails": "Details",
   "updateSheetTitle": "Update Info",
-  "updateButtonGo": "Go to Update"
+  "updateButtonGo": "Go to Update",
+  "review_modal_binary_title": "Are you satisfied with the app so far?",
+  "review_modal_button_good": "I liked it",
+  "review_modal_button_bad": "Not really",
+  "review_positive_title": "Could you tell us what you liked?",
+  "review_positive_button_yes": "Sure",
+  "review_button_later": "Later",
+  "review_button_never": "Don't show again",
+  "review_negative_title": "Please let us know what didn't work for you.",
+  "review_negative_hint": "Tell us what was inconvenient.",
+  "review_negative_button_send": "Send",
+  "review_thanks_message": "Thank you for your feedback. We'll work to improve it."
 }

@@ -163,5 +163,16 @@
   "updateButton": "I-update",
   "updateDetails": "Detalye",
   "updateSheetTitle": "Impormasyon sa Update",
-  "updateButtonGo": "Pumunta sa Update"
+  "updateButtonGo": "Pumunta sa Update",
+  "review_modal_binary_title": "Kontento ka ba sa app sa ngayon?",
+  "review_modal_button_good": "Maganda",
+  "review_modal_button_bad": "Hindi masyado",
+  "review_positive_title": "Maaari mo bang sabihin kung ano ang nagustuhan mo?",
+  "review_positive_button_yes": "Sige",
+  "review_button_later": "Mamaya na",
+  "review_button_never": "Huwag nang ipakita",
+  "review_negative_title": "Pakisabi kung alin ang hindi maganda sa karanasan mo.",
+  "review_negative_hint": "Isulat ang hindi maginhawa.",
+  "review_negative_button_send": "Ipadala",
+  "review_thanks_message": "Salamat sa iyong feedback. Pagsusumikapan naming pagandahin pa."
 }

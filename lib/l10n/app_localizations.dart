@@ -1075,6 +1075,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Go to Update'**
   String get updateButtonGo;
+
+  /// No description provided for @review_modal_binary_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you satisfied with the app so far?'**
+  String get review_modal_binary_title;
+
+  /// No description provided for @review_modal_button_good.
+  ///
+  /// In en, this message translates to:
+  /// **'I liked it'**
+  String get review_modal_button_good;
+
+  /// No description provided for @review_modal_button_bad.
+  ///
+  /// In en, this message translates to:
+  /// **'Not really'**
+  String get review_modal_button_bad;
+
+  /// No description provided for @review_positive_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Could you tell us what you liked?'**
+  String get review_positive_title;
+
+  /// No description provided for @review_positive_button_yes.
+  ///
+  /// In en, this message translates to:
+  /// **'Sure'**
+  String get review_positive_button_yes;
+
+  /// No description provided for @review_button_later.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get review_button_later;
+
+  /// No description provided for @review_button_never.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t show again'**
+  String get review_button_never;
+
+  /// No description provided for @review_negative_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Please let us know what didn\'t work for you.'**
+  String get review_negative_title;
+
+  /// No description provided for @review_negative_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us what was inconvenient.'**
+  String get review_negative_hint;
+
+  /// No description provided for @review_negative_button_send.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get review_negative_button_send;
+
+  /// No description provided for @review_thanks_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for your feedback. We\'ll work to improve it.'**
+  String get review_thanks_message;
 }
 
 class _AppLocalizationsDelegate

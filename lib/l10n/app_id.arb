@@ -163,5 +163,16 @@
   "updateButton": "Perbarui",
   "updateDetails": "Detail",
   "updateSheetTitle": "Info Pembaruan",
-  "updateButtonGo": "Pergi ke Pembaruan"
+  "updateButtonGo": "Pergi ke Pembaruan",
+  "review_modal_binary_title": "Apakah Anda puas dengan aplikasi sejauh ini?",
+  "review_modal_button_good": "Bagus",
+  "review_modal_button_bad": "Kurang puas",
+  "review_positive_title": "Bisakah beri tahu apa yang Anda suka?",
+  "review_positive_button_yes": "Baik",
+  "review_button_later": "Nanti",
+  "review_button_never": "Jangan tampilkan lagi",
+  "review_negative_title": "Ceritakan bagian yang kurang memuaskan.",
+  "review_negative_hint": "Tulis hal yang merepotkan.",
+  "review_negative_button_send": "Kirim",
+  "review_thanks_message": "Terima kasih atas masukan Anda. Kami akan memperbaikinya."
 }

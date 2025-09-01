@@ -550,4 +550,39 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get updateButtonGo => 'Pergi ke Pembaruan';
+
+  @override
+  String get review_modal_binary_title =>
+      'Apakah Anda puas dengan aplikasi sejauh ini?';
+
+  @override
+  String get review_modal_button_good => 'Bagus';
+
+  @override
+  String get review_modal_button_bad => 'Kurang puas';
+
+  @override
+  String get review_positive_title => 'Bisakah beri tahu apa yang Anda suka?';
+
+  @override
+  String get review_positive_button_yes => 'Baik';
+
+  @override
+  String get review_button_later => 'Nanti';
+
+  @override
+  String get review_button_never => 'Jangan tampilkan lagi';
+
+  @override
+  String get review_negative_title => 'Ceritakan bagian yang kurang memuaskan.';
+
+  @override
+  String get review_negative_hint => 'Tulis hal yang merepotkan.';
+
+  @override
+  String get review_negative_button_send => 'Kirim';
+
+  @override
+  String get review_thanks_message =>
+      'Terima kasih atas masukan Anda. Kami akan memperbaikinya.';
 }

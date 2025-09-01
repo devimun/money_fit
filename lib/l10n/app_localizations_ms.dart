@@ -544,4 +544,40 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get updateButtonGo => 'Pergi ke Kemas Kini';
+
+  @override
+  String get review_modal_binary_title =>
+      'Adakah anda berpuas hati dengan aplikasi setakat ini?';
+
+  @override
+  String get review_modal_button_good => 'Baik';
+
+  @override
+  String get review_modal_button_bad => 'Kurang baik';
+
+  @override
+  String get review_positive_title => 'Boleh kongsi apa yang anda suka?';
+
+  @override
+  String get review_positive_button_yes => 'Baik';
+
+  @override
+  String get review_button_later => 'Nanti';
+
+  @override
+  String get review_button_never => 'Jangan tunjuk lagi';
+
+  @override
+  String get review_negative_title =>
+      'Beritahu kami apa yang kurang memuaskan.';
+
+  @override
+  String get review_negative_hint => 'Tulis perkara yang menyusahkan.';
+
+  @override
+  String get review_negative_button_send => 'Hantar';
+
+  @override
+  String get review_thanks_message =>
+      'Terima kasih atas maklum balas anda. Kami akan perbaiki.';
 }

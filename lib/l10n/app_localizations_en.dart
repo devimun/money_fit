@@ -546,4 +546,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get updateButtonGo => 'Go to Update';
+
+  @override
+  String get review_modal_binary_title =>
+      'Are you satisfied with the app so far?';
+
+  @override
+  String get review_modal_button_good => 'I liked it';
+
+  @override
+  String get review_modal_button_bad => 'Not really';
+
+  @override
+  String get review_positive_title => 'Could you tell us what you liked?';
+
+  @override
+  String get review_positive_button_yes => 'Sure';
+
+  @override
+  String get review_button_later => 'Later';
+
+  @override
+  String get review_button_never => 'Don\'t show again';
+
+  @override
+  String get review_negative_title =>
+      'Please let us know what didn\'t work for you.';
+
+  @override
+  String get review_negative_hint => 'Tell us what was inconvenient.';
+
+  @override
+  String get review_negative_button_send => 'Send';
+
+  @override
+  String get review_thanks_message =>
+      'Thank you for your feedback. We\'ll work to improve it.';
 }

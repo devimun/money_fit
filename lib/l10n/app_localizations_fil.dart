@@ -544,4 +544,40 @@ class AppLocalizationsFil extends AppLocalizations {
 
   @override
   String get updateButtonGo => 'Pumunta sa Update';
+
+  @override
+  String get review_modal_binary_title => 'Kontento ka ba sa app sa ngayon?';
+
+  @override
+  String get review_modal_button_good => 'Maganda';
+
+  @override
+  String get review_modal_button_bad => 'Hindi masyado';
+
+  @override
+  String get review_positive_title =>
+      'Maaari mo bang sabihin kung ano ang nagustuhan mo?';
+
+  @override
+  String get review_positive_button_yes => 'Sige';
+
+  @override
+  String get review_button_later => 'Mamaya na';
+
+  @override
+  String get review_button_never => 'Huwag nang ipakita';
+
+  @override
+  String get review_negative_title =>
+      'Pakisabi kung alin ang hindi maganda sa karanasan mo.';
+
+  @override
+  String get review_negative_hint => 'Isulat ang hindi maginhawa.';
+
+  @override
+  String get review_negative_button_send => 'Ipadala';
+
+  @override
+  String get review_thanks_message =>
+      'Salamat sa iyong feedback. Pagsusumikapan naming pagandahin pa.';
 }
