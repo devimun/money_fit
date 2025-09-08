@@ -12,7 +12,7 @@ class DatabaseHelper {
 
   static Database? _database;
   static const _dbName = 'money_fit.db';
-  static const _dbVersion = 3;
+  static const _dbVersion = 4;
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -62,6 +62,27 @@ class DatabaseHelper {
         "INSERT INTO categories (id, name, type, is_deletable) SELECT 'necessities', 'necessities', 'essential', 0 WHERE NOT EXISTS (SELECT 1 FROM categories WHERE id = 'necessities')",
       );
     }
+    if (oldVersion < 4) {
+      await db.execute('ALTER TABLE users RENAME TO users_old');
+      await db.execute('''
+        CREATE TABLE users (
+          id TEXT PRIMARY KEY,
+          email TEXT,
+          display_name TEXT,
+          budget REAL NOT NULL DEFAULT 50000.0,
+          budget_type TEXT NOT NULL DEFAULT 'daily',
+          is_dark_mode INTEGER NOT NULL DEFAULT 0,
+          notifications_enabled INTEGER NOT NULL DEFAULT 1,
+          created_at TEXT NOT NULL,
+          updated_at TEXT NOT NULL
+        )
+      ''');
+      await db.execute('''
+        INSERT INTO users (id, email, display_name, budget, is_dark_mode, notifications_enabled, created_at, updated_at)
+        SELECT id, email, display_name, daily_budget, is_dark_mode, notifications_enabled, created_at, updated_at FROM users_old
+      ''');
+      await db.execute('DROP TABLE users_old');
+    }
   }
 
   // 테이블 생성 스크립트
@@ -71,7 +92,8 @@ class DatabaseHelper {
         id TEXT PRIMARY KEY,
         email TEXT,
         display_name TEXT,
-        daily_budget REAL NOT NULL DEFAULT 50000.0,
+        budget REAL NOT NULL DEFAULT 50000.0,
+        budget_type TEXT NOT NULL DEFAULT 'daily',
         is_dark_mode INTEGER NOT NULL DEFAULT 0,
         notifications_enabled INTEGER NOT NULL DEFAULT 1,
         created_at TEXT NOT NULL,

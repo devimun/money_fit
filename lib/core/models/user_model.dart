@@ -1,11 +1,14 @@
 import 'package:flutter/foundation.dart';
 
+enum BudgetType { daily, monthly }
+
 @immutable
 class User {
   final String id;
   final String? email;
   final String? displayName;
-  final double dailyBudget;
+  final double budget;
+  final BudgetType budgetType;
   final bool isDarkMode;
   final bool notificationsEnabled;
   final DateTime createdAt;
@@ -15,7 +18,8 @@ class User {
     required this.id,
     this.email,
     this.displayName,
-    required this.dailyBudget,
+    required this.budget,
+    required this.budgetType,
     required this.isDarkMode,
     required this.notificationsEnabled,
     required this.createdAt,
@@ -26,7 +30,8 @@ class User {
     String? id,
     String? email,
     String? displayName,
-    double? dailyBudget,
+    double? budget,
+    BudgetType? budgetType,
     bool? isDarkMode,
     bool? notificationsEnabled,
     DateTime? createdAt,
@@ -36,7 +41,8 @@ class User {
       id: id ?? this.id,
       email: email ?? this.email,
       displayName: displayName ?? this.displayName,
-      dailyBudget: dailyBudget ?? this.dailyBudget,
+      budget: budget ?? this.budget,
+      budgetType: budgetType ?? this.budgetType,
       isDarkMode: isDarkMode ?? this.isDarkMode,
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
       createdAt: createdAt ?? this.createdAt,
@@ -49,7 +55,10 @@ class User {
       id: json['id'] as String,
       email: json['email'] as String?,
       displayName: json['display_name'] as String?,
-      dailyBudget: (json['daily_budget'] as num).toDouble(),
+      budget: ((json['budget'] ?? json['daily_budget']) as num).toDouble(),
+      budgetType: json['budget_type'] == 'monthly'
+          ? BudgetType.monthly
+          : BudgetType.daily,
       // 로컬 DB에서는 INTEGER, Supabase에서는 BOOLEAN일 수 있으므로 유연하게 처리
       isDarkMode: json['is_dark_mode'] is bool
           ? json['is_dark_mode']
@@ -67,7 +76,8 @@ class User {
       'id': id,
       'email': email,
       'display_name': displayName,
-      'daily_budget': dailyBudget,
+      'budget': budget,
+      'budget_type': budgetType.name,
       'is_dark_mode': isDarkMode ? 1 : 0,
       'notifications_enabled': notificationsEnabled ? 1 : 0,
       'created_at': createdAt.toIso8601String(),

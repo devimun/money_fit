@@ -39,11 +39,14 @@ class AppLocalizationsId extends AppLocalizations {
   String get dailyBudgetSetupTitle => 'Atur Anggaran Anda';
 
   @override
-  String get dailyBudgetSetupDescription =>
-      'Atur anggaran belanja harian Anda.\nIni adalah jumlah bebas yang bisa Anda gunakan,\ndi luar biaya tetap (tagihan, medis, dll).';
+  String get budgetSetupDescription =>
+      'Atur anggaran belanja Anda.\nIni adalah jumlah bebas yang bisa Anda gunakan,\ndi luar biaya tetap (tagihan, medis, dll).';
 
   @override
-  String get dailyBudgetLabel => 'Anggaran Harian';
+  String get dailyBudgetLabel => 'Anggaran Harian (IDR)';
+
+  @override
+  String get monthlyBudgetLabel => 'Anggaran Bulanan (IDR)';
 
   @override
   String get enterBudgetPrompt => 'Silakan masukkan anggaran Anda.';
@@ -67,14 +70,17 @@ class AppLocalizationsId extends AppLocalizations {
   String get dateFormat => 'd MMMM yyyy, EEEE';
 
   @override
-  String dailyDiscretionarySpending(Object amount) {
-    return 'Diskresioner Harian: $amount';
-  }
+  String get dailyDiscretionarySpending => 'Pengeluaran Diskresioner Harian: ';
 
   @override
-  String dailyBudget(Object amount) {
-    return 'Anggaran Harian: $amount';
-  }
+  String get monthlyDiscretionarySpending2 =>
+      'Pengeluaran Diskresioner Bulanan: ';
+
+  @override
+  String get dailyBudget => 'Anggaran Diskresioner Harian: ';
+
+  @override
+  String get monthlyBudget => 'Anggaran Diskresioner Bulanan: ';
 
   @override
   String get monthlyAvgDiscSpending => 'Disk/Hari (Bulan)';
@@ -265,7 +271,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get confirm => 'Konfirmasi';
 
   @override
-  String get dailyBudgetSetting => 'Pengaturan Anggaran Harian';
+  String get budgetSetting => 'Pengaturan Anggaran';
 
   @override
   String get save => 'Simpan';
@@ -477,6 +483,12 @@ class AppLocalizationsId extends AppLocalizations {
   String get home => 'Beranda';
 
   @override
+  String get daily => 'Harian';
+
+  @override
+  String get monthly => 'Bulanan';
+
+  @override
   String get calendar => 'Kalender';
 
   @override
@@ -585,4 +597,24 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get review_thanks_message =>
       'Terima kasih atas masukan Anda. Kami akan memperbaikinya.';
+
+  @override
+  String get monthlyExpenseMessageZero =>
+      'Belum ada pengeluaran diskresioner bulan ini!';
+
+  @override
+  String get monthlyExpenseMessageGood =>
+      'Anggaran Anda terkelola dengan baik bulan ini!';
+
+  @override
+  String get monthlyExpenseMessageHalf =>
+      'Anda telah menggunakan sekitar setengah dari anggaran Anda bulan ini.';
+
+  @override
+  String get monthlyExpenseMessageNearLimit =>
+      'Anggaran Anda hampir habis untuk bulan ini.';
+
+  @override
+  String get monthlyExpenseMessageOverLimit =>
+      'Anda telah melebihi anggaran Anda untuk bulan ini.';
 }

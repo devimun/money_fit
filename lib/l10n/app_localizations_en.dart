@@ -39,11 +39,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dailyBudgetSetupTitle => 'Set Your Budget';
 
   @override
-  String get dailyBudgetSetupDescription =>
-      'Set your daily discretionary spending budget.\nDiscretionary spending is the amount you can use freely, excluding fixed costs like bills, medical expenses, housing, and insurance.';
+  String get budgetSetupDescription =>
+      'Set your discretionary spending budget.\nDiscretionary spending is the amount you can use freely, excluding fixed costs like bills, medical expenses, housing, and insurance.';
 
   @override
   String get dailyBudgetLabel => 'Daily Budget';
+
+  @override
+  String get monthlyBudgetLabel => 'Monthly Budget';
 
   @override
   String get enterBudgetPrompt => 'Please enter your budget.';
@@ -66,14 +69,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dateFormat => 'MMMM d, yyyy EEEE';
 
   @override
-  String dailyDiscretionarySpending(Object amount) {
-    return 'Daily Discretionary Spending: $amount';
-  }
+  String get dailyDiscretionarySpending => 'Daily Discretionary Spending: ';
 
   @override
-  String dailyBudget(Object amount) {
-    return 'Daily Budget: $amount';
-  }
+  String get monthlyDiscretionarySpending2 =>
+      'Monthly Discretionary Spending: ';
+
+  @override
+  String get dailyBudget => 'Daily Discretionary Budget: ';
+
+  @override
+  String get monthlyBudget => 'Monthly Discretionary Budget: ';
 
   @override
   String get monthlyAvgDiscSpending => 'Disc/Day (Month)';
@@ -263,7 +269,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get confirm => 'Confirm';
 
   @override
-  String get dailyBudgetSetting => 'Daily Budget Setting';
+  String get budgetSetting => 'Budget Setting';
 
   @override
   String get save => 'Save';
@@ -473,6 +479,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home => 'Home';
 
   @override
+  String get daily => 'Daily';
+
+  @override
+  String get monthly => 'Monthly';
+
+  @override
   String get calendar => 'Calendar';
 
   @override
@@ -582,4 +594,24 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get review_thanks_message =>
       'Thank you for your feedback. We\'ll work to improve it.';
+
+  @override
+  String get monthlyExpenseMessageZero =>
+      'No discretionary spending this month yet!';
+
+  @override
+  String get monthlyExpenseMessageGood =>
+      'Your budget is well-managed this month!';
+
+  @override
+  String get monthlyExpenseMessageHalf =>
+      'You\'ve used about half of your budget this month.';
+
+  @override
+  String get monthlyExpenseMessageNearLimit =>
+      'Your budget is almost used up for this month.';
+
+  @override
+  String get monthlyExpenseMessageOverLimit =>
+      'You have exceeded your budget for this month.';
 }

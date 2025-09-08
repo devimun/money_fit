@@ -10,7 +10,7 @@ import 'package:money_fit/features/calendar/view/calendar_screen.dart';
 import 'package:money_fit/features/expense/view/expense_list_screen.dart';
 import 'package:money_fit/features/settings/view/settings_screen.dart';
 import 'package:money_fit/features/onboarding/view/onboarding_screen.dart';
-import 'package:money_fit/features/onboarding/view/daily_budget_setup_screen.dart';
+import 'package:money_fit/features/onboarding/view/budget_setup_screen.dart';
 import 'package:money_fit/core/widgets/update_check_screen.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -36,7 +36,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/daily_budget_setup',
         pageBuilder: (context, state) => NoTransitionPage(
           key: state.pageKey,
-          child: const DailyBudgetSetupScreen(),
+          child: const BudgetSetupScreen(),
         ),
       ),
       ShellRoute(
@@ -68,8 +68,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/stats',
-            pageBuilder: (context, state) =>
-                NoTransitionPage(child: StatisticsScreen(), key: state.pageKey),
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const StatisticsScreen(),
+            ),
           ),
           GoRoute(
             path: '/expense_list',

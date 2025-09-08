@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:money_fit/core/widgets/ads/ad_banner_widget.dart';
 import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
 import 'package:money_fit/features/home/widgets/home_date_header.dart';
 import 'package:money_fit/features/home/widgets/home_main_card.dart';
 import 'package:money_fit/features/home/widgets/home_action_buttons.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 import 'package:money_fit/widgets/custom_notification_dialog.dart';
-
 import 'package:money_fit/core/services/notification_service.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
@@ -21,6 +19,11 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   bool _hasShownDialog = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void didChangeDependencies() {
@@ -84,7 +87,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                const AdBannerWidget(screenType: ScreenType.home),
+                // const AdBannerWidget(screenType: ScreenType.home),
                 const SizedBox(height: 10),
                 const HomeDateHeader(),
                 const SizedBox(height: 10),

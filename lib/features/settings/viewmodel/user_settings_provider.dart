@@ -46,8 +46,8 @@ class UserSettingsNotifier extends AsyncNotifier<User> {
     sb.User? supabaseUser = _supabaseClient.auth.currentUser;
     if (supabaseUser == null) {
       log('No existing Supabase user. Attempting anonymous sign-in...');
-      final sb.AuthResponse response =
-          await _supabaseClient.auth.signInAnonymously();
+      final sb.AuthResponse response = await _supabaseClient.auth
+          .signInAnonymously();
       supabaseUser = response.user;
       if (supabaseUser == null) {
         log('Anonymous sign-in failed.');
@@ -64,7 +64,8 @@ class UserSettingsNotifier extends AsyncNotifier<User> {
       id: userId,
       email: null,
       displayName: null,
-      dailyBudget: 0.0,
+      budget: 0.0,
+      budgetType: BudgetType.daily,
       isDarkMode: false,
       notificationsEnabled: false,
       createdAt: DateTime.now(),
@@ -75,12 +76,13 @@ class UserSettingsNotifier extends AsyncNotifier<User> {
     return newUser;
   }
 
-  Future<void> updateDailyBudget(double newBudget) async {
+  Future<void> updateBudget(BudgetType budgetType, double newBudget) async {
     final currentUser = state.value;
     if (currentUser == null) return;
 
     final updatedUser = currentUser.copyWith(
-      dailyBudget: newBudget,
+      budgetType: budgetType,
+      budget: newBudget,
       updatedAt: DateTime.now(),
     );
     state = AsyncValue.data(updatedUser);
@@ -170,7 +172,8 @@ class UserSettingsNotifier extends AsyncNotifier<User> {
 }
 
 /// UserSettingsNotifier를 제공하는 StateNotifierProvider입니다.
-final userSettingsProvider =
-    AsyncNotifierProvider<UserSettingsNotifier, User>(() {
-  return UserSettingsNotifier();
-});
+final userSettingsProvider = AsyncNotifierProvider<UserSettingsNotifier, User>(
+  () {
+    return UserSettingsNotifier();
+  },
+);

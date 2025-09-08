@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:money_fit/features/settings/widgets/daily_budget_setting.dart';
+import 'package:money_fit/features/settings/widgets/budget_setting.dart';
 import 'package:money_fit/features/settings/widgets/notification_setting.dart';
 import 'package:money_fit/features/settings/widgets/dark_mode_setting.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
@@ -17,7 +17,7 @@ class BasicSettingsSection extends StatelessWidget {
       children: [
         buildSectionTitle(l10n.basicSettings, Theme.of(context).textTheme),
         buildSettingsCard([
-          const DailyBudgetSetting(),
+          const BudgetSetting(),
           const NotificationSetting(),
           const DarkModeSetting(),
         ]),

@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -31,39 +31,6 @@ class _AppInformationSectionState extends State<AppInformationSection> {
   }
 
   // 스토어 리뷰를 위한 URL 실행 함수
-  void _launchReviewURL() async {
-    const androidAppId = 'com.moneyfitapp.app'; // 예시 ID
-    const iOSAppId = '6749416452';
-
-    final Uri url;
-
-    if (Platform.isAndroid) {
-      url = Uri.parse('market://details?id=$androidAppId');
-    } else if (Platform.isIOS) {
-      url = Uri.parse(
-        'https://apps.apple.com/app/id$iOSAppId?action=write-review',
-      );
-    } else {
-      // 지원하지 않는 플랫폼
-      return;
-    }
-
-    try {
-      if (await canLaunchUrl(url)) {
-        await launchUrl(url, mode: LaunchMode.externalApplication);
-      } else {
-        // 스토어 앱을 직접 열 수 없을 경우 웹 URL로 시도
-        final webUrl = Uri.parse(
-          'https://play.google.com/store/apps/details?id=$androidAppId',
-        );
-        if (await canLaunchUrl(webUrl)) {
-          await launchUrl(webUrl, mode: LaunchMode.externalApplication);
-        }
-      }
-    } catch (e) {
-      // 에러 처리 (예: 사용자에게 알림 표시)
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +59,7 @@ class _AppInformationSectionState extends State<AppInformationSection> {
             icon: Icons.rate_review_outlined,
             iconColor: iconColor,
             title: l10n.writeReview,
-            onTap: _launchReviewURL,
+            onTap: launchReviewURL,
             trailing: const Icon(
               Icons.arrow_forward_ios,
               size: 16,

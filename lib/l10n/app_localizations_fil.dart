@@ -39,11 +39,14 @@ class AppLocalizationsFil extends AppLocalizations {
   String get dailyBudgetSetupTitle => 'Itakda ang Iyong Badyet';
 
   @override
-  String get dailyBudgetSetupDescription =>
+  String get budgetSetupDescription =>
       'Itakda ang iyong budget para sa gastusing flexible.\nIto ang halaga na malaya mong magagamit, hindi kasama ang mga bayarin, gastusing medikal, pabahay, at insurance.';
 
   @override
-  String get dailyBudgetLabel => 'Arawang Badyet';
+  String get dailyBudgetLabel => 'Arawang Badyet (PHP)';
+
+  @override
+  String get monthlyBudgetLabel => 'Badyet Buwanang (PHP)';
 
   @override
   String get enterBudgetPrompt => 'Ilagay ang iyong badyet.';
@@ -66,14 +69,18 @@ class AppLocalizationsFil extends AppLocalizations {
   String get dateFormat => 'MMMM d, yyyy EEEE';
 
   @override
-  String dailyDiscretionarySpending(Object amount) {
-    return 'Gastusing Flexible: $amount';
-  }
+  String get dailyDiscretionarySpending =>
+      'Araw-araw na Gastusing Diskresyonaryo: ';
 
   @override
-  String dailyBudget(Object amount) {
-    return 'Arawang Badyet: $amount';
-  }
+  String get monthlyDiscretionarySpending2 =>
+      'Buwanang Gastusing Diskresyonaryo: ';
+
+  @override
+  String get dailyBudget => 'Araw-araw na Badyet na Diskresyonaryo: ';
+
+  @override
+  String get monthlyBudget => 'Buwanang Badyet na Diskresyonaryo: ';
 
   @override
   String get monthlyAvgDiscSpending => 'Gastos/Araw (Buwan)';
@@ -262,7 +269,7 @@ class AppLocalizationsFil extends AppLocalizations {
   String get confirm => 'Kumpirmahin';
 
   @override
-  String get dailyBudgetSetting => 'Setting ng Arawang Badyet';
+  String get budgetSetting => 'Pag-set ng Badyet';
 
   @override
   String get save => 'I-save';
@@ -471,6 +478,12 @@ class AppLocalizationsFil extends AppLocalizations {
   String get home => 'Home';
 
   @override
+  String get daily => 'Araw-araw';
+
+  @override
+  String get monthly => 'Buwanan';
+
+  @override
   String get calendar => 'Kalendaryo';
 
   @override
@@ -580,4 +593,24 @@ class AppLocalizationsFil extends AppLocalizations {
   @override
   String get review_thanks_message =>
       'Salamat sa iyong feedback. Pagsusumikapan naming pagandahin pa.';
+
+  @override
+  String get monthlyExpenseMessageZero =>
+      'Wala pang discretionary spending ngayong buwan!';
+
+  @override
+  String get monthlyExpenseMessageGood =>
+      'Mahusay ang pamamahala ng iyong badyet ngayong buwan!';
+
+  @override
+  String get monthlyExpenseMessageHalf =>
+      'Ginamit mo na ang halos kalahati ng iyong badyet ngayong buwan.';
+
+  @override
+  String get monthlyExpenseMessageNearLimit =>
+      'Halos maubos na ang iyong badyet para sa buwang ito.';
+
+  @override
+  String get monthlyExpenseMessageOverLimit =>
+      'Nalagpasan mo na ang iyong badyet para sa buwang ito.';
 }

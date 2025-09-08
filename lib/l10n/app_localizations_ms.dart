@@ -39,11 +39,14 @@ class AppLocalizationsMs extends AppLocalizations {
   String get dailyBudgetSetupTitle => 'Tetapkan Bajet Anda';
 
   @override
-  String get dailyBudgetSetupDescription =>
-      'Tetapkan bajet belanja fleksibel harian anda.\nBelanja fleksibel ialah wang yang boleh anda guna secara bebas, tidak termasuk kos tetap seperti bil, perubatan, perumahan, dan insurans.';
+  String get budgetSetupDescription =>
+      'Tetapkan bajet belanja fleksibel anda.\nBelanja fleksibel ialah wang yang boleh anda guna secara bebas, tidak termasuk kos tetap seperti bil, perubatan, perumahan, dan insurans.';
 
   @override
-  String get dailyBudgetLabel => 'Bajet Harian';
+  String get dailyBudgetLabel => 'Bajet Harian(MYR)';
+
+  @override
+  String get monthlyBudgetLabel => 'Bajet Bulanan (MYR)';
 
   @override
   String get enterBudgetPrompt => 'Masukkan bajet anda.';
@@ -66,14 +69,18 @@ class AppLocalizationsMs extends AppLocalizations {
   String get dateFormat => 'd MMMM yyyy, EEEE';
 
   @override
-  String dailyDiscretionarySpending(Object amount) {
-    return 'Fleksibel Harian: $amount';
-  }
+  String get dailyDiscretionarySpending =>
+      'Perbelanjaan Diskresionari Harian: ';
 
   @override
-  String dailyBudget(Object amount) {
-    return 'Bajet Harian: $amount';
-  }
+  String get monthlyDiscretionarySpending2 =>
+      'Perbelanjaan Diskresionari Bulanan: ';
+
+  @override
+  String get dailyBudget => 'Belanjawan Diskresionari Harian: ';
+
+  @override
+  String get monthlyBudget => 'Belanjawan Diskresionari Bulanan: ';
 
   @override
   String get monthlyAvgDiscSpending => 'Fleksibel/Hari (Bulanan)';
@@ -185,7 +192,7 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String editDeleteExpensePrompt(Object expenseName) {
-    return 'Apa yang anda ingin lakukan dengan belanja \"$expenseName\"?';
+    return 'Apa yang anda ingin lakukan dengan belanja \"$expenseName\"';
   }
 
   @override
@@ -262,7 +269,7 @@ class AppLocalizationsMs extends AppLocalizations {
   String get confirm => 'Sahkan';
 
   @override
-  String get dailyBudgetSetting => 'Tetapan Bajet Harian';
+  String get budgetSetting => 'Tetapan Bajet';
 
   @override
   String get save => 'Simpan';
@@ -471,6 +478,12 @@ class AppLocalizationsMs extends AppLocalizations {
   String get home => 'Utama';
 
   @override
+  String get daily => 'Harian';
+
+  @override
+  String get monthly => 'Bulanan';
+
+  @override
   String get calendar => 'Kalendar';
 
   @override
@@ -580,4 +593,24 @@ class AppLocalizationsMs extends AppLocalizations {
   @override
   String get review_thanks_message =>
       'Terima kasih atas maklum balas anda. Kami akan perbaiki.';
+
+  @override
+  String get monthlyExpenseMessageZero =>
+      'Tiada perbelanjaan budi bicara bulan ini lagi!';
+
+  @override
+  String get monthlyExpenseMessageGood =>
+      'Belanjawan anda diurus dengan baik bulan ini!';
+
+  @override
+  String get monthlyExpenseMessageHalf =>
+      'Anda telah menggunakan kira-kira separuh daripada belanjawan anda bulan ini.';
+
+  @override
+  String get monthlyExpenseMessageNearLimit =>
+      'Belanjawan anda hampir habis untuk bulan ini.';
+
+  @override
+  String get monthlyExpenseMessageOverLimit =>
+      'Anda telah melebihi belanjawan anda untuk bulan ini.';
 }

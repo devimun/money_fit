@@ -27,13 +27,13 @@ class CircleProgressPainter extends CustomPainter {
     canvas.drawCircle(center, radius, backgroundPaint);
 
     const double fullCircle = 2 * 3.141592;
-    const double gapRatio = 0.06; // 빈 공간 비율 (예: 2%)
+    const double gapRatio = 0.06;
     final gap = fullCircle * gapRatio;
 
     double startAngle = -3.141592 / 2 + gap / 2;
     double sweepAngle;
 
-    if (progress == 1.0) {
+    if (progress > 0.96) {
       // 꽉 찼을 때 gap 두기
       sweepAngle = fullCircle - gap;
     } else {

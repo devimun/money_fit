@@ -35,8 +35,10 @@ class BaseBottomSheet extends StatelessWidget {
               ],
             ),
             Divider(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12), 
-              height: 1
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.12),
+              height: 1,
             ),
             const SizedBox(height: 20),
 

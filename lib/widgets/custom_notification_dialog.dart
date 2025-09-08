@@ -25,9 +25,13 @@ class CustomNotificationDialog extends StatelessWidget {
     );
   }
 
-  Widget contentBox(BuildContext context, ThemeData theme, AppLocalizations l10n) {
+  Widget contentBox(
+    BuildContext context,
+    ThemeData theme,
+    AppLocalizations l10n,
+  ) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(8, 24, 8, 24),
+      padding: EdgeInsets.all(30),
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
         color: theme.cardColor,
@@ -75,7 +79,10 @@ class CustomNotificationDialog extends StatelessWidget {
               Expanded(
                 child: ElevatedButton(
                   onPressed: onConfirm,
-                  child: Text(l10n.notificationDialogConfirm, style: theme.textTheme.labelLarge),
+                  child: Text(
+                    l10n.notificationDialogConfirm,
+                    style: theme.textTheme.labelLarge,
+                  ),
                 ),
               ),
             ],

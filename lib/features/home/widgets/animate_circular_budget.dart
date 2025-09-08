@@ -8,12 +8,14 @@ class AnimatedCircularBudget extends StatelessWidget {
   final double ratio; // 0.0 ~ 1.0
   final Color color;
   final double remainingAmount;
+  final bool isMonthly; // 월간 모드인지 여부
 
   const AnimatedCircularBudget({
     super.key,
     required this.ratio,
     required this.color,
     required this.remainingAmount,
+    this.isMonthly = false,
   });
 
   @override

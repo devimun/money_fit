@@ -24,7 +24,7 @@ class CalendarCell extends ConsumerWidget {
           onTap: () {
             // 캘린더 셀 선택 액션 기록
             InterstitialAdManager.instance.logActionAndShowAd();
-            
+
             ref.read(dateManager.notifier).changeDate(day);
             showModalBottomSheet(
               isDismissible: false,

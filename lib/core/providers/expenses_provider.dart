@@ -16,7 +16,6 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
   Future<Map<DateTime, List<Expense>>> build() async {
     final userSettings = await ref.read(userSettingsProvider.future);
     final now = ref.watch(dateManager);
-    // await ref.read(expenseRepositoryProvider).seedJulyExpenses();
     return await loadMonthlyExpenses(userSettings.id, now.year, now.month);
   }
 

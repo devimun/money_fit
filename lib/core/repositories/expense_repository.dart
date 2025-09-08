@@ -23,11 +23,11 @@ class ExpenseRepository implements IExpenseRepository {
 
   ExpenseRepository({required DatabaseHelper dbHelper}) : _dbHelper = dbHelper;
 
-  Future<void> getAll() async {
-    final db = await _dbHelper.database;
-    final data = await db.query('expenses');
-    log(data.toString());
-  }
+  // Future<void> getAll() async {
+  //   final db = await _dbHelper.database;
+  //   final data = await db.query('expenses');
+  //   log(data.toString());
+  // }
 
   @override
   Future<void> createExpense(Expense expense) async {

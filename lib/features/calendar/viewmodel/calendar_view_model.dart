@@ -11,6 +11,7 @@
 // 하단 자율 지출 금액과 필수 지출 금액 표시
 // 컨테이너 클릭하면 해당 일의 지출 내역 전부 볼 수 있게함
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/providers/expenses_provider.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/features/calendar/model/model.dart';
@@ -24,16 +25,22 @@ class CalendarViewModel extends AsyncNotifier<CalendarState> {
 
     final today = ref.watch(dateManager);
 
+    final double dailyBudget = calculateDailyBudget(
+      user.budgetType,
+      user.budget,
+      today,
+    );
+
     final calendarCells = <DateTime, CalendarCellData>{};
     for (final entry in expensesMap.entries) {
       calendarCells[entry.key] = CalendarCellData.from(
         entry.key,
         entry.value,
-        user.dailyBudget,
+        dailyBudget,
       );
     }
 
-    final stats = CalendarStat.fromExpenses(expensesMap, user.dailyBudget);
+    final stats = CalendarStat.fromExpenses(expensesMap, dailyBudget);
 
     return CalendarState(
       selectedDay: today,

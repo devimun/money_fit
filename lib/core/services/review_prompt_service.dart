@@ -1,8 +1,12 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:money_fit/l10n/app_localizations.dart';
+import 'package:money_fit/core/functions/functions.dart';
+import 'package:money_fit/core/widgets/review_system/review_dialog_factory.dart';
+import 'package:money_fit/core/widgets/review_system/experience_binary_dialog.dart';
+import 'package:money_fit/core/widgets/review_system/positive_confirm_dialog.dart';
+import 'package:money_fit/core/widgets/review_system/negative_feedback_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:in_app_review/in_app_review.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ReviewPromptService {
@@ -68,45 +72,33 @@ class ReviewPromptService {
   }
 
   Future<void> maybePromptReview(BuildContext context) async {
-    final l10n = AppLocalizations.of(context)!;
     await ensureFirstRunTimestamp();
     if (!await isEligible) return;
     if (_requestedThisSession) return;
     _requestedThisSession = true;
 
     // 1단계: 이분화 질문
-    final bin = await showDialog<_BinaryExperience>(
-      context: context,
-      builder: (ctx) => const _ExperienceBinaryDialog(),
-    );
+    final bin = await ReviewDialogFactory.showExperienceBinaryDialog(context);
     if (bin == null) return;
     await _markPrompted();
 
-    if (bin == _BinaryExperience.good) {
+    if (bin == BinaryExperience.good) {
       // 긍정 분기: 확인 모달
-      final pa = await showDialog<_PositiveAction>(
-        context: context,
-        builder: (ctx) => const _PositiveConfirmDialog(),
-      );
+      final pa = await ReviewDialogFactory.showPositiveConfirmDialog(context);
       if (pa == null) return;
       switch (pa) {
-        case _PositiveAction.reviewNow:
-          // ignore: undefined_identifier
-          final inApp = InAppReview.instance;
+        case PositiveAction.reviewNow:
           try {
-            if (await inApp.isAvailable()) {
-              await inApp.requestReview();
-            }
-          } catch (_) {}
+            await setOptedOut(true);
+            launchReviewURL();
+          } catch (e) {
+            log(e.toString());
+          }
           break;
-        case _PositiveAction.later:
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString(
-            _kSnoozeUntil,
-            DateTime.now().add(const Duration(days: 7)).toIso8601String(),
-          );
+        case PositiveAction.later:
+          await _setSnoozeUntil(DateTime.now().add(const Duration(days: 7)));
           break;
-        case _PositiveAction.never:
+        case PositiveAction.never:
           await setOptedOut(true);
           break;
       }
@@ -114,43 +106,32 @@ class ReviewPromptService {
     }
 
     // 부정 분기: 자유 입력 모달
-    final neg = await showDialog<_NegativeResult>(
-      context: context,
-      builder: (ctx) => const _NegativeFeedbackDialog(),
-    );
+    final neg = await ReviewDialogFactory.showNegativeFeedbackDialog(context);
     if (neg == null) return;
     switch (neg.action) {
-      case _NegativeAction.send:
+      case NegativeAction.send:
         await _submitNegativeFeedback(neg.detail);
         // 감사 안내
         if (context.mounted) {
-          showDialog<void>(
-            context: context,
-            builder: (_) => AlertDialog(
-              content: Text(l10n.review_thanks_message),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text(l10n.confirm),
-                ),
-              ],
-            ),
-          );
+          await ReviewDialogFactory.showThanksDialog(context);
         }
         break;
-      case _NegativeAction.later:
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString(
-          _kSnoozeUntil,
-          DateTime.now().add(const Duration(days: 7)).toIso8601String(),
-        );
+      case NegativeAction.later:
+        await _setSnoozeUntil(DateTime.now().add(const Duration(days: 7)));
         break;
-      case _NegativeAction.never:
+      case NegativeAction.never:
         await setOptedOut(true);
         break;
     }
   }
 
+  /// 스누즈 설정 (다음에 하기)
+  Future<void> _setSnoozeUntil(DateTime dateTime) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_kSnoozeUntil, dateTime.toIso8601String());
+  }
+
+  /// 부정적인 피드백 제출
   Future<void> _submitNegativeFeedback(String? detail) async {
     try {
       final client = Supabase.instance.client;
@@ -161,123 +142,5 @@ class ReviewPromptService {
             : (Platform.isAndroid ? 'android' : 'other'),
       });
     } catch (_) {}
-  }
-}
-
-enum _BinaryExperience { good, bad }
-
-enum _PositiveAction { reviewNow, later, never }
-
-enum _NegativeAction { send, later, never }
-
-class _NegativeResult {
-  final _NegativeAction action;
-  final String? detail;
-  const _NegativeResult(this.action, this.detail);
-}
-
-class _ExperienceBinaryDialog extends StatelessWidget {
-  const _ExperienceBinaryDialog();
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return AlertDialog(
-      title: Text(l10n.review_modal_binary_title),
-      actions: [
-        FilledButton(
-          onPressed: () => Navigator.of(context).pop(_BinaryExperience.good),
-          child: Text(l10n.review_modal_button_good),
-        ),
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(_BinaryExperience.bad),
-          child: Text(l10n.review_modal_button_bad),
-        ),
-      ],
-    );
-  }
-}
-
-class _PositiveConfirmDialog extends StatelessWidget {
-  const _PositiveConfirmDialog();
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return AlertDialog(
-      title: Text(l10n.review_positive_title),
-      actions: [
-        FilledButton(
-          onPressed: () => Navigator.of(context).pop(_PositiveAction.reviewNow),
-          child: Text(l10n.review_positive_button_yes),
-        ),
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(_PositiveAction.later),
-          child: Text(l10n.review_button_later),
-        ),
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(_PositiveAction.never),
-          child: Text(l10n.review_button_never),
-        ),
-      ],
-    );
-  }
-}
-
-class _NegativeFeedbackDialog extends StatefulWidget {
-  const _NegativeFeedbackDialog();
-
-  @override
-  State<_NegativeFeedbackDialog> createState() =>
-      _NegativeFeedbackDialogState();
-}
-
-class _NegativeFeedbackDialogState extends State<_NegativeFeedbackDialog> {
-  final TextEditingController _controller = TextEditingController();
-  static const int _maxLen = 300;
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return AlertDialog(
-      title: Text(l10n.review_negative_title),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            controller: _controller,
-            maxLines: 4,
-            maxLength: _maxLen,
-            decoration: InputDecoration(hintText: l10n.review_negative_hint),
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(
-            context,
-          ).pop(_NegativeResult(_NegativeAction.later, null)),
-          child: Text(l10n.review_button_later),
-        ),
-        TextButton(
-          onPressed: () => Navigator.of(
-            context,
-          ).pop(_NegativeResult(_NegativeAction.never, null)),
-          child: Text(l10n.review_button_never),
-        ),
-        FilledButton(
-          onPressed: () => Navigator.of(
-            context,
-          ).pop(_NegativeResult(_NegativeAction.send, _controller.text.trim())),
-          child: Text(l10n.review_negative_button_send),
-        ),
-      ],
-    );
   }
 }

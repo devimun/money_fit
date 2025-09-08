@@ -36,11 +36,14 @@ class AppLocalizationsKo extends AppLocalizations {
   String get dailyBudgetSetupTitle => '예산 설정하기';
 
   @override
-  String get dailyBudgetSetupDescription =>
-      '하루 자유 지출 예산을 설정해주세요.\n자유 지출이란, 공과금,의료비,주거비,보험 등 필수 지출을 제외한 자유롭게 사용할 수 있는 금액을 말해요.';
+  String get budgetSetupDescription =>
+      '자율 지출 예산을 설정해주세요.\n자유 지출이란, 공과금,의료비,주거비,보험 등 필수 지출을 제외한 자유롭게 사용할 수 있는 금액을 말해요.';
 
   @override
   String get dailyBudgetLabel => '일일 예산 (원)';
+
+  @override
+  String get monthlyBudgetLabel => '월간 예산 (원)';
 
   @override
   String get enterBudgetPrompt => '예산을 입력해주세요.';
@@ -63,14 +66,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get dateFormat => 'yyyy.MM.dd EEEE';
 
   @override
-  String dailyDiscretionarySpending(Object amount) {
-    return '일일 자율 지출 : $amount';
-  }
+  String get dailyDiscretionarySpending => '일일 자율 지출 : ';
 
   @override
-  String dailyBudget(Object amount) {
-    return '일일 예산 : $amount';
-  }
+  String get monthlyDiscretionarySpending2 => '월간 자율 지출 : ';
+
+  @override
+  String get dailyBudget => '일일 자율 지출 예산 : ';
+
+  @override
+  String get monthlyBudget => '월간 자율 지출 예산 : ';
 
   @override
   String get monthlyAvgDiscSpending => '월평균 일일 자율 지출';
@@ -251,7 +256,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get confirm => '확인';
 
   @override
-  String get dailyBudgetSetting => '일일 예산 설정';
+  String get budgetSetting => '예산 설정';
 
   @override
   String get save => '저장';
@@ -455,6 +460,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get home => '홈';
 
   @override
+  String get daily => '일일';
+
+  @override
+  String get monthly => '월간';
+
+  @override
   String get calendar => '캘린더';
 
   @override
@@ -558,4 +569,19 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get review_thanks_message => '알려주셔서 감사합니다. 개선에 반영할 수 있도록 하겠습니다.';
+
+  @override
+  String get monthlyExpenseMessageZero => '이번 달 아직 자율 지출이 없어요!';
+
+  @override
+  String get monthlyExpenseMessageGood => '이번 달 예산 관리가 잘 되고 있어요!';
+
+  @override
+  String get monthlyExpenseMessageHalf => '이번 달 절반 정도 사용했어요';
+
+  @override
+  String get monthlyExpenseMessageNearLimit => '이번 달 예산이 거의 소진되었어요';
+
+  @override
+  String get monthlyExpenseMessageOverLimit => '이번 달 예산을 초과했어요';
 }

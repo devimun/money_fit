@@ -158,17 +158,23 @@ abstract class AppLocalizations {
   /// **'Set Your Budget'**
   String get dailyBudgetSetupTitle;
 
-  /// No description provided for @dailyBudgetSetupDescription.
+  /// No description provided for @budgetSetupDescription.
   ///
   /// In en, this message translates to:
-  /// **'Set your daily discretionary spending budget.\nDiscretionary spending is the amount you can use freely, excluding fixed costs like bills, medical expenses, housing, and insurance.'**
-  String get dailyBudgetSetupDescription;
+  /// **'Set your discretionary spending budget.\nDiscretionary spending is the amount you can use freely, excluding fixed costs like bills, medical expenses, housing, and insurance.'**
+  String get budgetSetupDescription;
 
   /// No description provided for @dailyBudgetLabel.
   ///
   /// In en, this message translates to:
   /// **'Daily Budget'**
   String get dailyBudgetLabel;
+
+  /// No description provided for @monthlyBudgetLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Budget'**
+  String get monthlyBudgetLabel;
 
   /// No description provided for @enterBudgetPrompt.
   ///
@@ -209,14 +215,26 @@ abstract class AppLocalizations {
   /// No description provided for @dailyDiscretionarySpending.
   ///
   /// In en, this message translates to:
-  /// **'Daily Discretionary Spending: {amount}'**
-  String dailyDiscretionarySpending(Object amount);
+  /// **'Daily Discretionary Spending: '**
+  String get dailyDiscretionarySpending;
+
+  /// No description provided for @monthlyDiscretionarySpending2.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Discretionary Spending: '**
+  String get monthlyDiscretionarySpending2;
 
   /// No description provided for @dailyBudget.
   ///
   /// In en, this message translates to:
-  /// **'Daily Budget: {amount}'**
-  String dailyBudget(Object amount);
+  /// **'Daily Discretionary Budget: '**
+  String get dailyBudget;
+
+  /// No description provided for @monthlyBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Discretionary Budget: '**
+  String get monthlyBudget;
 
   /// No description provided for @monthlyAvgDiscSpending.
   ///
@@ -548,11 +566,11 @@ abstract class AppLocalizations {
   /// **'Confirm'**
   String get confirm;
 
-  /// No description provided for @dailyBudgetSetting.
+  /// No description provided for @budgetSetting.
   ///
   /// In en, this message translates to:
-  /// **'Daily Budget Setting'**
-  String get dailyBudgetSetting;
+  /// **'Budget Setting'**
+  String get budgetSetting;
 
   /// No description provided for @save.
   ///
@@ -938,6 +956,18 @@ abstract class AppLocalizations {
   /// **'Home'**
   String get home;
 
+  /// No description provided for @daily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get daily;
+
+  /// No description provided for @monthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get monthly;
+
   /// No description provided for @calendar.
   ///
   /// In en, this message translates to:
@@ -1141,6 +1171,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Thank you for your feedback. We\'ll work to improve it.'**
   String get review_thanks_message;
+
+  /// No description provided for @monthlyExpenseMessageZero.
+  ///
+  /// In en, this message translates to:
+  /// **'No discretionary spending this month yet!'**
+  String get monthlyExpenseMessageZero;
+
+  /// No description provided for @monthlyExpenseMessageGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Your budget is well-managed this month!'**
+  String get monthlyExpenseMessageGood;
+
+  /// No description provided for @monthlyExpenseMessageHalf.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve used about half of your budget this month.'**
+  String get monthlyExpenseMessageHalf;
+
+  /// No description provided for @monthlyExpenseMessageNearLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Your budget is almost used up for this month.'**
+  String get monthlyExpenseMessageNearLimit;
+
+  /// No description provided for @monthlyExpenseMessageOverLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'You have exceeded your budget for this month.'**
+  String get monthlyExpenseMessageOverLimit;
 }
 
 class _AppLocalizationsDelegate
