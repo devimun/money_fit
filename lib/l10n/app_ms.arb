@@ -130,6 +130,7 @@
   "todayExpenseMessageNearLimit": "Bajet harian anda hampir habis! ⚠️",
   "todayExpenseMessageOverLimit": "Anda sudah melebihi bajet!\nJom kawal semula perbelanjaan anda ❗",
   "information": "Maklumat",
+  "contactUs": "Hubungi Kami",
   "writeReview": "Beri Ulasan",
   "appVersion": "Versi Aplikasi",
   "privacyPolicy": "Dasar Privasi",
@@ -183,5 +184,18 @@
   "monthlyExpenseMessageGood": "Belanjawan anda diurus dengan baik bulan ini!",
   "monthlyExpenseMessageHalf": "Anda telah menggunakan kira-kira separuh daripada belanjawan anda bulan ini.",
   "monthlyExpenseMessageNearLimit": "Belanjawan anda hampir habis untuk bulan ini.",
-  "monthlyExpenseMessageOverLimit": "Anda telah melebihi belanjawan anda untuk bulan ini."
+  "monthlyExpenseMessageOverLimit": "Anda telah melebihi belanjawan anda untuk bulan ini.",
+  "contactUs": "Hubungi Kami",
+  "inquiryType": "Jenis Pertanyaan",
+  "inquiryTypeBugReport": "Laporan Pepijat",
+  "inquiryTypeFeatureSuggestion": "Cadangan Ciri",
+  "inquiryTypeGeneralInquiry": "Pertanyaan Umum",
+  "inquiryTypeOther": "Lain-lain",
+  "replyEmail": "E-mel untuk balasan",
+  "inquiryDetails": "Butiran Pertanyaan",
+  "submit": "Hantar",
+  "inquirySuccess": "Pertanyaan anda telah berjaya dihantar.",
+  "inquiryFailure": "Gagal menghantar pertanyaan anda.",
+  "invalidEmail": "Sila masukkan alamat e-mel yang sah.",
+  "fieldRequired": "Ruangan ini diperlukan."
 }

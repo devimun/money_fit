@@ -129,6 +129,7 @@
   "todayExpenseMessageNearLimit": "조금만 더 쓰면 오늘 예산을 초과해요! ⚠️",
   "todayExpenseMessageOverLimit": "오늘 예산을 초과했어요! 지출을 조절해봐요 ❗",
   "information": "정보",
+  
   "writeReview": "리뷰 작성",
   "appVersion": "앱 버전",
   "privacyPolicy": "개인정보 처리방침",
@@ -172,7 +173,7 @@
   "review_positive_button_yes": "좋아요",
   "review_button_later": "다음에 하기",
   "review_button_never": "다시 보지 않기",
-  "review_negative_title": "어떤 점이 별로였는지 말씀해주세요.",
+  "review_negative_title": "어떤 점이 불편했는지 말씀해주세요.",
   "review_negative_hint": "불편했던 점을 작성해 주세요.",
   "review_negative_button_send": "보내기", 
   "review_thanks_message": "알려주셔서 감사합니다. 개선에 반영할 수 있도록 하겠습니다.",
@@ -182,5 +183,18 @@
   "monthlyExpenseMessageNearLimit": "이번 달 예산이 거의 소진되었어요",
   "monthlyExpenseMessageOverLimit": "이번 달 예산을 초과했어요",
   "daily": "일일",
-  "monthly": "월간"
+  "monthly": "월간",
+  "contactUs": "문의하기",
+  "inquiryType": "문의 유형",
+  "inquiryTypeBugReport": "버그 신고",
+  "inquiryTypeFeatureSuggestion": "기능 제안",
+  "inquiryTypeGeneralInquiry": "일반 문의",
+  "inquiryTypeOther": "기타",
+  "replyEmail": "답변받을 이메일",
+  "inquiryDetails": "문의 내용",
+  "submit": "보내기",
+  "inquirySuccess": "문의가 성공적으로 제출되었습니다.",
+  "inquiryFailure": "문의 제출에 실패했습니다.",
+  "invalidEmail": "올바른 이메일 형식이 아닙니다.",
+  "fieldRequired": "필수 항목입니다."
 }

@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -31,6 +32,10 @@ class _BudgetSetupScreenState
       await ref
           .read(userSettingsProvider.notifier)
           .updateBudget(_budgetType, newBudget);
+
+      // Onboarding complete event log
+      await FirebaseAnalytics.instance.logEvent(name: 'onboarding_complete');
+
       // 홈으로 이동시키고 알림 설정 요청 다이얼로그 띄우기
       if (mounted) {
         context.go('/home', extra: {'showNotificationPrompt': true});

@@ -559,7 +559,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get review_button_never => '다시 보지 않기';
 
   @override
-  String get review_negative_title => '어떤 점이 별로였는지 말씀해주세요.';
+  String get review_negative_title => '어떤 점이 불편했는지 말씀해주세요.';
 
   @override
   String get review_negative_hint => '불편했던 점을 작성해 주세요.';
@@ -584,4 +584,43 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get monthlyExpenseMessageOverLimit => '이번 달 예산을 초과했어요';
+
+  @override
+  String get contactUs => '문의하기';
+
+  @override
+  String get inquiryType => '문의 유형';
+
+  @override
+  String get inquiryTypeBugReport => '버그 신고';
+
+  @override
+  String get inquiryTypeFeatureSuggestion => '기능 제안';
+
+  @override
+  String get inquiryTypeGeneralInquiry => '일반 문의';
+
+  @override
+  String get inquiryTypeOther => '기타';
+
+  @override
+  String get replyEmail => '답변받을 이메일';
+
+  @override
+  String get inquiryDetails => '문의 내용';
+
+  @override
+  String get submit => '보내기';
+
+  @override
+  String get inquirySuccess => '문의가 성공적으로 제출되었습니다.';
+
+  @override
+  String get inquiryFailure => '문의 제출에 실패했습니다.';
+
+  @override
+  String get invalidEmail => '올바른 이메일 형식이 아닙니다.';
+
+  @override
+  String get fieldRequired => '필수 항목입니다.';
 }

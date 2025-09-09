@@ -47,13 +47,16 @@ class PositiveConfirmDialog extends StatelessWidget {
             const SizedBox(height: 24),
 
             // 제목
-            Text(
-              l10n.review_positive_title,
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.onSurface,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                l10n.review_positive_title,
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.onSurface,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
             ),
 
             const SizedBox(height: 32),

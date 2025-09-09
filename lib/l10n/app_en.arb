@@ -184,5 +184,18 @@
   "monthlyExpenseMessageGood": "Your budget is well-managed this month!",
   "monthlyExpenseMessageHalf": "You've used about half of your budget this month.",
   "monthlyExpenseMessageNearLimit": "Your budget is almost used up for this month.",
-  "monthlyExpenseMessageOverLimit": "You have exceeded your budget for this month."
+  "monthlyExpenseMessageOverLimit": "You have exceeded your budget for this month.",
+  "contactUs": "Contact Us",
+  "inquiryType": "Inquiry Type",
+  "inquiryTypeBugReport": "Bug Report",
+  "inquiryTypeFeatureSuggestion": "Feature Suggestion",
+  "inquiryTypeGeneralInquiry": "General Inquiry",
+  "inquiryTypeOther": "Other",
+  "replyEmail": "Email for reply",
+  "inquiryDetails": "Inquiry Details",
+  "submit": "Submit",
+  "inquirySuccess": "Your inquiry has been submitted successfully.",
+  "inquiryFailure": "Failed to submit your inquiry.",
+  "invalidEmail": "Please enter a valid email address.",
+  "fieldRequired": "This field is required."
 }

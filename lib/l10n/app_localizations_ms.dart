@@ -613,4 +613,43 @@ class AppLocalizationsMs extends AppLocalizations {
   @override
   String get monthlyExpenseMessageOverLimit =>
       'Anda telah melebihi belanjawan anda untuk bulan ini.';
+
+  @override
+  String get contactUs => 'Hubungi Kami';
+
+  @override
+  String get inquiryType => 'Jenis Pertanyaan';
+
+  @override
+  String get inquiryTypeBugReport => 'Laporan Pepijat';
+
+  @override
+  String get inquiryTypeFeatureSuggestion => 'Cadangan Ciri';
+
+  @override
+  String get inquiryTypeGeneralInquiry => 'Pertanyaan Umum';
+
+  @override
+  String get inquiryTypeOther => 'Lain-lain';
+
+  @override
+  String get replyEmail => 'E-mel untuk balasan';
+
+  @override
+  String get inquiryDetails => 'Butiran Pertanyaan';
+
+  @override
+  String get submit => 'Hantar';
+
+  @override
+  String get inquirySuccess => 'Pertanyaan anda telah berjaya dihantar.';
+
+  @override
+  String get inquiryFailure => 'Gagal menghantar pertanyaan anda.';
+
+  @override
+  String get invalidEmail => 'Sila masukkan alamat e-mel yang sah.';
+
+  @override
+  String get fieldRequired => 'Ruangan ini diperlukan.';
 }

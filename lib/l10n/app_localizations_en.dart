@@ -614,4 +614,43 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get monthlyExpenseMessageOverLimit =>
       'You have exceeded your budget for this month.';
+
+  @override
+  String get contactUs => 'Contact Us';
+
+  @override
+  String get inquiryType => 'Inquiry Type';
+
+  @override
+  String get inquiryTypeBugReport => 'Bug Report';
+
+  @override
+  String get inquiryTypeFeatureSuggestion => 'Feature Suggestion';
+
+  @override
+  String get inquiryTypeGeneralInquiry => 'General Inquiry';
+
+  @override
+  String get inquiryTypeOther => 'Other';
+
+  @override
+  String get replyEmail => 'Email for reply';
+
+  @override
+  String get inquiryDetails => 'Inquiry Details';
+
+  @override
+  String get submit => 'Submit';
+
+  @override
+  String get inquirySuccess => 'Your inquiry has been submitted successfully.';
+
+  @override
+  String get inquiryFailure => 'Failed to submit your inquiry.';
+
+  @override
+  String get invalidEmail => 'Please enter a valid email address.';
+
+  @override
+  String get fieldRequired => 'This field is required.';
 }

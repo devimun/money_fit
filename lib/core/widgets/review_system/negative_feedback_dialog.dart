@@ -61,13 +61,16 @@ class _NegativeFeedbackDialogState extends State<NegativeFeedbackDialog> {
             const SizedBox(height: 24),
 
             // 제목
-            Text(
-              l10n.review_negative_title,
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.onSurface,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                l10n.review_negative_title,
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.onSurface,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
             ),
 
             const SizedBox(height: 24),
@@ -80,7 +83,7 @@ class _NegativeFeedbackDialogState extends State<NegativeFeedbackDialog> {
               style: theme.textTheme.bodyMedium,
               decoration: InputDecoration(
                 hintText: l10n.review_negative_hint,
-                hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                hintStyle: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
                 border: InputBorder.none,

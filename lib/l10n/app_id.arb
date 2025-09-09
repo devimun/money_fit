@@ -131,6 +131,7 @@
   "todayExpenseMessageNearLimit": "Anda hampir melebihi anggaran hari ini! ⚠️",
   "todayExpenseMessageOverLimit": "Anda telah melebihi anggaran hari ini!\nAyo sesuaikan pengeluaran Anda ❗",
   "information": "Informasi",
+  "contactUs": "Hubungi Kami",
   "writeReview": "Tulis Ulasan",
   "appVersion": "Versi Aplikasi",
   "privacyPolicy": "Kebijakan Privasi",
@@ -184,5 +185,17 @@
   "monthlyExpenseMessageGood": "Anggaran Anda terkelola dengan baik bulan ini!",
   "monthlyExpenseMessageHalf": "Anda telah menggunakan sekitar setengah dari anggaran Anda bulan ini.",
   "monthlyExpenseMessageNearLimit": "Anggaran Anda hampir habis untuk bulan ini.",
-  "monthlyExpenseMessageOverLimit": "Anda telah melebihi anggaran Anda untuk bulan ini."
+  "monthlyExpenseMessageOverLimit": "Anda telah melebihi anggaran Anda untuk bulan ini.",
+  "inquiryType": "Jenis Pertanyaan",
+  "inquiryTypeBugReport": "Laporan Bug",
+  "inquiryTypeFeatureSuggestion": "Saran Fitur",
+  "inquiryTypeGeneralInquiry": "Pertanyaan Umum",
+  "inquiryTypeOther": "Lainnya",
+  "replyEmail": "Email untuk balasan",
+  "inquiryDetails": "Detail Pertanyaan",
+  "submit": "Kirim",
+  "inquirySuccess": "Pertanyaan Anda telah berhasil dikirim.",
+  "inquiryFailure": "Gagal mengirimkan pertanyaan Anda.",
+  "invalidEmail": "Silakan masukkan alamat email yang valid.",
+  "fieldRequired": "Bagian ini wajib diisi."
 }

@@ -1201,6 +1201,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You have exceeded your budget for this month.'**
   String get monthlyExpenseMessageOverLimit;
+
+  /// No description provided for @contactUs.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Us'**
+  String get contactUs;
+
+  /// No description provided for @inquiryType.
+  ///
+  /// In en, this message translates to:
+  /// **'Inquiry Type'**
+  String get inquiryType;
+
+  /// No description provided for @inquiryTypeBugReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Bug Report'**
+  String get inquiryTypeBugReport;
+
+  /// No description provided for @inquiryTypeFeatureSuggestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Feature Suggestion'**
+  String get inquiryTypeFeatureSuggestion;
+
+  /// No description provided for @inquiryTypeGeneralInquiry.
+  ///
+  /// In en, this message translates to:
+  /// **'General Inquiry'**
+  String get inquiryTypeGeneralInquiry;
+
+  /// No description provided for @inquiryTypeOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get inquiryTypeOther;
+
+  /// No description provided for @replyEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email for reply'**
+  String get replyEmail;
+
+  /// No description provided for @inquiryDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Inquiry Details'**
+  String get inquiryDetails;
+
+  /// No description provided for @submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get submit;
+
+  /// No description provided for @inquirySuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your inquiry has been submitted successfully.'**
+  String get inquirySuccess;
+
+  /// No description provided for @inquiryFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to submit your inquiry.'**
+  String get inquiryFailure;
+
+  /// No description provided for @invalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email address.'**
+  String get invalidEmail;
+
+  /// No description provided for @fieldRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required.'**
+  String get fieldRequired;
 }
 
 class _AppLocalizationsDelegate

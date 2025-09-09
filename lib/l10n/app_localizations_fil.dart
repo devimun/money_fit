@@ -613,4 +613,43 @@ class AppLocalizationsFil extends AppLocalizations {
   @override
   String get monthlyExpenseMessageOverLimit =>
       'Nalagpasan mo na ang iyong badyet para sa buwang ito.';
+
+  @override
+  String get contactUs => 'Makipag-ugnayan sa amin';
+
+  @override
+  String get inquiryType => 'Uri ng Pagtatanong';
+
+  @override
+  String get inquiryTypeBugReport => 'Ulat ng Bug';
+
+  @override
+  String get inquiryTypeFeatureSuggestion => 'Mungkahi ng Tampok';
+
+  @override
+  String get inquiryTypeGeneralInquiry => 'Pangkalahatang Pagtatanong';
+
+  @override
+  String get inquiryTypeOther => 'Iba pa';
+
+  @override
+  String get replyEmail => 'Email para sa tugon';
+
+  @override
+  String get inquiryDetails => 'Mga Detalye ng Pagtatanong';
+
+  @override
+  String get submit => 'Ipasa';
+
+  @override
+  String get inquirySuccess => 'Matagumpay na naisumite ang iyong pagtatanong.';
+
+  @override
+  String get inquiryFailure => 'Nabigong isumite ang iyong pagtatanong.';
+
+  @override
+  String get invalidEmail => 'Mangyaring maglagay ng wastong email address.';
+
+  @override
+  String get fieldRequired => 'Kinakailangan ang field na ito.';
 }

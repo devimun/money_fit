@@ -617,4 +617,43 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get monthlyExpenseMessageOverLimit =>
       'Anda telah melebihi anggaran Anda untuk bulan ini.';
+
+  @override
+  String get contactUs => 'Hubungi Kami';
+
+  @override
+  String get inquiryType => 'Jenis Pertanyaan';
+
+  @override
+  String get inquiryTypeBugReport => 'Laporan Bug';
+
+  @override
+  String get inquiryTypeFeatureSuggestion => 'Saran Fitur';
+
+  @override
+  String get inquiryTypeGeneralInquiry => 'Pertanyaan Umum';
+
+  @override
+  String get inquiryTypeOther => 'Lainnya';
+
+  @override
+  String get replyEmail => 'Email untuk balasan';
+
+  @override
+  String get inquiryDetails => 'Detail Pertanyaan';
+
+  @override
+  String get submit => 'Kirim';
+
+  @override
+  String get inquirySuccess => 'Pertanyaan Anda telah berhasil dikirim.';
+
+  @override
+  String get inquiryFailure => 'Gagal mengirimkan pertanyaan Anda.';
+
+  @override
+  String get invalidEmail => 'Silakan masukkan alamat email yang valid.';
+
+  @override
+  String get fieldRequired => 'Bagian ini wajib diisi.';
 }

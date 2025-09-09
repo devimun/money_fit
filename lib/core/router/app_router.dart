@@ -22,11 +22,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: '/update-check',
+        name: 'UpdateCheckScreen',
         builder: (context, state) => const UpdateCheckScreen(),
       ),
-      GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
+      GoRoute(
+        path: '/',
+        name: 'SplashScreen',
+        builder: (context, state) => const SplashScreen(),
+      ),
       GoRoute(
         path: '/onboarding',
+        name: 'OnboardingScreen',
         pageBuilder: (context, state) => NoTransitionPage(
           key: state.pageKey,
           child: const OnboardingScreen(),
@@ -34,6 +40,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/daily_budget_setup',
+        name: 'BudgetSetupScreen',
         pageBuilder: (context, state) => NoTransitionPage(
           key: state.pageKey,
           child: const BudgetSetupScreen(),
@@ -46,6 +53,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(
             path: '/home',
+            name: 'HomeScreen',
             pageBuilder: (context, state) {
               bool showNoti = false;
               final extras = state.extra as Map<String, dynamic>?;
@@ -61,6 +69,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/calendar',
+            name: 'CalendarScreen',
             pageBuilder: (context, state) => NoTransitionPage(
               key: state.pageKey,
               child: const CalendarScreen(),
@@ -68,6 +77,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/stats',
+            name: 'StatisticsScreen',
             pageBuilder: (context, state) => NoTransitionPage(
               key: state.pageKey,
               child: const StatisticsScreen(),
@@ -75,6 +85,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/expense_list',
+            name: 'ExpenseListScreen',
             pageBuilder: (context, state) => NoTransitionPage(
               key: state.pageKey,
               child: const ExpenseListScreen(),
@@ -82,6 +93,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/settings',
+            name: 'SettingsScreen',
             pageBuilder: (context, state) => NoTransitionPage(
               key: state.pageKey,
               child: const SettingsScreen(),
@@ -91,7 +103,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
     ],
     observers: [
-      FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+      FirebaseAnalyticsObserver(
+        analytics: FirebaseAnalytics.instance,
+        nameExtractor: (settings) => settings.name,
+      ),
     ],
   );
 });

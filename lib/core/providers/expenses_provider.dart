@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/providers/repository_providers.dart';
@@ -45,6 +46,15 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
   Future<void> addExpense(Expense expense) async {
     final repo = ref.read(expenseRepositoryProvider);
     await repo.createExpense(expense);
+
+    // Log create_transaction event
+    await FirebaseAnalytics.instance.logEvent(
+      name: 'create_transaction',
+      parameters: {
+        'type': expense.type.name, // 'income' or 'expense'
+        'category': expense.categoryId,
+      },
+    );
 
     final dateKey = _stripTime(expense.date);
     final currentState = state.value ?? {};

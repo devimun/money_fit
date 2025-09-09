@@ -110,7 +110,7 @@ class ReviewPromptService {
     if (neg == null) return;
     switch (neg.action) {
       case NegativeAction.send:
-        await _submitNegativeFeedback(neg.detail);
+        await submitNegativeFeedback(neg.detail);
         // 감사 안내
         if (context.mounted) {
           await ReviewDialogFactory.showThanksDialog(context);
@@ -132,10 +132,12 @@ class ReviewPromptService {
   }
 
   /// 부정적인 피드백 제출
-  Future<void> _submitNegativeFeedback(String? detail) async {
+  Future<void> submitNegativeFeedback(String? detail) async {
     try {
       final client = Supabase.instance.client;
+      final uid = Supabase.instance.client.auth.currentUser?.id;
       await client.from('app_feedback').insert({
+        if (uid != null) uid: uid,
         'detail': detail ?? '',
         'platform': Platform.isIOS
             ? 'ios'
