@@ -23,12 +23,14 @@ class SplashScreen extends ConsumerWidget {
           next,
         ) {
           next.when(
-            data: (home) {
+            data: (home) async {
               if (home.dailyBudget == 0) {
                 context.go('/onboarding');
               } else {
-                AppOpenAdManager.instance.showAdIfAvailable();
-                context.go('/home');
+                await AppOpenAdManager.instance.showAdIfAvailable();
+                await Future.delayed(Duration(seconds: 1), () {
+                  context.go('/home');
+                });
               }
             },
             error: (err, stack) {

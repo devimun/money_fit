@@ -101,7 +101,7 @@ class InterstitialAdManager {
   // --- 광고 정책 변수 ---
   int _actionCount = 0;
   DateTime? _lastAdShowTime;
-  final int _actionsPerAd = 8; // 몇 번의 액션마다 광고를 보여줄지
+  final int _actionsPerAd = 12; // 몇 번의 액션마다 광고를 보여줄지
   final Duration _adCooldown = const Duration(minutes: 10); // 광고 사이의 최소 간격
 
   /// 전면 광고 로드
@@ -237,7 +237,7 @@ class AppOpenAdManager {
     );
   }
 
-  void showAdIfAvailable({VoidCallback? onDismissed}) {
+  Future<void> showAdIfAvailable({VoidCallback? onDismissed}) async {
     if (_isShowingAd) {
       debugPrint('[AppOpenAd] show skipped: already showing');
       return;
