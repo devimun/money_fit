@@ -28,7 +28,7 @@ class SplashScreen extends ConsumerWidget {
                 context.go('/onboarding');
               } else {
                 await AppOpenAdManager.instance.showAdIfAvailable();
-                await Future.delayed(Duration(seconds: 1), () {
+                await Future.delayed(Duration(milliseconds: 800), () {
                   context.go('/home');
                 });
               }

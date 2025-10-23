@@ -154,9 +154,11 @@ class StatisticsScreen extends ConsumerWidget {
   ) {
     final l10n = AppLocalizations.of(context)!;
     final categoryNotifier = ref.read(categoryProvider.notifier);
-    final expenses = data.expenseType == ExpenseType.discretionary
-        ? data.flexExpenses
-        : data.essentialExpenses;
+    final expenses = [
+      ...(data.expenseType == ExpenseType.discretionary
+          ? data.flexExpenses
+          : data.essentialExpenses),
+    ]..sort((a, b) => b.totalAmount.compareTo(a.totalAmount));
     final totalAmount = expenses.fold<double>(
       0,
       (sum, item) => sum + item.totalAmount,

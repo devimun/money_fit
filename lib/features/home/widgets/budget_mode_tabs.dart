@@ -19,7 +19,10 @@ class BudgetModeTabs extends ConsumerWidget {
 
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(16.0),
+      ),
       child: Column(
         children: [
           Row(
@@ -61,6 +64,7 @@ class BudgetModeTabs extends ConsumerWidget {
   ) {
     return Expanded(
       child: InkWell(
+        borderRadius: BorderRadius.circular(16.0),
         onTap: () {
           ref
               .read(homeViewModelProvider.notifier)
@@ -97,4 +101,3 @@ class BudgetModeTabs extends ConsumerWidget {
     );
   }
 }
-

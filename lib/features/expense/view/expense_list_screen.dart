@@ -177,9 +177,12 @@ class ExpenseListScreen extends ConsumerWidget {
       children: [
         Text(
           dateFormat.format(date),
-          style: Theme.of(context).textTheme.labelSmall,
+          style: Theme.of(context).textTheme.labelMedium,
         ),
-        Divider(color: Theme.of(context).colorScheme.primary, thickness: 0.5),
+        Divider(
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.55),
+          thickness: 0.6,
+        ),
         for (Expense e in expenses)
           _buildExpenseWidget(e, context, ref, categories, l10n),
         const SizedBox(height: 8),

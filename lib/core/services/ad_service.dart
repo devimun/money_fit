@@ -217,14 +217,14 @@ class AppOpenAdManager {
       adUnitId: AdService.appOpenAdId,
       request: const AdRequest(),
       adLoadCallback: AppOpenAdLoadCallback(
-        onAdLoaded: (ad) {
+        onAdLoaded: (ad) async {
           _appOpenAd = ad;
           _adLoadTime = DateTime.now();
           _isLoading = false;
           debugPrint('[AppOpenAd] loaded successfully');
           if (_deferShowUntilLoaded || showOnLoad) {
             _deferShowUntilLoaded = false;
-            showAdIfAvailable();
+            await showAdIfAvailable();
           }
         },
         onAdFailedToLoad: (error) {
@@ -244,7 +244,7 @@ class AppOpenAdManager {
     }
     if (!isAdAvailable) {
       _deferShowUntilLoaded = true;
-      loadAd();
+      await loadAd();
       return;
     }
 
@@ -272,6 +272,6 @@ class AppOpenAdManager {
       },
     );
 
-    _appOpenAd!.show();
+    await _appOpenAd!.show();
   }
 }
