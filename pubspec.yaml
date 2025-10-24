@@ -83,7 +83,6 @@ flutter:
     - family: Pretendard Variable
       fonts:
         - asset: assets/fonts/PretendardVariable.ttf
-
 flutter_launcher_icons:
   android: true
   ios: true

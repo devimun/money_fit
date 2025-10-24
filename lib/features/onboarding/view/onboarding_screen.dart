@@ -68,9 +68,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       width: _currentPage == index ? 24 : 10,
       margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
-        color: _currentPage == index
-            ? Theme.of(context).primaryColor
-            : Colors.grey,
+        color:
+            _currentPage == index
+                ? Theme.of(context).primaryColor
+                : Colors.grey,
         borderRadius: BorderRadius.circular(5),
       ),
     );
@@ -122,7 +123,7 @@ class OnboardingPage extends ConsumerWidget {
             ElevatedButton(
               onPressed: () async {
                 context.go(
-                  '/daily_budget_setup',
+                  '/budget_setup',
                 ); // Navigate to daily budget setup screen
               },
               style: ElevatedButton.styleFrom(),
