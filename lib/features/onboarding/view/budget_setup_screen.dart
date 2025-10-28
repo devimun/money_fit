@@ -10,12 +10,10 @@ class BudgetSetupScreen extends ConsumerStatefulWidget {
   const BudgetSetupScreen({super.key});
 
   @override
-  ConsumerState<BudgetSetupScreen> createState() =>
-      _BudgetSetupScreenState();
+  ConsumerState<BudgetSetupScreen> createState() => _BudgetSetupScreenState();
 }
 
-class _BudgetSetupScreenState
-    extends ConsumerState<BudgetSetupScreen> {
+class _BudgetSetupScreenState extends ConsumerState<BudgetSetupScreen> {
   final TextEditingController _budgetController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   BudgetType _budgetType = BudgetType.daily;
@@ -34,7 +32,7 @@ class _BudgetSetupScreenState
           .updateBudget(_budgetType, newBudget);
 
       // Onboarding complete event log
-      await FirebaseAnalytics.instance.logEvent(name: 'onboarding_complete');
+      await FirebaseAnalytics.instance.logEvent(name: 'first_budget_setting');
 
       // 홈으로 이동시키고 알림 설정 요청 다이얼로그 띄우기
       if (mounted) {

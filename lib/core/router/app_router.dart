@@ -9,7 +9,8 @@ import 'package:money_fit/features/home/view/home_screen.dart';
 import 'package:money_fit/features/calendar/view/calendar_screen.dart';
 import 'package:money_fit/features/expense/view/expense_list_screen.dart';
 import 'package:money_fit/features/settings/view/settings_screen.dart';
-import 'package:money_fit/features/onboarding/view/onboarding_screen.dart';
+// 온보딩 과정을 줄이기 위해 제거
+// import 'package:money_fit/features/onboarding/view/onboarding_screen.dart';
 import 'package:money_fit/features/onboarding/view/budget_setup_screen.dart';
 import 'package:money_fit/core/widgets/update_check_screen.dart';
 
@@ -30,21 +31,23 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         name: 'SplashScreen',
         builder: (context, state) => const SplashScreen(),
       ),
+      // 온보딩 과정을 줄이기 위해 바로 BudgetSetup 화면으로 이동
+      // GoRoute(
+      //   path: '/onboarding',
+      //   name: 'OnboardingScreen',
+      //   pageBuilder: (context, state) => NoTransitionPage(
+      //     key: state.pageKey,
+      //     child: const OnboardingScreen(),
+      //   ),
+      // ),
       GoRoute(
-        path: '/onboarding',
-        name: 'OnboardingScreen',
-        pageBuilder: (context, state) => NoTransitionPage(
-          key: state.pageKey,
-          child: const OnboardingScreen(),
-        ),
-      ),
-      GoRoute(
-        path: '/daily_budget_setup',
+        path: '/budget_setup',
         name: 'BudgetSetupScreen',
-        pageBuilder: (context, state) => NoTransitionPage(
-          key: state.pageKey,
-          child: const BudgetSetupScreen(),
-        ),
+        pageBuilder:
+            (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const BudgetSetupScreen(),
+            ),
       ),
       ShellRoute(
         builder: (context, state, child) {
@@ -70,34 +73,38 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/calendar',
             name: 'CalendarScreen',
-            pageBuilder: (context, state) => NoTransitionPage(
-              key: state.pageKey,
-              child: const CalendarScreen(),
-            ),
+            pageBuilder:
+                (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const CalendarScreen(),
+                ),
           ),
           GoRoute(
             path: '/stats',
             name: 'StatisticsScreen',
-            pageBuilder: (context, state) => NoTransitionPage(
-              key: state.pageKey,
-              child: const StatisticsScreen(),
-            ),
+            pageBuilder:
+                (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const StatisticsScreen(),
+                ),
           ),
           GoRoute(
             path: '/expense_list',
             name: 'ExpenseListScreen',
-            pageBuilder: (context, state) => NoTransitionPage(
-              key: state.pageKey,
-              child: const ExpenseListScreen(),
-            ),
+            pageBuilder:
+                (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const ExpenseListScreen(),
+                ),
           ),
           GoRoute(
             path: '/settings',
             name: 'SettingsScreen',
-            pageBuilder: (context, state) => NoTransitionPage(
-              key: state.pageKey,
-              child: const SettingsScreen(),
-            ),
+            pageBuilder:
+                (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const SettingsScreen(),
+                ),
           ),
         ],
       ),

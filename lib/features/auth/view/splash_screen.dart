@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:money_fit/core/providers/category_providers.dart';
-import 'package:money_fit/core/services/ad_service.dart';
+// import 'package:money_fit/core/providers/category_providers.dart';
+// import 'package:money_fit/core/services/ad_service.dart';
 import 'package:money_fit/core/services/app_initializer.dart';
 import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
 
@@ -25,30 +25,26 @@ class SplashScreen extends ConsumerWidget {
           next.when(
             data: (home) async {
               if (home.dailyBudget == 0) {
-                context.go('/onboarding');
+                context.go('/budget_setup');
               } else {
-                await AppOpenAdManager.instance.showAdIfAvailable();
-                await Future.delayed(Duration(milliseconds: 800), () {
-                  context.go('/home');
-                });
+                context.go('/home');
               }
             },
             error: (err, stack) {
-              context.go('/onboarding');
+              context.go('/budget_setup');
             },
             loading: () {},
           );
         });
 
         // homeViewModelProvider와 categoryProvider를 구독하여 로딩을 시작합니다.
-        ref.watch(homeViewModelProvider);
-        ref.watch(categoryProvider);
 
         // 로딩 중 화면을 계속 표시하기 위해
         return const Scaffold(body: Center(child: CircularProgressIndicator()));
       },
-      loading: () =>
-          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      loading:
+          () =>
+              const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (err, stack) => Scaffold(body: Center(child: Text('Error: $err'))),
     );
   }
