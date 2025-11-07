@@ -35,8 +35,8 @@ final appInitializerProvider = FutureProvider<void>((ref) async {
   await ref.read(notificationServiceProvider).init();
 
   // 기존 데이터 상태 초기화
-  await ref.watch(homeViewModelProvider.future);
-  await ref.watch(categoryProvider.future);
+  await ref.read(homeViewModelProvider.future);
+  await ref.read(categoryProvider.future);
 
   // 개발 모드에서만 더미 데이터 생성
   // if (kDebugMode) {

@@ -137,7 +137,7 @@ class ReviewPromptService {
       final client = Supabase.instance.client;
       final uid = Supabase.instance.client.auth.currentUser?.id;
       await client.from('app_feedback').insert({
-        if (uid != null) uid: uid,
+        if (uid != null) 'uid': uid,
         'detail': detail ?? '',
         'platform': Platform.isIOS
             ? 'ios'
