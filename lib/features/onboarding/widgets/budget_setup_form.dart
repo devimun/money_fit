@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/models/user_model.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 class BudgetSetupForm extends ConsumerWidget {
@@ -30,12 +31,12 @@ class BudgetSetupForm extends ConsumerWidget {
         children: [
           Text(
             l10n.dailyBudgetSetupTitle, // This title might need to be more generic
-            style: Theme.of(context).textTheme.displayMedium,
+            style: context.textTheme.displayMedium,
           ),
           const SizedBox(height: 20),
           Text(
             l10n.budgetSetupDescription,
-            style: Theme.of(context).textTheme.bodyLarge,
+            style: context.textTheme.bodyLarge,
           ),
           const SizedBox(height: 30),
           SegmentedButton<BudgetType>(
@@ -47,10 +48,10 @@ class BudgetSetupForm extends ConsumerWidget {
               ) {
                 if (states.contains(WidgetState.selected)) {
                   // 선택된 버튼의 배경색
-                  return Theme.of(context).colorScheme.primary;
+                  return context.colors.brandPrimary;
                 }
                 // 선택되지 않은 버튼의 배경색
-                return Theme.of(context).colorScheme.surface;
+                return context.colors.cardBackground;
               }),
               // 선택되었을 때와 아닐 때의 텍스트/아이콘 색상을 지정합니다.
               foregroundColor: WidgetStateProperty.resolveWith<Color?>((
@@ -58,10 +59,10 @@ class BudgetSetupForm extends ConsumerWidget {
               ) {
                 if (states.contains(WidgetState.selected)) {
                   // 선택된 버튼의 텍스트 색상
-                  return Theme.of(context).colorScheme.onPrimary;
+                  return context.colors.textOnBrand;
                 }
                 // 선택되지 않은 버튼의 텍스트 색상
-                return Theme.of(context).colorScheme.onSurface;
+                return context.colors.textPrimary;
               }),
             ),
             segments: <ButtonSegment<BudgetType>>[
@@ -85,7 +86,7 @@ class BudgetSetupForm extends ConsumerWidget {
             keyboardType: TextInputType.numberWithOptions(decimal: true),
             decoration: InputDecoration(
               suffixText: l10n.currency,
-              suffixStyle: Theme.of(context).textTheme.labelMedium,
+              suffixStyle: context.textTheme.labelMedium,
               labelText: selectedType == BudgetType.daily
                   ? l10n.dailyBudgetLabel
                   : l10n.monthlyBudgetLabel, // Assumes 'monthlyBudgetLabel' exists
@@ -111,11 +112,11 @@ class BudgetSetupForm extends ConsumerWidget {
               onPressed: onSubmitted,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
-                textStyle: Theme.of(context).textTheme.labelLarge,
+                textStyle: context.textTheme.labelLarge,
               ),
               child: Text(
                 l10n.start,
-                style: Theme.of(context).textTheme.labelLarge,
+                style: context.textTheme.labelLarge,
               ),
             ),
           ),

@@ -1,5 +1,50 @@
 # 업데이트 테스크 - v1.4.7
 
+---
+
+## Part A: 테마 시스템 리팩토링 (완료)
+
+### 1단계: 코어 테마 시스템 구축
+- [x] `AppThemeColors` ThemeExtension 구현 (22개 색상 속성)
+- [x] `AppThemeGenerator` 팩토리 클래스 구현 (colorSeed → 테마 생성)
+- [x] `BuildContext Extension` 구현 (`context.colors`, `context.textTheme`)
+- [x] `AppTextStyles` 색상 제거 (폰트 크기/가중치만 유지)
+- [x] `ThemeSettings` 데이터 모델 구현 (JSON 직렬화)
+- [x] `ThemeRepository` 구현 (SharedPreferences 영구 저장)
+- [x] `ThemeProvider` Riverpod 연동
+
+### 2단계: 사용자 커스터마이징 UI
+- [x] `PresetColorsGrid` 위젯 (8개 프리셋 색상)
+- [x] `RecentColorsGrid` 위젯 (최근 사용 색상)
+- [x] `HSVColorPicker` 위젯 (자유 색상 선택)
+- [x] `ThemePreviewCard` 위젯 (실시간 미리보기)
+- [x] `ColorPickerDialog` 통합 다이얼로그
+- [x] Settings 화면에 테마 색상 변경 메뉴 추가
+
+### 3단계: 폰트 크기 커스터마이징
+- [x] `ThemeSettings`에 `fontSizeScale` 필드 추가
+- [x] `FontSizeNotifier` Provider 구현
+- [x] `TextTheme`에 폰트 크기 스케일 적용
+- [x] `FontSizeSetting` 위젯 Provider 연동
+
+### 4단계: 마이그레이션
+- [x] `LightAppColors`/`DarkAppColors` Deprecated 처리
+- [x] Home 화면 마이그레이션
+- [x] Calendar 화면 마이그레이션
+- [x] Expense 화면 마이그레이션
+- [x] Settings 화면 마이그레이션
+- [x] Onboarding 화면 마이그레이션
+- [x] 공통 위젯 마이그레이션
+
+### 5단계: 테스트
+- [x] Property-Based Tests (색상 일관성, 대비율, 라운드트립)
+- [x] Unit Tests (각 컴포넌트별)
+- [x] Widget Tests (UI 컴포넌트)
+
+---
+
+## Part B: 유럽 시장 확장 (언어 현지화)
+
 ## 1단계: 핵심 현지화 (최우선)
 - [ ] `app_es.arb` (스페인어) 생성 (기준: `app_ko.arb`)
 - [ ] `app_pl.arb` (폴란드어) 생성

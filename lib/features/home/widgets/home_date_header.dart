@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 class HomeDateHeader extends StatelessWidget {
@@ -14,8 +15,8 @@ class HomeDateHeader extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: Text(
         DateFormat(l10n.dateFormat, locale).format(DateTime.now()),
-        style: Theme.of(context).textTheme.labelMedium?.copyWith(
-          color: Theme.of(context).colorScheme.onSurface,
+        style: context.textTheme.labelMedium?.copyWith(
+          color: context.colors.textPrimary,
         ),
       ),
     );

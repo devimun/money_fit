@@ -390,6 +390,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get darkMode => 'Dark Mode';
 
   @override
+  String get themeColor => 'Theme Color';
+
+  @override
+  String get themeColorDescription => 'Customize your app\'s color scheme';
+
+  @override
+  String get fontSize => 'Font Size';
+
+  @override
+  String get fontSizeDescription => 'Adjust text size for better readability';
+
+  @override
+  String get fontSizeSmall => 'Small';
+
+  @override
+  String get fontSizeMedium => 'Medium';
+
+  @override
+  String get fontSizeLarge => 'Large';
+
+  @override
   String get apply => 'Apply';
 
   @override
@@ -637,6 +658,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get replyEmail => 'Email for reply';
 
   @override
+  String get optional => 'Optional';
+
+  @override
   String get inquiryDetails => 'Inquiry Details';
 
   @override
@@ -653,4 +677,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fieldRequired => 'This field is required.';
+
+  @override
+  String get selectThemeColor => 'Select Theme Color';
+
+  @override
+  String get quickSelect => 'Quick Select';
+
+  @override
+  String get recentColors => 'Recent Colors';
+
+  @override
+  String get customSelect => 'Custom Select';
+
+  @override
+  String get close => 'Close';
 }

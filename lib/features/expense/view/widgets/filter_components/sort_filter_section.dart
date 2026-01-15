@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/features/expense/viewmodel/expense_list_provider.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
@@ -30,18 +31,18 @@ class SortFilterSection extends StatelessWidget {
                 onSortTypeChanged(index == 0 ? SortType.desc : SortType.asc);
               },
               borderRadius: BorderRadius.circular(10),
-              selectedBorderColor: Theme.of(context).colorScheme.primary,
-              fillColor: Theme.of(context).colorScheme.primary,
-              selectedColor: Theme.of(context).colorScheme.primary,
-              color: Theme.of(context).colorScheme.onSurface,
+              selectedBorderColor: context.colors.brandPrimary,
+              fillColor: context.colors.brandPrimary,
+              selectedColor: context.colors.brandPrimary,
+              color: context.colors.textPrimary,
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
                     l10n.latest,
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    style: context.textTheme.labelMedium?.copyWith(
                       color: selectedSortType == SortType.desc
-                          ? Theme.of(context).colorScheme.onPrimary
+                          ? context.colors.textOnBrand
                           : null,
                     ),
                   ),
@@ -50,9 +51,9 @@ class SortFilterSection extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
                     l10n.oldest,
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    style: context.textTheme.labelMedium?.copyWith(
                       color: selectedSortType == SortType.asc
-                          ? Theme.of(context).colorScheme.onPrimary
+                          ? context.colors.textOnBrand
                           : null,
                     ),
                   ),
@@ -74,7 +75,7 @@ class SortFilterSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: Theme.of(context).textTheme.labelMedium),
+        Text(label, style: context.textTheme.labelMedium),
         const SizedBox(height: 10),
         child,
       ],

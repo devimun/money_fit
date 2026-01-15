@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_fit/core/functions/functions.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
 import 'package:money_fit/features/home/widgets/animate_circular_budget.dart';
 import 'package:money_fit/features/home/widgets/budget_mode_tabs.dart';
@@ -70,8 +71,8 @@ class HomeMainCard extends StatelessWidget {
                 fit: BoxFit.scaleDown,
                 child: Text(
                   getMessage(context),
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface,
+                  style: context.textTheme.bodyLarge?.copyWith(
+                    color: context.colors.textPrimary,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -82,7 +83,7 @@ class HomeMainCard extends StatelessWidget {
 
           AnimatedCircularBudget(
             ratio: status.spendingRatio,
-            color: status.color,
+            color: status.getColor(context.colors),
             remainingAmount: status.remainingAmount,
             isMonthly: homeState.budgetDisplayMode == BudgetDisplayMode.monthly,
           ),
@@ -125,8 +126,8 @@ class HomeMainCard extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               '$spentLabel ${formatCurrencyAdaptive(context, spent)}',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface,
+              style: context.textTheme.bodyMedium?.copyWith(
+                color: context.colors.textPrimary,
               ),
             ),
           ],
@@ -139,8 +140,8 @@ class HomeMainCard extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               '$budgetLabel ${formatCurrencyAdaptive(context, budget)}',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface,
+              style: context.textTheme.bodyMedium?.copyWith(
+                color: context.colors.textPrimary,
               ),
             ),
           ],
@@ -161,8 +162,8 @@ class HomeMainCard extends StatelessWidget {
                 Text(
                   l10n.monthlyAvgDiscSpending,
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface,
+                  style: context.textTheme.labelMedium?.copyWith(
+                    color: context.colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -172,8 +173,8 @@ class HomeMainCard extends StatelessWidget {
                     homeState.monthlyDiscretionaryExpenseAvg,
                   ),
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface,
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: context.colors.textPrimary,
                   ),
                 ),
               ],
@@ -186,16 +187,16 @@ class HomeMainCard extends StatelessWidget {
                 Text(
                   l10n.consecutiveDays,
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface,
+                  style: context.textTheme.labelMedium?.copyWith(
+                    color: context.colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 10),
                 Text(
                   l10n.days(homeState.consecutiveAchievementDays),
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface,
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: context.colors.textPrimary,
                   ),
                 ),
               ],

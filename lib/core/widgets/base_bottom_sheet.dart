@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 
 class BaseBottomSheet extends StatelessWidget {
   final String title;
@@ -20,7 +21,7 @@ class BaseBottomSheet extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
+          color: context.colors.cardBackground,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
@@ -30,14 +31,12 @@ class BaseBottomSheet extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(title, style: Theme.of(context).textTheme.titleMedium),
+                Text(title, style: context.textTheme.titleMedium),
                 IconButton(icon: const Icon(Icons.close), onPressed: onClose),
               ],
             ),
             Divider(
-              color: Theme.of(
-                context,
-              ).colorScheme.onSurface.withValues(alpha: 0.12),
+              color: context.colors.divider,
               height: 1,
             ),
             const SizedBox(height: 20),

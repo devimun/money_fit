@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/providers/expenses_provider.dart';
 import 'package:money_fit/core/services/ad_service.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/features/calendar/model/model.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
@@ -64,7 +65,7 @@ class CalendarHeader extends ConsumerWidget {
             DateFormat.MMM(locale).format(day).toString(),
             DateFormat.y(locale).format(day).toString(),
           ),
-          style: Theme.of(context).textTheme.displaySmall,
+          style: context.textTheme.displaySmall,
         ),
         IconButton(
           onPressed: () async {
@@ -95,7 +96,7 @@ class CalendarHeader extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.onSecondaryContainer,
+        color: context.colors.calendarCellBackground,
         borderRadius: BorderRadius.circular(12.0),
       ),
       child: Column(
@@ -166,24 +167,24 @@ class CalendarHeader extends ConsumerWidget {
       children: [
         Text(
           title,
-          style: Theme.of(context).textTheme.labelMedium,
+          style: context.textTheme.labelMedium,
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 5),
         if (intValue != null)
           Text(
             l10n.daysCount(intValue),
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSecondaryFixed,
+            style: context.textTheme.labelMedium?.copyWith(
+              color: context.colors.textSecondary,
             ),
           ),
         if (doubleValue != null)
           Text(
             formatCurrencyAdaptive(context, doubleValue),
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+            style: context.textTheme.labelMedium?.copyWith(
               color: title == l10n.monthlyDiscretionarySpending
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.onSecondaryFixed,
+                  ? context.colors.brandPrimary
+                  : context.colors.textSecondary,
               fontWeight: title == l10n.monthlyDiscretionarySpending
                   ? FontWeight.w600
                   : FontWeight.w400,

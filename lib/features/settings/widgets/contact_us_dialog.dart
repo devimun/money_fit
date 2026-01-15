@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -51,6 +52,7 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
           Navigator.of(context).pop();
         }
       } catch (error) {
+        debugPrint('Contact us error: $error');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -66,7 +68,6 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
 
     final inquiryTypes = [
       l10n.inquiryTypeBugReport,
@@ -82,7 +83,7 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
       child: Container(
         padding: const EdgeInsets.all(32),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
+          color: context.colors.cardBackground,
           borderRadius: BorderRadius.circular(20),
         ),
         child: SingleChildScrollView(
@@ -95,31 +96,31 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                    color: context.colors.brandPrimary.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.contact_support_outlined,
                     size: 40,
-                    color: theme.colorScheme.primary,
+                    color: context.colors.brandPrimary,
                   ),
                 ),
                 const SizedBox(height: 24),
                 Text(
                   l10n.contactUs,
-                  style: theme.textTheme.bodyLarge?.copyWith(
+                  style: context.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.onSurface,
+                    color: context.colors.textPrimary,
                   ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
                 DropdownButtonFormField<String>(
-                  value: _selectedInquiryType,
+                  initialValue: _selectedInquiryType,
                   decoration: InputDecoration(
                     labelText: l10n.inquiryType,
                     filled: true,
-                    fillColor: theme.colorScheme.onSurface.withValues(
+                    fillColor: context.colors.textPrimary.withValues(
                       alpha: 0.05,
                     ),
                     border: OutlineInputBorder(
@@ -154,9 +155,9 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
                 TextFormField(
                   controller: _emailController,
                   decoration: InputDecoration(
-                    labelText: l10n.replyEmail,
-                    hintStyle: Theme.of(context).textTheme.bodySmall,
-                    hintText: l10n.invalidEmail,
+                    labelText: '${l10n.replyEmail} (${l10n.optional})',
+                    hintStyle: context.textTheme.bodySmall,
+                    hintText: 'example@email.com',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -193,8 +194,8 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
                 ElevatedButton(
                   onPressed: _submit,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primary,
-                    foregroundColor: theme.colorScheme.onPrimary,
+                    backgroundColor: context.colors.brandPrimary,
+                    foregroundColor: context.colors.textOnBrand,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -202,7 +203,7 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
                     elevation: 0,
                   ),
                   child: Center(
-                    child: Text(l10n.submit, style: theme.textTheme.labelLarge),
+                    child: Text(l10n.submit, style: context.textTheme.labelLarge),
                   ),
                 ),
               ],

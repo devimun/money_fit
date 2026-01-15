@@ -47,3 +47,4 @@ app.*.map.json
 have_to_ignore.md
 # Secrets and environment variables
 .env
+.kiro

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/providers/category_providers.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/expense_management/category_management/category_dialogs.dart';
 
 /// 카테고리 목록을 표시하는 위젯
@@ -32,11 +33,8 @@ class CategoryList extends ConsumerWidget {
             .where((e) => e.type == selectedType)
             .toList();
 
-        final theme = Theme.of(context);
-        final isDark = theme.brightness == Brightness.dark;
-        final inputBorderColor =
-            theme.inputDecorationTheme.enabledBorder?.borderSide.color ??
-            Colors.grey;
+        final isDark = context.isDarkMode;
+        final inputBorderColor = context.colors.border;
         final notSelectedBorderColor = isDark
             ? inputBorderColor
             : Colors.black.withAlpha(38);
@@ -72,15 +70,15 @@ class CategoryList extends ConsumerWidget {
                   side: BorderSide(
                     width: 0.5,
                     color: isSelected
-                        ? theme.colorScheme.primary
+                        ? context.colors.brandPrimary
                         : notSelectedBorderColor,
                   ),
                   backgroundColor: isDark
-                      ? theme.colorScheme.surfaceContainerHighest
-                      : theme.colorScheme.onSecondaryContainer,
-                  selectedColor: theme.colorScheme.primary,
-                  labelStyle: theme.textTheme.labelMedium?.copyWith(
-                    color: isSelected ? theme.colorScheme.onPrimary : null,
+                      ? context.colors.inputBackground
+                      : context.colors.calendarCellBackground,
+                  selectedColor: context.colors.brandPrimary,
+                  labelStyle: context.textTheme.labelMedium?.copyWith(
+                    color: isSelected ? context.colors.textOnBrand : null,
                   ),
                 );
               }),
@@ -98,9 +96,9 @@ class CategoryList extends ConsumerWidget {
                 showCheckmark: false,
                 side: BorderSide(width: 0.5, color: notSelectedBorderColor),
                 backgroundColor: isDark
-                    ? theme.colorScheme.surfaceContainerHighest
-                    : theme.colorScheme.onSecondaryContainer,
-                labelStyle: theme.textTheme.labelMedium,
+                    ? context.colors.inputBackground
+                    : context.colors.calendarCellBackground,
+                labelStyle: context.textTheme.labelMedium,
               ),
             ],
           ),

@@ -376,6 +376,27 @@ class AppLocalizationsKo extends AppLocalizations {
   String get darkMode => '다크 모드';
 
   @override
+  String get themeColor => '테마 색상';
+
+  @override
+  String get themeColorDescription => '앱의 색상 테마를 변경하세요';
+
+  @override
+  String get fontSize => '글자 크기';
+
+  @override
+  String get fontSizeDescription => '읽기 편한 글자 크기로 조정하세요';
+
+  @override
+  String get fontSizeSmall => '작게';
+
+  @override
+  String get fontSizeMedium => '보통';
+
+  @override
+  String get fontSizeLarge => '크게';
+
+  @override
   String get apply => '적용';
 
   @override
@@ -607,6 +628,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get replyEmail => '답변받을 이메일';
 
   @override
+  String get optional => '선택';
+
+  @override
   String get inquiryDetails => '문의 내용';
 
   @override
@@ -623,4 +647,19 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get fieldRequired => '필수 항목입니다.';
+
+  @override
+  String get selectThemeColor => '테마 색상 선택';
+
+  @override
+  String get quickSelect => '빠른 선택';
+
+  @override
+  String get recentColors => '최근 사용 색상';
+
+  @override
+  String get customSelect => '자유 선택';
+
+  @override
+  String get close => '닫기';
 }

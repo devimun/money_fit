@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
@@ -20,7 +21,7 @@ class BudgetModeTabs extends ConsumerWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: context.colors.cardBackground,
         borderRadius: BorderRadius.circular(16.0),
       ),
       child: Column(
@@ -47,7 +48,7 @@ class BudgetModeTabs extends ConsumerWidget {
           Divider(
             height: 0,
             thickness: 0.2,
-            color: Theme.of(context).colorScheme.onSecondaryFixed,
+            color: context.colors.textSecondary,
           ),
           SizedBox(height: 16),
         ],
@@ -74,7 +75,7 @@ class BudgetModeTabs extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(vertical: 16.0),
           decoration: BoxDecoration(
             color: isSelected
-                ? Theme.of(context).primaryColor.withValues(alpha: 0.1)
+                ? context.colors.brandPrimary.withValues(alpha: 0.1)
                 : null,
             borderRadius: BorderRadius.only(
               topLeft: mode == BudgetDisplayMode.daily
@@ -88,11 +89,11 @@ class BudgetModeTabs extends ConsumerWidget {
           child: Center(
             child: Text(
               title,
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              style: context.textTheme.bodyMedium!.copyWith(
                 fontWeight: FontWeight.w500,
                 color: isSelected
-                    ? Theme.of(context).primaryColor
-                    : Theme.of(context).unselectedWidgetColor,
+                    ? context.colors.brandPrimary
+                    : context.colors.navUnselected,
               ),
             ),
           ),

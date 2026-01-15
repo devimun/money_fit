@@ -1,7 +1,65 @@
-import 'package:flutter/material.dart';
-import 'package:money_fit/core/theme/design_palette.dart';
+/// app_theme.dart
+///
+/// ⚠️ DEPRECATED: 이 파일은 마이그레이션 참조용으로만 유지됩니다.
+/// 새로운 테마 시스템인 theme_provider.dart의 lightThemeProvider와 darkThemeProvider를 사용하세요.
+///
+/// 마이그레이션 가이드:
+/// - 기존: AppTheme.lightTheme → 새로운: ref.watch(lightThemeProvider)
+/// - 기존: AppTheme.darkTheme → 새로운: ref.watch(darkThemeProvider)
+/// - 기존: AppTheme.getBoxDecoration(context) → 새로운: context.boxDecoration
+///
+/// ### Theme.of(context) → context.colors 매핑
+/// | 기존 (Theme.of(context))                    | 새로운 (context.colors)              |
+/// |--------------------------------------------|-------------------------------------|
+/// | `colorScheme.primary`                      | `context.colors.brandPrimary`       |
+/// | `colorScheme.secondary`                    | `context.colors.brandSecondary`     |
+/// | `colorScheme.surface`                      | `context.colors.cardBackground`     |
+/// | `colorScheme.error`                        | `context.colors.error`              |
+/// | `colorScheme.onPrimary`                    | `context.colors.textOnBrand`        |
+/// | `colorScheme.onSurface`                    | `context.colors.textPrimary`        |
+/// | `colorScheme.onSecondaryFixed`             | `context.colors.textSecondary`      |
+/// | `scaffoldBackgroundColor`                  | `context.colors.screenBackground`   |
+///
+/// 자세한 마이그레이션 가이드는 design.md의 Migration Guide 섹션을 참조하세요.
+library;
 
+import 'package:flutter/material.dart';
+// ignore: deprecated_member_use_from_same_package
+import 'package:money_fit/core/theme/design_palette.dart';
+import 'package:money_fit/core/theme/app_text_styles.dart';
+
+/// ⚠️ DEPRECATED: theme_provider.dart의 lightThemeProvider/darkThemeProvider를 사용하세요.
+///
+/// 이 클래스는 마이그레이션 참조용으로만 유지됩니다.
+/// 새로운 코드에서는 Riverpod provider를 사용하세요.
+///
+/// ### 마이그레이션 예시
+/// ```dart
+/// // Before (기존 코드)
+/// MaterialApp(
+///   theme: AppTheme.lightTheme,
+///   darkTheme: AppTheme.darkTheme,
+/// )
+///
+/// // After (새로운 코드)
+/// Consumer(
+///   builder: (context, ref, _) {
+///     final lightTheme = ref.watch(lightThemeProvider);
+///     final darkTheme = ref.watch(darkThemeProvider);
+///     return MaterialApp(
+///       theme: lightTheme,
+///       darkTheme: darkTheme,
+///     );
+///   },
+/// )
+/// ```
+@Deprecated(
+  'This class is kept for migration reference only. '
+  'Use lightThemeProvider/darkThemeProvider from theme_provider.dart instead.',
+)
 class AppTheme {
+  /// @Deprecated Use context.boxDecoration instead
+  @Deprecated('Use context.boxDecoration instead')
   static BoxDecoration getBoxDecoration(BuildContext context) {
     return BoxDecoration(
       color: Theme.of(context).colorScheme.surface,
@@ -18,27 +76,20 @@ class AppTheme {
     );
   }
 
-  // 기존 코드와의 호환성을 위한 deprecated getter
-  @Deprecated("Use getBoxDecoration(context) instead")
-  static BoxDecoration get boxDecoration => BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(16),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withValues(alpha: 0.25),
-        blurRadius: 4,
-        offset: const Offset(1, 1),
-      ),
-    ],
-  );
+  /// @Deprecated Use lightThemeProvider from theme_provider.dart instead
+  @Deprecated(
+    'Use lightThemeProvider from theme_provider.dart instead. '
+    'See design.md Migration Guide for details.',
+  )
+  // ignore: deprecated_member_use_from_same_package
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
       scaffoldBackgroundColor: LightAppColors.background,
       primaryColor: LightAppColors.primary,
-
       fontFamily: 'Pretendard Variable',
+      
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(
@@ -115,6 +166,12 @@ class AppTheme {
     );
   }
 
+  /// @Deprecated Use darkThemeProvider from theme_provider.dart instead
+  @Deprecated(
+    'Use darkThemeProvider from theme_provider.dart instead. '
+    'See design.md Migration Guide for details.',
+  )
+  // ignore: deprecated_member_use_from_same_package
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
@@ -189,26 +246,15 @@ class AppTheme {
 
   static TextTheme _textTheme(Color primaryColor, Color secondaryColor) {
     return TextTheme(
-      // displayLarge: Onboarding main titles, Home circular progress bar amount
       displayLarge: AppTextStyles.h1.copyWith(color: primaryColor),
-      // displayMedium: Onboarding "예산 설정하기" title
       displayMedium: AppTextStyles.h2.copyWith(color: primaryColor),
-      // displaySmall: AppBar logo, Calendar month display, Modal titles
       displaySmall: AppTextStyles.h3.copyWith(color: primaryColor),
-      // headlineMedium: Home greeting, Settings modal titles
       headlineMedium: AppTextStyles.h4.copyWith(color: primaryColor),
-      // bodyLarge: Onboarding descriptions, Settings menu items
       bodyLarge: AppTextStyles.bodyL.copyWith(color: secondaryColor),
-      // bodyMedium: Home card titles, Expense list item titles, Calendar summary values, Buttons
       bodyMedium: AppTextStyles.bodyM.copyWith(color: primaryColor),
-      // bodySmall: Home date, card subtitles, Expense list item subtitles, Calendar day of the week
       bodySmall: AppTextStyles.bodyS.copyWith(color: secondaryColor),
-      // labelLarge: Buttons
-      labelLarge: AppTextStyles.bodyM.copyWith(
-        color: LightAppColors.textOnPrimary,
-      ),
+      labelLarge: AppTextStyles.bodyM.copyWith(color: primaryColor),
       labelMedium: AppTextStyles.bodyMM.copyWith(color: secondaryColor),
-      // caption: Calendar price under the date
       labelSmall: AppTextStyles.caption.copyWith(color: secondaryColor),
       titleSmall: AppTextStyles.captionOnDate.copyWith(color: secondaryColor),
       titleMedium: AppTextStyles.bodyL2.copyWith(color: primaryColor),

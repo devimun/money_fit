@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/functions/functions.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/ads/ad_banner_widget.dart';
 import 'package:money_fit/features/calendar/view/widgets/helper.dart';
 import 'package:money_fit/features/calendar/viewmodel/calendar_view_model.dart';
@@ -16,7 +17,7 @@ class CalendarScreen extends ConsumerWidget {
     final viewModel = ref.watch(calendarViewModel);
     return viewModel.when(
       data: (data) => Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.onPrimary,
+        backgroundColor: context.colors.screenBackground,
         body: Column(
           children: [
             const AdBannerWidget(screenType: ScreenType.calendar),
@@ -63,11 +64,11 @@ class CalendarScreen extends ConsumerWidget {
 
                       Color? color;
                       if (day.weekday == DateTime.sunday) {
-                        color = Colors.red;
+                        color = context.colors.error;
                       } else if (day.weekday == DateTime.saturday) {
                         color = Colors.blue;
                       } else {
-                        color = Theme.of(context).colorScheme.onSurface;
+                        color = context.colors.textPrimary;
                       }
 
                       return Align(

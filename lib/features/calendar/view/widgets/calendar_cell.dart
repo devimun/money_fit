@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/core/services/ad_service.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/today_expense_list.dart';
 import 'package:money_fit/features/calendar/model/model.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
@@ -38,7 +39,7 @@ class CalendarCell extends ConsumerWidget {
           child: Container(
             padding: EdgeInsets.all(2.0),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onSecondaryContainer,
+              color: context.colors.calendarCellBackground,
               borderRadius: BorderRadius.circular(12.0),
             ),
             child: Column(
@@ -68,10 +69,10 @@ class CalendarCell extends ConsumerWidget {
           Expanded(
             child: Text(
               '${day.day}',
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              style: context.textTheme.labelMedium?.copyWith(
                 color: cellData != null && cellData!.isSuccess
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.onSurface,
+                    ? context.colors.brandPrimary
+                    : context.colors.textPrimary,
               ),
             ),
           ),
@@ -84,8 +85,8 @@ class CalendarCell extends ConsumerWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: cellData!.isSuccess
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.grey,
+                      ? context.colors.brandPrimary
+                      : context.colors.navUnselected,
                 ),
               ),
             ),
@@ -108,8 +109,8 @@ class CalendarCell extends ConsumerWidget {
             fit: BoxFit.scaleDown,
             child: Text(
               formatCurrencyAdaptive(context, cellData!.discretionaryTotal),
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: Theme.of(context).colorScheme.primary,
+              style: context.textTheme.titleSmall?.copyWith(
+                color: context.colors.brandPrimary,
                 fontWeight: FontWeight.w600,
               ),
               textAlign: TextAlign.start,
@@ -120,9 +121,7 @@ class CalendarCell extends ConsumerWidget {
             fit: BoxFit.scaleDown,
             child: Text(
               formatCurrencyAdaptive(context, cellData!.essentialTotal),
-              style: Theme.of(
-                context,
-              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),
+              style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),
             ),
           ),
         ],
