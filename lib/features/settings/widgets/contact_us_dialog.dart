@@ -95,7 +95,7 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withOpacity(0.1),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -119,7 +119,9 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
                   decoration: InputDecoration(
                     labelText: l10n.inquiryType,
                     filled: true,
-                    fillColor: theme.colorScheme.onSurface.withOpacity(0.05),
+                    fillColor: theme.colorScheme.onSurface.withValues(
+                      alpha: 0.05,
+                    ),
                     border: OutlineInputBorder(
                       borderSide: BorderSide.none,
                       borderRadius: BorderRadius.circular(12),
