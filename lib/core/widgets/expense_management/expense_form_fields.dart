@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
+import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 /// 지출 등록 폼의 필드들을 관리하는 위젯
@@ -99,8 +100,8 @@ class ExpenseFormFields extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Text(
-                  l10n.essentialExpense,
+                child: ResponsiveLabelText(
+                  text: l10n.essentialExpense,
                   style: context.textTheme.labelMedium?.copyWith(
                     color: selectedType == ExpenseType.essential
                         ? context.colors.textOnBrand
@@ -110,8 +111,8 @@ class ExpenseFormFields extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Text(
-                  l10n.discretionaryExpense,
+                child: ResponsiveLabelText(
+                  text: l10n.discretionaryExpense,
                   style: context.textTheme.labelMedium?.copyWith(
                     color: selectedType == ExpenseType.discretionary
                         ? context.colors.textOnBrand
@@ -134,7 +135,7 @@ class ExpenseFormFields extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: context.textTheme.labelMedium),
+        ResponsiveLabelText(text: label, style: context.textTheme.labelMedium),
         const SizedBox(height: 10),
         child,
         const SizedBox(height: 20),

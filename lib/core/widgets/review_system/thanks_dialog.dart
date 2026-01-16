@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
+import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 /// 감사 인사 다이얼로그
@@ -47,8 +48,8 @@ class ThanksDialog extends StatelessWidget {
             const SizedBox(height: 24),
 
             // 메시지
-            Text(
-              l10n.review_thanks_message,
+            ResponsiveMessageText(
+              text: l10n.review_thanks_message,
               style: context.textTheme.bodyMedium?.copyWith(
                 color: context.colors.textPrimary.withValues(alpha: 0.7),
                 height: 1.5,
@@ -71,8 +72,8 @@ class ThanksDialog extends StatelessWidget {
                   ),
                   elevation: 0,
                 ),
-                child: Text(
-                  l10n.confirm,
+                child: ResponsiveButtonText(
+                  text: l10n.confirm,
                   style: context.textTheme.labelLarge?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
+import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -106,8 +107,8 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                Text(
-                  l10n.contactUs,
+                ResponsiveTitleText(
+                  text: l10n.contactUs,
                   style: context.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: context.colors.textPrimary,
@@ -203,7 +204,10 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
                     elevation: 0,
                   ),
                   child: Center(
-                    child: Text(l10n.submit, style: context.textTheme.labelLarge),
+                    child: ResponsiveButtonText(
+                      text: l10n.submit,
+                      style: context.textTheme.labelLarge,
+                    ),
                   ),
                 ),
               ],

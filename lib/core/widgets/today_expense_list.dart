@@ -8,6 +8,7 @@ import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/base_bottom_sheet.dart';
 import 'package:money_fit/core/widgets/expense_management/expense_add_form.dart';
+import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
@@ -55,8 +56,8 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
                   children: [
                     Icon(Icons.receipt_long, size: 64, color: context.colors.navUnselected),
                     const SizedBox(height: 16),
-                    Text(
-                      l10n.noExpenseHistory,
+                    ResponsiveMessageText(
+                      text: l10n.noExpenseHistory,
                       style: TextStyle(fontSize: 16, color: context.colors.textSecondary),
                     ),
                   ],
@@ -85,8 +86,8 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
                         context: context,
                         builder: (context) {
                           return AlertDialog(
-                            title: Text(l10n.editDeleteExpense),
-                            content: Text(l10n.editDeleteExpensePrompt(e.name)),
+                            title: ResponsiveTitleText(text: l10n.editDeleteExpense),
+                            content: ResponsiveDescriptionText(text: l10n.editDeleteExpensePrompt(e.name)),
                             actions: [
                               if (isHome)
                                 TextButton(
@@ -111,7 +112,7 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
                                       },
                                     );
                                   },
-                                  child: Text(l10n.edit),
+                                  child: ResponsiveButtonText(text: l10n.edit),
                                 ),
                               TextButton(
                                 onPressed: () async {
@@ -128,7 +129,7 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
                                     Navigator.pop(context);
                                   }
                                 },
-                                child: Text(l10n.delete),
+                                child: ResponsiveButtonText(text: l10n.delete),
                               ),
                             ],
                           );

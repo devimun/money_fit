@@ -15,19 +15,19 @@ class AppLocalizationsKo extends AppLocalizations {
   String get onboardingTitle1 => '복잡한 가계부는 이제 그만';
 
   @override
-  String get onboardingDescription1 => '매일의 지출을 간편하게 관리하고,\n건강한 소비 습관을 만들어보세요.';
+  String get onboardingDescription1 => '매일의 지출을 간편하게 관리하고, 건강한 소비 습관을 만들어보세요.';
 
   @override
   String get onboardingTitle2 => '한 눈에 확인 가능한 하루 예산';
 
   @override
-  String get onboardingDescription2 => '오늘 남은 예산을 파악하고,\n계획적인 소비를 시작하세요.';
+  String get onboardingDescription2 => '오늘 남은 예산을 파악하고, 계획적인 소비를 시작하세요.';
 
   @override
   String get onboardingTitle3 => '성취의 기록이 꾸준한 습관으로';
 
   @override
-  String get onboardingDescription3 => '매일의 도전을 성취로 채우고,\n돈 관리의 재미를 느껴보세요.';
+  String get onboardingDescription3 => '매일의 도전을 성취로 채우고, 돈 관리의 재미를 느껴보세요.';
 
   @override
   String get next => '다음으로';
@@ -37,7 +37,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get budgetSetupDescription =>
-      '자율 지출 예산을 설정해주세요.\n자유 지출이란, 공과금,의료비,주거비,보험 등 필수 지출을 제외한 자유롭게 사용할 수 있는 금액을 말해요.';
+      '자율 지출 예산을 설정해주세요. 자유 지출이란, 공과금,의료비,주거비,보험 등 필수 지출을 제외한 자유롭게 사용할 수 있는 금액을 말해요.';
 
   @override
   String get dailyBudgetLabel => '일일 예산 (원)';
@@ -89,9 +89,6 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get currency => '₩';
-
-  @override
   String get viewTodaySpending => '오늘 지출 보기';
 
   @override
@@ -110,7 +107,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get notificationDialogDescription =>
-      '지출 기록 , 어렵진 않지만 잊어버리기 쉽죠.\n잊지 않도록 매일 알림으로 도와드릴게요. \n알림을 받아 보시겠어요?';
+      '지출 기록, 어렵진 않지만 잊어버리기 쉽죠. 잊지 않도록 매일 알림으로 도와드릴게요. 알림을 받아 보시겠어요?';
 
   @override
   String get notificationDialogDeny => '괜찮아요';
@@ -208,7 +205,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get noExpenseData => '지출 내역이 존재하지 않습니다';
 
   @override
-  String get changeFilterPrompt => '필터 조건을 변경하거나\n새로운 지출을 추가해보세요';
+  String get changeFilterPrompt => '필터 조건을 변경하거나 새로운 지출을 추가해보세요';
 
   @override
   String get allFieldsRequired => '모든 항목을 올바르게 입력해주세요.';
@@ -430,7 +427,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get todayExpenseMessageGood => '좋아요! 오늘은 아직 여유 있어요 🌿';
 
   @override
-  String get todayExpenseMessageHalf => '절반 가까이 사용했어요!\n이제 조금만 신경써볼까요? 🔔';
+  String get todayExpenseMessageHalf => '절반 가까이 사용했어요! 이제 조금만 신경써볼까요? 🔔';
 
   @override
   String get todayExpenseMessageNearLimit => '조금만 더 쓰면 오늘 예산을 초과해요! ⚠️';
@@ -662,4 +659,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get close => '닫기';
+
+  @override
+  String get languageSetting => '언어 및 화폐';
+
+  @override
+  String get selectLanguage => '언어 선택';
 }

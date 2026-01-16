@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
@@ -49,6 +50,13 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
     _yearController.dispose();
     _monthController.dispose();
     super.dispose();
+  }
+
+  /// 로케일에 맞는 월 이름 반환
+  String _getLocalizedMonthName(BuildContext context, int month) {
+    final locale = Localizations.localeOf(context).toString();
+    final date = DateTime(2024, month, 1);
+    return DateFormat.MMM(locale).format(date);
   }
 
   @override
@@ -128,9 +136,7 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
                           .map(
                             (month) => Center(
                               child: Text(
-                                l10n.monthLabel(
-                                  month.toString().padLeft(2, '0'),
-                                ),
+                                _getLocalizedMonthName(context, month),
                                 style: context.textTheme.titleMedium?.copyWith(
                                   fontWeight: month == selectedMonth
                                       ? FontWeight.bold

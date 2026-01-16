@@ -4,8 +4,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:money_fit/core/config/locale_config.dart';
+import 'package:money_fit/core/providers/locale_provider.dart';
 import 'package:money_fit/core/router/app_router.dart';
-import 'package:money_fit/core/theme/theme_provider.dart';
+import 'package:money_fit/core/providers/theme_provider.dart';
+import 'package:money_fit/core/providers/shared_preferences_provider.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 import 'package:money_fit/firebase_options.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
@@ -20,7 +23,8 @@ Future<void> main() async {
     anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await initializeDateFormatting('ko_KR', null);
+  // 모든 로케일의 날짜 포맷팅 초기화
+  await initializeDateFormatting();
   
   // Initialize SharedPreferences
   final sharedPreferences = await SharedPreferences.getInstance();
@@ -53,6 +57,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     final isDarkMode = ref.watch(themeModeProvider);
     final lightTheme = ref.watch(lightThemeProvider);
     final darkTheme = ref.watch(darkThemeProvider);
+    final currentLocale = ref.watch(currentLocaleProvider);
 
     // 기존 User.isDarkMode를 ThemeSettings로 마이그레이션
     // userSettingsProvider가 로드되면 한 번만 실행
@@ -78,8 +83,9 @@ class _MyAppState extends ConsumerState<MyApp> {
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       debugShowCheckedModeBanner: false,
       routerConfig: router,
+      locale: currentLocale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
+      supportedLocales: supportedLocales,
       builder: (context, child) {
         return SafeArea(child: child!);
       },

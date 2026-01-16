@@ -5,11 +5,20 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_bg.dart';
+import 'app_localizations_cs.dart';
+import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_es.dart';
 import 'app_localizations_fil.dart';
 import 'app_localizations_id.dart';
+import 'app_localizations_it.dart';
 import 'app_localizations_ko.dart';
 import 'app_localizations_ms.dart';
+import 'app_localizations_pl.dart';
+import 'app_localizations_ro.dart';
+import 'app_localizations_sk.dart';
+import 'app_localizations_uk.dart';
 
 // ignore_for_file: type=lint
 
@@ -99,9 +108,18 @@ abstract class AppLocalizations {
   static const List<Locale> supportedLocales = <Locale>[
     Locale('ko'),
     Locale('en'),
-    Locale('fil'),
-    Locale('ms'),
+    Locale('es'),
+    Locale('pl'),
+    Locale('uk'),
+    Locale('cs'),
+    Locale('de'),
+    Locale('it'),
+    Locale('ro'),
+    Locale('sk'),
+    Locale('bg'),
     Locale('id'),
+    Locale('ms'),
+    Locale('fil'),
   ];
 
   /// No description provided for @appName.
@@ -119,7 +137,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingDescription1.
   ///
   /// In en, this message translates to:
-  /// **'Easily manage your daily expenses and\nbuild healthy spending habits.'**
+  /// **'Easily manage your daily expenses and build healthy spending habits.'**
   String get onboardingDescription1;
 
   /// No description provided for @onboardingTitle2.
@@ -131,7 +149,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingDescription2.
   ///
   /// In en, this message translates to:
-  /// **'Track your remaining budget for the day\nand start spending mindfully.'**
+  /// **'Track your remaining budget for the day and start spending mindfully.'**
   String get onboardingDescription2;
 
   /// No description provided for @onboardingTitle3.
@@ -143,7 +161,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingDescription3.
   ///
   /// In en, this message translates to:
-  /// **'Turn daily challenges into achievements\nand enjoy managing your money.'**
+  /// **'Turn daily challenges into achievements and enjoy managing your money.'**
   String get onboardingDescription3;
 
   /// No description provided for @next.
@@ -161,7 +179,7 @@ abstract class AppLocalizations {
   /// No description provided for @budgetSetupDescription.
   ///
   /// In en, this message translates to:
-  /// **'Set your discretionary spending budget.\nDiscretionary spending is the amount you can use freely, excluding fixed costs like bills, medical expenses, housing, and insurance.'**
+  /// **'Set your discretionary spending budget. Discretionary spending is the amount you can use freely, excluding fixed costs like bills, medical expenses, housing, and insurance.'**
   String get budgetSetupDescription;
 
   /// No description provided for @dailyBudgetLabel.
@@ -254,12 +272,6 @@ abstract class AppLocalizations {
   /// **'{count} days'**
   String days(Object count);
 
-  /// No description provided for @currency.
-  ///
-  /// In en, this message translates to:
-  /// **'\$'**
-  String get currency;
-
   /// No description provided for @viewTodaySpending.
   ///
   /// In en, this message translates to:
@@ -293,7 +305,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationDialogDescription.
   ///
   /// In en, this message translates to:
-  /// **'Logging expenses is easy, but it\'s also easy to forget.\nWe\'ll send you daily reminders to help you stay on track. Would you like to receive notifications?'**
+  /// **'Logging expenses is easy, but it\'s also easy to forget. We\'ll send you daily reminders to help you stay on track. Would you like to receive notifications?'**
   String get notificationDialogDescription;
 
   /// No description provided for @notificationDialogDeny.
@@ -485,7 +497,7 @@ abstract class AppLocalizations {
   /// No description provided for @changeFilterPrompt.
   ///
   /// In en, this message translates to:
-  /// **'Try changing the filter conditions or\nadd a new expense'**
+  /// **'Try changing the filter conditions or add a new expense'**
   String get changeFilterPrompt;
 
   /// No description provided for @allFieldsRequired.
@@ -899,7 +911,7 @@ abstract class AppLocalizations {
   /// No description provided for @todayExpenseMessageHalf.
   ///
   /// In en, this message translates to:
-  /// **'You\'ve used almost half!\nLet\'s be a little more mindful now 🔔'**
+  /// **'You\'ve used almost half! Let\'s be a little more mindful now 🔔'**
   String get todayExpenseMessageHalf;
 
   /// No description provided for @todayExpenseMessageNearLimit.
@@ -911,7 +923,7 @@ abstract class AppLocalizations {
   /// No description provided for @todayExpenseMessageOverLimit.
   ///
   /// In en, this message translates to:
-  /// **'You\'ve exceeded today\'s budget!\nLet\'s adjust your spending ❗'**
+  /// **'You\'ve exceeded today\'s budget! Let\'s adjust your spending ❗'**
   String get todayExpenseMessageOverLimit;
 
   /// No description provided for @information.
@@ -1357,6 +1369,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close'**
   String get close;
+
+  /// No description provided for @languageSetting.
+  ///
+  /// In en, this message translates to:
+  /// **'Language & Currency'**
+  String get languageSetting;
+
+  /// No description provided for @selectLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Language'**
+  String get selectLanguage;
 }
 
 class _AppLocalizationsDelegate
@@ -1369,8 +1393,22 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en', 'fil', 'id', 'ko', 'ms'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+    'bg',
+    'cs',
+    'de',
+    'en',
+    'es',
+    'fil',
+    'id',
+    'it',
+    'ko',
+    'ms',
+    'pl',
+    'ro',
+    'sk',
+    'uk',
+  ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -1379,16 +1417,34 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'bg':
+      return AppLocalizationsBg();
+    case 'cs':
+      return AppLocalizationsCs();
+    case 'de':
+      return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
     case 'fil':
       return AppLocalizationsFil();
     case 'id':
       return AppLocalizationsId();
+    case 'it':
+      return AppLocalizationsIt();
     case 'ko':
       return AppLocalizationsKo();
     case 'ms':
       return AppLocalizationsMs();
+    case 'pl':
+      return AppLocalizationsPl();
+    case 'ro':
+      return AppLocalizationsRo();
+    case 'sk':
+      return AppLocalizationsSk();
+    case 'uk':
+      return AppLocalizationsUk();
   }
 
   throw FlutterError(

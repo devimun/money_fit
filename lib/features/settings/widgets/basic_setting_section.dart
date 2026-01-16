@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/features/settings/widgets/budget_setting.dart';
 import 'package:money_fit/features/settings/widgets/font_size_setting.dart';
+import 'package:money_fit/features/settings/widgets/language_setting.dart';
 import 'package:money_fit/features/settings/widgets/notification_setting.dart';
 import 'package:money_fit/features/settings/widgets/dark_mode_setting.dart';
 import 'package:money_fit/features/settings/widgets/theme_color_setting.dart';
@@ -22,6 +23,7 @@ class BasicSettingsSection extends StatelessWidget {
         buildSettingsCard([
           const BudgetSetting(),
           const NotificationSetting(),
+          const LanguageSetting(),
           const DarkModeSetting(),
           const ThemeColorSetting(),
           const FontSizeSetting()

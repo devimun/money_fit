@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/models/theme_settings.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
-import 'package:money_fit/core/theme/theme_provider.dart';
+import 'package:money_fit/core/providers/theme_provider.dart';
+import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
@@ -21,8 +22,8 @@ class FontSizeSetting extends ConsumerWidget {
       icon: Icons.text_fields,
       iconColor: context.colors.brandPrimary,
       title: l10n.fontSize,
-      trailing: Text(
-        _getFontSizeLabel(currentOption, l10n),
+      trailing: ResponsiveLabelText(
+        text: _getFontSizeLabel(currentOption, l10n),
         style: context.textTheme.bodyMedium?.copyWith(
               color: context.colors.brandPrimary,
             ),
@@ -82,7 +83,7 @@ class _FontSizeDialogState extends State<_FontSizeDialog> {
     final l10n = AppLocalizations.of(context)!;
 
     return AlertDialog(
-      title: Text(l10n.fontSize),
+      title: ResponsiveTitleText(text: l10n.fontSize),
       content: RadioGroup<FontSizeOption>(
         groupValue: _selectedOption,
         onChanged: (FontSizeOption? value) {
@@ -113,14 +114,14 @@ class _FontSizeDialogState extends State<_FontSizeDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text(l10n.cancel),
+          child: ResponsiveButtonText(text: l10n.cancel),
         ),
         TextButton(
           onPressed: () {
             widget.onApply(_selectedOption);
             Navigator.of(context).pop();
           },
-          child: Text(l10n.apply),
+          child: ResponsiveButtonText(text: l10n.apply),
         ),
       ],
     );

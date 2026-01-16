@@ -4,6 +4,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
+import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 
 /// Widget that provides HSV (Hue, Saturation, Value) color selection
 /// 
@@ -186,8 +187,8 @@ class _SliderSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              label,
+            ResponsiveLabelText(
+              text: label,
               style: context.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
               ),

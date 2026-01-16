@@ -12,7 +12,7 @@ class DatabaseHelper {
 
   static Database? _database;
   static const _dbName = 'money_fit.db';
-  static const _dbVersion = 4;
+  static const _dbVersion = 5;
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -83,6 +83,15 @@ class DatabaseHelper {
       ''');
       await db.execute('DROP TABLE users_old');
     }
+    // 버전 5: 언어/화폐 설정 컬럼 추가
+    if (oldVersion < 5) {
+      await db.execute(
+        "ALTER TABLE users ADD COLUMN language_code TEXT NOT NULL DEFAULT 'en'",
+      );
+      await db.execute(
+        "ALTER TABLE users ADD COLUMN currency_code TEXT NOT NULL DEFAULT 'USD'",
+      );
+    }
   }
 
   // 테이블 생성 스크립트
@@ -96,6 +105,8 @@ class DatabaseHelper {
         budget_type TEXT NOT NULL DEFAULT 'daily',
         is_dark_mode INTEGER NOT NULL DEFAULT 0,
         notifications_enabled INTEGER NOT NULL DEFAULT 1,
+        language_code TEXT NOT NULL DEFAULT 'en',
+        currency_code TEXT NOT NULL DEFAULT 'USD',
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL
       )

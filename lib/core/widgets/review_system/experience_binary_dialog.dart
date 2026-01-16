@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
+import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 /// 리뷰 경험을 이분화하여 묻는 다이얼로그
@@ -47,16 +48,13 @@ class ExperienceBinaryDialog extends StatelessWidget {
             const SizedBox(height: 24),
 
             // 제목
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                l10n.review_modal_binary_title,
-                style: context.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: context.colors.textPrimary,
-                ),
-                textAlign: TextAlign.center,
+            ResponsiveTitleText(
+              text: l10n.review_modal_binary_title,
+              style: context.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: context.colors.textPrimary,
               ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
 
@@ -130,8 +128,8 @@ class ExperienceBinaryDialog extends StatelessWidget {
                     : context.colors.error,
               ),
               const SizedBox(height: 8),
-              Text(
-                label,
+              ResponsiveButtonText(
+                text: label,
                 style: context.textTheme.labelMedium?.copyWith(
                   color: isPositive
                       ? context.colors.brandPrimary

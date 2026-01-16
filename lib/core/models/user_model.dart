@@ -18,6 +18,12 @@ class User {
   final bool notificationsEnabled;
   final DateTime createdAt;
   final DateTime updatedAt;
+  
+  /// 사용자 언어 설정 (기본값: 'en')
+  final String languageCode;
+  
+  /// 사용자 화폐 설정 (기본값: 'USD')
+  final String currencyCode;
 
   const User({
     required this.id,
@@ -29,6 +35,8 @@ class User {
     required this.notificationsEnabled,
     required this.createdAt,
     required this.updatedAt,
+    this.languageCode = 'en',
+    this.currencyCode = 'USD',
   });
 
   User copyWith({
@@ -41,6 +49,8 @@ class User {
     bool? notificationsEnabled,
     DateTime? createdAt,
     DateTime? updatedAt,
+    String? languageCode,
+    String? currencyCode,
   }) {
     return User(
       id: id ?? this.id,
@@ -52,6 +62,8 @@ class User {
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      languageCode: languageCode ?? this.languageCode,
+      currencyCode: currencyCode ?? this.currencyCode,
     );
   }
 
@@ -73,6 +85,8 @@ class User {
           : json['notifications_enabled'] == 1,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
+      languageCode: (json['language_code'] as String?) ?? 'en',
+      currencyCode: (json['currency_code'] as String?) ?? 'USD',
     );
   }
 
@@ -87,6 +101,8 @@ class User {
       'notifications_enabled': notificationsEnabled ? 1 : 0,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
+      'language_code': languageCode,
+      'currency_code': currencyCode,
     };
   }
 }

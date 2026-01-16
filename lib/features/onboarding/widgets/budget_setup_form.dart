@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_fit/core/config/locale_config.dart';
 import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
+import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 class BudgetSetupForm extends ConsumerWidget {
@@ -23,19 +25,21 @@ class BudgetSetupForm extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context);
+    final localeConfig = getLocaleConfig(locale.languageCode);
 
     return Form(
       key: formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            l10n.dailyBudgetSetupTitle, // This title might need to be more generic
+          ResponsiveTitleText(
+            text: l10n.dailyBudgetSetupTitle, // This title might need to be more generic
             style: context.textTheme.displayMedium,
           ),
           const SizedBox(height: 20),
-          Text(
-            l10n.budgetSetupDescription,
+          ResponsiveDescriptionText(
+            text: l10n.budgetSetupDescription,
             style: context.textTheme.bodyLarge,
           ),
           const SizedBox(height: 30),
@@ -68,11 +72,11 @@ class BudgetSetupForm extends ConsumerWidget {
             segments: <ButtonSegment<BudgetType>>[
               ButtonSegment<BudgetType>(
                 value: BudgetType.daily,
-                label: Text(l10n.daily),
+                label: ResponsiveButtonText(text: l10n.daily),
               ),
               ButtonSegment<BudgetType>(
                 value: BudgetType.monthly,
-                label: Text(l10n.monthly),
+                label: ResponsiveButtonText(text: l10n.monthly),
               ),
             ],
             selected: {selectedType},
@@ -85,7 +89,7 @@ class BudgetSetupForm extends ConsumerWidget {
             controller: budgetController,
             keyboardType: TextInputType.numberWithOptions(decimal: true),
             decoration: InputDecoration(
-              suffixText: l10n.currency,
+              suffixText: localeConfig.currencySymbol,
               suffixStyle: context.textTheme.labelMedium,
               labelText: selectedType == BudgetType.daily
                   ? l10n.dailyBudgetLabel
@@ -114,8 +118,8 @@ class BudgetSetupForm extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 textStyle: context.textTheme.labelLarge,
               ),
-              child: Text(
-                l10n.start,
+              child: ResponsiveButtonText(
+                text: l10n.start,
                 style: context.textTheme.labelLarge,
               ),
             ),
