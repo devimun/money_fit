@@ -173,8 +173,8 @@ final lightThemeProvider = Provider<ThemeData>((ref) {
           borderRadius: BorderRadius.circular(10),
         ),
         backgroundColor: appColors.selectedButtonBackground,
+        foregroundColor: appColors.textOnBrand,
         minimumSize: const Size(double.maxFinite, 50),
-        textStyle: TextStyle(color: appColors.textOnBrand),
       ),
     ),
     
@@ -260,8 +260,8 @@ final darkThemeProvider = Provider<ThemeData>((ref) {
           borderRadius: BorderRadius.circular(10),
         ),
         backgroundColor: appColors.selectedButtonBackground,
+        foregroundColor: appColors.textOnBrand,
         minimumSize: const Size(double.maxFinite, 50),
-        textStyle: TextStyle(color: appColors.textOnBrand),
       ),
     ),
     

@@ -436,22 +436,22 @@ class AppLocalizationsUk extends AppLocalizations {
   String get remainingAmount => 'Залишок';
 
   @override
-  String get todayExpenseMessageZero => 'Запишіть свої витрати за сьогодні 😊';
+  String get todayExpenseMessageZero => 'Запишіть свої витрати\nза сьогодні 😊';
 
   @override
-  String get todayExpenseMessageGood => 'Чудово! У вас ще багато бюджету 🌿';
+  String get todayExpenseMessageGood => 'Чудово!\nУ вас ще багато бюджету 🌿';
 
   @override
   String get todayExpenseMessageHalf =>
-      'Ви використали майже половину! Будьмо обережнішими 🔔';
+      'Ви використали майже половину!\nБудьмо обережнішими 🔔';
 
   @override
   String get todayExpenseMessageNearLimit =>
-      'Ви близькі до перевищення сьогоднішнього бюджету! ⚠️';
+      'Ви близькі до перевищення\nсьогоднішнього бюджету! ⚠️';
 
   @override
   String get todayExpenseMessageOverLimit =>
-      'Ви перевищили сьогоднішній бюджет! Давайте скоригуємо витрати ❗';
+      'Ви перевищили сьогоднішній бюджет!\nДавайте скоригуємо витрати ❗';
 
   @override
   String get information => 'Інформація';
@@ -613,23 +613,23 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get monthlyExpenseMessageZero =>
-      'Ще немає дискреційних витрат цього місяця!';
+      'Ще немає дискреційних витрат\nцього місяця!';
 
   @override
   String get monthlyExpenseMessageGood =>
-      'Ваш бюджет добре керується цього місяця!';
+      'Ваш бюджет добре керується\nцього місяця!';
 
   @override
   String get monthlyExpenseMessageHalf =>
-      'Ви використали приблизно половину бюджету цього місяця.';
+      'Ви використали приблизно половину\nбюджету цього місяця.';
 
   @override
   String get monthlyExpenseMessageNearLimit =>
-      'Ваш бюджет майже вичерпано цього місяця.';
+      'Ваш бюджет майже вичерпано\nцього місяця.';
 
   @override
   String get monthlyExpenseMessageOverLimit =>
-      'Ви перевищили бюджет цього місяця.';
+      'Ви перевищили бюджет\nцього місяця.';
 
   @override
   String get contactUs => 'Зв\'яжіться з нами';

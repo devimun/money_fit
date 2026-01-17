@@ -443,22 +443,22 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get todayExpenseMessageZero =>
-      'Înregistrează-ți cheltuielile de azi 😊';
+      'Înregistrează-ți cheltuielile\nde azi 😊';
 
   @override
-  String get todayExpenseMessageGood => 'Excelent! Mai ai mult buget rămas 🌿';
+  String get todayExpenseMessageGood => 'Excelent!\nMai ai mult buget rămas 🌿';
 
   @override
   String get todayExpenseMessageHalf =>
-      'Ai folosit aproape jumătate! Hai să fim mai atenți acum 🔔';
+      'Ai folosit aproape jumătate!\nHai să fim mai atenți acum 🔔';
 
   @override
   String get todayExpenseMessageNearLimit =>
-      'Ești aproape de a depăși bugetul de azi! ⚠️';
+      'Ești aproape de a depăși\nbugetul de azi! ⚠️';
 
   @override
   String get todayExpenseMessageOverLimit =>
-      'Ai depășit bugetul de azi! Hai să ajustăm cheltuielile ❗';
+      'Ai depășit bugetul de azi!\nHai să ajustăm cheltuielile ❗';
 
   @override
   String get information => 'Informații';
@@ -621,23 +621,23 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get monthlyExpenseMessageZero =>
-      'Nicio cheltuială discreționară luna aceasta încă!';
+      'Nicio cheltuială discreționară\nluna aceasta încă!';
 
   @override
   String get monthlyExpenseMessageGood =>
-      'Bugetul tău este bine gestionat luna aceasta!';
+      'Bugetul tău este bine gestionat\nluna aceasta!';
 
   @override
   String get monthlyExpenseMessageHalf =>
-      'Ai folosit aproximativ jumătate din buget luna aceasta.';
+      'Ai folosit aproximativ jumătate din buget\nluna aceasta.';
 
   @override
   String get monthlyExpenseMessageNearLimit =>
-      'Bugetul tău este aproape epuizat luna aceasta.';
+      'Bugetul tău este aproape epuizat\nluna aceasta.';
 
   @override
   String get monthlyExpenseMessageOverLimit =>
-      'Ai depășit bugetul luna aceasta.';
+      'Ai depășit bugetul\nluna aceasta.';
 
   @override
   String get contactUs => 'Contactează-ne';

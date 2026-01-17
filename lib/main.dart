@@ -25,10 +25,10 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   // 모든 로케일의 날짜 포맷팅 초기화
   await initializeDateFormatting();
-  
+
   // Initialize SharedPreferences
   final sharedPreferences = await SharedPreferences.getInstance();
-  
+
   runApp(
     Phoenix(
       child: ProviderScope(
@@ -52,31 +52,21 @@ class _MyAppState extends ConsumerState<MyApp> {
   bool _migrationAttempted = false;
 
   @override
-  void initState() {
-    super.initState();
-    // initState에서 마이그레이션 리스너를 한 번만 등록
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _setupMigrationListener();
-    });
-  }
-
-  void _setupMigrationListener() {
+  Widget build(BuildContext context) {
     // 기존 User.isDarkMode를 ThemeSettings로 마이그레이션
     // userSettingsProvider가 로드되면 한 번만 실행
+    // ref.listen은 build 메서드 내에서만 사용 가능
     ref.listen(userSettingsProvider, (previous, next) {
       next.whenData((user) {
         if (!_migrationAttempted) {
           _migrationAttempted = true;
-          ref.read(themeModeProvider.notifier).migrateFromUserSettings(
-            user.isDarkMode,
-          );
+          ref
+              .read(themeModeProvider.notifier)
+              .migrateFromUserSettings(user.isDarkMode);
         }
       });
     });
-  }
 
-  @override
-  Widget build(BuildContext context) {
     final router = ref.watch(goRouterProvider);
     final isDarkMode = ref.watch(themeModeProvider);
     final lightTheme = ref.watch(lightThemeProvider);

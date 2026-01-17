@@ -439,23 +439,23 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get todayExpenseMessageZero =>
-      'Notieren Sie Ihre heutigen Ausgaben 😊';
+      'Notieren Sie\nIhre heutigen Ausgaben 😊';
 
   @override
   String get todayExpenseMessageGood =>
-      'Super! Sie haben noch viel Budget übrig 🌿';
+      'Super!\nSie haben noch viel Budget übrig 🌿';
 
   @override
   String get todayExpenseMessageHalf =>
-      'Sie haben fast die Hälfte verbraucht! Seien wir jetzt vorsichtiger 🔔';
+      'Sie haben fast die Hälfte verbraucht!\nSeien wir jetzt vorsichtiger 🔔';
 
   @override
   String get todayExpenseMessageNearLimit =>
-      'Sie sind kurz davor, das heutige Budget zu überschreiten! ⚠️';
+      'Sie sind kurz davor,\ndas heutige Budget zu überschreiten! ⚠️';
 
   @override
   String get todayExpenseMessageOverLimit =>
-      'Sie haben das heutige Budget überschritten! Passen wir die Ausgaben an ❗';
+      'Sie haben das heutige Budget überschritten!\nPassen wir die Ausgaben an ❗';
 
   @override
   String get information => 'Information';
@@ -618,23 +618,23 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get monthlyExpenseMessageZero =>
-      'Noch keine freien Ausgaben diesen Monat!';
+      'Noch keine freien Ausgaben\ndiesen Monat!';
 
   @override
   String get monthlyExpenseMessageGood =>
-      'Ihr Budget ist diesen Monat gut verwaltet!';
+      'Ihr Budget ist diesen Monat\ngut verwaltet!';
 
   @override
   String get monthlyExpenseMessageHalf =>
-      'Sie haben etwa die Hälfte Ihres Budgets diesen Monat verbraucht.';
+      'Sie haben etwa die Hälfte\nIhres Budgets diesen Monat verbraucht.';
 
   @override
   String get monthlyExpenseMessageNearLimit =>
-      'Ihr Budget ist diesen Monat fast aufgebraucht.';
+      'Ihr Budget ist diesen Monat\nfast aufgebraucht.';
 
   @override
   String get monthlyExpenseMessageOverLimit =>
-      'Sie haben Ihr Budget diesen Monat überschritten.';
+      'Sie haben Ihr Budget\ndiesen Monat überschritten.';
 
   @override
   String get contactUs => 'Kontaktieren Sie uns';

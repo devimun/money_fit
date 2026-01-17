@@ -437,14 +437,14 @@ class AppLocalizationsMs extends AppLocalizations {
   String get remainingAmount => 'Jumlah Baki';
 
   @override
-  String get todayExpenseMessageZero => 'Sila catat belanja anda hari ini 😊';
+  String get todayExpenseMessageZero => 'Sila catat belanja anda\nhari ini 😊';
 
   @override
-  String get todayExpenseMessageGood => 'Hebat! Bajet anda masih banyak 🌿';
+  String get todayExpenseMessageGood => 'Hebat!\nBajet anda masih banyak 🌿';
 
   @override
   String get todayExpenseMessageHalf =>
-      'Anda dah guna hampir separuh! Jom lebih berhati-hati 🔔';
+      'Anda dah guna hampir separuh!\nJom lebih berhati-hati 🔔';
 
   @override
   String get todayExpenseMessageNearLimit =>
@@ -452,7 +452,7 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get todayExpenseMessageOverLimit =>
-      'Anda sudah melebihi bajet! Jom kawal semula perbelanjaan anda ❗';
+      'Anda sudah melebihi bajet!\nJom kawal semula perbelanjaan anda ❗';
 
   @override
   String get information => 'Maklumat';
@@ -615,23 +615,23 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get monthlyExpenseMessageZero =>
-      'Tiada perbelanjaan budi bicara bulan ini lagi!';
+      'Tiada perbelanjaan budi bicara\nbulan ini lagi!';
 
   @override
   String get monthlyExpenseMessageGood =>
-      'Belanjawan anda diurus dengan baik bulan ini!';
+      'Belanjawan anda diurus dengan baik\nbulan ini!';
 
   @override
   String get monthlyExpenseMessageHalf =>
-      'Anda telah menggunakan kira-kira separuh daripada belanjawan anda bulan ini.';
+      'Anda telah menggunakan kira-kira separuh\ndaripada belanjawan anda bulan ini.';
 
   @override
   String get monthlyExpenseMessageNearLimit =>
-      'Belanjawan anda hampir habis untuk bulan ini.';
+      'Belanjawan anda hampir habis\nuntuk bulan ini.';
 
   @override
   String get monthlyExpenseMessageOverLimit =>
-      'Anda telah melebihi belanjawan anda untuk bulan ini.';
+      'Anda telah melebihi belanjawan anda\nuntuk bulan ini.';
 
   @override
   String get contactUs => 'Hubungi Kami';
