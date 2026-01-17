@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
+import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
 import 'package:money_fit/features/home/widgets/animate_circular_budget.dart';
 import 'package:money_fit/features/home/widgets/budget_mode_tabs.dart';
@@ -63,20 +64,10 @@ class HomeMainCard extends StatelessWidget {
       child: Column(
         children: [
           BudgetModeTabs(),
-          SizedBox(
-            height: 50,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  getMessage(context),
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    color: context.colors.textPrimary,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
+          ResponsiveMessageText(
+            text: getMessage(context),
+            style: context.textTheme.bodyLarge?.copyWith(
+              color: context.colors.textPrimary,
             ),
           ),
           SizedBox(height: heightSpace),
@@ -117,92 +108,106 @@ class HomeMainCard extends StatelessWidget {
         : l10n.dailyDiscretionarySpending;
     final budgetLabel = isMonthly ? l10n.monthlyBudget : l10n.dailyBudget;
 
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            buildCircleWidget(true, context),
-            const SizedBox(width: 8),
-            Text(
-              '$spentLabel ${formatCurrencyAdaptive(context, spent)}',
-              style: context.textTheme.bodyMedium?.copyWith(
-                color: context.colors.textPrimary,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              buildCircleWidget(true, context),
+              const SizedBox(width: 8),
+              Flexible(
+                child: ResponsiveLabelText(
+                  text: '$spentLabel ${formatCurrencyAdaptive(context, spent)}',
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: context.colors.textPrimary,
+                  ),
+                ),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            buildCircleWidget(false, context),
-            const SizedBox(width: 8),
-            Text(
-              '$budgetLabel ${formatCurrencyAdaptive(context, budget)}',
-              style: context.textTheme.bodyMedium?.copyWith(
-                color: context.colors.textPrimary,
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              buildCircleWidget(false, context),
+              const SizedBox(width: 8),
+              Flexible(
+                child: ResponsiveLabelText(
+                  text: '$budgetLabel ${formatCurrencyAdaptive(context, budget)}',
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: context.colors.textPrimary,
+                  ),
+                ),
               ),
-            ),
-          ],
-        ),
-      ],
+            ],
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildStatistics(BuildContext context, AppLocalizations l10n) {
-    return IntrinsicHeight(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  l10n.monthlyAvgDiscSpending,
-                  textAlign: TextAlign.center,
-                  style: context.textTheme.labelMedium?.copyWith(
-                    color: context.colors.textPrimary,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: IntrinsicHeight(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ResponsiveLabelText(
+                    text: l10n.monthlyAvgDiscSpending,
+                    style: context.textTheme.labelMedium?.copyWith(
+                      color: context.colors.textPrimary,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  formatCurrencyAdaptive(
-                    context,
-                    homeState.monthlyDiscretionaryExpenseAvg,
+                  const SizedBox(height: 10),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      formatCurrencyAdaptive(
+                        context,
+                        homeState.monthlyDiscretionaryExpenseAvg,
+                      ),
+                      textAlign: TextAlign.center,
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        color: context.colors.textPrimary,
+                      ),
+                    ),
                   ),
-                  textAlign: TextAlign.center,
-                  style: context.textTheme.bodyMedium?.copyWith(
-                    color: context.colors.textPrimary,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  l10n.consecutiveDays,
-                  textAlign: TextAlign.center,
-                  style: context.textTheme.labelMedium?.copyWith(
-                    color: context.colors.textPrimary,
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ResponsiveLabelText(
+                    text: l10n.consecutiveDays,
+                    style: context.textTheme.labelMedium?.copyWith(
+                      color: context.colors.textPrimary,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  l10n.days(homeState.consecutiveAchievementDays),
-                  textAlign: TextAlign.center,
-                  style: context.textTheme.bodyMedium?.copyWith(
-                    color: context.colors.textPrimary,
+                  const SizedBox(height: 10),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      l10n.days(homeState.consecutiveAchievementDays),
+                      textAlign: TextAlign.center,
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        color: context.colors.textPrimary,
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -8,6 +8,7 @@ import 'package:money_fit/core/providers/category_providers.dart';
 import 'package:money_fit/core/services/ad_service.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/ads/ad_banner_widget.dart';
+import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/features/expense/view/widgets/filter_components/month_year_picker_dialog.dart';
 import 'package:money_fit/features/statistics/model/models.dart';
 import 'package:money_fit/features/statistics/viewmodel/view_model.dart';
@@ -168,8 +169,8 @@ class StatisticsScreen extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          l10n.spendingByCategory,
+        ResponsiveTitleText(
+          text: l10n.spendingByCategory,
           style: context.textTheme.bodyLarge!.copyWith(
             color: context.colors.brandPrimary,
           ),
@@ -277,21 +278,17 @@ class StatisticsScreen extends ConsumerWidget {
                                   ),
                                   const SizedBox(width: 8),
                                   Expanded(
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Text(
-                                        categoryNotifier.getCategoryName(
-                                          context,
-                                          expense.categoryId,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.labelMedium,
+                                    child: ResponsiveLabelText(
+                                      text: categoryNotifier.getCategoryName(
+                                        context,
+                                        expense.categoryId,
                                       ),
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.labelMedium,
                                     ),
                                   ),
-                                  const SizedBox(width: 10),
+                                  const SizedBox(width: 4),
                                   Text(
                                     formatCurrencyAdaptive(
                                       context,
@@ -337,8 +334,8 @@ class StatisticsScreen extends ConsumerWidget {
               ? context.colors.brandPrimary.withValues(alpha: 0.1)
               : null,
           child: Center(
-            child: Text(
-              title,
+            child: ResponsiveLabelText(
+              text: title,
               style: context.textTheme.bodyMedium!.copyWith(
                 fontWeight: FontWeight.w400,
                 color: isSelected
@@ -370,8 +367,8 @@ class StatisticsScreen extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          l10n.top3ExpensesThisMonth,
+        ResponsiveTitleText(
+          text: l10n.top3ExpensesThisMonth,
           style: context.textTheme.bodyLarge!.copyWith(
             color: context.colors.brandPrimary,
           ),
@@ -411,8 +408,8 @@ class StatisticsScreen extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            categoryNotifier.getCategoryName(
+                          ResponsiveLabelText(
+                            text: categoryNotifier.getCategoryName(
                               context,
                               expense.categoryId,
                             ),

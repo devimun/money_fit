@@ -4,7 +4,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:money_fit/core/theme/theme_provider.dart';
+import 'package:money_fit/core/providers/shared_preferences_provider.dart';
 import 'package:money_fit/features/settings/widgets/theme_color_setting.dart';
 import 'package:money_fit/features/settings/widgets/theme_customization/color_picker_dialog.dart';
 import 'package:money_fit/l10n/app_localizations.dart';

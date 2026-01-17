@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
+import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -68,19 +69,19 @@ class NotificationSetting extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n.notificationPermissionRequired),
-        content: Text(l10n.notificationPermissionDescription),
+        title: ResponsiveTitleText(text: l10n.notificationPermissionRequired),
+        content: ResponsiveDescriptionText(text: l10n.notificationPermissionDescription),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
+            child: ResponsiveButtonText(text: l10n.cancel),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               openAppSettings();
             },
-            child: Text(l10n.goToSettings),
+            child: ResponsiveButtonText(text: l10n.goToSettings),
           ),
         ],
       ),

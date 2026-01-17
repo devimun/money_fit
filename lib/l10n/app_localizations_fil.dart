@@ -16,21 +16,21 @@ class AppLocalizationsFil extends AppLocalizations {
 
   @override
   String get onboardingDescription1 =>
-      'Madaling pamahalaan ang iyong pang-araw-araw na gastos at\nbumuo ng malusog na gawi sa paggastos.';
+      'Madaling pamahalaan ang iyong pang-araw-araw na gastos at bumuo ng malusog na gawi sa paggastos.';
 
   @override
   String get onboardingTitle2 => 'Badyet sa Isang Sulyap';
 
   @override
   String get onboardingDescription2 =>
-      'Subaybayan ang iyong natitirang badyet para sa araw at\nsimulan ang maingat na paggastos.';
+      'Subaybayan ang iyong natitirang badyet para sa araw at simulan ang maingat na paggastos.';
 
   @override
   String get onboardingTitle3 => 'Gawing Gawi ang mga Nakamit';
 
   @override
   String get onboardingDescription3 =>
-      'Gawing mga nakamit ang pang-araw-araw na hamon at\nmag-enjoy sa pamamahala ng iyong pera.';
+      'Gawing mga nakamit ang pang-araw-araw na hamon at mag-enjoy sa pamamahala ng iyong pera.';
 
   @override
   String get next => 'Susunod';
@@ -40,7 +40,7 @@ class AppLocalizationsFil extends AppLocalizations {
 
   @override
   String get budgetSetupDescription =>
-      'Itakda ang iyong budget para sa gastusing flexible.\nIto ang halaga na malaya mong magagamit, hindi kasama ang mga bayarin, gastusing medikal, pabahay, at insurance.';
+      'Itakda ang iyong budget para sa gastusing flexible. Ito ang halaga na malaya mong magagamit, hindi kasama ang mga bayarin, gastusing medikal, pabahay, at insurance.';
 
   @override
   String get dailyBudgetLabel => 'Arawang Badyet (PHP)';
@@ -94,9 +94,6 @@ class AppLocalizationsFil extends AppLocalizations {
   }
 
   @override
-  String get currency => '₱';
-
-  @override
   String get viewTodaySpending => 'Tingnan ang\nGastos Ngayon';
 
   @override
@@ -122,7 +119,7 @@ class AppLocalizationsFil extends AppLocalizations {
 
   @override
   String get notificationDialogDescription =>
-      'Madali ang pag-log ng gastos, pero madali ring makalimutan.\nMagpapadala kami ng arawang paalala. Gusto mo bang makatanggap ng notifications?';
+      'Madali ang pag-log ng gastos, pero madali ring makalimutan. Magpapadala kami ng arawang paalala. Gusto mo bang makatanggap ng notifications?';
 
   @override
   String get notificationDialogDeny => 'Huwag na lang';
@@ -221,7 +218,7 @@ class AppLocalizationsFil extends AppLocalizations {
 
   @override
   String get changeFilterPrompt =>
-      'Subukang baguhin ang filter o\nmagdagdag ng bagong gastos.';
+      'Subukang baguhin ang filter o magdagdag ng bagong gastos.';
 
   @override
   String get allFieldsRequired => 'Pakilagay nang tama ang lahat ng field.';
@@ -447,7 +444,7 @@ class AppLocalizationsFil extends AppLocalizations {
 
   @override
   String get todayExpenseMessageHalf =>
-      'Halos kalahati na ang nagamit mo!\nMaging mas maingat ngayon 🔔';
+      'Halos kalahati na ang nagamit mo! Maging mas maingat ngayon 🔔';
 
   @override
   String get todayExpenseMessageNearLimit =>
@@ -455,7 +452,7 @@ class AppLocalizationsFil extends AppLocalizations {
 
   @override
   String get todayExpenseMessageOverLimit =>
-      'Lumagpas ka na sa badyet!\nAyusin ang iyong paggastos ❗';
+      'Lumagpas ka na sa badyet! Ayusin ang iyong paggastos ❗';
 
   @override
   String get information => 'Impormasyon';
@@ -692,4 +689,10 @@ class AppLocalizationsFil extends AppLocalizations {
 
   @override
   String get close => 'Isara';
+
+  @override
+  String get languageSetting => 'Wika at Pera';
+
+  @override
+  String get selectLanguage => 'Pumili ng Wika';
 }

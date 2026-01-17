@@ -4,6 +4,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
+import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/features/settings/widgets/theme_customization/hsv_color_picker.dart';
 import 'package:money_fit/features/settings/widgets/theme_customization/preset_colors_grid.dart';
 import 'package:money_fit/features/settings/widgets/theme_customization/recent_colors_grid.dart';
@@ -204,12 +205,11 @@ class _DialogHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            child: Text(
-              l10n.selectThemeColor,
+            child: ResponsiveTitleText(
+              text: l10n.selectThemeColor,
               style: context.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
-              overflow: TextOverflow.ellipsis,
             ),
           ),
           IconButton(
@@ -231,8 +231,8 @@ class _SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      title,
+    return ResponsiveTitleText(
+      text: title,
       style: context.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
           ),
@@ -268,10 +268,7 @@ class _DialogFooter extends StatelessWidget {
           Expanded(
             child: TextButton(
               onPressed: onCancel,
-              child: Text(
-                l10n.cancel,
-                overflow: TextOverflow.ellipsis,
-              ),
+              child: ResponsiveButtonText(text: l10n.cancel),
             ),
           ),
           const SizedBox(width: 12),
@@ -281,10 +278,7 @@ class _DialogFooter extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 foregroundColor: context.colors.textOnBrand,
               ),
-              child: Text(
-                l10n.apply,
-                overflow: TextOverflow.ellipsis,
-              ),
+              child: ResponsiveButtonText(text: l10n.apply),
             ),
           ),
         ],

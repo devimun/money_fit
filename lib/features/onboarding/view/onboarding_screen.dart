@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
+import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -108,14 +109,14 @@ class OnboardingPage extends ConsumerWidget {
             height: MediaQuery.of(context).size.height * 0.4,
           ),
           const SizedBox(height: 40),
-          Text(
-            title,
+          ResponsiveTitleText(
+            text: title,
             style: context.textTheme.displayMedium,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
-          Text(
-            description,
+          ResponsiveDescriptionText(
+            text: description,
             style: context.textTheme.bodyLarge,
             textAlign: TextAlign.center,
           ),
@@ -128,8 +129,8 @@ class OnboardingPage extends ConsumerWidget {
                 ); // Navigate to daily budget setup screen
               },
               style: ElevatedButton.styleFrom(),
-              child: Text(
-                l10n.next,
+              child: ResponsiveButtonText(
+                text: l10n.next,
                 style: context.textTheme.labelLarge,
               ),
             ),

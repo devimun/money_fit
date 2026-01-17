@@ -16,21 +16,21 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get onboardingDescription1 =>
-      'Kelola pengeluaran harian Anda dengan mudah dan\nbangun kebiasaan belanja yang sehat.';
+      'Kelola pengeluaran harian Anda dengan mudah dan bangun kebiasaan belanja yang sehat.';
 
   @override
   String get onboardingTitle2 => 'Anggaran Harian dalam Sekejap';
 
   @override
   String get onboardingDescription2 =>
-      'Lacak sisa anggaran Anda untuk hari ini\ndan mulailah berbelanja dengan bijak.';
+      'Lacak sisa anggaran Anda untuk hari ini dan mulailah berbelanja dengan bijak.';
 
   @override
   String get onboardingTitle3 => 'Ubah Prestasi menjadi Kebiasaan Abadi';
 
   @override
   String get onboardingDescription3 =>
-      'Ubah tantangan harian menjadi prestasi\ndan nikmati pengelolaan uang Anda.';
+      'Ubah tantangan harian menjadi prestasi dan nikmati pengelolaan uang Anda.';
 
   @override
   String get next => 'Berikutnya';
@@ -40,7 +40,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get budgetSetupDescription =>
-      'Atur anggaran belanja Anda.\nIni adalah jumlah bebas yang bisa Anda gunakan,\ndi luar biaya tetap (tagihan, medis, dll).';
+      'Atur anggaran belanja Anda. Ini adalah jumlah bebas yang bisa Anda gunakan, di luar biaya tetap (tagihan, medis, dll).';
 
   @override
   String get dailyBudgetLabel => 'Anggaran Harian (IDR)';
@@ -94,9 +94,6 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get currency => 'Rp';
-
-  @override
   String get viewTodaySpending => 'Lihat\nPengeluaran Hari Ini';
 
   @override
@@ -123,7 +120,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get notificationDialogDescription =>
-      'Mencatat pengeluaran itu mudah, tapi sering lupa.\nKami akan kirim pengingat harian. Anda mau?';
+      'Mencatat pengeluaran itu mudah, tapi sering lupa. Kami akan kirim pengingat harian. Anda mau?';
 
   @override
   String get notificationDialogDeny => 'Tidak, terima kasih';
@@ -223,7 +220,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get changeFilterPrompt =>
-      'Coba ubah kondisi filter atau\ntambahkan pengeluaran baru';
+      'Coba ubah kondisi filter atau tambahkan pengeluaran baru';
 
   @override
   String get allFieldsRequired => 'Silakan isi semua kolom dengan benar.';
@@ -452,7 +449,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get todayExpenseMessageHalf =>
-      'Anda sudah menggunakan hampir setengahnya!\nAyo lebih berhati-hati sekarang 🔔';
+      'Anda sudah menggunakan hampir setengahnya! Ayo lebih berhati-hati sekarang 🔔';
 
   @override
   String get todayExpenseMessageNearLimit =>
@@ -460,7 +457,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get todayExpenseMessageOverLimit =>
-      'Anda telah melebihi anggaran hari ini!\nAyo sesuaikan pengeluaran Anda ❗';
+      'Anda telah melebihi anggaran hari ini! Ayo sesuaikan pengeluaran Anda ❗';
 
   @override
   String get information => 'Informasi';
@@ -696,4 +693,10 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get close => 'Tutup';
+
+  @override
+  String get languageSetting => 'Bahasa & Mata Uang';
+
+  @override
+  String get selectLanguage => 'Pilih Bahasa';
 }

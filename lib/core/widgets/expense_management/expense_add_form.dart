@@ -8,6 +8,7 @@ import 'package:money_fit/core/widgets/base_bottom_sheet.dart';
 import 'package:money_fit/core/widgets/expense_management/expense_form_fields.dart';
 import 'package:money_fit/core/widgets/expense_management/category_management/category_list.dart';
 import 'package:money_fit/core/widgets/expense_management/expense_form_validator.dart';
+import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 import 'package:uuid/uuid.dart';
 
@@ -104,8 +105,8 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
             if (!_isFormValid) return;
             await _handleSubmit(widget.uid, l10n);
           },
-          child: Text(
-            l10n.register,
+          child: ResponsiveButtonText(
+            text: l10n.register,
             style: context.textTheme.labelLarge?.copyWith(
               color: _isFormValid
                   ? context.colors.textOnBrand

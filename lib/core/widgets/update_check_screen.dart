@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:money_fit/core/services/update_service.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 
 class UpdateCheckScreen extends StatefulWidget {
   const UpdateCheckScreen({super.key});
@@ -28,16 +29,16 @@ class _UpdateCheckScreenState extends State<UpdateCheckScreen> {
         context: context,
         barrierDismissible: false,
         builder: (_) => AlertDialog(
-          title: Text(l10n.updateRequiredTitle),
+          title: ResponsiveTitleText(text: l10n.updateRequiredTitle),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(l10n.updateRequiredBody),
+              ResponsiveDescriptionText(text: l10n.updateRequiredBody),
               if (status.changelogLines.isNotEmpty) ...[
                 const SizedBox(height: 12),
-                Text(
-                  l10n.updateChangelogTitle,
+                ResponsiveDescriptionText(
+                  text: l10n.updateChangelogTitle,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
@@ -48,7 +49,7 @@ class _UpdateCheckScreenState extends State<UpdateCheckScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text('• '),
-                        Expanded(child: Text(e)),
+                        Expanded(child: ResponsiveDescriptionText(text: e)),
                       ],
                     ),
                   ),
@@ -61,7 +62,7 @@ class _UpdateCheckScreenState extends State<UpdateCheckScreen> {
               onPressed: () async {
                 await UpdateService.openStorePage(null);
               },
-              child: Text(l10n.updateButton),
+              child: ResponsiveButtonText(text: l10n.updateButton),
             ),
           ],
         ),
@@ -90,18 +91,18 @@ class _UpdateCheckScreenState extends State<UpdateCheckScreen> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          l10n.updateSheetTitle,
+                        ResponsiveTitleText(
+                          text: l10n.updateSheetTitle,
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 8),
-                        Text(l10n.updateAvailableBody),
+                        ResponsiveDescriptionText(text: l10n.updateAvailableBody),
                         const SizedBox(height: 12),
-                        Text(
-                          l10n.updateChangelogTitle,
+                        ResponsiveDescriptionText(
+                          text: l10n.updateChangelogTitle,
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 8),
@@ -112,7 +113,7 @@ class _UpdateCheckScreenState extends State<UpdateCheckScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text('• '),
-                                Expanded(child: Text(e)),
+                                Expanded(child: ResponsiveDescriptionText(text: e)),
                               ],
                             ),
                           ),
@@ -123,7 +124,7 @@ class _UpdateCheckScreenState extends State<UpdateCheckScreen> {
                           child: ElevatedButton(
                             onPressed: () async =>
                                 UpdateService.openStorePage(null),
-                            child: Text(l10n.updateButtonGo),
+                            child: ResponsiveButtonText(text: l10n.updateButtonGo),
                           ),
                         ),
                       ],

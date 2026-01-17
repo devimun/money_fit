@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
+import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 /// 긍정적인 경험에 대한 확인 다이얼로그
@@ -47,16 +48,13 @@ class PositiveConfirmDialog extends StatelessWidget {
             const SizedBox(height: 24),
 
             // 제목
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                l10n.review_positive_title,
-                style: context.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: context.colors.textPrimary,
-                ),
-                textAlign: TextAlign.center,
+            ResponsiveTitleText(
+              text: l10n.review_positive_title,
+              style: context.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: context.colors.textPrimary,
               ),
+              textAlign: TextAlign.center,
             ),
 
             const SizedBox(height: 32),
@@ -76,8 +74,8 @@ class PositiveConfirmDialog extends StatelessWidget {
                   ),
                   elevation: 0,
                 ),
-                child: Text(
-                  l10n.review_positive_button_yes,
+                child: ResponsiveButtonText(
+                  text: l10n.review_positive_button_yes,
                   style: context.textTheme.labelLarge?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
@@ -99,8 +97,8 @@ class PositiveConfirmDialog extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: Text(
-                    l10n.review_button_later,
+                  child: ResponsiveButtonText(
+                    text: l10n.review_button_later,
                     style: context.textTheme.labelMedium?.copyWith(
                       color: context.colors.textPrimary.withValues(alpha: 0.7),
                     ),
@@ -116,8 +114,8 @@ class PositiveConfirmDialog extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: Text(
-                    l10n.review_button_never,
+                  child: ResponsiveButtonText(
+                    text: l10n.review_button_never,
                     style: context.textTheme.labelMedium?.copyWith(
                       color: context.colors.textPrimary.withValues(alpha: 0.5),
                     ),

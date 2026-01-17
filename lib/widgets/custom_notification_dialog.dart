@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
+import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 class CustomNotificationDialog extends StatelessWidget {
@@ -45,15 +46,15 @@ class CustomNotificationDialog extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text(
-            l10n.notificationDialogTitle,
+          ResponsiveTitleText(
+            text: l10n.notificationDialogTitle,
             style: context.textTheme.displaySmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 16),
-          Text(
-            l10n.notificationDialogDescription,
+          ResponsiveDescriptionText(
+            text: l10n.notificationDialogDescription,
             style: context.textTheme.bodyLarge?.copyWith(
               color: context.colors.textSecondary,
             ),
@@ -66,8 +67,8 @@ class CustomNotificationDialog extends StatelessWidget {
               Expanded(
                 child: TextButton(
                   onPressed: onDeny,
-                  child: Text(
-                    l10n.notificationDialogDeny,
+                  child: ResponsiveButtonText(
+                    text: l10n.notificationDialogDeny,
                     style: TextStyle(
                       color: context.colors.textSecondary,
                     ),
@@ -77,8 +78,8 @@ class CustomNotificationDialog extends StatelessWidget {
               Expanded(
                 child: ElevatedButton(
                   onPressed: onConfirm,
-                  child: Text(
-                    l10n.notificationDialogConfirm,
+                  child: ResponsiveButtonText(
+                    text: l10n.notificationDialogConfirm,
                     style: context.textTheme.labelLarge,
                   ),
                 ),

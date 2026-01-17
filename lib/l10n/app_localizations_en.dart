@@ -16,21 +16,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingDescription1 =>
-      'Easily manage your daily expenses and\nbuild healthy spending habits.';
+      'Easily manage your daily expenses and build healthy spending habits.';
 
   @override
   String get onboardingTitle2 => 'Daily Budget at a Glance';
 
   @override
   String get onboardingDescription2 =>
-      'Track your remaining budget for the day\nand start spending mindfully.';
+      'Track your remaining budget for the day and start spending mindfully.';
 
   @override
   String get onboardingTitle3 => 'Turn Achievements into Lasting Habits';
 
   @override
   String get onboardingDescription3 =>
-      'Turn daily challenges into achievements\nand enjoy managing your money.';
+      'Turn daily challenges into achievements and enjoy managing your money.';
 
   @override
   String get next => 'Next';
@@ -40,7 +40,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get budgetSetupDescription =>
-      'Set your discretionary spending budget.\nDiscretionary spending is the amount you can use freely, excluding fixed costs like bills, medical expenses, housing, and insurance.';
+      'Set your discretionary spending budget. Discretionary spending is the amount you can use freely, excluding fixed costs like bills, medical expenses, housing, and insurance.';
 
   @override
   String get dailyBudgetLabel => 'Daily Budget';
@@ -93,9 +93,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get currency => '\$';
-
-  @override
   String get viewTodaySpending => 'View\nToday\'s Spending';
 
   @override
@@ -122,7 +119,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationDialogDescription =>
-      'Logging expenses is easy, but it\'s also easy to forget.\nWe\'ll send you daily reminders to help you stay on track. Would you like to receive notifications?';
+      'Logging expenses is easy, but it\'s also easy to forget. We\'ll send you daily reminders to help you stay on track. Would you like to receive notifications?';
 
   @override
   String get notificationDialogDeny => 'No, thanks';
@@ -221,7 +218,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get changeFilterPrompt =>
-      'Try changing the filter conditions or\nadd a new expense';
+      'Try changing the filter conditions or add a new expense';
 
   @override
   String get allFieldsRequired => 'Please enter all fields correctly.';
@@ -447,7 +444,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get todayExpenseMessageHalf =>
-      'You\'ve used almost half!\nLet\'s be a little more mindful now 🔔';
+      'You\'ve used almost half! Let\'s be a little more mindful now 🔔';
 
   @override
   String get todayExpenseMessageNearLimit =>
@@ -455,7 +452,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get todayExpenseMessageOverLimit =>
-      'You\'ve exceeded today\'s budget!\nLet\'s adjust your spending ❗';
+      'You\'ve exceeded today\'s budget! Let\'s adjust your spending ❗';
 
   @override
   String get information => 'Information';
@@ -692,4 +689,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get close => 'Close';
+
+  @override
+  String get languageSetting => 'Language & Currency';
+
+  @override
+  String get selectLanguage => 'Select Language';
 }

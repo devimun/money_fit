@@ -9,12 +9,7 @@ import 'package:money_fit/core/theme/app_text_styles.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/repositories/theme_repository.dart';
 import 'package:money_fit/core/models/theme_settings.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-/// Provides SharedPreferences instance
-final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
-  throw UnimplementedError('SharedPreferences must be overridden in main.dart');
-});
+import 'package:money_fit/core/providers/shared_preferences_provider.dart';
 
 /// Provides ThemeRepository
 final themeRepositoryProvider = Provider<ThemeRepository>((ref) {
@@ -53,6 +48,7 @@ class ThemeSeedColorNotifier extends StateNotifier<Color> {
     return settings.favoriteColorObjects;
   }
 }
+
 
 /// StateNotifier for managing dark mode state
 class ThemeModeNotifier extends StateNotifier<bool> {
@@ -157,6 +153,7 @@ final fontSizeProvider = StateNotifierProvider<FontSizeNotifier, double>((ref) {
   return FontSizeNotifier(repository);
 });
 
+
 /// Provides the light theme with AppThemeColors extension
 final lightThemeProvider = Provider<ThemeData>((ref) {
   final seedColor = ref.watch(themeSeedColorProvider);
@@ -169,7 +166,6 @@ final lightThemeProvider = Provider<ThemeData>((ref) {
     scaffoldBackgroundColor: appColors.screenBackground,
     primaryColor: appColors.brandPrimary,
     fontFamily: 'Pretendard Variable',
-    
     
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -210,10 +206,7 @@ final lightThemeProvider = Provider<ThemeData>((ref) {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: appColors.screenBackground,
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 12,
-      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
         borderSide: BorderSide(color: appColors.border),
@@ -246,6 +239,7 @@ final lightThemeProvider = Provider<ThemeData>((ref) {
     ),
   ).withAppColors(appColors);
 });
+
 
 /// Provides the dark theme with AppThemeColors extension
 final darkThemeProvider = Provider<ThemeData>((ref) {
@@ -299,10 +293,7 @@ final darkThemeProvider = Provider<ThemeData>((ref) {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: appColors.cardBackground,
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 12,
-      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
         borderSide: BorderSide(color: appColors.border),

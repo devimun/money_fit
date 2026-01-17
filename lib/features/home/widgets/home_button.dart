@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
+import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 
 class HomeButton extends StatelessWidget {
   final String title;
@@ -27,23 +28,17 @@ class HomeButton extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                title,
-                style: context.textTheme.headlineMedium?.copyWith(
-                  color: context.colors.textPrimary,
-                ),
+            ResponsiveTitleText(
+              text: title,
+              style: context.textTheme.headlineMedium?.copyWith(
+                color: context.colors.textPrimary,
               ),
             ),
             const SizedBox(height: 4),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                subtitle,
-                style: context.textTheme.labelSmall?.copyWith(
-                  color: context.colors.textSecondary,
-                ),
+            ResponsiveLabelText(
+              text: subtitle,
+              style: context.textTheme.labelSmall?.copyWith(
+                color: context.colors.textSecondary,
               ),
             ),
           ],

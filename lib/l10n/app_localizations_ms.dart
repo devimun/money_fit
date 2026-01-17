@@ -16,21 +16,21 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get onboardingDescription1 =>
-      'Urus belanja harian dengan mudah dan\nbina tabiat kewangan yang sihat.';
+      'Urus belanja harian dengan mudah dan bina tabiat kewangan yang sihat.';
 
   @override
   String get onboardingTitle2 => 'Bajet Harian Sepintas Lalu';
 
   @override
   String get onboardingDescription2 =>
-      'Jejaki baki bajet harian anda dan\nmula berbelanja dengan lebih bijak.';
+      'Jejaki baki bajet harian anda dan mula berbelanja dengan lebih bijak.';
 
   @override
   String get onboardingTitle3 => 'Bina Tabiat Kewangan Hebat';
 
   @override
   String get onboardingDescription3 =>
-      'Ubah cabaran harian menjadi pencapaian dan\nnikmati pengurusan wang anda.';
+      'Ubah cabaran harian menjadi pencapaian dan nikmati pengurusan wang anda.';
 
   @override
   String get next => 'Seterusnya';
@@ -40,7 +40,7 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get budgetSetupDescription =>
-      'Tetapkan bajet belanja fleksibel anda.\nBelanja fleksibel ialah wang yang boleh anda guna secara bebas, tidak termasuk kos tetap seperti bil, perubatan, perumahan, dan insurans.';
+      'Tetapkan bajet belanja fleksibel anda. Belanja fleksibel ialah wang yang boleh anda guna secara bebas, tidak termasuk kos tetap seperti bil, perubatan, perumahan, dan insurans.';
 
   @override
   String get dailyBudgetLabel => 'Bajet Harian(MYR)';
@@ -94,9 +94,6 @@ class AppLocalizationsMs extends AppLocalizations {
   }
 
   @override
-  String get currency => 'RM';
-
-  @override
   String get viewTodaySpending => 'Lihat\nBelanja Hari Ini';
 
   @override
@@ -122,7 +119,7 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get notificationDialogDescription =>
-      'Mencatat belanja memang mudah, tapi mudah juga terlupa.\nKami akan hantar notifikasi harian untuk bantu anda. Anda ingin terima notifikasi?';
+      'Mencatat belanja memang mudah, tapi mudah juga terlupa. Kami akan hantar notifikasi harian untuk bantu anda. Anda ingin terima notifikasi?';
 
   @override
   String get notificationDialogDeny => 'Tidak, terima kasih';
@@ -221,7 +218,7 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get changeFilterPrompt =>
-      'Cuba tukar tetapan penapis atau\ntambah belanja baharu.';
+      'Cuba tukar tetapan penapis atau tambah belanja baharu.';
 
   @override
   String get allFieldsRequired => 'Sila isi semua ruangan dengan betul.';
@@ -447,7 +444,7 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get todayExpenseMessageHalf =>
-      'Anda dah guna hampir separuh!\nJom lebih berhati-hati 🔔';
+      'Anda dah guna hampir separuh! Jom lebih berhati-hati 🔔';
 
   @override
   String get todayExpenseMessageNearLimit =>
@@ -455,7 +452,7 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get todayExpenseMessageOverLimit =>
-      'Anda sudah melebihi bajet!\nJom kawal semula perbelanjaan anda ❗';
+      'Anda sudah melebihi bajet! Jom kawal semula perbelanjaan anda ❗';
 
   @override
   String get information => 'Maklumat';
@@ -692,4 +689,10 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get close => 'Tutup';
+
+  @override
+  String get languageSetting => 'Bahasa & Mata Wang';
+
+  @override
+  String get selectLanguage => 'Pilih Bahasa';
 }

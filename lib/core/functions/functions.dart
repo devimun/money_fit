@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:money_fit/core/config/locale_config.dart';
 import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
@@ -119,37 +120,53 @@ String dateFormatting(BuildContext context, DateTime date) {
 }
 
 String formatCurrencyAdaptive(BuildContext context, double value) {
-  final locale = Localizations.localeOf(context).toString();
-  final l10n = AppLocalizations.of(context)!;
-  final currencySymbol = l10n.currency;
+  final locale = Localizations.localeOf(context);
+  final localeConfig = getLocaleConfig(locale.languageCode);
+  final currencySymbol = localeConfig.currencySymbol;
+  final decimalDigits = localeConfig.decimalDigits;
+
+  // 소수점 자릿수가 0인 통화(KRW, IDR)는 항상 정수로 표시
+  if (decimalDigits == 0) {
+    final intFormat = NumberFormat.currency(
+      locale: locale.toString(),
+      symbol: '',
+      decimalDigits: 0,
+    );
+    return '$currencySymbol${intFormat.format(value)}';
+  }
+
+  // 소수점이 있는 통화는 값에 따라 동적으로 처리
   if (value == value.roundToDouble()) {
     // 정수면 소수점 없이 포맷
     final intFormat = NumberFormat.currency(
-      locale: locale,
+      locale: locale.toString(),
       symbol: '',
       decimalDigits: 0,
     );
     return '$currencySymbol${intFormat.format(value)}';
   } else {
-    // 소수점 있을 땐 2자리까지 표시
+    // 소수점 있을 땐 해당 통화의 소수점 자릿수까지 표시
     final decimalFormat = NumberFormat.currency(
-      locale: locale,
+      locale: locale.toString(),
       symbol: '',
-      decimalDigits: 2,
+      decimalDigits: decimalDigits,
     );
     return '$currencySymbol${decimalFormat.format(value)}';
   }
 }
 
-/// 사용자의 예산 설정(일간/월간)과 국가에 따라 일일 예산을 계산합니다.
+/// 사용자의 예산 설정(일간/월간)과 통화에 따라 일일 예산을 계산합니다.
 ///
-/// [user] - 예산 정보를 포함한 사용자 객체
+/// [budgetType] - 예산 유형 (일간/월간)
+/// [budget] - 예산 금액
 /// [forDate] - 기준이 되는 날짜 (월간 예산 계산 시 필요)
+/// [decimalDigits] - 통화의 소수점 자릿수 (LocaleConfig에서 가져옴)
 double calculateDailyBudget(
   BudgetType budgetType,
   double budget,
-  DateTime forDate,
-) {
+  DateTime forDate, {
+  int decimalDigits = 2,
+}) {
   if (budgetType == BudgetType.daily) {
     return budget;
   } else {
@@ -157,14 +174,23 @@ double calculateDailyBudget(
     final daysInMonth = DateTime(forDate.year, forDate.month + 1, 0).day;
     final rawDailyBudget = budget / daysInMonth;
 
-    // 국가별 통화에 따라 소수점 처리를 다르게 합니다.
-    final countryCode = Platform.localeName.split('_').last;
-    if (countryCode == 'KR' || countryCode == 'ID') {
-      // 한국 원, 인도네시아 루피아는 소수점을 사용하지 않습니다.
+    // 통화의 소수점 자릿수에 따라 처리
+    if (decimalDigits == 0) {
+      // 소수점 없는 통화 (KRW, IDR)
       return rawDailyBudget.floorToDouble();
     } else {
-      // 그 외 국가는 소수점 둘째 자리까지 표시합니다. (달러, 링깃 등)
-      return (rawDailyBudget * 100).roundToDouble() / 100;
+      // 소수점 있는 통화
+      final multiplier = _pow10(decimalDigits);
+      return (rawDailyBudget * multiplier).roundToDouble() / multiplier;
     }
   }
+}
+
+/// 10의 거듭제곱 계산 헬퍼 함수
+double _pow10(int exponent) {
+  double result = 1.0;
+  for (int i = 0; i < exponent; i++) {
+    result *= 10;
+  }
+  return result;
 }
