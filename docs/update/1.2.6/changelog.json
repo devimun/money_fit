@@ -1,0 +1,86 @@
+{
+  "ko": [
+    "테마 커스터마이징 기능 추가",
+    "텍스트 크기 조절 기능 추가 (소/중/대)",
+    "스페인어, 폴란드어, 우크라이나어, 체코어, 독일어, 이탈리아어, 불가리아어, 루마니아어, 슬로바키아어 추가",
+    "언어 및 통화 변경 기능 추가"
+  ],
+  "en": [
+    "Theme customization added",
+    "Font size adjustment added (S/M/L)",
+    "Added: Spanish, Polish, Ukrainian, Czech, German, Italian, Bulgarian, Romanian, Slovak",
+    "Language and currency settings added"
+  ],
+  "es": [
+    "Personalización de tema añadida",
+    "Ajuste de tamaño de fuente añadido",
+    "Ahora disponible en español 🇪🇸",
+    "Configuración de idioma y moneda añadida"
+  ],
+  "de": [
+    "Themenanpassung hinzugefügt",
+    "Schriftgrößenanpassung hinzugefügt",
+    "Jetzt auf Deutsch verfügbar 🇩🇪",
+    "Sprach- und Währungseinstellungen hinzugefügt"
+  ],
+  "pl": [
+    "Dodano personalizację motywu",
+    "Dodano regulację rozmiaru czcionki",
+    "Teraz dostępne po polsku 🇵🇱",
+    "Dodano ustawienia języka i waluty"
+  ],
+  "uk": [
+    "Додано налаштування теми",
+    "Додано регулювання розміру шрифту",
+    "Тепер доступно українською 🇺🇦",
+    "Додано налаштування мови та валюти"
+  ],
+  "cs": [
+    "Přidána personalizace motivu",
+    "Přidána úprava velikosti písma",
+    "Nyní dostupné v češtině 🇨🇿",
+    "Přidáno nastavení jazyka a měny"
+  ],
+  "it": [
+    "Personalizzazione tema aggiunta",
+    "Regolazione dimensione carattere aggiunta",
+    "Ora disponibile in italiano 🇮🇹",
+    "Impostazioni lingua e valuta aggiunte"
+  ],
+  "bg": [
+    "Добавена персонализация на темата",
+    "Добавена настройка на размера на шрифта",
+    "Вече достъпно на български 🇧🇬",
+    "Добавени настройки за език и валута"
+  ],
+  "ro": [
+    "Personalizare temă adăugată",
+    "Ajustare dimensiune font adăugată",
+    "Acum disponibil în română 🇷🇴",
+    "Setări limbă și monedă adăugate"
+  ],
+  "sk": [
+    "Pridaná personalizácia témy",
+    "Pridaná úprava veľkosti písma",
+    "Teraz dostupné po slovensky 🇸🇰",
+    "Pridané nastavenie jazyka a meny"
+  ],
+  "fil": [
+    "Idinagdag ang pagpapasadya ng tema",
+    "Idinagdag ang pagsasaayos ng laki ng font",
+    "Idinagdag: Espanyol, Polish, Ukrainian, Czech, German, Italian, Bulgarian, Romanian, Slovak",
+    "Idinagdag ang mga setting ng wika at pera"
+  ],
+  "id": [
+    "Kustomisasi tema ditambahkan",
+    "Penyesuaian ukuran font ditambahkan",
+    "Ditambahkan: Spanyol, Polandia, Ukraina, Ceko, Jerman, Italia, Bulgaria, Rumania, Slovakia",
+    "Pengaturan bahasa dan mata uang ditambahkan"
+  ],
+  "ms": [
+    "Penyesuaian tema ditambah",
+    "Pelarasan saiz fon ditambah",
+    "Ditambah: Sepanyol, Poland, Ukraine, Czech, Jerman, Itali, Bulgaria, Romania, Slovakia",
+    "Tetapan bahasa dan mata wang ditambah"
+  ]
+}
