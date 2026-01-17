@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_fit/core/functions/functions.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/features/settings/widgets/contact_us_dialog.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -41,22 +42,21 @@ class _AppInformationSectionState extends State<AppInformationSection> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final textTheme = Theme.of(context).textTheme;
-    final iconColor = Theme.of(context).colorScheme.primary;
+    final iconColor = context.colors.brandPrimary;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildSectionTitle(l10n.information, textTheme),
+        buildSectionTitle(l10n.information, context.textTheme),
         buildSettingsCard([
           buildSettingsItem(
             icon: Icons.rate_review_outlined,
             iconColor: iconColor,
             title: l10n.writeReview,
             onTap: launchReviewURL,
-            trailing: const Icon(
+            trailing: Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: Color(0xFF9CA3AF),
+              color: context.colors.textSecondary,
             ),
           ),
           buildSettingsItem(
@@ -64,10 +64,10 @@ class _AppInformationSectionState extends State<AppInformationSection> {
             iconColor: iconColor,
             title: l10n.contactUs,
             onTap: _showContactUsDialog,
-            trailing: const Icon(
+            trailing: Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: Color(0xFF9CA3AF),
+              color: context.colors.textSecondary,
             ),
           ),
           buildSettingsItem(
@@ -76,8 +76,8 @@ class _AppInformationSectionState extends State<AppInformationSection> {
             title: l10n.appVersion,
             trailing: Text(
               _appVersion, // 동적으로 가져온 버전 표시
-              style: textTheme.bodyLarge?.copyWith(
-                color: const Color(0xFF6B7280),
+              style: context.textTheme.bodyLarge?.copyWith(
+                color: context.colors.textSecondary,
               ),
             ),
           ),
@@ -107,10 +107,10 @@ class _AppInformationSectionState extends State<AppInformationSection> {
 
               await launchUrl(Uri.parse(url));
             },
-            trailing: const Icon(
+            trailing: Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: Color(0xFF9CA3AF),
+              color: context.colors.textSecondary,
             ),
           ),
         ]),

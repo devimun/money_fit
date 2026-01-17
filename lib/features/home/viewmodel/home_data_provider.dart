@@ -7,20 +7,51 @@ import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/core/providers/expenses_provider.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';
-import 'package:money_fit/core/theme/design_palette.dart';
+import 'package:money_fit/core/theme/app_theme_colors.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
+
+/// 예산 상태 레벨 (View에서 색상 결정에 사용)
+enum SpendingLevel {
+  /// 지출 없음 또는 70% 이상 남음 → brandPrimary
+  excellent,
+  /// 50~69% 남음 → green
+  good,
+  /// 1~49% 남음 → orange
+  warning,
+  /// 초과 → red
+  exceeded,
+}
 
 /// 💡 뷰에서 사용할 계산된 값들 묶음
 class SpendingStatus {
   final double remainingAmount;
   final double spendingRatio; // 0.0 ~ 1.0 (초과 가능)
-  final Color color;
+  final SpendingLevel level;
 
   SpendingStatus({
     required this.remainingAmount,
     required this.spendingRatio,
-    required this.color,
+    required this.level,
   });
+
+  /// View에서 AppThemeColors를 사용해 색상을 결정합니다.
+  /// 
+  /// Usage:
+  /// ```dart
+  /// final color = spendingStatus.getColor(context.colors);
+  /// ```
+  Color getColor(AppThemeColors colors) {
+    switch (level) {
+      case SpendingLevel.excellent:
+        return colors.brandPrimary;
+      case SpendingLevel.good:
+        return Colors.green;
+      case SpendingLevel.warning:
+        return Colors.orange;
+      case SpendingLevel.exceeded:
+        return Colors.red;
+    }
+  }
 }
 
 /// 예산 표시 모드
@@ -93,24 +124,24 @@ class HomeState {
     final remaining = dailyBudget - spent;
     final ratio = dailyBudget > 0 ? remaining / dailyBudget : 0.0;
 
-    late Color color;
+    late SpendingLevel level;
 
     if (spent == 0) {
-      color = LightAppColors.primary;
+      level = SpendingLevel.excellent;
     } else if (ratio > 0.69) {
-      color = LightAppColors.primary;
+      level = SpendingLevel.excellent;
     } else if (ratio > 0.5) {
-      color = Colors.green;
+      level = SpendingLevel.good;
     } else if (ratio > 0.0) {
-      color = Colors.orange;
+      level = SpendingLevel.warning;
     } else {
-      color = Colors.red;
+      level = SpendingLevel.exceeded;
     }
 
     return SpendingStatus(
       remainingAmount: remaining,
       spendingRatio: ratio.clamp(0.0, 1.0),
-      color: color,
+      level: level,
     );
   }
 
@@ -120,24 +151,24 @@ class HomeState {
     final remaining = budget - spent;
     final ratio = budget > 0 ? remaining / budget : 0.0;
 
-    late Color color;
+    late SpendingLevel level;
 
     if (spent == 0) {
-      color = LightAppColors.primary;
+      level = SpendingLevel.excellent;
     } else if (ratio > 0.69) {
-      color = LightAppColors.primary;
+      level = SpendingLevel.excellent;
     } else if (ratio > 0.5) {
-      color = Colors.green;
+      level = SpendingLevel.good;
     } else if (ratio > 0.0) {
-      color = Colors.orange;
+      level = SpendingLevel.warning;
     } else {
-      color = Colors.red;
+      level = SpendingLevel.exceeded;
     }
 
     return SpendingStatus(
       remainingAmount: remaining,
       spendingRatio: ratio.clamp(0.0, 1.0),
-      color: color,
+      level: level,
     );
   }
 }

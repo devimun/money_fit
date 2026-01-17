@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 /// 긍정적인 경험에 대한 확인 다이얼로그
@@ -8,7 +9,6 @@ class PositiveConfirmDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -17,7 +17,7 @@ class PositiveConfirmDialog extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(32),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
+          color: context.colors.cardBackground,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -51,9 +51,9 @@ class PositiveConfirmDialog extends StatelessWidget {
               fit: BoxFit.scaleDown,
               child: Text(
                 l10n.review_positive_title,
-                style: theme.textTheme.headlineSmall?.copyWith(
+                style: context.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.onSurface,
+                  color: context.colors.textPrimary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -68,8 +68,8 @@ class PositiveConfirmDialog extends StatelessWidget {
                 onPressed: () =>
                     Navigator.of(context).pop(PositiveAction.reviewNow),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primary,
-                  foregroundColor: theme.colorScheme.onPrimary,
+                  backgroundColor: context.colors.brandPrimary,
+                  foregroundColor: context.colors.textOnBrand,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -78,7 +78,7 @@ class PositiveConfirmDialog extends StatelessWidget {
                 ),
                 child: Text(
                   l10n.review_positive_button_yes,
-                  style: theme.textTheme.labelLarge?.copyWith(
+                  style: context.textTheme.labelLarge?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -101,8 +101,8 @@ class PositiveConfirmDialog extends StatelessWidget {
                   ),
                   child: Text(
                     l10n.review_button_later,
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                    style: context.textTheme.labelMedium?.copyWith(
+                      color: context.colors.textPrimary.withValues(alpha: 0.7),
                     ),
                   ),
                 ),
@@ -118,8 +118,8 @@ class PositiveConfirmDialog extends StatelessWidget {
                   ),
                   child: Text(
                     l10n.review_button_never,
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                    style: context.textTheme.labelMedium?.copyWith(
+                      color: context.colors.textPrimary.withValues(alpha: 0.5),
                     ),
                   ),
                 ),

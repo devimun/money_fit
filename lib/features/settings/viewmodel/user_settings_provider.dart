@@ -96,24 +96,8 @@ class UserSettingsNotifier extends AsyncNotifier<User> {
     }
   }
 
-  Future<void> toggleDarkMode() async {
-    final currentUser = state.value;
-    if (currentUser == null) return;
-
-    final updatedUser = currentUser.copyWith(
-      isDarkMode: !currentUser.isDarkMode,
-      updatedAt: DateTime.now(),
-    );
-    state = AsyncValue.data(updatedUser);
-
-    try {
-      await _userRepository.updateUser(updatedUser);
-    } catch (e, st) {
-      log('Failed to toggle dark mode: $e', stackTrace: st);
-      state = AsyncValue.error(e, st);
-      state = AsyncValue.data(currentUser);
-    }
-  }
+  // Note: toggleDarkMode has been moved to themeModeProvider in theme_provider.dart
+  // Dark mode is now managed by ThemeSettings instead of User model
 
   Future<void> enableNotifications(AppLocalizations l10n) async {
     final currentUser = state.value;

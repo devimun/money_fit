@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 
 Widget buildSectionTitle(String title, TextTheme textTheme) {
   return Padding(
@@ -48,10 +49,10 @@ Widget buildSwitchItem({
     trailing: Switch(
       value: value,
       onChanged: onChanged,
-      activeColor: Theme.of(context).colorScheme.primary,
-      inactiveTrackColor: Theme.of(context).brightness == Brightness.dark
-          ? Theme.of(context).colorScheme.surfaceContainerHighest
-          : Colors.grey[300],
+      activeThumbColor: context.colors.brandPrimary,
+      inactiveTrackColor: context.isDarkMode
+          ? context.colors.calendarCellBackground
+          : context.colors.border,
     ),
   );
 }

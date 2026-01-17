@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 /// 부정적인 경험에 대한 피드백 다이얼로그
@@ -22,7 +23,6 @@ class _NegativeFeedbackDialogState extends State<NegativeFeedbackDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -31,7 +31,7 @@ class _NegativeFeedbackDialogState extends State<NegativeFeedbackDialog> {
       child: Container(
         padding: const EdgeInsets.all(32),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
+          color: context.colors.cardBackground,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -49,13 +49,13 @@ class _NegativeFeedbackDialogState extends State<NegativeFeedbackDialog> {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: theme.colorScheme.error.withValues(alpha: 0.1),
+                color: context.colors.error.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.feedback_outlined,
                 size: 40,
-                color: theme.colorScheme.error,
+                color: context.colors.error,
               ),
             ),
             const SizedBox(height: 24),
@@ -65,9 +65,9 @@ class _NegativeFeedbackDialogState extends State<NegativeFeedbackDialog> {
               fit: BoxFit.scaleDown,
               child: Text(
                 l10n.review_negative_title,
-                style: theme.textTheme.headlineSmall?.copyWith(
+                style: context.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.onSurface,
+                  color: context.colors.textPrimary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -80,16 +80,16 @@ class _NegativeFeedbackDialogState extends State<NegativeFeedbackDialog> {
               controller: _controller,
               maxLines: 4,
               maxLength: _maxLen,
-              style: theme.textTheme.bodyMedium,
+              style: context.textTheme.bodyMedium,
               decoration: InputDecoration(
                 hintText: l10n.review_negative_hint,
-                hintStyle: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                hintStyle: context.textTheme.bodySmall?.copyWith(
+                  color: context.colors.textPrimary.withValues(alpha: 0.5),
                 ),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.all(16),
-                counterStyle: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                counterStyle: context.textTheme.bodySmall?.copyWith(
+                  color: context.colors.textPrimary.withValues(alpha: 0.5),
                 ),
               ),
             ),
@@ -106,8 +106,8 @@ class _NegativeFeedbackDialogState extends State<NegativeFeedbackDialog> {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primary,
-                    foregroundColor: theme.colorScheme.onPrimary,
+                    backgroundColor: context.colors.brandPrimary,
+                    foregroundColor: context.colors.textOnBrand,
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -116,7 +116,7 @@ class _NegativeFeedbackDialogState extends State<NegativeFeedbackDialog> {
                   ),
                   child: Text(
                     l10n.review_negative_button_send,
-                    style: theme.textTheme.labelLarge,
+                    style: context.textTheme.labelLarge,
                   ),
                 ),
                 Row(
@@ -134,8 +134,8 @@ class _NegativeFeedbackDialogState extends State<NegativeFeedbackDialog> {
                       ),
                       child: Text(
                         l10n.review_button_later,
-                        style: theme.textTheme.labelMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(
+                        style: context.textTheme.labelMedium?.copyWith(
+                          color: context.colors.textPrimary.withValues(
                             alpha: 0.7,
                           ),
                         ),
@@ -154,8 +154,8 @@ class _NegativeFeedbackDialogState extends State<NegativeFeedbackDialog> {
                       ),
                       child: Text(
                         l10n.review_button_never,
-                        style: theme.textTheme.labelMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(
+                        style: context.textTheme.labelMedium?.copyWith(
+                          color: context.colors.textPrimary.withValues(
                             alpha: 0.5,
                           ),
                         ),

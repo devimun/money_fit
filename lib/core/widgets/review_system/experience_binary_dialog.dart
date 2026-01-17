@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 /// 리뷰 경험을 이분화하여 묻는 다이얼로그
@@ -8,7 +9,6 @@ class ExperienceBinaryDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -17,7 +17,7 @@ class ExperienceBinaryDialog extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(32),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
+          color: context.colors.cardBackground,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -35,13 +35,13 @@ class ExperienceBinaryDialog extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                color: context.colors.brandPrimary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.favorite_outline,
                 size: 40,
-                color: theme.colorScheme.primary,
+                color: context.colors.brandPrimary,
               ),
             ),
             const SizedBox(height: 24),
@@ -51,9 +51,9 @@ class ExperienceBinaryDialog extends StatelessWidget {
               fit: BoxFit.scaleDown,
               child: Text(
                 l10n.review_modal_binary_title,
-                style: theme.textTheme.headlineSmall?.copyWith(
+                style: context.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.onSurface,
+                  color: context.colors.textPrimary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -101,8 +101,6 @@ class ExperienceBinaryDialog extends StatelessWidget {
     required bool isPositive,
     required VoidCallback onTap,
   }) {
-    final theme = Theme.of(context);
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -112,13 +110,13 @@ class ExperienceBinaryDialog extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
           decoration: BoxDecoration(
             color: isPositive
-                ? theme.colorScheme.primary.withValues(alpha: 0.1)
-                : theme.colorScheme.error.withValues(alpha: 0.1),
+                ? context.colors.brandPrimary.withValues(alpha: 0.1)
+                : context.colors.error.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: isPositive
-                  ? theme.colorScheme.primary.withValues(alpha: 0.3)
-                  : theme.colorScheme.error.withValues(alpha: 0.3),
+                  ? context.colors.brandPrimary.withValues(alpha: 0.3)
+                  : context.colors.error.withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -128,16 +126,16 @@ class ExperienceBinaryDialog extends StatelessWidget {
                 icon,
                 size: 32,
                 color: isPositive
-                    ? theme.colorScheme.primary
-                    : theme.colorScheme.error,
+                    ? context.colors.brandPrimary
+                    : context.colors.error,
               ),
               const SizedBox(height: 8),
               Text(
                 label,
-                style: theme.textTheme.labelMedium?.copyWith(
+                style: context.textTheme.labelMedium?.copyWith(
                   color: isPositive
-                      ? theme.colorScheme.primary
-                      : theme.colorScheme.error,
+                      ? context.colors.brandPrimary
+                      : context.colors.error,
                   fontWeight: FontWeight.w600,
                 ),
                 textAlign: TextAlign.center,

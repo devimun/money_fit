@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/features/settings/widgets/budget_setting.dart';
+import 'package:money_fit/features/settings/widgets/font_size_setting.dart';
 import 'package:money_fit/features/settings/widgets/notification_setting.dart';
 import 'package:money_fit/features/settings/widgets/dark_mode_setting.dart';
+import 'package:money_fit/features/settings/widgets/theme_color_setting.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
@@ -15,11 +18,13 @@ class BasicSettingsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildSectionTitle(l10n.basicSettings, Theme.of(context).textTheme),
+        buildSectionTitle(l10n.basicSettings, context.textTheme),
         buildSettingsCard([
           const BudgetSetting(),
           const NotificationSetting(),
           const DarkModeSetting(),
+          const ThemeColorSetting(),
+          const FontSizeSetting()
         ]),
       ],
     );

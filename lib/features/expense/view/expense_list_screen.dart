@@ -5,6 +5,7 @@ import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/models/category_model.dart';
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/providers/category_providers.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/ads/ad_banner_widget.dart';
 import 'package:money_fit/features/expense/viewmodel/expense_list_provider.dart';
 import 'package:money_fit/features/expense/view/widgets/expense_filter_bottom_sheet.dart';
@@ -115,7 +116,7 @@ class ExpenseListScreen extends ConsumerWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: context.colors.cardBackground,
         boxShadow: [
           BoxShadow(
             color: const Color.fromRGBO(0, 0, 0, 0.1),
@@ -133,8 +134,8 @@ class ExpenseListScreen extends ConsumerWidget {
               scrollDirection: Axis.horizontal,
               child: Text(
                 '${l10n.yearMonth(DateFormat.MMM(locale).format(date), DateFormat.y(locale).format(date))} · $typeLabel · $categoryLabel · $sortLabel',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface,
+                style: context.textTheme.bodySmall?.copyWith(
+                  color: context.colors.textPrimary,
                 ),
               ),
             ),
@@ -142,7 +143,7 @@ class ExpenseListScreen extends ConsumerWidget {
           IconButton(
             icon: Icon(
               Icons.manage_search,
-              color: Theme.of(context).colorScheme.onSurface,
+              color: context.colors.textPrimary,
             ),
             onPressed: () {
               showModalBottomSheet(
@@ -177,10 +178,10 @@ class ExpenseListScreen extends ConsumerWidget {
       children: [
         Text(
           dateFormat.format(date),
-          style: Theme.of(context).textTheme.labelMedium,
+          style: context.textTheme.labelMedium,
         ),
         Divider(
-          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.55),
+          color: context.colors.divider,
           thickness: 0.6,
         ),
         for (Expense e in expenses)
@@ -205,14 +206,14 @@ class ExpenseListScreen extends ConsumerWidget {
 
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      title: Text(e.name, style: Theme.of(context).textTheme.titleMedium),
+      title: Text(e.name, style: context.textTheme.titleMedium),
       subtitle: Text(
         '$typeLabel · $categoryName',
-        style: Theme.of(context).textTheme.labelSmall,
+        style: context.textTheme.labelSmall,
       ),
       trailing: Text(
         '-${formatCurrencyAdaptive(context, e.amount)}',
-        style: Theme.of(context).textTheme.bodyMedium,
+        style: context.textTheme.bodyMedium,
       ),
     );
   }
@@ -227,13 +228,13 @@ class ExpenseListScreen extends ConsumerWidget {
           const SizedBox(height: 16),
           Text(
             l10n.noExpenseData,
-            style: Theme.of(context).textTheme.titleMedium,
+            style: context.textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
           Text(
             l10n.changeFilterPrompt,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodySmall,
+            style: context.textTheme.bodySmall,
           ),
         ],
       ),

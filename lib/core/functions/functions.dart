@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:money_fit/core/models/user_model.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -14,8 +15,8 @@ Widget buildCircleWidget(bool needPrimaryColor, BuildContext context) {
     decoration: BoxDecoration(
       shape: BoxShape.circle,
       color: needPrimaryColor
-          ? Theme.of(context).colorScheme.primary
-          : Theme.of(context).colorScheme.secondaryContainer,
+          ? context.colors.brandPrimary
+          : context.colors.calendarCellBackground,
     ),
   );
 }

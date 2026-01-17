@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/services/ad_service.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/features/expense/viewmodel/expense_list_provider.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
@@ -29,14 +30,14 @@ class FilterActionButtons extends ConsumerWidget {
         Expanded(
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).brightness == Brightness.dark
-                  ? Theme.of(context).colorScheme.surfaceContainerHighest
-                  : Theme.of(context).colorScheme.onSecondaryContainer,
+              backgroundColor: context.isDarkMode
+                  ? context.colors.inputBackground
+                  : context.colors.calendarCellBackground,
             ),
             onPressed: onReset,
             child: Text(
               l10n.reset,
-              style: Theme.of(context).textTheme.labelMedium,
+              style: context.textTheme.labelMedium,
             ),
           ),
         ),
@@ -44,7 +45,7 @@ class FilterActionButtons extends ConsumerWidget {
         Expanded(
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.primary,
+              backgroundColor: context.colors.brandPrimary,
             ),
             onPressed: () {
               InterstitialAdManager.instance.logActionAndShowAd();
@@ -60,8 +61,8 @@ class FilterActionButtons extends ConsumerWidget {
             },
             child: Text(
               l10n.apply,
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onPrimary,
+              style: context.textTheme.labelLarge?.copyWith(
+                color: context.colors.textOnBrand,
               ),
             ),
           ),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/services/ad_service.dart';
 import 'package:money_fit/core/services/review_prompt_service.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/base_bottom_sheet.dart';
 import 'package:money_fit/core/widgets/expense_management/expense_form_fields.dart';
 import 'package:money_fit/core/widgets/expense_management/category_management/category_list.dart';
@@ -96,8 +97,8 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: _isFormValid
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.onSecondaryContainer,
+                ? context.colors.brandPrimary
+                : context.colors.calendarCellBackground,
           ),
           onPressed: () async {
             if (!_isFormValid) return;
@@ -105,10 +106,10 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
           },
           child: Text(
             l10n.register,
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+            style: context.textTheme.labelLarge?.copyWith(
               color: _isFormValid
-                  ? null
-                  : Theme.of(context).textTheme.labelSmall?.color,
+                  ? context.colors.textOnBrand
+                  : context.colors.textSecondary,
             ),
           ),
         ),
@@ -157,6 +158,7 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
         double.tryParse(_amountController.text.trim().replaceAll(',', '')) ?? 0;
     final categoryId = _selectedCategoryId;
     if (name.isEmpty || amount <= 0 || categoryId == null) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(l10n.allFieldsRequired)));
@@ -178,14 +180,12 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
 
     widget.onSubmit(expense);
 
-    // context가 유효한 경우에만 리뷰 프롬프트 표시
-    if (context.mounted) {
-      await ReviewPromptService.instance.maybePromptReview(context);
-    }
+    // mounted 체크 후 리뷰 프롬프트 표시
+    if (!mounted) return;
+    await ReviewPromptService.instance.maybePromptReview(context);
 
-    // context가 여전히 유효한 경우에만 pop 실행
-    if (context.mounted) {
-      Navigator.pop(context, true);
-    }
+    // mounted 체크 후 pop 실행
+    if (!mounted) return;
+    Navigator.pop(context, true);
   }
 }

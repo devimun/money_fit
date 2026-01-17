@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -17,7 +18,7 @@ class NotificationSetting extends ConsumerWidget {
       data: (user) {
         return buildSwitchItem(
           icon: Icons.notifications_active_outlined,
-          iconColor: Theme.of(context).colorScheme.primary,
+          iconColor: context.colors.brandPrimary,
           title: l10n.notificationSetting,
           value: user.notificationsEnabled,
           onChanged: (value) => _handleNotificationToggle(context, ref, value, l10n),

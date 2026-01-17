@@ -6,6 +6,7 @@ import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/providers/category_providers.dart';
 import 'package:money_fit/core/services/ad_service.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/ads/ad_banner_widget.dart';
 import 'package:money_fit/features/expense/view/widgets/filter_components/month_year_picker_dialog.dart';
 import 'package:money_fit/features/statistics/model/models.dart';
@@ -97,7 +98,7 @@ class StatisticsScreen extends ConsumerWidget {
                     locale,
                   ).format(DateTime(data.year, data.month, 1)).toString(),
                 ),
-                style: Theme.of(context).textTheme.displaySmall,
+                style: context.textTheme.displaySmall,
               ),
               SizedBox(width: 8.0),
               Icon(Icons.keyboard_arrow_down_rounded, size: 24.0),
@@ -116,8 +117,7 @@ class StatisticsScreen extends ConsumerWidget {
   ) {
     // Generate harmonious, theme-driven colors for pie sections while avoiding whites.
     // We derive hues from the app's primary color and vary them by index.
-    final ColorScheme scheme = Theme.of(context).colorScheme;
-    final HSLColor base = HSLColor.fromColor(scheme.primary);
+    final HSLColor base = HSLColor.fromColor(context.colors.brandPrimary);
 
     // Keep the number of distinct hue steps within a sensible range for visual harmony
     final int steps = total < 3 ? 3 : (total > 12 ? 12 : total);
@@ -170,8 +170,8 @@ class StatisticsScreen extends ConsumerWidget {
       children: [
         Text(
           l10n.spendingByCategory,
-          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-            color: Theme.of(context).colorScheme.primary,
+          style: context.textTheme.bodyLarge!.copyWith(
+            color: context.colors.brandPrimary,
           ),
         ),
         const SizedBox(height: 16),
@@ -204,7 +204,7 @@ class StatisticsScreen extends ConsumerWidget {
               Divider(
                 height: 0,
                 thickness: 0.2,
-                color: Theme.of(context).colorScheme.onSecondaryFixed,
+                color: context.colors.textSecondary,
               ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -334,16 +334,16 @@ class StatisticsScreen extends ConsumerWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12.0),
           color: isSelected
-              ? Theme.of(context).primaryColor.withValues(alpha: 0.1)
+              ? context.colors.brandPrimary.withValues(alpha: 0.1)
               : null,
           child: Center(
             child: Text(
               title,
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              style: context.textTheme.bodyMedium!.copyWith(
                 fontWeight: FontWeight.w400,
                 color: isSelected
-                    ? Theme.of(context).primaryColor
-                    : Theme.of(context).unselectedWidgetColor,
+                    ? context.colors.brandPrimary
+                    : context.colors.navUnselected,
               ),
             ),
           ),
@@ -372,8 +372,8 @@ class StatisticsScreen extends ConsumerWidget {
       children: [
         Text(
           l10n.top3ExpensesThisMonth,
-          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-            color: Theme.of(context).colorScheme.primary,
+          style: context.textTheme.bodyLarge!.copyWith(
+            color: context.colors.brandPrimary,
           ),
         ),
         const SizedBox(height: 16),
@@ -416,14 +416,14 @@ class StatisticsScreen extends ConsumerWidget {
                               context,
                               expense.categoryId,
                             ),
-                            style: Theme.of(context).textTheme.labelMedium,
+                            style: context.textTheme.labelMedium,
                           ),
                         ],
                       ),
                     ),
                     Text(
                       formatCurrencyAdaptive(context, expense.totalAmount),
-                      style: Theme.of(context).textTheme.labelMedium,
+                      style: context.textTheme.labelMedium,
                     ),
                   ],
                 ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 class MonthYearPickerDialog extends StatefulWidget {
@@ -53,14 +54,13 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
 
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       title: Text(
         l10n.selectDate,
         textAlign: TextAlign.center,
-        style: theme.textTheme.titleLarge?.copyWith(
+        style: context.textTheme.titleLarge?.copyWith(
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -73,7 +73,7 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
             Container(
               height: 45,
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                color: context.colors.brandPrimary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
@@ -96,13 +96,13 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
                             (year) => Center(
                               child: Text(
                                 l10n.yearLabel(year),
-                                style: theme.textTheme.titleMedium?.copyWith(
+                                style: context.textTheme.titleMedium?.copyWith(
                                   fontWeight: year == selectedYear
                                       ? FontWeight.bold
                                       : FontWeight.normal,
                                   color: year == selectedYear
-                                      ? theme.colorScheme.primary
-                                      : theme.colorScheme.onSurface.withValues(
+                                      ? context.colors.brandPrimary
+                                      : context.colors.textPrimary.withValues(
                                           alpha: 0.6,
                                         ),
                                 ),
@@ -131,13 +131,13 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
                                 l10n.monthLabel(
                                   month.toString().padLeft(2, '0'),
                                 ),
-                                style: theme.textTheme.titleMedium?.copyWith(
+                                style: context.textTheme.titleMedium?.copyWith(
                                   fontWeight: month == selectedMonth
                                       ? FontWeight.bold
                                       : FontWeight.normal,
                                   color: month == selectedMonth
-                                      ? theme.colorScheme.primary
-                                      : theme.colorScheme.onSurface.withValues(
+                                      ? context.colors.brandPrimary
+                                      : context.colors.textPrimary.withValues(
                                           alpha: 0.6,
                                         ),
                                 ),
@@ -160,7 +160,7 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
           padding: EdgeInsets.all(20.0),
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: theme.colorScheme.primary,
+              backgroundColor: context.colors.brandPrimary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -170,7 +170,7 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
             },
             child: Text(
               l10n.confirm,
-              style: TextStyle(color: theme.colorScheme.onPrimary),
+              style: TextStyle(color: context.colors.textOnBrand),
             ),
           ),
         ),

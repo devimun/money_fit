@@ -390,6 +390,28 @@ class AppLocalizationsFil extends AppLocalizations {
   String get darkMode => 'Dark Mode';
 
   @override
+  String get themeColor => 'Kulay ng Tema';
+
+  @override
+  String get themeColorDescription => 'I-customize ang kulay ng iyong app';
+
+  @override
+  String get fontSize => 'Laki ng Font';
+
+  @override
+  String get fontSizeDescription =>
+      'Ayusin ang laki ng teksto para sa mas magandang pagbasa';
+
+  @override
+  String get fontSizeSmall => 'Maliit';
+
+  @override
+  String get fontSizeMedium => 'Katamtaman';
+
+  @override
+  String get fontSizeLarge => 'Malaki';
+
+  @override
   String get apply => 'Ilapat';
 
   @override
@@ -636,6 +658,9 @@ class AppLocalizationsFil extends AppLocalizations {
   String get replyEmail => 'Email para sa tugon';
 
   @override
+  String get optional => 'Opsyonal';
+
+  @override
   String get inquiryDetails => 'Mga Detalye ng Pagtatanong';
 
   @override
@@ -652,4 +677,19 @@ class AppLocalizationsFil extends AppLocalizations {
 
   @override
   String get fieldRequired => 'Kinakailangan ang field na ito.';
+
+  @override
+  String get selectThemeColor => 'Pumili ng Kulay ng Tema';
+
+  @override
+  String get quickSelect => 'Mabilis na Pagpili';
+
+  @override
+  String get recentColors => 'Mga Kamakailang Kulay';
+
+  @override
+  String get customSelect => 'Sariling Pagpili';
+
+  @override
+  String get close => 'Isara';
 }

@@ -5,6 +5,7 @@ import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/providers/category_providers.dart';
 import 'package:money_fit/core/providers/expenses_provider.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/base_bottom_sheet.dart';
 import 'package:money_fit/core/widgets/expense_management/expense_add_form.dart';
 import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
@@ -52,11 +53,11 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.receipt_long, size: 64, color: Colors.grey[400]),
+                    Icon(Icons.receipt_long, size: 64, color: context.colors.navUnselected),
                     const SizedBox(height: 16),
                     Text(
                       l10n.noExpenseHistory,
-                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                      style: TextStyle(fontSize: 16, color: context.colors.textSecondary),
                     ),
                   ],
                 ),
@@ -138,7 +139,7 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
                       title: Text(e.name),
                       subtitle: Text(
                         '$typeLabel · $categoryName',
-                        style: Theme.of(context).textTheme.labelSmall,
+                        style: context.textTheme.labelSmall,
                       ),
                       trailing: Text(
                         '-${formatCurrencyAdaptive(context, e.amount)}',

@@ -9,7 +9,12 @@ class User {
   final String? displayName;
   final double budget;
   final BudgetType budgetType;
+  
+  /// @deprecated 다크 모드 설정은 ThemeSettings로 이전되었습니다.
+  /// themeModeProvider를 사용하세요.
+  /// 이 필드는 기존 데이터 호환성을 위해 유지됩니다.
   final bool isDarkMode;
+  
   final bool notificationsEnabled;
   final DateTime createdAt;
   final DateTime updatedAt;

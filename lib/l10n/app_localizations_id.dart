@@ -392,6 +392,28 @@ class AppLocalizationsId extends AppLocalizations {
   String get darkMode => 'Mode Gelap';
 
   @override
+  String get themeColor => 'Warna Tema';
+
+  @override
+  String get themeColorDescription => 'Sesuaikan skema warna aplikasi Anda';
+
+  @override
+  String get fontSize => 'Ukuran Font';
+
+  @override
+  String get fontSizeDescription =>
+      'Sesuaikan ukuran teks untuk keterbacaan yang lebih baik';
+
+  @override
+  String get fontSizeSmall => 'Kecil';
+
+  @override
+  String get fontSizeMedium => 'Sedang';
+
+  @override
+  String get fontSizeLarge => 'Besar';
+
+  @override
   String get apply => 'Terapkan';
 
   @override
@@ -640,6 +662,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get replyEmail => 'Email untuk balasan';
 
   @override
+  String get optional => 'Opsional';
+
+  @override
   String get inquiryDetails => 'Detail Pertanyaan';
 
   @override
@@ -656,4 +681,19 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get fieldRequired => 'Bagian ini wajib diisi.';
+
+  @override
+  String get selectThemeColor => 'Pilih Warna Tema';
+
+  @override
+  String get quickSelect => 'Pilihan Cepat';
+
+  @override
+  String get recentColors => 'Warna Terbaru';
+
+  @override
+  String get customSelect => 'Pilihan Kustom';
+
+  @override
+  String get close => 'Tutup';
 }

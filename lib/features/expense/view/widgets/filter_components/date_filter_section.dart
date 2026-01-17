@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/features/expense/view/widgets/filter_components/month_year_picker_dialog.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
@@ -25,7 +26,7 @@ class DateFilterSection extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
             border: Border.all(
-              color: Theme.of(context).colorScheme.onSecondary,
+              color: context.colors.border,
               width: 0.3,
             ),
             borderRadius: BorderRadius.circular(8),
@@ -38,7 +39,7 @@ class DateFilterSection extends StatelessWidget {
                   DateFormat.MMM(locale).format(selectedDate),
                   DateFormat.y(locale).format(selectedDate),
                 ),
-                style: Theme.of(context).textTheme.labelMedium,
+                style: context.textTheme.labelMedium,
               ),
               const Icon(Icons.calendar_today),
             ],
@@ -72,7 +73,7 @@ class DateFilterSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: Theme.of(context).textTheme.labelMedium),
+        Text(label, style: context.textTheme.labelMedium),
         const SizedBox(height: 10),
         child,
       ],

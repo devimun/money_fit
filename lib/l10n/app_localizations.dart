@@ -788,6 +788,48 @@ abstract class AppLocalizations {
   /// **'Dark Mode'**
   String get darkMode;
 
+  /// No description provided for @themeColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme Color'**
+  String get themeColor;
+
+  /// No description provided for @themeColorDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize your app\'s color scheme'**
+  String get themeColorDescription;
+
+  /// No description provided for @fontSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Font Size'**
+  String get fontSize;
+
+  /// No description provided for @fontSizeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust text size for better readability'**
+  String get fontSizeDescription;
+
+  /// No description provided for @fontSizeSmall.
+  ///
+  /// In en, this message translates to:
+  /// **'Small'**
+  String get fontSizeSmall;
+
+  /// No description provided for @fontSizeMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get fontSizeMedium;
+
+  /// No description provided for @fontSizeLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Large'**
+  String get fontSizeLarge;
+
   /// No description provided for @apply.
   ///
   /// In en, this message translates to:
@@ -1244,6 +1286,12 @@ abstract class AppLocalizations {
   /// **'Email for reply'**
   String get replyEmail;
 
+  /// No description provided for @optional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get optional;
+
   /// No description provided for @inquiryDetails.
   ///
   /// In en, this message translates to:
@@ -1279,6 +1327,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This field is required.'**
   String get fieldRequired;
+
+  /// No description provided for @selectThemeColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Theme Color'**
+  String get selectThemeColor;
+
+  /// No description provided for @quickSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Select'**
+  String get quickSelect;
+
+  /// No description provided for @recentColors.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Colors'**
+  String get recentColors;
+
+  /// No description provided for @customSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Select'**
+  String get customSelect;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
 }
 
 class _AppLocalizationsDelegate

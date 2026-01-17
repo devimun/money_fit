@@ -78,12 +78,14 @@ class ReviewPromptService {
     _requestedThisSession = true;
 
     // 1단계: 이분화 질문
+    if (!context.mounted) return;
     final bin = await ReviewDialogFactory.showExperienceBinaryDialog(context);
     if (bin == null) return;
     await _markPrompted();
 
     if (bin == BinaryExperience.good) {
       // 긍정 분기: 확인 모달
+      if (!context.mounted) return;
       final pa = await ReviewDialogFactory.showPositiveConfirmDialog(context);
       if (pa == null) return;
       switch (pa) {
@@ -106,6 +108,7 @@ class ReviewPromptService {
     }
 
     // 부정 분기: 자유 입력 모달
+    if (!context.mounted) return;
     final neg = await ReviewDialogFactory.showNegativeFeedbackDialog(context);
     if (neg == null) return;
     switch (neg.action) {

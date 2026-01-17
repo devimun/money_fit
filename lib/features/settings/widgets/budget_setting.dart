@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/models/user_model.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
@@ -35,11 +36,11 @@ class _BudgetSettingState extends ConsumerState<BudgetSetting> {
             : l10n.monthly;
         return buildSettingsItem(
           icon: Icons.account_balance_wallet_outlined,
-          iconColor: Theme.of(context).colorScheme.primary,
+          iconColor: context.colors.brandPrimary,
           title: l10n.budgetSetting,
           trailing: Text(
             '${formatCurrencyAdaptive(context, user.budget)} / $budgetTypeSuffix',
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: context.textTheme.bodyMedium,
           ),
           onTap: () => _showBudgetDialog(
             user,
@@ -82,10 +83,10 @@ class _BudgetSettingState extends ConsumerState<BudgetSetting> {
                               ) {
                                 if (states.contains(WidgetState.selected)) {
                                   // 선택된 버튼의 배경색
-                                  return Theme.of(context).colorScheme.primary;
+                                  return context.colors.brandPrimary;
                                 }
                                 // 선택되지 않은 버튼의 배경색
-                                return Theme.of(context).colorScheme.surface;
+                                return context.colors.cardBackground;
                               }),
                           // 선택되었을 때와 아닐 때의 텍스트/아이콘 색상을 지정합니다.
                           foregroundColor:
@@ -94,12 +95,10 @@ class _BudgetSettingState extends ConsumerState<BudgetSetting> {
                               ) {
                                 if (states.contains(WidgetState.selected)) {
                                   // 선택된 버튼의 텍스트 색상
-                                  return Theme.of(
-                                    context,
-                                  ).colorScheme.onPrimary;
+                                  return context.colors.textOnBrand;
                                 }
                                 // 선택되지 않은 버튼의 텍스트 색상
-                                return Theme.of(context).colorScheme.onSurface;
+                                return context.colors.textPrimary;
                               }),
                         ),
                     showSelectedIcon: false,

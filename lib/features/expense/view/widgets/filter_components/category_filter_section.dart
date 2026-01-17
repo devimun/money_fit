@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/providers/category_providers.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 class CategoryFilterSection extends ConsumerWidget {
@@ -27,12 +28,12 @@ class CategoryFilterSection extends ConsumerWidget {
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            color: context.colors.inputBackground,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
             l10n.selectExpenseTypeFirst,
-            style: Theme.of(context).textTheme.labelSmall,
+            style: context.textTheme.labelSmall,
           ),
         ),
         context: context,
@@ -52,7 +53,7 @@ class CategoryFilterSection extends ConsumerWidget {
         label: l10n.category,
         child: Text(
           l10n.errorLoadingCategories,
-          style: Theme.of(context).textTheme.labelSmall,
+          style: context.textTheme.labelSmall,
         ),
         context: context,
       );
@@ -101,12 +102,12 @@ class CategoryFilterSection extends ConsumerWidget {
   ) {
     return ChoiceChip(
       side: BorderSide.none,
-      backgroundColor: Theme.of(context).brightness == Brightness.dark
-          ? Theme.of(context).colorScheme.surfaceContainerHighest
-          : Theme.of(context).colorScheme.onSecondaryContainer,
-      selectedColor: Theme.of(context).colorScheme.primary,
-      labelStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
-        color: isSelected ? Theme.of(context).colorScheme.onPrimary : null,
+      backgroundColor: context.isDarkMode
+          ? context.colors.inputBackground
+          : context.colors.calendarCellBackground,
+      selectedColor: context.colors.brandPrimary,
+      labelStyle: context.textTheme.labelMedium?.copyWith(
+        color: isSelected ? context.colors.textOnBrand : null,
       ),
       showCheckmark: false,
       label: Text(label),
@@ -123,7 +124,7 @@ class CategoryFilterSection extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: Theme.of(context).textTheme.labelMedium),
+        Text(label, style: context.textTheme.labelMedium),
         const SizedBox(height: 10),
         child,
       ],

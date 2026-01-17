@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:money_fit/core/theme/app_theme.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 
 class HomeButton extends StatelessWidget {
   final String title;
@@ -17,7 +17,7 @@ class HomeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 4),
-      decoration: AppTheme.getBoxDecoration(context),
+      decoration: context.boxDecoration,
       child: TextButton(
         onPressed: onPressed,
         style: TextButton.styleFrom(
@@ -31,8 +31,8 @@ class HomeButton extends StatelessWidget {
               fit: BoxFit.scaleDown,
               child: Text(
                 title,
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface,
+                style: context.textTheme.headlineMedium?.copyWith(
+                  color: context.colors.textPrimary,
                 ),
               ),
             ),
@@ -41,8 +41,8 @@ class HomeButton extends StatelessWidget {
               fit: BoxFit.scaleDown,
               child: Text(
                 subtitle,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface,
+                style: context.textTheme.labelSmall?.copyWith(
+                  color: context.colors.textSecondary,
                 ),
               ),
             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -70,8 +71,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       decoration: BoxDecoration(
         color:
             _currentPage == index
-                ? Theme.of(context).primaryColor
-                : Colors.grey,
+                ? context.colors.brandPrimary
+                : context.colors.navUnselected,
         borderRadius: BorderRadius.circular(5),
       ),
     );
@@ -109,13 +110,13 @@ class OnboardingPage extends ConsumerWidget {
           const SizedBox(height: 40),
           Text(
             title,
-            style: Theme.of(context).textTheme.displayMedium,
+            style: context.textTheme.displayMedium,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
           Text(
             description,
-            style: Theme.of(context).textTheme.bodyLarge,
+            style: context.textTheme.bodyLarge,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 60),
@@ -129,7 +130,7 @@ class OnboardingPage extends ConsumerWidget {
               style: ElevatedButton.styleFrom(),
               child: Text(
                 l10n.next,
-                style: Theme.of(context).textTheme.labelLarge,
+                style: context.textTheme.labelLarge,
               ),
             ),
         ],
