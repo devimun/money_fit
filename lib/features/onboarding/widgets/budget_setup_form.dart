@@ -34,7 +34,8 @@ class BudgetSetupForm extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ResponsiveTitleText(
-            text: l10n.dailyBudgetSetupTitle, // This title might need to be more generic
+            text: l10n
+                .dailyBudgetSetupTitle, // This title might need to be more generic
             style: context.textTheme.displayMedium,
           ),
           const SizedBox(height: 20),
@@ -118,10 +119,7 @@ class BudgetSetupForm extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 textStyle: context.textTheme.labelLarge,
               ),
-              child: ResponsiveButtonText(
-                text: l10n.start,
-                style: context.textTheme.labelLarge,
-              ),
+              child: ResponsiveButtonText(text: l10n.start),
             ),
           ),
         ],

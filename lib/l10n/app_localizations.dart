@@ -899,31 +899,31 @@ abstract class AppLocalizations {
   /// No description provided for @todayExpenseMessageZero.
   ///
   /// In en, this message translates to:
-  /// **'Please log your expenses today 😊'**
+  /// **'Please log your expenses\ntoday 😊'**
   String get todayExpenseMessageZero;
 
   /// No description provided for @todayExpenseMessageGood.
   ///
   /// In en, this message translates to:
-  /// **'Great! You still have plenty of budget left 🌿'**
+  /// **'Great!\nYou still have plenty of budget left 🌿'**
   String get todayExpenseMessageGood;
 
   /// No description provided for @todayExpenseMessageHalf.
   ///
   /// In en, this message translates to:
-  /// **'You\'ve used almost half! Let\'s be a little more mindful now 🔔'**
+  /// **'You\'ve used almost half!\nLet\'s be a little more mindful now 🔔'**
   String get todayExpenseMessageHalf;
 
   /// No description provided for @todayExpenseMessageNearLimit.
   ///
   /// In en, this message translates to:
-  /// **'You\'re close to exceeding today\'s budget! ⚠️'**
+  /// **'You\'re close to exceeding\ntoday\'s budget! ⚠️'**
   String get todayExpenseMessageNearLimit;
 
   /// No description provided for @todayExpenseMessageOverLimit.
   ///
   /// In en, this message translates to:
-  /// **'You\'ve exceeded today\'s budget! Let\'s adjust your spending ❗'**
+  /// **'You\'ve exceeded today\'s budget!\nLet\'s adjust your spending ❗'**
   String get todayExpenseMessageOverLimit;
 
   /// No description provided for @information.
@@ -1229,31 +1229,31 @@ abstract class AppLocalizations {
   /// No description provided for @monthlyExpenseMessageZero.
   ///
   /// In en, this message translates to:
-  /// **'No discretionary spending this month yet!'**
+  /// **'No discretionary spending\nthis month yet!'**
   String get monthlyExpenseMessageZero;
 
   /// No description provided for @monthlyExpenseMessageGood.
   ///
   /// In en, this message translates to:
-  /// **'Your budget is well-managed this month!'**
+  /// **'Your budget is well-managed\nthis month!'**
   String get monthlyExpenseMessageGood;
 
   /// No description provided for @monthlyExpenseMessageHalf.
   ///
   /// In en, this message translates to:
-  /// **'You\'ve used about half of your budget this month.'**
+  /// **'You\'ve used about half\nof your budget this month.'**
   String get monthlyExpenseMessageHalf;
 
   /// No description provided for @monthlyExpenseMessageNearLimit.
   ///
   /// In en, this message translates to:
-  /// **'Your budget is almost used up for this month.'**
+  /// **'Your budget is almost used up\nfor this month.'**
   String get monthlyExpenseMessageNearLimit;
 
   /// No description provided for @monthlyExpenseMessageOverLimit.
   ///
   /// In en, this message translates to:
-  /// **'You have exceeded your budget for this month.'**
+  /// **'You have exceeded your budget\nfor this month.'**
   String get monthlyExpenseMessageOverLimit;
 
   /// No description provided for @contactUs.

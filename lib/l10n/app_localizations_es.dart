@@ -440,23 +440,23 @@ class AppLocalizationsEs extends AppLocalizations {
   String get remainingAmount => 'Cantidad restante';
 
   @override
-  String get todayExpenseMessageZero => 'Registra tus gastos de hoy 😊';
+  String get todayExpenseMessageZero => 'Registra tus gastos\nde hoy 😊';
 
   @override
   String get todayExpenseMessageGood =>
-      '¡Genial! Aún te queda bastante presupuesto 🌿';
+      '¡Genial!\nAún te queda bastante presupuesto 🌿';
 
   @override
   String get todayExpenseMessageHalf =>
-      '¡Has usado casi la mitad! Vamos a ser más cuidadosos ahora 🔔';
+      '¡Has usado casi la mitad!\nVamos a ser más cuidadosos ahora 🔔';
 
   @override
   String get todayExpenseMessageNearLimit =>
-      '¡Estás cerca de superar el presupuesto de hoy! ⚠️';
+      '¡Estás cerca de superar\nel presupuesto de hoy! ⚠️';
 
   @override
   String get todayExpenseMessageOverLimit =>
-      '¡Has superado el presupuesto de hoy! Ajustemos los gastos ❗';
+      '¡Has superado el presupuesto de hoy!\nAjustemos los gastos ❗';
 
   @override
   String get information => 'Información';
@@ -619,23 +619,23 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get monthlyExpenseMessageZero =>
-      '¡Aún no hay gastos discrecionales este mes!';
+      '¡Aún no hay gastos discrecionales\neste mes!';
 
   @override
   String get monthlyExpenseMessageGood =>
-      '¡Tu presupuesto está bien gestionado este mes!';
+      '¡Tu presupuesto está bien gestionado\neste mes!';
 
   @override
   String get monthlyExpenseMessageHalf =>
-      'Has usado aproximadamente la mitad de tu presupuesto este mes.';
+      'Has usado aproximadamente la mitad\nde tu presupuesto este mes.';
 
   @override
   String get monthlyExpenseMessageNearLimit =>
-      'Tu presupuesto está casi agotado este mes.';
+      'Tu presupuesto está casi agotado\neste mes.';
 
   @override
   String get monthlyExpenseMessageOverLimit =>
-      'Has superado tu presupuesto este mes.';
+      'Has superado tu presupuesto\neste mes.';
 
   @override
   String get contactUs => 'Contáctanos';

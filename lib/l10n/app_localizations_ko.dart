@@ -589,7 +589,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get review_thanks_message => '알려주셔서 감사합니다. 개선에 반영할 수 있도록 하겠습니다.';
 
   @override
-  String get monthlyExpenseMessageZero => '이번 달 아직 자율 지출이 없어요!';
+  String get monthlyExpenseMessageZero => '이번 달 자율 지출이 아직 없어요!';
 
   @override
   String get monthlyExpenseMessageGood => '이번 달 예산 관리가 잘 되고 있어요!';

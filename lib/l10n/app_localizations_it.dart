@@ -437,22 +437,22 @@ class AppLocalizationsIt extends AppLocalizations {
   String get remainingAmount => 'Importo rimanente';
 
   @override
-  String get todayExpenseMessageZero => 'Registra le tue spese di oggi 😊';
+  String get todayExpenseMessageZero => 'Registra le tue spese\ndi oggi 😊';
 
   @override
-  String get todayExpenseMessageGood => 'Ottimo! Hai ancora molto budget 🌿';
+  String get todayExpenseMessageGood => 'Ottimo!\nHai ancora molto budget 🌿';
 
   @override
   String get todayExpenseMessageHalf =>
-      'Hai usato quasi la metà! Siamo più attenti ora 🔔';
+      'Hai usato quasi la metà!\nSiamo più attenti ora 🔔';
 
   @override
   String get todayExpenseMessageNearLimit =>
-      'Stai per superare il budget di oggi! ⚠️';
+      'Stai per superare il budget\ndi oggi! ⚠️';
 
   @override
   String get todayExpenseMessageOverLimit =>
-      'Hai superato il budget di oggi! Regoliamo le spese ❗';
+      'Hai superato il budget di oggi!\nRegoliamo le spese ❗';
 
   @override
   String get information => 'Informazioni';
@@ -613,23 +613,23 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get monthlyExpenseMessageZero =>
-      'Nessuna spesa discrezionale questo mese ancora!';
+      'Nessuna spesa discrezionale\nquesto mese ancora!';
 
   @override
   String get monthlyExpenseMessageGood =>
-      'Il tuo budget è ben gestito questo mese!';
+      'Il tuo budget è ben gestito\nquesto mese!';
 
   @override
   String get monthlyExpenseMessageHalf =>
-      'Hai usato circa metà del budget questo mese.';
+      'Hai usato circa metà del budget\nquesto mese.';
 
   @override
   String get monthlyExpenseMessageNearLimit =>
-      'Il tuo budget è quasi esaurito questo mese.';
+      'Il tuo budget è quasi esaurito\nquesto mese.';
 
   @override
   String get monthlyExpenseMessageOverLimit =>
-      'Hai superato il budget questo mese.';
+      'Hai superato il budget\nquesto mese.';
 
   @override
   String get contactUs => 'Contattaci';

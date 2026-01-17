@@ -439,19 +439,19 @@ class AppLocalizationsCs extends AppLocalizations {
   String get todayExpenseMessageZero => 'Zapište své dnešní výdaje 😊';
 
   @override
-  String get todayExpenseMessageGood => 'Skvělé! Máte ještě hodně rozpočtu 🌿';
+  String get todayExpenseMessageGood => 'Skvělé!\nMáte ještě hodně rozpočtu 🌿';
 
   @override
   String get todayExpenseMessageHalf =>
-      'Použili jste skoro polovinu! Buďme teď opatrnější 🔔';
+      'Použili jste skoro polovinu!\nBuďme teď opatrnější 🔔';
 
   @override
   String get todayExpenseMessageNearLimit =>
-      'Blížíte se k překročení dnešního rozpočtu! ⚠️';
+      'Blížíte se k překročení\ndnešního rozpočtu! ⚠️';
 
   @override
   String get todayExpenseMessageOverLimit =>
-      'Překročili jste dnešní rozpočet! Upravme výdaje ❗';
+      'Překročili jste dnešní rozpočet!\nUpravme výdaje ❗';
 
   @override
   String get information => 'Informace';
@@ -612,23 +612,23 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get monthlyExpenseMessageZero =>
-      'Zatím žádné volné výdaje tento měsíc!';
+      'Zatím žádné volné výdaje\ntento měsíc!';
 
   @override
   String get monthlyExpenseMessageGood =>
-      'Váš rozpočet je tento měsíc dobře spravován!';
+      'Váš rozpočet je tento měsíc\ndobře spravován!';
 
   @override
   String get monthlyExpenseMessageHalf =>
-      'Použili jste přibližně polovinu rozpočtu tento měsíc.';
+      'Použili jste přibližně polovinu\nrozpočtu tento měsíc.';
 
   @override
   String get monthlyExpenseMessageNearLimit =>
-      'Váš rozpočet je tento měsíc téměř vyčerpán.';
+      'Váš rozpočet je tento měsíc\ntéměř vyčerpán.';
 
   @override
   String get monthlyExpenseMessageOverLimit =>
-      'Překročili jste rozpočet tento měsíc.';
+      'Překročili jste rozpočet\ntento měsíc.';
 
   @override
   String get contactUs => 'Kontaktujte nás';

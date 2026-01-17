@@ -80,7 +80,6 @@ class CustomNotificationDialog extends StatelessWidget {
                   onPressed: onConfirm,
                   child: ResponsiveButtonText(
                     text: l10n.notificationDialogConfirm,
-                    style: context.textTheme.labelLarge,
                   ),
                 ),
               ),

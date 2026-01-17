@@ -441,19 +441,19 @@ class AppLocalizationsBg extends AppLocalizations {
   String get todayExpenseMessageZero => 'Запишете днешните си разходи 😊';
 
   @override
-  String get todayExpenseMessageGood => 'Страхотно! Имате още много бюджет 🌿';
+  String get todayExpenseMessageGood => 'Страхотно!\nИмате още много бюджет 🌿';
 
   @override
   String get todayExpenseMessageHalf =>
-      'Използвахте почти половината! Нека бъдем по-внимателни сега 🔔';
+      'Използвахте почти половината!\nНека бъдем по-внимателни сега 🔔';
 
   @override
   String get todayExpenseMessageNearLimit =>
-      'Близо сте до надвишаване на днешния бюджет! ⚠️';
+      'Близо сте до надвишаване\nна днешния бюджет! ⚠️';
 
   @override
   String get todayExpenseMessageOverLimit =>
-      'Надвишихте днешния бюджет! Нека коригираме разходите ❗';
+      'Надвишихте днешния бюджет!\nНека коригираме разходите ❗';
 
   @override
   String get information => 'Информация';
@@ -615,23 +615,23 @@ class AppLocalizationsBg extends AppLocalizations {
 
   @override
   String get monthlyExpenseMessageZero =>
-      'Все още няма дискреционни разходи този месец!';
+      'Все още няма дискреционни разходи\nтози месец!';
 
   @override
   String get monthlyExpenseMessageGood =>
-      'Бюджетът ви е добре управляван този месец!';
+      'Бюджетът ви е добре управляван\nтози месец!';
 
   @override
   String get monthlyExpenseMessageHalf =>
-      'Използвахте около половината от бюджета си този месец.';
+      'Използвахте около половината\nот бюджета си този месец.';
 
   @override
   String get monthlyExpenseMessageNearLimit =>
-      'Бюджетът ви е почти изчерпан този месец.';
+      'Бюджетът ви е почти изчерпан\nтози месец.';
 
   @override
   String get monthlyExpenseMessageOverLimit =>
-      'Надвишихте бюджета си този месец.';
+      'Надвишихте бюджета си\nтози месец.';
 
   @override
   String get contactUs => 'Свържете се с нас';

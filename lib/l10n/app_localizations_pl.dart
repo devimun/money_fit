@@ -438,23 +438,23 @@ class AppLocalizationsPl extends AppLocalizations {
   String get remainingAmount => 'Pozostała kwota';
 
   @override
-  String get todayExpenseMessageZero => 'Zapisz swoje wydatki z dzisiaj 😊';
+  String get todayExpenseMessageZero => 'Zapisz swoje wydatki\nz dzisiaj 😊';
 
   @override
   String get todayExpenseMessageGood =>
-      'Świetnie! Masz jeszcze sporo budżetu 🌿';
+      'Świetnie!\nMasz jeszcze sporo budżetu 🌿';
 
   @override
   String get todayExpenseMessageHalf =>
-      'Wykorzystałeś prawie połowę! Bądźmy teraz bardziej ostrożni 🔔';
+      'Wykorzystałeś prawie połowę!\nBądźmy teraz bardziej ostrożni 🔔';
 
   @override
   String get todayExpenseMessageNearLimit =>
-      'Jesteś blisko przekroczenia dzisiejszego budżetu! ⚠️';
+      'Jesteś blisko przekroczenia\ndzisiejszego budżetu! ⚠️';
 
   @override
   String get todayExpenseMessageOverLimit =>
-      'Przekroczyłeś dzisiejszy budżet! Dostosujmy wydatki ❗';
+      'Przekroczyłeś dzisiejszy budżet!\nDostosujmy wydatki ❗';
 
   @override
   String get information => 'Informacje';
@@ -616,23 +616,23 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get monthlyExpenseMessageZero =>
-      'Brak wydatków uznaniowych w tym miesiącu!';
+      'Brak wydatków uznaniowych\nw tym miesiącu!';
 
   @override
   String get monthlyExpenseMessageGood =>
-      'Twój budżet jest dobrze zarządzany w tym miesiącu!';
+      'Twój budżet jest dobrze zarządzany\nw tym miesiącu!';
 
   @override
   String get monthlyExpenseMessageHalf =>
-      'Wykorzystałeś około połowy budżetu w tym miesiącu.';
+      'Wykorzystałeś około połowy budżetu\nw tym miesiącu.';
 
   @override
   String get monthlyExpenseMessageNearLimit =>
-      'Twój budżet jest prawie wyczerpany w tym miesiącu.';
+      'Twój budżet jest prawie wyczerpany\nw tym miesiącu.';
 
   @override
   String get monthlyExpenseMessageOverLimit =>
-      'Przekroczyłeś budżet w tym miesiącu.';
+      'Przekroczyłeś budżet\nw tym miesiącu.';
 
   @override
   String get contactUs => 'Skontaktuj się z nami';

@@ -35,7 +35,9 @@ class ResponsiveButtonText extends StatelessWidget {
       fit: BoxFit.scaleDown,
       child: Text(
         text,
-        style: style ?? context.textTheme.bodyMedium,
+        // 부모 위젯(SegmentedButton 등)의 foregroundColor를 상속받기 위해
+        // DefaultTextStyle을 기본값으로 사용
+        style: style ?? DefaultTextStyle.of(context).style,
         textAlign: textAlign ?? TextAlign.center,
         maxLines: maxLines,
         overflow: TextOverflow.ellipsis,

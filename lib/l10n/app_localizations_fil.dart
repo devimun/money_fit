@@ -437,22 +437,22 @@ class AppLocalizationsFil extends AppLocalizations {
   String get remainingAmount => 'Natitirang Halaga';
 
   @override
-  String get todayExpenseMessageZero => 'I-log ang iyong mga gastos ngayon 😊';
+  String get todayExpenseMessageZero => 'I-log ang iyong mga gastos\nngayon 😊';
 
   @override
-  String get todayExpenseMessageGood => 'Mahusay! Malaki pa ang badyet mo 🌿';
+  String get todayExpenseMessageGood => 'Mahusay!\nMalaki pa ang badyet mo 🌿';
 
   @override
   String get todayExpenseMessageHalf =>
-      'Halos kalahati na ang nagamit mo! Maging mas maingat ngayon 🔔';
+      'Halos kalahati na ang nagamit mo!\nMaging mas maingat ngayon 🔔';
 
   @override
   String get todayExpenseMessageNearLimit =>
-      'Malapit nang maubos ang badyet mo! ⚠️';
+      'Malapit nang maubos\nang badyet mo! ⚠️';
 
   @override
   String get todayExpenseMessageOverLimit =>
-      'Lumagpas ka na sa badyet! Ayusin ang iyong paggastos ❗';
+      'Lumagpas ka na sa badyet!\nAyusin ang iyong paggastos ❗';
 
   @override
   String get information => 'Impormasyon';
@@ -615,23 +615,23 @@ class AppLocalizationsFil extends AppLocalizations {
 
   @override
   String get monthlyExpenseMessageZero =>
-      'Wala pang discretionary spending ngayong buwan!';
+      'Wala pang discretionary spending\nngayong buwan!';
 
   @override
   String get monthlyExpenseMessageGood =>
-      'Mahusay ang pamamahala ng iyong badyet ngayong buwan!';
+      'Mahusay ang pamamahala\nng iyong badyet ngayong buwan!';
 
   @override
   String get monthlyExpenseMessageHalf =>
-      'Ginamit mo na ang halos kalahati ng iyong badyet ngayong buwan.';
+      'Ginamit mo na ang halos kalahati\nng iyong badyet ngayong buwan.';
 
   @override
   String get monthlyExpenseMessageNearLimit =>
-      'Halos maubos na ang iyong badyet para sa buwang ito.';
+      'Halos maubos na ang iyong badyet\npara sa buwang ito.';
 
   @override
   String get monthlyExpenseMessageOverLimit =>
-      'Nalagpasan mo na ang iyong badyet para sa buwang ito.';
+      'Nalagpasan mo na ang iyong badyet\npara sa buwang ito.';
 
   @override
   String get contactUs => 'Makipag-ugnayan sa amin';
