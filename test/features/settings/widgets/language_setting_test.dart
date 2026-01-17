@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:money_fit/core/config/locale_config.dart';
-import 'package:money_fit/core/providers/locale_provider.dart';
 import 'package:money_fit/core/providers/shared_preferences_provider.dart';
 import 'package:money_fit/features/settings/widgets/language_setting.dart';
 import 'package:money_fit/l10n/app_localizations.dart';

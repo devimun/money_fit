@@ -20,11 +20,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   Future<void> _navigateOnce() async {
     try {
+      // appInitializer에서 homeViewModelProvider도 초기화됨
       await ref.read(appInitializerProvider.future);
-      final homeState = await ref.read(homeViewModelProvider.future);
+      
+      // 이미 초기화되었으므로 동기적으로 현재 값 읽기
+      final homeState = ref.read(homeViewModelProvider).valueOrNull;
 
       if (!mounted) return;
-      if (homeState.dailyBudget == 0) {
+      if (homeState == null || homeState.dailyBudget == 0) {
         context.go('/budget_setup');
       } else {
         context.go('/home');
@@ -40,13 +43,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final appInitialization = ref.watch(appInitializerProvider);
-    return appInitialization.when(
-      data: (_) =>
-          const Scaffold(body: Center(child: CircularProgressIndicator())),
-      loading: () =>
-          const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (err, stack) => Scaffold(body: Center(child: Text('Error: $err'))),
-    );
+    // 단순히 로딩 표시만 - watch로 인한 중복 호출 제거
+    return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }

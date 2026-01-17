@@ -2,7 +2,6 @@
 /// ConstrainedBox로 높이 제한하여 UI 침범 방지
 library;
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import '../../theme/theme_extensions.dart';
 
@@ -10,7 +9,7 @@ import '../../theme/theme_extensions.dart';
 ///
 /// 특징:
 /// - ConstrainedBox로 높이 제한 (minHeight: 40, maxHeight: 60)
-/// - 텍스트 크기 자동 축소 (최소 12sp)
+/// - FittedBox로 텍스트 크기 자동 축소
 /// - 최대 2줄까지 허용
 /// - UI 침범 방지
 ///
@@ -27,8 +26,6 @@ class ResponsiveMessageText extends StatelessWidget {
   final TextStyle? style;
   final TextAlign? textAlign;
 
-  static const double defaultFontSize = 14.0;
-  static const double minFontSize = 12.0;
   static const int maxLines = 2;
   static const double minHeight = 40.0;
   static const double maxHeight = 60.0;
@@ -42,13 +39,15 @@ class ResponsiveMessageText extends StatelessWidget {
         minHeight: minHeight,
         maxHeight: maxHeight,
       ),
-      child: AutoSizeText(
-        text,
-        style: style ?? context.textTheme.bodyLarge,
-        textAlign: textAlign ?? TextAlign.center,
-        minFontSize: minFontSize,
-        maxLines: maxLines,
-        overflow: TextOverflow.ellipsis,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          text,
+          style: style ?? context.textTheme.bodyLarge,
+          textAlign: textAlign ?? TextAlign.center,
+          maxLines: maxLines,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
     );
   }
