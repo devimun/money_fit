@@ -1,0 +1,4 @@
+• Personalización de tema añadida
+• Ajuste de tamaño de fuente añadido (S/M/L)
+• Ahora disponible en español 🇪🇸
+• Configuración de idioma y moneda añadida

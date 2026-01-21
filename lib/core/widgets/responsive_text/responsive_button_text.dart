@@ -3,7 +3,6 @@
 library;
 
 import 'package:flutter/material.dart';
-import '../../theme/theme_extensions.dart';
 
 /// 버튼 내 텍스트를 위한 반응형 위젯
 ///

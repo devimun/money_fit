@@ -1,0 +1,87 @@
+require 'yaml'
+
+default_platform(:android)
+
+platform :android do
+  
+  # ==========================================
+  # 1. 개발/테스트용 (기존 코드 유지)
+  # ==========================================
+  desc "pubspec.yaml 버전을 기준으로 내부 테스트 배포"
+  lane :beta do
+    pubspec = YAML.load_file(File.join(File.dirname(__FILE__), "../../pubspec.yaml"))
+    version_string = pubspec['version']
+    version_name = version_string.split('+')[0]
+    build_number = version_string.split('+')[1]
+
+    puts "------------------------------------------------"
+    puts "🤖 Project MoneyFit 안드로이드 내부 테스트 배포"
+    puts "📌 버전: #{version_name} (빌드코드: #{build_number})"
+    puts "------------------------------------------------"
+
+    Dir.chdir ".." do
+      sh "flutter build appbundle --release"
+    end
+
+    upload_to_play_store(
+      track: 'internal',
+      aab: '../build/app/outputs/bundle/release/app-release.aab',
+      skip_upload_screenshots: true, # 빠른 배포를 위해 스킵
+      skip_upload_images: true       # 빠른 배포를 위해 스킵
+    )
+  end
+  
+  # ==========================================
+  # 2. 메타데이터 업데이트용 (텍스트만)
+  # ==========================================
+  desc "앱 빌드 없이 스토어 텍스트 정보만 업데이트"
+  lane :update_metadata do
+    upload_to_play_store(
+      track: 'internal',
+      skip_upload_aab: true,           # 앱은 안 올림
+      skip_upload_images: true,        # 이미지 스킵 (빠른 업데이트)
+      skip_upload_screenshots: true,   # 스크린샷 스킵
+      skip_upload_metadata: false,     # 텍스트 올림!
+      skip_upload_changelogs: true     # changelog는 릴리즈 때
+    )
+  end
+
+  # ==========================================
+  # 2-1. 이미지 업데이트용 (스크린샷 바꿨을 때만)
+  # ==========================================
+  desc "스크린샷/아이콘 등 이미지를 바꿨을 때 사용"
+  lane :update_images do
+    upload_to_play_store(
+      track: 'internal',
+      skip_upload_aab: true,
+      skip_upload_images: false,       # 이미지 올림!
+      skip_upload_screenshots: false,  # 스크린샷 올림!
+      skip_upload_metadata: true,      # 텍스트는 스킵
+      skip_upload_changelogs: true,
+      sync_image_upload: true          # 로컬과 동기화 (삭제+업로드)
+    )
+  end
+
+  # ==========================================
+  # 3. 정식 출시용 (Internal -> Production 승격)
+  # ==========================================
+  desc "내부 테스트의 최신 빌드를 정식 출시(Production)로 승격 + 스토어 정보 반영"
+  lane :release do
+    pubspec = YAML.load_file(File.join(File.dirname(__FILE__), "../../pubspec.yaml"))
+    version_string = pubspec['version']
+    build_number = version_string.split('+')[1].to_i
+
+    upload_to_play_store(
+      track: 'internal',              # 출발지: 내부 테스트 트랙
+      track_promote_to: 'production', # 목적지: 프로덕션 트랙
+      skip_upload_aab: true,          # 새 파일 업로드 안 함 (있는 거 씀)
+      version_code: build_number,     # changelog 버전 지정
+      
+      # 정식 출시니까 스토어 정보도 확실하게 업데이트
+      skip_upload_images: false,
+      skip_upload_screenshots: false,
+      skip_upload_metadata: false,
+      sync_image_upload: true          # 로컬에 없는 이미지는 삭제
+    )
+  end
+end

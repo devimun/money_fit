@@ -1,0 +1,4 @@
+• Penyesuaian tema ditambah
+• Pelarasan saiz fon ditambah (S/M/L)
+• Ditambah: Sepanyol, Poland, Ukraine, Czech, Jerman, Itali, Bulgaria, Romania, Slovakia
+• Tetapan bahasa dan mata wang ditambah

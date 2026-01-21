@@ -1,0 +1,82 @@
+require 'yaml'
+
+default_platform(:ios)
+
+platform :ios do
+
+  # ==========================================
+  # 1. 개발/테스트용 (기존 코드 유지)
+  # ==========================================
+  desc "pubspec.yaml 버전을 기준으로 TestFlight 배포"
+  lane :beta do
+    pubspec = YAML.load_file(File.join(File.dirname(__FILE__), "../../pubspec.yaml"))
+    version_string = pubspec['version']
+    version_name = version_string.split('+')[0]
+    build_number = version_string.split('+')[1]
+
+    puts "------------------------------------------------"
+    puts "🚀 Project MoneyFit iOS TestFlight 배포"
+    puts "📌 버전: #{version_name} (빌드: #{build_number})"
+    puts "------------------------------------------------"
+
+    increment_version_number(version_number: version_name, xcodeproj: "Runner.xcodeproj")
+    increment_build_number(build_number: build_number, xcodeproj: "Runner.xcodeproj")
+
+    build_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner",
+      export_method: "app-store",
+      xcargs: "-allowProvisioningUpdates" 
+    )
+
+    upload_to_testflight(skip_waiting_for_build_processing: true)
+  end
+
+  # ==========================================
+  # 2. 메타데이터 업데이트용 (텍스트만)
+  # ==========================================
+  desc "앱 빌드 없이 스토어 텍스트 정보만 업데이트"
+  lane :update_metadata do
+    deliver(
+      submit_for_review: false,
+      automatic_release: false,
+      force: true,
+      skip_binary_upload: true,
+      skip_screenshots: true,      # 스크린샷 스킵 (빠른 업데이트)
+      skip_metadata: false         # 텍스트 올림!
+    )
+  end
+
+  # ==========================================
+  # 2-1. 이미지 업데이트용 (스크린샷 바꿨을 때만)
+  # ==========================================
+  desc "스크린샷을 바꿨을 때 사용"
+  lane :update_images do
+    deliver(
+      submit_for_review: false,
+      automatic_release: false,
+      force: true,
+      skip_binary_upload: true,
+      skip_screenshots: false,       # 스크린샷 올림!
+      skip_metadata: true,           # 텍스트는 스킵
+      overwrite_screenshots: true    # 기존 삭제 후 업로드
+    )
+  end
+
+  # ==========================================
+  # 3. 정식 출시용 (심사 제출)
+  # ==========================================
+  desc "메타데이터 업로드 + TestFlight 최신 빌드 선택 + 심사 요청"
+  lane :release do
+    deliver(
+      submit_for_review: true,
+      automatic_release: true,
+      force: true,
+      skip_binary_upload: true,
+      build_number: "latest",
+      
+      skip_screenshots: true,        # 스크린샷은 update_images로 미리 올림
+      skip_metadata: false           # 텍스트 반영
+    )
+  end
+end
