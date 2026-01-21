@@ -1,0 +1,4 @@
+• Kustomisasi tema ditambahkan
+• Penyesuaian ukuran font ditambahkan (S/M/L)
+• Ditambahkan: Spanyol, Polandia, Ukraina, Ceko, Jerman, Italia, Bulgaria, Rumania, Slovakia
+• Pengaturan bahasa dan mata uang ditambahkan

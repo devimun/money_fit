@@ -1,0 +1,4 @@
+• Themenanpassung hinzugefügt
+• Schriftgrößenanpassung hinzugefügt (S/M/L)
+• Jetzt auf Deutsch verfügbar 🇩🇪
+• Sprach- und Währungseinstellungen hinzugefügt

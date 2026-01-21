@@ -1,0 +1,4 @@
+• Přidána personalizace motivu
+• Přidána úprava velikosti písma (S/M/L)
+• Nyní dostupné v češtině
+• Přidáno nastavení jazyka a měny

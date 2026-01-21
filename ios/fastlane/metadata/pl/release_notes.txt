@@ -1,0 +1,4 @@
+• Dodano personalizację motywu
+• Dodano regulację rozmiaru czcionki (S/M/L)
+• Teraz dostępne po polsku
+• Dodano ustawienia języka i waluty

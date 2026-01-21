@@ -1,0 +1,4 @@
+• Personalizzazione tema aggiunta
+• Regolazione dimensione carattere aggiunta (S/M/L)
+• Ora disponibile in italiano
+• Impostazioni lingua e valuta aggiunte

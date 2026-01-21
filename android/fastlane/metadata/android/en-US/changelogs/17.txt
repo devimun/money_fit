@@ -1,0 +1,4 @@
+• Theme customization added
+• Font size adjustment added (S/M/L)
+• Added: Spanish, Polish, Ukrainian, Czech, German, Italian, Bulgarian, Romanian, Slovak
+• Language and currency settings added
