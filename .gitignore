@@ -79,3 +79,6 @@ android-key.json
 
 # 3. Mac 시스템 파일
 .DS_Store
+
+#4. 아직 업데이트 확정 안된 것
+1.2.7/

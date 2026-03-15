@@ -27,12 +27,18 @@
 
 ```text
 lib/
- ├── core/          # 공통 인프라 (DB, 서비스, 라우터, 테마, 재사용 위젯)
- ├── features/      # 도메인 모듈 (home, calendar, expense, statistics, settings…)
- └── widgets/       # 전역 위젯 (탭바, 다이얼로그 등)
+ ├── core/                  # 공통 인프라 (DB, 서비스, 라우터, 테마, Provider)
+ ├── features/
+ │   ├── home/
+ │   ├── calendar/
+ │   ├── expense/
+ │   ├── statistics/
+ │   └── settings/
+ ├── widgets/               # 전역 공용 위젯
+ └── l10n/                  # 다국어 리소스
 ```
 
-- **State management:** `flutter_riverpod` 기반 MVVM. 모든 화면은 `AsyncNotifier` 기반 ViewModel(`features/*/viewmodel`)과 `ConsumerWidget` View 조합으로, 비동기 상태 로딩·에러를 일관되게 처리.
+- **State management:** `flutter_riverpod` 기반 MVVM. 각 기능은 `features/{feature}` 아래에서 `view`, `viewmodel`, `model`, `widgets`를 필요에 따라 조합해 구성하며, 모든 feature가 동일한 폴더 세트를 갖는 것은 아닙니다.
 - **Navigation:** `go_router` (`core/router/app_router.dart`)의 ShellRoute를 활용해 하단 탭 네비게이션과 라우팅을 모듈화. Firebase Analytics observer를 붙여 화면 전환 로그를 자동 수집.
 - **Dependency graph:** Provider tree에서 Repository·Service를 주입 (`core/providers/repository_providers.dart`). DB 싱글톤, NotificationService, Supabase Client 등은 Provider를 통해 lazy load.
 
