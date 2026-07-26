@@ -4,8 +4,8 @@ import 'dart:convert';
 import 'dart:ui' as ui;
 
 import 'package:firebase_remote_config/firebase_remote_config.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:money_fit/core/config/app_environment.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UpdateStatus {
@@ -14,6 +14,9 @@ class UpdateStatus {
   final String messageToDisplay;
   final Uri? storeUri;
   final List<String> changelogLines;
+  final RemoteCapabilityUnavailable? remoteCapabilityUnavailable;
+  final Object? remoteCheckError;
+  final StackTrace? remoteCheckStackTrace;
 
   const UpdateStatus({
     required this.isForceUpdateRequired,
@@ -21,6 +24,9 @@ class UpdateStatus {
     required this.messageToDisplay,
     required this.storeUri,
     required this.changelogLines,
+    this.remoteCapabilityUnavailable,
+    this.remoteCheckError,
+    this.remoteCheckStackTrace,
   });
 
   static const none = UpdateStatus(
@@ -30,6 +36,23 @@ class UpdateStatus {
     storeUri: null,
     changelogLines: [],
   );
+
+  factory UpdateStatus.remoteUnavailable(
+    RemoteCapabilityUnavailable unavailable,
+  ) {
+    return UpdateStatus(
+      isForceUpdateRequired: false,
+      isUpdateRecommended: false,
+      messageToDisplay: '',
+      storeUri: null,
+      changelogLines: const [],
+      remoteCapabilityUnavailable: unavailable,
+    );
+  }
+
+  bool get isRemoteCheckUnavailable => remoteCapabilityUnavailable != null;
+
+  bool get hasRemoteCheckError => remoteCheckError != null;
 }
 
 class UpdateService {
@@ -37,7 +60,16 @@ class UpdateService {
   static const String rcKeyMinSupportedVersion = 'min_supported_version';
   static const String rcKeyUpdateChangelog = 'update_changelog';
 
-  static Future<UpdateStatus> fetchUpdateStatus() async {
+  static Future<UpdateStatus> fetchUpdateStatus({
+    AppEnvironment? environment,
+  }) async {
+    final activeEnvironment = environment ?? AppEnvironment.fromDartDefines();
+    if (!activeEnvironment.firebase.isAvailable) {
+      return UpdateStatus.remoteUnavailable(
+        activeEnvironment.firebase.unavailable!,
+      );
+    }
+
     final packageInfo = await PackageInfo.fromPlatform();
     final currentVersion = packageInfo.version;
     log('currentVersion: $currentVersion');
@@ -55,10 +87,15 @@ class UpdateService {
       rcKeyUpdateChangelog: '',
     });
 
+    Object? remoteCheckError;
+    StackTrace? remoteCheckStackTrace;
     try {
       await remoteConfig.fetchAndActivate();
-    } catch (_) {
-      // 네트워크 실패 시 기본값으로 진행
+    } catch (error, stackTrace) {
+      // Cached/default values can still produce a valid update decision, but
+      // callers must be able to distinguish that from a successful refresh.
+      remoteCheckError = error;
+      remoteCheckStackTrace = stackTrace;
     }
 
     final latest = remoteConfig.getString(rcKeyLatestVersion).trim();
@@ -109,7 +146,16 @@ class UpdateService {
         _compareSemver(currentVersion, latest) < 0;
 
     if (!mustUpdate && !shouldUpdate) {
-      return UpdateStatus.none;
+      if (remoteCheckError == null) return UpdateStatus.none;
+      return UpdateStatus(
+        isForceUpdateRequired: false,
+        isUpdateRecommended: false,
+        messageToDisplay: '',
+        storeUri: null,
+        changelogLines: const [],
+        remoteCheckError: remoteCheckError,
+        remoteCheckStackTrace: remoteCheckStackTrace,
+      );
     }
 
     return UpdateStatus(
@@ -118,10 +164,15 @@ class UpdateService {
       messageToDisplay: message,
       storeUri: null,
       changelogLines: changelogLines,
+      remoteCheckError: remoteCheckError,
+      remoteCheckStackTrace: remoteCheckStackTrace,
     );
   }
 
-  static Future<void> openStorePage(Uri? uri) async {
+  static Future<void> openStorePage(
+    Uri? uri, {
+    AppEnvironment? environment,
+  }) async {
     if (uri != null && await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
       return;
@@ -140,7 +191,8 @@ class UpdateService {
       );
       await launchUrl(web, mode: LaunchMode.externalApplication);
     } else if (Platform.isIOS) {
-      final appId = dotenv.env['IOS_APP_ID'];
+      final appId =
+          environment?.iosAppId ?? AppEnvironment.fromDartDefines().iosAppId;
       if (appId != null && appId.isNotEmpty) {
         final appStore = Uri.parse('https://apps.apple.com/app/id$appId');
         if (await canLaunchUrl(appStore)) {

@@ -16,6 +16,20 @@ import 'package:money_fit/core/widgets/update_check_screen.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 
+/// Navigation observers used by the application router.
+///
+/// Production records navigation with Firebase Analytics. Tests can override
+/// this provider with a regular no-op [NavigatorObserver] without initializing
+/// the Firebase SDK.
+final appRouterObserversProvider = Provider<List<NavigatorObserver>>((ref) {
+  return [
+    FirebaseAnalyticsObserver(
+      analytics: FirebaseAnalytics.instance,
+      nameExtractor: (settings) => settings.name,
+    ),
+  ];
+});
+
 final goRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     navigatorKey: rootNavigatorKey,
@@ -43,11 +57,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/budget_setup',
         name: 'BudgetSetupScreen',
-        pageBuilder:
-            (context, state) => NoTransitionPage(
-              key: state.pageKey,
-              child: const BudgetSetupScreen(),
-            ),
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const BudgetSetupScreen(),
+        ),
       ),
       ShellRoute(
         builder: (context, state, child) {
@@ -73,48 +86,39 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/calendar',
             name: 'CalendarScreen',
-            pageBuilder:
-                (context, state) => NoTransitionPage(
-                  key: state.pageKey,
-                  child: const CalendarScreen(),
-                ),
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const CalendarScreen(),
+            ),
           ),
           GoRoute(
             path: '/stats',
             name: 'StatisticsScreen',
-            pageBuilder:
-                (context, state) => NoTransitionPage(
-                  key: state.pageKey,
-                  child: const StatisticsScreen(),
-                ),
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const StatisticsScreen(),
+            ),
           ),
           GoRoute(
             path: '/expense_list',
             name: 'ExpenseListScreen',
-            pageBuilder:
-                (context, state) => NoTransitionPage(
-                  key: state.pageKey,
-                  child: const ExpenseListScreen(),
-                ),
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const ExpenseListScreen(),
+            ),
           ),
           GoRoute(
             path: '/settings',
             name: 'SettingsScreen',
-            pageBuilder:
-                (context, state) => NoTransitionPage(
-                  key: state.pageKey,
-                  child: const SettingsScreen(),
-                ),
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const SettingsScreen(),
+            ),
           ),
         ],
       ),
     ],
-    observers: [
-      FirebaseAnalyticsObserver(
-        analytics: FirebaseAnalytics.instance,
-        nameExtractor: (settings) => settings.name,
-      ),
-    ],
+    observers: ref.watch(appRouterObserversProvider),
   );
 });
 

@@ -1,17 +1,21 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_fit/core/config/app_environment.dart';
 import 'package:money_fit/core/services/update_service.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 
-class UpdateCheckScreen extends StatefulWidget {
+class UpdateCheckScreen extends ConsumerStatefulWidget {
   const UpdateCheckScreen({super.key});
 
   @override
-  State<UpdateCheckScreen> createState() => _UpdateCheckScreenState();
+  ConsumerState<UpdateCheckScreen> createState() => _UpdateCheckScreenState();
 }
 
-class _UpdateCheckScreenState extends State<UpdateCheckScreen> {
+class _UpdateCheckScreenState extends ConsumerState<UpdateCheckScreen> {
   bool _checking = true;
 
   @override
@@ -21,8 +25,25 @@ class _UpdateCheckScreenState extends State<UpdateCheckScreen> {
   }
 
   Future<void> _run() async {
-    final status = await UpdateService.fetchUpdateStatus();
+    final environment = ref.read(appEnvironmentProvider);
+    final status = await UpdateService.fetchUpdateStatus(
+      environment: environment,
+    );
     if (!mounted) return;
+    if (status.isRemoteCheckUnavailable) {
+      final unavailable = status.remoteCapabilityUnavailable!;
+      log(
+        'Update check unavailable (${unavailable.reason.name}): '
+        '${unavailable.message}',
+      );
+    }
+    if (status.hasRemoteCheckError) {
+      log(
+        'Update check failed; continuing with cached/default update status.',
+        error: status.remoteCheckError,
+        stackTrace: status.remoteCheckStackTrace,
+      );
+    }
     if (status.isForceUpdateRequired) {
       final l10n = AppLocalizations.of(context)!;
       await showDialog(
@@ -60,7 +81,10 @@ class _UpdateCheckScreenState extends State<UpdateCheckScreen> {
           actions: [
             TextButton(
               onPressed: () async {
-                await UpdateService.openStorePage(null);
+                await UpdateService.openStorePage(
+                  null,
+                  environment: environment,
+                );
               },
               child: ResponsiveButtonText(text: l10n.updateButton),
             ),
@@ -99,7 +123,9 @@ class _UpdateCheckScreenState extends State<UpdateCheckScreen> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        ResponsiveDescriptionText(text: l10n.updateAvailableBody),
+                        ResponsiveDescriptionText(
+                          text: l10n.updateAvailableBody,
+                        ),
                         const SizedBox(height: 12),
                         ResponsiveDescriptionText(
                           text: l10n.updateChangelogTitle,
@@ -113,7 +139,9 @@ class _UpdateCheckScreenState extends State<UpdateCheckScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text('• '),
-                                Expanded(child: ResponsiveDescriptionText(text: e)),
+                                Expanded(
+                                  child: ResponsiveDescriptionText(text: e),
+                                ),
                               ],
                             ),
                           ),
@@ -122,9 +150,13 @@ class _UpdateCheckScreenState extends State<UpdateCheckScreen> {
                         Align(
                           alignment: Alignment.centerRight,
                           child: ElevatedButton(
-                            onPressed: () async =>
-                                UpdateService.openStorePage(null),
-                            child: ResponsiveButtonText(text: l10n.updateButtonGo),
+                            onPressed: () async => UpdateService.openStorePage(
+                              null,
+                              environment: environment,
+                            ),
+                            child: ResponsiveButtonText(
+                              text: l10n.updateButtonGo,
+                            ),
                           ),
                         ),
                       ],
