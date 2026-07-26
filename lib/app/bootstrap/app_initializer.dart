@@ -61,7 +61,7 @@ final appInitializerProvider = FutureProvider<void>((ref) async {
     initializeMobileAds: AdService.initialize,
     preloadInterstitialAd: InterstitialAdManager.instance.loadAd,
     initializeNotifications: () async {
-      await ref.read(notificationServiceProvider).init();
+      await ref.read(notificationSchedulerProvider).initialize();
     },
     preloadHome: () async {
       await ref.read(homeViewModelProvider.future);

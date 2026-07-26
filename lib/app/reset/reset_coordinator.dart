@@ -37,7 +37,7 @@ class ResetCoordinator {
       await _ref.read(appPreferencesProvider.notifier).clear();
     }
     if (scope == ResetScope.notifications || scope == ResetScope.all) {
-      await _ref.read(notificationServiceProvider).cancelAllNotifications();
+      await _ref.read(notificationSchedulerProvider).cancelAll();
     }
     if (scope.clearsEngagementCounters) {
       await _ref.read(engagementResetterProvider).clear();
