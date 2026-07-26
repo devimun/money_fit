@@ -16,6 +16,7 @@ import 'package:money_fit/core/widgets/update_check_screen.dart';
 
 import 'bootstrap_failure_screen.dart';
 import 'bootstrap_gate.dart';
+import 'package:money_fit/app/bootstrap/bootstrap_controller.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -34,6 +35,8 @@ final appRouterObserversProvider = Provider<List<NavigatorObserver>>((ref) {
 });
 
 final goRouterProvider = Provider<GoRouter>((ref) {
+  ref.watch(bootstrapGateProvider);
+  ref.read(bootstrapControllerProvider).start();
   return GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: '/update-check',

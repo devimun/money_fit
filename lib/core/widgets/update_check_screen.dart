@@ -1,197 +1,45 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_fit/app/router/bootstrap_gate.dart';
 import 'package:money_fit/core/config/app_environment.dart';
 import 'package:money_fit/core/services/update_service.dart';
-import 'package:money_fit/l10n/app_localizations.dart';
-import 'package:go_router/go_router.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
-import 'package:money_fit/app/router/bootstrap_gate.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
 
-class UpdateCheckScreen extends ConsumerStatefulWidget {
+/// Route presentation for the bootstrap controller's update decision.
+class UpdateCheckScreen extends ConsumerWidget {
   const UpdateCheckScreen({super.key});
 
   @override
-  ConsumerState<UpdateCheckScreen> createState() => _UpdateCheckScreenState();
-}
-
-class _UpdateCheckScreenState extends ConsumerState<UpdateCheckScreen> {
-  bool _checking = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _run();
-  }
-
-  Future<void> _run() async {
-    final environment = ref.read(appEnvironmentProvider);
-    final status = await UpdateService.fetchUpdateStatus(
-      environment: environment,
-    );
-    if (!mounted) return;
-    if (status.isRemoteCheckUnavailable) {
-      final unavailable = status.remoteCapabilityUnavailable!;
-      log(
-        'Update check unavailable (${unavailable.reason.name}): '
-        '${unavailable.message}',
-      );
-    }
-    if (status.hasRemoteCheckError) {
-      log(
-        'Update check failed; continuing with cached/default update status.',
-        error: status.remoteCheckError,
-        stackTrace: status.remoteCheckStackTrace,
-      );
-    }
-    if (status.isForceUpdateRequired) {
-      ref
-          .read(bootstrapGateProvider.notifier)
-          .set(BootstrapGateState.forceUpdate);
-      final l10n = AppLocalizations.of(context)!;
-      await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => AlertDialog(
-          title: ResponsiveTitleText(text: l10n.updateRequiredTitle),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ResponsiveDescriptionText(text: l10n.updateRequiredBody),
-              if (status.changelogLines.isNotEmpty) ...[
-                const SizedBox(height: 12),
-                ResponsiveDescriptionText(
-                  text: l10n.updateChangelogTitle,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                ...status.changelogLines.map(
-                  (e) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('• '),
-                        Expanded(child: ResponsiveDescriptionText(text: e)),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                await UpdateService.openStorePage(
-                  null,
-                  environment: environment,
-                );
-              },
-              child: ResponsiveButtonText(text: l10n.updateButton),
-            ),
-          ],
-        ),
-      );
-      // 강제 업데이트는 이 화면에서 머뭅니다. (스토어로 이동 유도)
-      return;
-    }
-
-    if (status.isUpdateRecommended) {
-      final l10n = AppLocalizations.of(context)!;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          behavior: SnackBarBehavior.floating,
-          content: Text(l10n.updateAvailableBody),
-          action: SnackBarAction(
-            label: l10n.updateDetails,
-            onPressed: () async {
-              await showModalBottomSheet(
-                context: context,
-                showDragHandle: true,
-                isScrollControlled: true,
-                builder: (_) => SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ResponsiveTitleText(
-                          text: l10n.updateSheetTitle,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        ResponsiveDescriptionText(
-                          text: l10n.updateAvailableBody,
-                        ),
-                        const SizedBox(height: 12),
-                        ResponsiveDescriptionText(
-                          text: l10n.updateChangelogTitle,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 8),
-                        ...status.changelogLines.map(
-                          (e) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 2),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text('• '),
-                                Expanded(
-                                  child: ResponsiveDescriptionText(text: e),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: ElevatedButton(
-                            onPressed: () async => UpdateService.openStorePage(
-                              null,
-                              environment: environment,
-                            ),
-                            child: ResponsiveButtonText(
-                              text: l10n.updateButtonGo,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      );
-    }
-
-    ref
-        .read(bootstrapGateProvider.notifier)
-        .set(BootstrapGateState.initializing);
-    setState(() => _checking = false);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_checking) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final gate = ref.watch(bootstrapGateProvider);
+    if (gate != BootstrapGateState.forceUpdate) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-    // 체크 통과 시 스플래시로 이동
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        final from = GoRouterState.of(context).uri.queryParameters['from'];
-        context.go(from == null ? '/' : '/?from=${Uri.encodeComponent(from)}');
-      }
-    });
-    return const Scaffold();
+
+    final l10n = AppLocalizations.of(context)!;
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ResponsiveTitleText(text: l10n.updateRequiredTitle),
+              const SizedBox(height: 12),
+              ResponsiveDescriptionText(text: l10n.updateRequiredBody),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => UpdateService.openStorePage(
+                  null,
+                  environment: ref.read(appEnvironmentProvider),
+                ),
+                child: ResponsiveButtonText(text: l10n.updateButton),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

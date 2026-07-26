@@ -7,7 +7,7 @@ import 'package:money_fit/core/widgets/update_check_screen.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 void main() {
-  testWidgets('continues when the remote update capability is unavailable', (
+  testWidgets('waits for the bootstrap controller update decision', (
     tester,
   ) async {
     final router = GoRouter(
@@ -16,11 +16,6 @@ void main() {
         GoRoute(
           path: '/update-check',
           builder: (context, state) => const UpdateCheckScreen(),
-        ),
-        GoRoute(
-          path: '/',
-          builder: (context, state) =>
-              const Scaffold(body: Center(child: Text('Bootstrap continues'))),
         ),
       ],
     );
@@ -38,8 +33,8 @@ void main() {
         ),
       ),
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
 
-    expect(find.text('Bootstrap continues'), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
 }
