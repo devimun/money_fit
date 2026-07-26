@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/app/composition/database_providers.dart';
-import 'package:money_fit/core/repositories/category_repository.dart';
-import 'package:money_fit/core/repositories/expense_repository.dart';
+import 'package:money_fit/features/ledger/data/legacy/category_repository.dart';
+import 'package:money_fit/features/ledger/data/legacy/expense_repository.dart';
 import 'package:money_fit/core/repositories/user_repository.dart';
 
 /// UserRepository 인스턴스를 제공하는 Provider입니다.

@@ -1,6 +1,6 @@
 import 'package:money_fit/core/database/app_database.dart';
 import 'package:money_fit/core/error/app_failure.dart';
-import 'package:money_fit/core/models/category_model.dart';
+import 'package:money_fit/features/ledger/data/legacy/category_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 /// CategoryRepository의 인터페이스입니다.

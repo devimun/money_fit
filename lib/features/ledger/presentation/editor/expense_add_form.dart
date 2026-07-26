@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:money_fit/core/models/expense_model.dart';
+import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/core/services/ad_service.dart';
 import 'package:money_fit/core/services/review_prompt_service.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:money_fit/core/models/expense_model.dart';
-import 'package:money_fit/core/providers/category_providers.dart';
+import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
+import 'package:money_fit/features/ledger/application/legacy/category_providers.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/features/ledger/presentation/categories/category_dialogs.dart';
 

@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:money_fit/core/providers/category_providers.dart';
+import 'package:money_fit/features/ledger/application/legacy/category_providers.dart';
 // import 'package:money_fit/core/database/database_seeder.dart';
 // import 'package:money_fit/core/providers/repository_providers.dart';
 import 'package:money_fit/core/services/notification_service.dart';

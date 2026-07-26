@@ -1,5 +1,5 @@
 import 'package:money_fit/core/database/app_database.dart';
-import 'package:money_fit/core/models/expense_model.dart';
+import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 /// Isolated v5 expenses table for repository characterization tests.

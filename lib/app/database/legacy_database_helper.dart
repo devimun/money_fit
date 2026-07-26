@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:money_fit/core/models/category_model.dart';
-import 'package:money_fit/core/models/expense_model.dart';
+import 'package:money_fit/features/ledger/data/legacy/category_model.dart';
+import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 

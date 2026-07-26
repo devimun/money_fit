@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:money_fit/core/models/category_model.dart' as category_model;
-import 'package:money_fit/core/models/expense_model.dart';
-import 'package:money_fit/core/providers/category_providers.dart';
+import 'package:money_fit/features/ledger/data/legacy/category_model.dart'
+    as category_model;
+import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
+import 'package:money_fit/features/ledger/application/legacy/category_providers.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 import 'package:uuid/uuid.dart';
 

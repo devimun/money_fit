@@ -55,32 +55,6 @@ class LegacyBoundaryAllowance {
 const allowedLegacyImports = <LegacyBoundaryAllowance>[
   // core -> feature imports (12 import directives from six legacy files).
   LegacyBoundaryAllowance(
-    filePath: 'lib/core/providers/category_providers.dart',
-    kind: LegacyBoundaryKind.coreToFeatureImport,
-    target:
-        'package:money_fit/features/settings/viewmodel/user_settings_provider.dart',
-    reason: 'Category state reads the legacy settings-owned user identity.',
-    owner: LegacyOwner.ledger,
-    removalPhase: RemovalPhase.pr3_2,
-  ),
-  LegacyBoundaryAllowance(
-    filePath: 'lib/core/providers/expenses_provider.dart',
-    kind: LegacyBoundaryKind.coreToFeatureImport,
-    target:
-        'package:money_fit/features/settings/viewmodel/user_settings_provider.dart',
-    reason: 'Expense state reads the legacy settings-owned user identity.',
-    owner: LegacyOwner.ledger,
-    removalPhase: RemovalPhase.pr3_2,
-  ),
-  LegacyBoundaryAllowance(
-    filePath: 'lib/core/services/app_initializer.dart',
-    kind: LegacyBoundaryKind.coreToFeatureImport,
-    target: 'package:money_fit/features/home/viewmodel/home_data_provider.dart',
-    reason: 'Legacy startup preloads the home ViewModel directly.',
-    owner: LegacyOwner.appComposition,
-    removalPhase: RemovalPhase.pr6_1,
-  ),
-  LegacyBoundaryAllowance(
     filePath: 'lib/core/services/notification_service.dart',
     kind: LegacyBoundaryKind.coreToFeatureImport,
     target:
@@ -91,30 +65,6 @@ const allowedLegacyImports = <LegacyBoundaryAllowance>[
   ),
 
   // Direct SDK/database singletons outside main/app composition.
-  LegacyBoundaryAllowance(
-    filePath: 'lib/core/services/app_initializer.dart',
-    kind: LegacyBoundaryKind.sdkSingleton,
-    target: 'FirebaseRemoteConfig.instance',
-    reason: 'Bootstrap still configures Remote Config directly.',
-    owner: LegacyOwner.appComposition,
-    removalPhase: RemovalPhase.pr6_1,
-  ),
-  LegacyBoundaryAllowance(
-    filePath: 'lib/core/services/data_reset_service.dart',
-    kind: LegacyBoundaryKind.sdkSingleton,
-    target: 'FirebaseAnalytics.instance',
-    reason: 'Reset coordination has not yet isolated analytics.',
-    owner: LegacyOwner.reset,
-    removalPhase: RemovalPhase.pr5_4,
-  ),
-  LegacyBoundaryAllowance(
-    filePath: 'lib/core/services/data_reset_service.dart',
-    kind: LegacyBoundaryKind.sdkSingleton,
-    target: 'DatabaseHelper.instance',
-    reason: 'Reset still deletes the legacy v5 database directly.',
-    owner: LegacyOwner.reset,
-    removalPhase: RemovalPhase.pr5_4,
-  ),
   LegacyBoundaryAllowance(
     filePath: 'lib/core/services/review_prompt_service.dart',
     kind: LegacyBoundaryKind.sdkSingleton,

@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:money_fit/core/models/expense_model.dart';
-import 'package:money_fit/core/providers/expenses_provider.dart';
+import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
+import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 

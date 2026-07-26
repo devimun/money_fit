@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:money_fit/core/error/app_failure.dart';
-import 'package:money_fit/core/repositories/expense_repository.dart';
+import 'package:money_fit/features/ledger/data/legacy/expense_repository.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../support/expense_sqlite_fixture.dart';

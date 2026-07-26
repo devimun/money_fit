@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
-import 'package:money_fit/core/models/expense_model.dart';
-import 'package:money_fit/core/repositories/expense_repository.dart';
+import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
+import 'package:money_fit/features/ledger/data/legacy/expense_repository.dart';
 import 'package:uuid/uuid.dart';
 
 class UserIDD {

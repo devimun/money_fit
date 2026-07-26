@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:money_fit/core/services/app_initializer.dart';
-import 'package:money_fit/core/services/data_reset_service.dart';
+import 'package:money_fit/app/bootstrap/app_initializer.dart';
+import 'package:money_fit/app/reset/data_reset_service.dart';
 
 void main() {
   test(

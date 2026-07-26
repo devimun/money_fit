@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:money_fit/core/models/expense_model.dart';
+import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/core/widgets/base_bottom_sheet.dart';
 import 'package:money_fit/features/ledger/presentation/history/view/widgets/filter_components/category_filter_section.dart';
 import 'package:money_fit/features/ledger/presentation/history/view/widgets/filter_components/date_filter_section.dart';

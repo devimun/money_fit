@@ -1,7 +1,7 @@
 import 'package:money_fit/core/database/app_database.dart';
 import 'package:money_fit/core/error/app_failure.dart';
 import 'package:money_fit/core/foundation/local_date.dart';
-import 'package:money_fit/core/models/expense_model.dart';
+import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 /// ExpenseRepository의 인터페이스입니다.

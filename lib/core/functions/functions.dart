@@ -6,7 +6,7 @@ import 'package:money_fit/core/config/locale_config.dart';
 import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
-import 'package:money_fit/core/models/expense_model.dart';
+import 'package:money_fit/core/foundation/spending_kind.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Widget buildCircleWidget(bool needPrimaryColor, BuildContext context) {
@@ -60,12 +60,12 @@ Widget buildCircleWidget(bool needPrimaryColor, BuildContext context) {
 //   }
 // }
 
-String getExpenseTypeName(BuildContext context, ExpenseType type) {
+String getExpenseTypeName(BuildContext context, SpendingKind type) {
   final l10n = AppLocalizations.of(context)!;
   switch (type) {
-    case ExpenseType.essential:
+    case SpendingKind.essential:
       return l10n.expenseType_essential;
-    case ExpenseType.discretionary:
+    case SpendingKind.discretionary:
       return l10n.expenseType_discretionary;
     default:
       return '';

@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:money_fit/core/models/category_model.dart';
-import 'package:money_fit/core/models/expense_model.dart';
+import 'package:money_fit/features/ledger/data/legacy/category_model.dart';
+import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/app/composition/repository_providers.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
@@ -80,7 +80,7 @@ class CategoryProviders extends AsyncNotifier<List<Category>> {
           orElse: () => Category(
             id: '',
             name: AppLocalizations.of(context)!.unknown,
-            type: ExpenseType.n,
+            type: ExpenseType.unknown,
             isDeletable: false,
           ),
         );

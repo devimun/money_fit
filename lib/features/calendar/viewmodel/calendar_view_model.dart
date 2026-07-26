@@ -12,7 +12,7 @@
 // 컨테이너 클릭하면 해당 일의 지출 내역 전부 볼 수 있게함
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/functions/functions.dart';
-import 'package:money_fit/core/providers/expenses_provider.dart';
+import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
 import 'package:money_fit/core/providers/locale_provider.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/features/calendar/model/model.dart';

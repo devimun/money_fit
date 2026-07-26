@@ -1,5 +1,5 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:money_fit/core/database/database_helper.dart';
+import 'package:money_fit/app/database/legacy_database_helper.dart';
 
 typedef DataResetAction = Future<void> Function();
 

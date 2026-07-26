@@ -1,4 +1,4 @@
-import 'package:money_fit/core/models/expense_model.dart';
+import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 
 class CalendarCellData {
   final DateTime date;

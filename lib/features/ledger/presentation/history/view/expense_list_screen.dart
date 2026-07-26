@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:money_fit/core/functions/functions.dart';
-import 'package:money_fit/core/models/category_model.dart';
-import 'package:money_fit/core/models/expense_model.dart';
-import 'package:money_fit/core/providers/category_providers.dart';
+import 'package:money_fit/features/ledger/data/legacy/category_model.dart';
+import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
+import 'package:money_fit/features/ledger/application/legacy/category_providers.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/ads/ad_banner_widget.dart';
 import 'package:money_fit/features/ledger/presentation/history/view/widgets/expense_filter_bottom_sheet.dart';
@@ -101,7 +101,7 @@ class ExpenseListScreen extends ConsumerWidget {
         orElse: () => Category(
           id: '',
           name: l10n.unknown,
-          type: ExpenseType.n,
+          type: ExpenseType.unknown,
           isDeletable: false,
         ),
       );

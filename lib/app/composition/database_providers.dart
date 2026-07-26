@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/database/app_database.dart';
-import 'package:money_fit/core/database/database_helper.dart';
+import 'package:money_fit/app/database/legacy_database_helper.dart';
 import 'package:sqflite/sqflite.dart';
 
 class LegacySqfliteAppDatabase implements AppDatabase {

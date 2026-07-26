@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:money_fit/core/models/expense_model.dart';
+import 'package:money_fit/core/foundation/spending_kind.dart';
 
 // 지출/카테고리 타입을 나타내는 enum
 
@@ -8,7 +8,7 @@ class Category {
   final String id;
   final String? userId; // NULL이면 기본 카테고리
   final String name;
-  final ExpenseType type;
+  final SpendingKind type;
   final bool isDeletable;
 
   const Category({
@@ -23,7 +23,7 @@ class Category {
     String? id,
     String? userId,
     String? name,
-    ExpenseType? type,
+    SpendingKind? type,
     bool? isDeletable,
   }) {
     return Category(
@@ -42,9 +42,9 @@ class Category {
       id: json['id'] as String,
       userId: json['user_id'] as String?,
       name: json['name'] as String,
-      type: ExpenseType.values.firstWhere(
+      type: SpendingKind.values.firstWhere(
         (e) => e.name == json['type'],
-        orElse: () => ExpenseType.n,
+        orElse: () => SpendingKind.unknown,
       ),
       isDeletable: json['is_deletable'] is bool
           ? json['is_deletable']

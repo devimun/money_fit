@@ -1,5 +1,5 @@
 // 뷰에 사용되는 모델을 정의한다.
-import 'package:money_fit/core/models/expense_model.dart';
+import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 
 // 뷰모델에서  coreExpenseProvider를 통해 특정 월의 데이터를 가져오면 언제 데이터인지 카테고리별로 얼마씩 썼는지 , TOP3 지출 카테고리는 뭔지 보여준다.
 class StatisticsModel {

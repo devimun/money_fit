@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'package:money_fit/core/foundation/spending_kind.dart';
 
-// "필수", "변동" 타입을 나타내는 enum
-enum ExpenseType { essential, discretionary, n }
+typedef ExpenseType = SpendingKind;
 
 @immutable
 class Expense {
@@ -62,7 +62,7 @@ class Expense {
       categoryId: json['category_id'] as String,
       type: ExpenseType.values.firstWhere(
         (e) => e.name == json['type'],
-        orElse: () => ExpenseType.n,
+        orElse: () => ExpenseType.unknown,
       ),
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
