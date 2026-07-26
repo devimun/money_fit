@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/app/composition/database_providers.dart';
+import 'package:money_fit/app/bootstrap/optional_remote_capabilities.dart';
 import 'package:money_fit/app/router/bootstrap_gate.dart';
 import 'package:money_fit/core/config/app_environment.dart';
 import 'package:money_fit/core/preferences/preferences_provider.dart';
@@ -44,9 +45,12 @@ class BootstrapController {
           await _ref.read(currentBudgetProvider.future) != null,
     );
     gate.set(outcome.gateState);
-    if (outcome.startsOptionalCapabilities) {
-      unawaited(_startBestEffortCapabilities());
-    }
+    unawaited(
+      startOptionalCapabilitiesForOutcome(
+        outcome: outcome,
+        start: () => _startBestEffortCapabilities(environment),
+      ),
+    );
     return outcome;
   }
 
@@ -70,8 +74,11 @@ class BootstrapController {
     }
   }
 
-  Future<void> _startBestEffortCapabilities() async {
+  Future<void> _startBestEffortCapabilities(AppEnvironment environment) async {
     await Future.wait([
+      _ignoreFailure(
+        () => _ref.read(optionalRemoteCapabilitiesProvider).start(environment),
+      ),
       _ignoreFailure(
         () => _ref.read(notificationSchedulerProvider).initialize(),
       ),
@@ -137,6 +144,22 @@ Future<BootstrapOutcome> resolveBootstrapOutcome({
         : BootstrapOutcome.needsSetup;
   } catch (_) {
     return BootstrapOutcome.recoverableFailure;
+  }
+}
+
+/// Runs optional work only once local bootstrap has selected a usable route.
+///
+/// The callback is intentionally fail-open so callers can safely detach it
+/// from the critical startup path.
+Future<void> startOptionalCapabilitiesForOutcome({
+  required BootstrapOutcome outcome,
+  required Future<void> Function() start,
+}) async {
+  if (!outcome.startsOptionalCapabilities) return;
+  try {
+    await start();
+  } catch (_) {
+    // A remote integration cannot turn a ready local application into failure.
   }
 }
 

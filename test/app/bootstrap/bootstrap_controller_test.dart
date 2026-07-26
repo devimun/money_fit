@@ -89,6 +89,32 @@ void main() {
     expect(outcome, BootstrapOutcome.recoverableFailure);
     expect(budgetChecked, isFalse);
   });
+
+  test(
+    'optional capabilities start only after a usable local outcome',
+    () async {
+      final startedFor = <BootstrapOutcome>[];
+
+      for (final outcome in BootstrapOutcome.values) {
+        await startOptionalCapabilitiesForOutcome(
+          outcome: outcome,
+          start: () async => startedFor.add(outcome),
+        );
+      }
+
+      expect(startedFor, [BootstrapOutcome.needsSetup, BootstrapOutcome.ready]);
+    },
+  );
+
+  test(
+    'optional capability failures do not change a usable local outcome',
+    () async {
+      await startOptionalCapabilitiesForOutcome(
+        outcome: BootstrapOutcome.ready,
+        start: () => Future<void>.error(StateError('offline')),
+      );
+    },
+  );
 }
 
 UpdateStatus _forceUpdate() => const UpdateStatus(
