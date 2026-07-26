@@ -83,14 +83,6 @@ const allowedLegacyImports = <LegacyBoundaryAllowance>[
     removalPhase: RemovalPhase.pr6_3,
   ),
   LegacyBoundaryAllowance(
-    filePath: 'lib/features/onboarding/view/budget_setup_screen.dart',
-    kind: LegacyBoundaryKind.sdkSingleton,
-    target: 'FirebaseAnalytics.instance',
-    reason: 'Budget presentation still emits analytics directly.',
-    owner: LegacyOwner.budget,
-    removalPhase: RemovalPhase.pr4_1,
-  ),
-  LegacyBoundaryAllowance(
     filePath: 'lib/features/settings/viewmodel/user_settings_provider.dart',
     kind: LegacyBoundaryKind.sdkSingleton,
     target: 'Supabase.instance',

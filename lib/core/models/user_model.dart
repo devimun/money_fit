@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'package:money_fit/core/foundation/budget_type.dart';
 
-enum BudgetType { daily, monthly }
+export 'package:money_fit/core/foundation/budget_type.dart';
 
 @immutable
 class User {

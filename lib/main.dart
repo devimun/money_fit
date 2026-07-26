@@ -6,9 +6,13 @@ import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:money_fit/app/app.dart';
+import 'package:money_fit/app/composition/current_budget_providers.dart';
+import 'package:money_fit/app/composition/repository_providers.dart';
 import 'package:money_fit/core/config/app_environment.dart';
 import 'package:money_fit/core/providers/shared_preferences_provider.dart';
 import 'package:money_fit/firebase_options.dart';
+import 'package:money_fit/features/budget/application/current_budget_provider.dart';
+import 'package:money_fit/features/budget/data/legacy_current_budget_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -32,6 +36,11 @@ Future<void> main() async {
         overrides: [
           sharedPreferencesProvider.overrideWithValue(sharedPreferences),
           appEnvironmentProvider.overrideWithValue(environment),
+          currentOwnerProvider.overrideWith(SettingsCurrentOwner.new),
+          currentBudgetRepositoryProvider.overrideWith(
+            (ref) =>
+                LegacyCurrentBudgetRepository(ref.read(userRepositoryProvider)),
+          ),
         ],
         child: const MoneyFitApp(),
       ),
