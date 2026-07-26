@@ -6,7 +6,6 @@ import 'package:money_fit/core/config/locale_config.dart';
 import 'package:money_fit/core/providers/locale_provider.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
-import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 import 'package:money_fit/features/settings/widgets/language_currency_selector.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
@@ -51,14 +50,10 @@ class LanguageSetting extends ConsumerWidget {
     );
   }
 
-  /// 로케일 변경 - LocaleProvider와 UserSettings 둘 다 업데이트
+  /// Locale is presentation preference only; ledger currency is managed by
+  /// the ledger feature and is never changed by this selector.
   Future<void> _changeLocale(WidgetRef ref, LocaleConfig config) async {
     // 1. LocaleProvider 업데이트 (즉시 UI 반영)
     await ref.read(localeProvider.notifier).setLocaleConfig(config);
-
-    // 2. UserSettings 업데이트 (DB 영속화)
-    await ref
-        .read(userSettingsProvider.notifier)
-        .updateLocale(config.languageCode, config.currencyCode);
   }
 }

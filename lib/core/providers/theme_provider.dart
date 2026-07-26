@@ -7,105 +7,78 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/theme/app_theme_generator.dart';
 import 'package:money_fit/core/theme/app_text_styles.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
-import 'package:money_fit/core/repositories/theme_repository.dart';
 import 'package:money_fit/core/models/theme_settings.dart';
-import 'package:money_fit/core/providers/shared_preferences_provider.dart';
-
-/// Provides ThemeRepository
-final themeRepositoryProvider = Provider<ThemeRepository>((ref) {
-  final prefs = ref.watch(sharedPreferencesProvider);
-  return ThemeRepository(prefs);
-});
+import 'package:money_fit/core/preferences/app_preferences.dart';
+import 'package:money_fit/core/preferences/preferences_provider.dart';
 
 /// StateNotifier for managing theme seed color
 class ThemeSeedColorNotifier extends StateNotifier<Color> {
-  ThemeSeedColorNotifier(this._repository)
-    : super(AppThemeGenerator.defaultSeed) {
-    _loadSeedColor();
+  ThemeSeedColorNotifier(this._ref)
+    : super(_ref.read(appPreferencesProvider).theme.colorSeed) {
+    _ref.listen<AppPreferences>(appPreferencesProvider, (_, next) {
+      state = next.theme.colorSeed;
+    });
   }
 
-  final ThemeRepository _repository;
-
-  void _loadSeedColor() {
-    final settings = _repository.loadSettings();
-    state = settings.colorSeed;
-  }
+  final Ref _ref;
 
   Future<void> setSeedColor(Color color, List<Color> favoriteColors) async {
-    final settings = _repository.loadSettings();
+    final settings = _ref.read(appPreferencesProvider).theme;
     final updatedSettings = settings.copyWith(
       colorSeedValue: color.toARGB32(),
       favoriteColors: favoriteColors.map((c) => c.toARGB32()).toList(),
     );
 
-    final success = await _repository.saveSettings(updatedSettings);
-    if (success) {
-      state = color;
-    }
+    await _ref
+        .read(appPreferencesProvider.notifier)
+        .updateTheme(updatedSettings);
   }
 
   List<Color> getFavoriteColors() {
-    final settings = _repository.loadSettings();
-    return settings.favoriteColorObjects;
+    return _ref.read(appPreferencesProvider).theme.favoriteColorObjects;
   }
 }
 
 /// StateNotifier for managing dark mode state
 class ThemeModeNotifier extends StateNotifier<bool> {
-  ThemeModeNotifier(this._repository) : super(false) {
-    _loadDarkMode();
+  ThemeModeNotifier(this._ref)
+    : super(_ref.read(appPreferencesProvider).theme.isDarkMode) {
+    _ref.listen<AppPreferences>(appPreferencesProvider, (_, next) {
+      state = next.theme.isDarkMode;
+    });
   }
 
-  final ThemeRepository _repository;
-
-  void _loadDarkMode() {
-    final settings = _repository.loadSettings();
-    state = settings.isDarkMode;
-  }
-
-  /// 기존 User.isDarkMode 값을 ThemeSettings로 마이그레이션합니다.
-  /// 앱 시작 시 한 번만 호출되어야 합니다.
-  Future<void> migrateFromUserSettings(bool userIsDarkMode) async {
-    final success = await _repository.migrateFromUserDarkMode(userIsDarkMode);
-    if (success) {
-      // 마이그레이션 후 상태 다시 로드
-      _loadDarkMode();
-    }
-  }
+  final Ref _ref;
 
   Future<void> toggleDarkMode() async {
-    final settings = _repository.loadSettings();
+    final settings = _ref.read(appPreferencesProvider).theme;
     final updatedSettings = settings.copyWith(isDarkMode: !state);
 
-    final success = await _repository.saveSettings(updatedSettings);
-    if (success) {
-      state = !state;
-    }
+    await _ref
+        .read(appPreferencesProvider.notifier)
+        .updateTheme(updatedSettings);
   }
 
   Future<void> setDarkMode(bool isDark) async {
-    final settings = _repository.loadSettings();
+    final settings = _ref.read(appPreferencesProvider).theme;
     final updatedSettings = settings.copyWith(isDarkMode: isDark);
 
-    final success = await _repository.saveSettings(updatedSettings);
-    if (success) {
-      state = isDark;
-    }
+    await _ref
+        .read(appPreferencesProvider.notifier)
+        .updateTheme(updatedSettings);
   }
 }
 
 /// StateNotifier for managing font size scale
 class FontSizeNotifier extends StateNotifier<double> {
-  FontSizeNotifier(this._repository) : super(1.0) {
-    _loadFontSize();
+  FontSizeNotifier(this._ref)
+    : super(_ref.read(appPreferencesProvider).theme.fontSizeScale) {
+    _ref.listen<AppPreferences>(appPreferencesProvider, (_, next) {
+      state = next.theme.fontSizeScale;
+    });
   }
 
-  final ThemeRepository _repository;
-
-  void _loadFontSize() {
-    final settings = _repository.loadSettings();
-    state = settings.fontSizeScale;
-  }
+  final Ref _ref;
 
   /// 현재 폰트 크기 옵션 반환
   FontSizeOption get currentOption => FontSizeOption.fromScale(state);
@@ -116,13 +89,12 @@ class FontSizeNotifier extends StateNotifier<double> {
       scale = 1.0; // 기본값으로 폴백
     }
 
-    final settings = _repository.loadSettings();
+    final settings = _ref.read(appPreferencesProvider).theme;
     final updatedSettings = settings.copyWith(fontSizeScale: scale);
 
-    final success = await _repository.saveSettings(updatedSettings);
-    if (success) {
-      state = scale;
-    }
+    await _ref
+        .read(appPreferencesProvider.notifier)
+        .updateTheme(updatedSettings);
   }
 
   /// FontSizeOption으로 폰트 크기 설정
@@ -134,20 +106,17 @@ class FontSizeNotifier extends StateNotifier<double> {
 /// Provides the seed color for theme generation with state management
 final themeSeedColorProvider =
     StateNotifierProvider<ThemeSeedColorNotifier, Color>((ref) {
-      final repository = ref.watch(themeRepositoryProvider);
-      return ThemeSeedColorNotifier(repository);
+      return ThemeSeedColorNotifier(ref);
     });
 
 /// Provides the dark mode state with state management
 final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, bool>((ref) {
-  final repository = ref.watch(themeRepositoryProvider);
-  return ThemeModeNotifier(repository);
+  return ThemeModeNotifier(ref);
 });
 
 /// Provides the font size scale with state management
 final fontSizeProvider = StateNotifierProvider<FontSizeNotifier, double>((ref) {
-  final repository = ref.watch(themeRepositoryProvider);
-  return FontSizeNotifier(repository);
+  return FontSizeNotifier(ref);
 });
 
 /// Provides the light theme with AppThemeColors extension

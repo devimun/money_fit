@@ -5,32 +5,14 @@ import 'package:money_fit/core/config/app_environment.dart';
 import 'package:money_fit/core/config/locale_config.dart';
 import 'package:money_fit/core/providers/locale_provider.dart';
 import 'package:money_fit/core/providers/theme_provider.dart';
-import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
-class MoneyFitApp extends ConsumerStatefulWidget {
+class MoneyFitApp extends ConsumerWidget {
   const MoneyFitApp({super.key});
 
   @override
-  ConsumerState<MoneyFitApp> createState() => _MoneyFitAppState();
-}
-
-class _MoneyFitAppState extends ConsumerState<MoneyFitApp> {
-  bool _migrationAttempted = false;
-
   @override
-  Widget build(BuildContext context) {
-    ref.listen(userSettingsProvider, (previous, next) {
-      next.whenData((user) {
-        if (!_migrationAttempted) {
-          _migrationAttempted = true;
-          ref
-              .read(themeModeProvider.notifier)
-              .migrateFromUserSettings(user.isDarkMode);
-        }
-      });
-    });
-
+  Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(goRouterProvider);
     final isDarkMode = ref.watch(themeModeProvider);
     final lightTheme = ref.watch(lightThemeProvider);
