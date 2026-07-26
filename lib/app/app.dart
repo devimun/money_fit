@@ -11,7 +11,6 @@ class MoneyFitApp extends ConsumerWidget {
   const MoneyFitApp({super.key});
 
   @override
-  @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(goRouterProvider);
     final isDarkMode = ref.watch(themeModeProvider);
@@ -29,7 +28,6 @@ class MoneyFitApp extends ConsumerWidget {
       locale: currentLocale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: supportedLocales,
-      builder: (context, child) => SafeArea(child: child!),
     );
   }
 }

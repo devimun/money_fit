@@ -37,7 +37,7 @@ class _BudgetSetupScreenState extends ConsumerState<BudgetSetupScreen> {
 
       // 홈으로 이동시키고 알림 설정 요청 다이얼로그 띄우기
       if (mounted) {
-        context.go('/home', extra: {'showNotificationPrompt': true});
+        context.go('/home?showNotificationPrompt=true');
       }
     }
   }

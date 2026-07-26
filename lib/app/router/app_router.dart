@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:money_fit/core/config/app_environment.dart';
 import 'package:money_fit/features/auth/view/splash_screen.dart';
 import 'package:money_fit/features/statistics/view/statistics.dart';
 import 'package:money_fit/app/shell/app_shell.dart';
@@ -26,9 +29,11 @@ final rootNavigatorKey = GlobalKey<NavigatorState>();
 /// this provider with a regular no-op [NavigatorObserver] without initializing
 /// the Firebase SDK.
 final appRouterObserversProvider = Provider<List<NavigatorObserver>>((ref) {
+  final environment = ref.watch(appEnvironmentProvider);
+  if (!environment.firebase.isAvailable) return const [];
   return [
-    FirebaseAnalyticsObserver(
-      analytics: FirebaseAnalytics.instance,
+    FailOpenFirebaseAnalyticsObserver(
+      analytics: () => FirebaseAnalytics.instance,
       nameExtractor: (settings) => settings.name,
     ),
   ];
@@ -90,15 +95,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: '/home',
                 name: 'HomeScreen',
                 pageBuilder: (context, state) {
-                  bool showNoti = false;
-                  final extras = state.extra as Map<String, dynamic>?;
-                  if (extras != null) {
-                    showNoti = extras['showNotificationPrompt'] == true;
-                  }
-
                   return NoTransitionPage(
                     key: state.pageKey,
-                    child: HomeScreen(showNotificationPrompt: showNoti),
+                    child: HomeScreen(
+                      showNotificationPrompt:
+                          state.uri.queryParameters['showNotificationPrompt'] ==
+                          'true',
+                    ),
                   );
                 },
               ),
@@ -198,4 +201,49 @@ const _protectedPaths = {
 String _withFrom(String destination, String? from) {
   if (from == null || from.isEmpty) return destination;
   return '$destination?from=${Uri.encodeComponent(from)}';
+}
+
+/// Firebase analytics is optional and can initialize after the local UI.
+/// This observer turns every unavailable or plugin failure into a no-op so
+/// route transitions never depend on a remote SDK being ready.
+class FailOpenFirebaseAnalyticsObserver extends NavigatorObserver {
+  FailOpenFirebaseAnalyticsObserver({
+    required FirebaseAnalytics Function() analytics,
+    required this.nameExtractor,
+  }) : _analytics = analytics;
+
+  final FirebaseAnalytics Function() _analytics;
+  final String? Function(RouteSettings settings) nameExtractor;
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPush(route, previousRoute);
+    _sendScreenView(route);
+  }
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+    if (newRoute != null) _sendScreenView(newRoute);
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPop(route, previousRoute);
+    if (previousRoute != null) _sendScreenView(previousRoute);
+  }
+
+  void _sendScreenView(Route<dynamic> route) {
+    final screenName = nameExtractor(route.settings);
+    if (screenName == null || screenName.isEmpty) return;
+    unawaited(_logScreenView(screenName));
+  }
+
+  Future<void> _logScreenView(String screenName) async {
+    try {
+      await _analytics().logScreenView(screenName: screenName);
+    } catch (_) {
+      // Remote analytics is observational and therefore deliberately ignored.
+    }
+  }
 }

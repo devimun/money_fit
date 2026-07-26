@@ -1,6 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:money_fit/app/router/app_router.dart';
 import 'package:money_fit/app/router/bootstrap_gate.dart';
+import 'package:money_fit/core/config/app_environment.dart';
 
 void main() {
   test(
@@ -48,5 +51,32 @@ void main() {
         expectation.$2,
       );
     }
+  });
+
+  test('disabled Firebase uses no router analytics observer', () {
+    final container = ProviderContainer(
+      overrides: [
+        appEnvironmentProvider.overrideWithValue(AppEnvironment.test()),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    expect(container.read(appRouterObserversProvider), isEmpty);
+  });
+
+  testWidgets('analytics observer ignores an unavailable Firebase app', (
+    tester,
+  ) async {
+    final observer = FailOpenFirebaseAnalyticsObserver(
+      analytics: () => throw StateError('Firebase not initialized'),
+      nameExtractor: (settings) => settings.name,
+    );
+    final route = MaterialPageRoute<void>(
+      settings: const RouteSettings(name: 'HomeScreen'),
+      builder: (_) => const SizedBox(),
+    );
+
+    observer.didPush(route, null);
+    await tester.pump();
   });
 }

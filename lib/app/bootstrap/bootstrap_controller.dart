@@ -18,52 +18,57 @@ class BootstrapController {
   BootstrapController(this._ref);
 
   final Ref _ref;
-  bool _started = false;
+  Future<BootstrapOutcome>? _startFuture;
 
-  Future<void> start() async {
-    if (_started) return;
-    _started = true;
+  Future<BootstrapOutcome> start() => _startFuture ??= _start();
+
+  Future<BootstrapOutcome> _start() async {
     final gate = _ref.read(bootstrapGateProvider.notifier);
     gate.set(BootstrapGateState.checkingUpdate);
-    try {
-      UpdateStatus update = UpdateStatus.none;
-      try {
-        update = await UpdateService.fetchUpdateStatus(
-          environment: _ref.read(appEnvironmentProvider),
-          remoteConfig: FirebaseRemoteConfig.instance,
-        );
-      } catch (_) {
-        // Remote Config is observational; a local session can still start.
-      }
-      if (update.isForceUpdateRequired) {
-        gate.set(BootstrapGateState.forceUpdate);
-        return;
-      }
-
-      gate.set(BootstrapGateState.initializing);
-      await _ref.read(appDatabaseProvider).executor;
-      _ref.read(appPreferencesProvider);
-      await _ref.read(sessionContextProvider.future);
-      final budget = await _ref.read(currentBudgetProvider.future);
-      gate.set(
-        budget == null
-            ? BootstrapGateState.needsSetup
-            : BootstrapGateState.ready,
-      );
+    final environment = _ref.read(appEnvironmentProvider);
+    final outcome = await resolveBootstrapOutcome(
+      checkForUpdate: () => _checkForUpdate(environment),
+      initializeLocalData: () async {
+        gate.set(BootstrapGateState.initializing);
+        await _ref.read(appDatabaseProvider).executor;
+        _ref.read(appPreferencesProvider);
+        await _ref.read(sessionContextProvider.future);
+      },
+      hasCurrentBudget: () async =>
+          await _ref.read(currentBudgetProvider.future) != null,
+    );
+    gate.set(outcome.gateState);
+    if (outcome.startsOptionalCapabilities) {
       unawaited(_startBestEffortCapabilities());
-    } catch (_) {
-      gate.set(BootstrapGateState.recoverableFailure);
     }
+    return outcome;
   }
 
-  Future<void> retry() {
-    _started = false;
+  Future<BootstrapOutcome> retry() {
+    _startFuture = null;
     return start();
+  }
+
+  Future<UpdateStatus> _checkForUpdate(AppEnvironment environment) async {
+    if (!environment.firebase.isAvailable) return UpdateStatus.none;
+
+    try {
+      return UpdateService.fetchUpdateStatus(
+        environment: environment,
+        remoteConfig: FirebaseRemoteConfig.instance,
+      );
+    } catch (_) {
+      // Firebase can be configured but still unavailable while its optional
+      // initialization is in progress. Update checks must never block local UI.
+      return UpdateStatus.none;
+    }
   }
 
   Future<void> _startBestEffortCapabilities() async {
     await Future.wait([
-      _ignoreFailure(() => _ref.read(notificationServiceProvider).init()),
+      _ignoreFailure(
+        () => _ref.read(notificationSchedulerProvider).initialize(),
+      ),
       _ignoreFailure(AdService.initialize),
       _ignoreFailure(InterstitialAdManager.instance.loadAd),
     ]);
@@ -79,3 +84,51 @@ class BootstrapController {
 final bootstrapControllerProvider = Provider<BootstrapController>(
   BootstrapController.new,
 );
+
+typedef BootstrapUpdateCheck = Future<UpdateStatus> Function();
+typedef BootstrapLocalInitializer = Future<void> Function();
+typedef BootstrapBudgetCheck = Future<bool> Function();
+
+/// The explicit result of the startup sequence, independent from presentation.
+///
+/// Remote update checks are advisory unless they positively report a forced
+/// update. Local initialization is the only part that can route to recovery.
+enum BootstrapOutcome { forceUpdate, needsSetup, ready, recoverableFailure }
+
+extension BootstrapOutcomeGate on BootstrapOutcome {
+  BootstrapGateState get gateState => switch (this) {
+    BootstrapOutcome.forceUpdate => BootstrapGateState.forceUpdate,
+    BootstrapOutcome.needsSetup => BootstrapGateState.needsSetup,
+    BootstrapOutcome.ready => BootstrapGateState.ready,
+    BootstrapOutcome.recoverableFailure =>
+      BootstrapGateState.recoverableFailure,
+  };
+
+  bool get startsOptionalCapabilities => switch (this) {
+    BootstrapOutcome.needsSetup || BootstrapOutcome.ready => true,
+    BootstrapOutcome.forceUpdate ||
+    BootstrapOutcome.recoverableFailure => false,
+  };
+}
+
+Future<BootstrapOutcome> resolveBootstrapOutcome({
+  required BootstrapUpdateCheck checkForUpdate,
+  required BootstrapLocalInitializer initializeLocalData,
+  required BootstrapBudgetCheck hasCurrentBudget,
+}) async {
+  try {
+    final update = await checkForUpdate();
+    if (update.isForceUpdateRequired) return BootstrapOutcome.forceUpdate;
+  } catch (_) {
+    // Remote Config is optional. Continue with the locally stored state.
+  }
+
+  try {
+    await initializeLocalData();
+    return await hasCurrentBudget()
+        ? BootstrapOutcome.ready
+        : BootstrapOutcome.needsSetup;
+  } catch (_) {
+    return BootstrapOutcome.recoverableFailure;
+  }
+}
