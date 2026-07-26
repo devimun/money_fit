@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:money_fit/app/database/database_schema_rollout.dart';
+import 'package:money_fit/app/database/migrations/sqlite_v6_migration.dart';
 import 'package:money_fit/features/ledger/data/legacy/category_model.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:path/path.dart';
@@ -12,7 +14,7 @@ class DatabaseHelper {
 
   static Database? _database;
   static const _dbName = 'money_fit.db';
-  static const _dbVersion = 5;
+  static const _dbVersion = DatabaseSchemaRollout.runtimeVersion;
 
   static int get schemaVersion => _dbVersion;
 
@@ -30,6 +32,7 @@ class DatabaseHelper {
     return await openDatabase(
       path,
       version: _dbVersion,
+      onConfigure: (db) => db.execute('PRAGMA foreign_keys = ON'),
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -93,6 +96,12 @@ class DatabaseHelper {
       await db.execute(
         "ALTER TABLE users ADD COLUMN currency_code TEXT NOT NULL DEFAULT 'USD'",
       );
+    }
+    if (DatabaseSchemaRollout.shouldApplyV6Migration(
+      oldVersion: oldVersion,
+      newVersion: newVersion,
+    )) {
+      await SqliteV6Migration.migrate(db);
     }
   }
 
