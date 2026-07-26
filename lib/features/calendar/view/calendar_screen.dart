@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/functions/functions.dart';
+import 'package:money_fit/core/providers/expenses_provider.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/ads/ad_banner_widget.dart';
 import 'package:money_fit/features/calendar/view/widgets/helper.dart';
@@ -127,8 +128,22 @@ class CalendarScreen extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [CircularProgressIndicator(), Text(l10n.pleaseWait)],
       ),
-      error: (error, stackTrace) =>
-          Center(child: Text(l10n.errorOccurred(error.toString()))),
+      error: (error, stackTrace) => Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(l10n.errorOccurred(error.toString())),
+            const SizedBox(height: 12),
+            IconButton(
+              onPressed: () => ref.invalidate(coreExpensesProvider),
+              icon: const Icon(Icons.refresh),
+              tooltip: MaterialLocalizations.of(
+                context,
+              ).refreshIndicatorSemanticLabel,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

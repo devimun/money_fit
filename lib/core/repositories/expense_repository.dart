@@ -1,6 +1,6 @@
-import 'dart:developer';
-
 import 'package:money_fit/core/database/database_helper.dart';
+import 'package:money_fit/core/error/app_failure.dart';
+import 'package:money_fit/core/foundation/local_date.dart';
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -16,7 +16,7 @@ abstract class IExpenseRepository {
   Future<List<Expense>> getExpensesByUserId(String userId);
 
   Future<void> updateExpense(Expense expense);
-  Future<void> deleteExpense(String id);
+  Future<void> deleteExpense(String id, String userId);
 }
 
 class ExpenseRepository implements IExpenseRepository {
@@ -36,45 +36,40 @@ class ExpenseRepository implements IExpenseRepository {
   Future<DatabaseExecutor> get _database async =>
       _databaseExecutor ?? await _dbHelper!.database;
 
-  // Future<void> getAll() async {
-  //   final db = await _dbHelper.database;
-  //   final data = await db.query('expenses');
-  //   log(data.toString());
-  // }
+  @override
+  Future<void> createExpense(Expense expense) =>
+      _runStorage('create expense', () async {
+        final db = await _database;
+        await db.insert('expenses', expense.toJson());
+      });
 
   @override
-  Future<void> createExpense(Expense expense) async {
-    final db = await _database;
-    await db.insert('expenses', expense.toJson());
-  }
-
-  @override
-  Future<List<Expense>> getExpensesByUserId(String userId) async {
-    final db = await _database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      'expenses',
-      where: 'user_id = ?',
-      whereArgs: [userId],
-      orderBy: 'date DESC, created_at DESC',
-    );
-    return List.generate(maps.length, (i) => Expense.fromJson(maps[i]));
-  }
+  Future<List<Expense>> getExpensesByUserId(String userId) =>
+      _runStorage('read user expenses', () async {
+        final db = await _database;
+        final maps = await db.query(
+          'expenses',
+          where: 'user_id = ?',
+          whereArgs: [userId],
+          orderBy: 'date DESC, created_at DESC',
+        );
+        return maps.map(_expenseFromRow).toList(growable: false);
+      });
 
   /// 특정 날짜의 모든 지출 내역을 가져옵니다.
   @override
-  Future<List<Expense>> getExpensesByDate(String userId, DateTime date) async {
-    final db = await _database;
-    final dateString = date.toIso8601String().substring(0, 10);
-
-    final List<Map<String, dynamic>> maps = await db.query(
-      'expenses',
-      where: 'user_id = ? AND date = ?',
-      whereArgs: [userId, dateString],
-      orderBy: 'created_at DESC',
-    );
-
-    return List.generate(maps.length, (i) => Expense.fromJson(maps[i]));
-  }
+  Future<List<Expense>> getExpensesByDate(String userId, DateTime date) =>
+      _runStorage('read daily expenses', () async {
+        final db = await _database;
+        final dateString = date.toIso8601String().substring(0, 10);
+        final maps = await db.query(
+          'expenses',
+          where: 'user_id = ? AND date = ?',
+          whereArgs: [userId, dateString],
+          orderBy: 'created_at DESC',
+        );
+        return maps.map(_expenseFromRow).toList(growable: false);
+      });
 
   /// 특정 월의 모든 지출 내역을 가져옵니다.
   @override
@@ -82,69 +77,100 @@ class ExpenseRepository implements IExpenseRepository {
     String userId,
     int year,
     int month,
-  ) async {
-    try {
-      final db = await _database;
-      final monthString = '$year-${month.toString().padLeft(2, '0')}';
+  ) => _runStorage('read monthly expenses', () async {
+    final db = await _database;
+    final monthString = '$year-${month.toString().padLeft(2, '0')}';
 
-      final List<Map<String, dynamic>> maps = await db.query(
-        'expenses',
-        where: 'user_id = ? AND date LIKE ?',
-        whereArgs: [userId, '$monthString%'],
-        orderBy: 'date DESC, created_at DESC',
+    final maps = await db.query(
+      'expenses',
+      where: 'user_id = ? AND date LIKE ?',
+      whereArgs: [userId, '$monthString%'],
+      orderBy: 'date DESC, created_at DESC',
+    );
+
+    final grouped = <DateTime, List<Expense>>{};
+
+    for (final map in maps) {
+      final expense = _expenseFromRow(map);
+      final dateOnly = DateTime(
+        expense.date.year,
+        expense.date.month,
+        expense.date.day,
       );
 
-      // 날짜별로 그룹핑된 결과를 저장할 Map
-      final Map<DateTime, List<Expense>> grouped = {};
-
-      for (final map in maps) {
-        final expense = Expense.fromJson(map);
-
-        // 날짜만 추출 (시간 제거)
-        final dateOnly = DateTime(
-          expense.date.year,
-          expense.date.month,
-          expense.date.day,
-        );
-
-        grouped.putIfAbsent(dateOnly, () => []).add(expense);
-      }
-
-      return grouped;
-    } on Exception catch (e) {
-      log(e.toString());
-      return {};
+      grouped.putIfAbsent(dateOnly, () => []).add(expense);
     }
-  }
+
+    return grouped;
+  });
 
   @override
-  Future<void> updateExpense(Expense expense) async {
-    final db = await _database;
-    log('Updating expense: ${expense.toJson()}');
-    try {
-      final data = await db.update(
-        'expenses',
-        expense.toJson(),
-        where: 'id = ? AND user_id = ?',
-        whereArgs: [expense.id, expense.userId],
-      );
-      log('Rows affected: $data');
-      if (data == 0) {
-        final check = await db.query(
+  Future<void> updateExpense(Expense expense) =>
+      _runStorage('update expense', () async {
+        final db = await _database;
+        final affectedRows = await db.update(
           'expenses',
+          expense.toJson(),
           where: 'id = ? AND user_id = ?',
           whereArgs: [expense.id, expense.userId],
         );
-        log('🔍 Existing row check: $check');
-      }
-    } catch (e) {
-      log('$e');
+        if (affectedRows == 0) {
+          throw NotFoundFailure(resource: 'Expense', identifier: expense.id);
+        }
+      });
+
+  @override
+  Future<void> deleteExpense(String id, String userId) =>
+      _runStorage('delete expense', () async {
+        final db = await _database;
+        final affectedRows = await db.delete(
+          'expenses',
+          where: 'id = ? AND user_id = ?',
+          whereArgs: [id, userId],
+        );
+        if (affectedRows == 0) {
+          throw NotFoundFailure(resource: 'Expense', identifier: id);
+        }
+      });
+
+  Future<T> _runStorage<T>(
+    String operation,
+    Future<T> Function() action,
+  ) async {
+    try {
+      return await action();
+    } on AppFailure {
+      rethrow;
+    } catch (error, stackTrace) {
+      throw StorageFailure(
+        operation: operation,
+        cause: error,
+        stackTrace: stackTrace,
+      );
     }
   }
 
-  @override
-  Future<void> deleteExpense(String id) async {
-    final db = await _database;
-    await db.delete('expenses', where: 'id = ?', whereArgs: [id]);
+  Expense _expenseFromRow(Map<String, Object?> row) {
+    try {
+      final type = row['type'];
+      if (type is! String ||
+          !ExpenseType.values.any((value) => value.name == type)) {
+        throw FormatException('Unknown expense type.', type);
+      }
+
+      final date = row['date'];
+      if (date is! String) {
+        throw FormatException('Expense date must be a string.', date);
+      }
+      LocalDate.parse(date);
+
+      return Expense.fromJson(Map<String, dynamic>.from(row));
+    } catch (error, stackTrace) {
+      throw CorruptDataFailure(
+        resource: 'expense',
+        cause: error,
+        stackTrace: stackTrace,
+      );
+    }
   }
 }

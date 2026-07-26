@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_fit/core/providers/expenses_provider.dart';
 import 'package:money_fit/core/widgets/ads/ad_banner_widget.dart';
 import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
 import 'package:money_fit/features/home/widgets/home_date_header.dart';
@@ -74,7 +75,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     if (homeStateAsync.hasError || userAsync.hasError) {
       final error = homeStateAsync.error ?? userAsync.error;
       return Scaffold(
-        body: Center(child: Text(l10n.errorOccurred(error.toString()))),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(l10n.errorOccurred(error.toString())),
+              const SizedBox(height: 12),
+              IconButton(
+                onPressed: () => ref.invalidate(coreExpensesProvider),
+                icon: const Icon(Icons.refresh),
+                tooltip: MaterialLocalizations.of(
+                  context,
+                ).refreshIndicatorSemanticLabel,
+              ),
+            ],
+          ),
+        ),
       );
     }
 

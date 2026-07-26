@@ -32,135 +32,172 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
       return const Center(child: CircularProgressIndicator());
     }
 
-    final expenses = asyncState.when(
-      data: (_) => ref
-          .watch(coreExpensesProvider.notifier)
-          .getTodayExpense(selectedDate),
-      loading: () => null,
-      error: (_, __) => null,
-    );
-
     return BaseBottomSheet(
       title: !isHome
           ? dateFormatting(context, selectedDate)
           : l10n.dailyExpenseHistory,
       onClose: onClose,
-      child: expenses == null
-          ? const Center(child: CircularProgressIndicator())
-          : expenses.isEmpty
-          ? Padding(
-              padding: const EdgeInsets.symmetric(vertical: 40),
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.receipt_long,
-                      size: 64,
-                      color: context.colors.navUnselected,
+      child: asyncState.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, _) => _ExpenseLoadError(
+          message: l10n.errorOccurred(error.toString()),
+          onRetry: () => ref.invalidate(coreExpensesProvider),
+        ),
+        data: (_) {
+          final expenses = ref
+              .watch(coreExpensesProvider.notifier)
+              .getTodayExpense(selectedDate);
+          return expenses.isEmpty
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 40),
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.receipt_long,
+                          size: 64,
+                          color: context.colors.navUnselected,
+                        ),
+                        const SizedBox(height: 16),
+                        ResponsiveMessageText(
+                          text: l10n.noExpenseHistory,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: context.colors.textSecondary,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 16),
-                    ResponsiveMessageText(
-                      text: l10n.noExpenseHistory,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: context.colors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          : ListView.separated(
-              shrinkWrap: true,
-              itemCount: expenses.length,
-              separatorBuilder: (_, __) => Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: const Divider(thickness: 0.1),
-              ),
-              itemBuilder: (_, index) {
-                final e = expenses[index];
-                final categoryName = ref
-                    .read(categoryProvider.notifier)
-                    .getCategoryName(context, e.categoryId);
-                final typeLabel = getExpenseTypeName(context, e.type);
+                  ),
+                )
+              : ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: expenses.length,
+                  separatorBuilder: (_, __) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: const Divider(thickness: 0.1),
+                  ),
+                  itemBuilder: (_, index) {
+                    final e = expenses[index];
+                    final categoryName = ref
+                        .read(categoryProvider.notifier)
+                        .getCategoryName(context, e.categoryId);
+                    final typeLabel = getExpenseTypeName(context, e.type);
 
-                return Material(
-                  child: InkWell(
-                    onLongPress: () {
-                      if (isHome) {}
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: ResponsiveTitleText(
-                              text: l10n.editDeleteExpense,
-                            ),
-                            content: ResponsiveDescriptionText(
-                              text: l10n.editDeleteExpensePrompt(e.name),
-                            ),
-                            actions: [
-                              if (isHome)
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    showModalBottomSheet(
-                                      context: context,
-                                      isScrollControlled: true,
-                                      builder: (context) {
-                                        return ExpenseAddForm(
-                                          initExpense: e,
-                                          uid: e.userId,
-                                          onSubmit: (updatedExpense) async {
-                                            await ref
-                                                .read(
-                                                  homeViewModelProvider
-                                                      .notifier,
-                                                )
-                                                .updateExpense(updatedExpense);
+                    return Material(
+                      child: InkWell(
+                        onLongPress: () {
+                          if (isHome) {}
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: ResponsiveTitleText(
+                                  text: l10n.editDeleteExpense,
+                                ),
+                                content: ResponsiveDescriptionText(
+                                  text: l10n.editDeleteExpensePrompt(e.name),
+                                ),
+                                actions: [
+                                  if (isHome)
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        showModalBottomSheet(
+                                          context: context,
+                                          isScrollControlled: true,
+                                          builder: (context) {
+                                            return ExpenseAddForm(
+                                              initExpense: e,
+                                              uid: e.userId,
+                                              onSubmit: (updatedExpense) async {
+                                                await ref
+                                                    .read(
+                                                      homeViewModelProvider
+                                                          .notifier,
+                                                    )
+                                                    .updateExpense(
+                                                      updatedExpense,
+                                                    );
+                                              },
+                                            );
                                           },
                                         );
                                       },
-                                    );
-                                  },
-                                  child: ResponsiveButtonText(text: l10n.edit),
-                                ),
-                              TextButton(
-                                onPressed: () async {
-                                  if (isHome) {
-                                    await ref
-                                        .read(homeViewModelProvider.notifier)
-                                        .deleteExpense(e);
-                                  } else {
-                                    await ref
-                                        .read(coreExpensesProvider.notifier)
-                                        .deleteExpense(e);
-                                  }
-                                  if (context.mounted) {
-                                    Navigator.pop(context);
-                                  }
-                                },
-                                child: ResponsiveButtonText(text: l10n.delete),
-                              ),
-                            ],
+                                      child: ResponsiveButtonText(
+                                        text: l10n.edit,
+                                      ),
+                                    ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      if (isHome) {
+                                        await ref
+                                            .read(
+                                              homeViewModelProvider.notifier,
+                                            )
+                                            .deleteExpense(e);
+                                      } else {
+                                        await ref
+                                            .read(coreExpensesProvider.notifier)
+                                            .deleteExpense(e);
+                                      }
+                                      if (context.mounted) {
+                                        Navigator.pop(context);
+                                      }
+                                    },
+                                    child: ResponsiveButtonText(
+                                      text: l10n.delete,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
                           );
                         },
-                      );
-                    },
-                    child: ListTile(
-                      title: Text(e.name),
-                      subtitle: Text(
-                        '$typeLabel · $categoryName',
-                        style: context.textTheme.labelSmall,
+                        child: ListTile(
+                          title: Text(e.name),
+                          subtitle: Text(
+                            '$typeLabel · $categoryName',
+                            style: context.textTheme.labelSmall,
+                          ),
+                          trailing: Text(
+                            '-${formatCurrencyAdaptive(context, e.amount)}',
+                          ),
+                        ),
                       ),
-                      trailing: Text(
-                        '-${formatCurrencyAdaptive(context, e.amount)}',
-                      ),
-                    ),
-                  ),
+                    );
+                  },
                 );
-              },
-            ),
+        },
+      ),
+    );
+  }
+}
+
+class _ExpenseLoadError extends StatelessWidget {
+  const _ExpenseLoadError({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(message, textAlign: TextAlign.center),
+          const SizedBox(height: 12),
+          IconButton(
+            onPressed: onRetry,
+            icon: const Icon(Icons.refresh),
+            tooltip: MaterialLocalizations.of(
+              context,
+            ).refreshIndicatorSemanticLabel,
+          ),
+        ],
+      ),
     );
   }
 }

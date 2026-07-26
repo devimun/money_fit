@@ -99,7 +99,7 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
   ///  지출 삭제
   Future<void> deleteExpense(Expense deleted) async {
     final repo = ref.read(expenseRepositoryProvider);
-    await repo.deleteExpense(deleted.id);
+    await repo.deleteExpense(deleted.id, deleted.userId);
 
     final dateKey = _stripTime(deleted.date);
     final currentState = state.value ?? {};
