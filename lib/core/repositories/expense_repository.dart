@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:money_fit/core/database/database_helper.dart';
 import 'package:money_fit/core/models/expense_model.dart';
+import 'package:sqflite/sqflite.dart';
 
 /// ExpenseRepository의 인터페이스입니다.
 abstract class IExpenseRepository {
@@ -19,9 +20,21 @@ abstract class IExpenseRepository {
 }
 
 class ExpenseRepository implements IExpenseRepository {
-  final DatabaseHelper _dbHelper;
+  final DatabaseHelper? _dbHelper;
+  final DatabaseExecutor? _databaseExecutor;
 
-  ExpenseRepository({required DatabaseHelper dbHelper}) : _dbHelper = dbHelper;
+  ExpenseRepository({required DatabaseHelper dbHelper})
+    : _dbHelper = dbHelper,
+      _databaseExecutor = null;
+
+  /// Test-only SQLite seam. App composition continues to use [DatabaseHelper]
+  /// until the database boundary is extracted.
+  ExpenseRepository.forTesting({required DatabaseExecutor databaseExecutor})
+    : _dbHelper = null,
+      _databaseExecutor = databaseExecutor;
+
+  Future<DatabaseExecutor> get _database async =>
+      _databaseExecutor ?? await _dbHelper!.database;
 
   // Future<void> getAll() async {
   //   final db = await _dbHelper.database;
@@ -31,13 +44,13 @@ class ExpenseRepository implements IExpenseRepository {
 
   @override
   Future<void> createExpense(Expense expense) async {
-    final db = await _dbHelper.database;
+    final db = await _database;
     await db.insert('expenses', expense.toJson());
   }
 
   @override
   Future<List<Expense>> getExpensesByUserId(String userId) async {
-    final db = await _dbHelper.database;
+    final db = await _database;
     final List<Map<String, dynamic>> maps = await db.query(
       'expenses',
       where: 'user_id = ?',
@@ -50,7 +63,7 @@ class ExpenseRepository implements IExpenseRepository {
   /// 특정 날짜의 모든 지출 내역을 가져옵니다.
   @override
   Future<List<Expense>> getExpensesByDate(String userId, DateTime date) async {
-    final db = await _dbHelper.database;
+    final db = await _database;
     final dateString = date.toIso8601String().substring(0, 10);
 
     final List<Map<String, dynamic>> maps = await db.query(
@@ -71,7 +84,7 @@ class ExpenseRepository implements IExpenseRepository {
     int month,
   ) async {
     try {
-      final db = await _dbHelper.database;
+      final db = await _database;
       final monthString = '$year-${month.toString().padLeft(2, '0')}';
 
       final List<Map<String, dynamic>> maps = await db.query(
@@ -106,7 +119,7 @@ class ExpenseRepository implements IExpenseRepository {
 
   @override
   Future<void> updateExpense(Expense expense) async {
-    final db = await _dbHelper.database;
+    final db = await _database;
     log('Updating expense: ${expense.toJson()}');
     try {
       final data = await db.update(
@@ -131,7 +144,7 @@ class ExpenseRepository implements IExpenseRepository {
 
   @override
   Future<void> deleteExpense(String id) async {
-    final db = await _dbHelper.database;
+    final db = await _database;
     await db.delete('expenses', where: 'id = ?', whereArgs: [id]);
   }
 }
