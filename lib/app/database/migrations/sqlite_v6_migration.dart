@@ -17,7 +17,26 @@ final class SqliteV6Migration {
   /// rows intact.
   static Future<void> migrate(Database database) async {
     await database.execute('PRAGMA foreign_keys = ON');
+    // `openDatabase` invokes an upgrade only once, but a process can be killed
+    // after SQLite commits the transaction and before Dart returns to the
+    // caller. Treating an already rebuilt database as a no-op makes recovery
+    // code safe to retry without ever attempting to read the removed v5
+    // tables.
+    if (await _isV6Database(database)) return;
     await database.transaction(migrateInTransaction);
+  }
+
+  static Future<bool> _isV6Database(DatabaseExecutor executor) async {
+    final v6Tables = await executor.rawQuery(
+      "SELECT name FROM sqlite_master WHERE type = 'table' "
+      "AND name IN ('local_users', 'ledger_settings', 'budgets')",
+    );
+    if (v6Tables.length != 3) return false;
+
+    final legacyUsers = await executor.rawQuery(
+      "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users'",
+    );
+    return legacyUsers.isEmpty;
   }
 
   /// Performs the migration in an existing transaction.
@@ -377,7 +396,13 @@ String _cadence(Object? value) {
 }
 
 String _spendingKind(Object? value, String label) {
-  if (value == 'essential' || value == 'discretionary') return value! as String;
+  // Versions 1 and 2 wrote the original Korean UI enum values as
+  // `required`/`variable`. Their v2/v3 SQL upgrade was a no-op, so those rows
+  // can still reach a v5 database in the field.
+  if (value == 'essential' || value == 'required') return 'essential';
+  if (value == 'discretionary' || value == 'variable') {
+    return 'discretionary';
+  }
   throw FormatException('Invalid $label');
 }
 

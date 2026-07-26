@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:money_fit/app/database/migrations/sqlite_v6_migration.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
+import '../../support/legacy_database_fixture.dart';
 
 void main() {
   setUpAll(sqfliteFfiInit);
@@ -178,6 +182,54 @@ void main() {
       );
     },
   );
+
+  for (final sourceVersion in [1, 2, 3, 4, 5]) {
+    test('v$sourceVersion historical fixture reconciles into v6', () async {
+      final db = await LegacyDatabaseFixture.openUpgradedToV5(
+        sourceVersion: sourceVersion,
+      );
+      addTearDown(db.close);
+
+      final before = await db.rawQuery('''
+        SELECT COUNT(*) AS rows, ROUND(SUM(amount) * 100) AS amount_minor
+        FROM expenses
+      ''');
+      await SqliteV6Migration.migrate(db);
+      final after = await db.rawQuery('''
+        SELECT COUNT(*) AS rows, SUM(amount_minor) AS amount_minor
+        FROM expenses
+      ''');
+
+      expect(after.single['rows'], before.single['rows']);
+      expect(after.single['amount_minor'], before.single['amount_minor']);
+      expect(
+        (await db.query('categories')).single['spending_kind'],
+        'essential',
+        reason: 'v1/v2 required categories must remain usable in v6',
+      );
+    });
+  }
+
+  test('restart retry is idempotent after a committed v6 migration', () async {
+    final directory = await Directory.systemTemp.createTemp('money-fit-v6-');
+    final path = '${directory.path}/money_fit.db';
+    addTearDown(() => directory.delete(recursive: true));
+
+    var db = await LegacyDatabaseFixture.openUpgradedToV5(
+      sourceVersion: 1,
+      path: path,
+    );
+    await SqliteV6Migration.migrate(db);
+    await db.close();
+
+    db = await databaseFactoryFfi.openDatabase(path);
+    addTearDown(db.close);
+    await SqliteV6Migration.migrate(db);
+
+    expect(await _count(db, 'local_users'), 1);
+    expect(await _count(db, 'expenses'), 1);
+    expect((await db.query('expenses')).single['amount_minor'], 1234);
+  });
 }
 
 Future<Database> _openV5() async {
