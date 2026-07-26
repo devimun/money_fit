@@ -76,7 +76,7 @@ flowchart LR
   Feature-first MVVM + 계층형 저장소 구조를 사용합니다.
 
   ```text
-  Database -> Repository -> RepositoryProvider -> Core AsyncNotifier -> Feature ViewModel -> View
+  App composition -> Feature application state -> Feature repository -> AppDatabase
   ```
 
   데이터는 위 순서대로 전달되며, 외부 서비스는 ViewModel에서 사이드 이펙트로 주입됩니다.
@@ -107,15 +107,10 @@ Feature-first 형식의 MVVM 패턴을 적용했습니다.
 
 ```text
 lib/
- ├── core/          # 공통 인프라 (DB, 서비스, 라우터, 테마, Provider)
- │   ├── database
- │   ├── repositories
- │   └── provider
- ├── features/      # 도메인 모듈 (home, calendar, expense, statistics, settings ...)
- │   ├── view/
- │   ├── viewmodel/
- │   └── model/
- └── widgets/       # 전역 위젯 (탭바, 다이얼로그 등)
+ ├── app/           # composition, bootstrap, router, shell, database lifecycle
+ ├── core/          # framework-independent foundation and cross-cutting ports
+ ├── features/      # ledger, budget, session, preferences, notification, projections
+ └── l10n/          # generated localization surface
 ```
 
 - **`core/`**

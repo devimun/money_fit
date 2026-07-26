@@ -35,8 +35,31 @@ jobs:
       - name: Run unit and widget tests
         run: flutter test
 
+      - name: Run database migration tests
+        run: flutter test test/app/database
+
       - name: Run architecture boundary tests
         run: flutter test test/architecture
 
       - name: Validate assets and runtime configuration
         run: bash tool/validate_assets_and_config.sh
+
+  android-debug:
+    name: Android debug build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.44.2
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Android debug APK
+        run: flutter build apk --debug

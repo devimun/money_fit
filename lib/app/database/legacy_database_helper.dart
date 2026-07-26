@@ -14,6 +14,8 @@ class DatabaseHelper {
   static const _dbName = 'money_fit.db';
   static const _dbVersion = 5;
 
+  static int get schemaVersion => _dbVersion;
+
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDatabase();
