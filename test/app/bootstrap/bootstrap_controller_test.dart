@@ -40,13 +40,54 @@ void main() {
   });
 
   test('a local initialization failure is recoverable', () async {
+    var budgetChecked = false;
+
     final outcome = await resolveBootstrapOutcome(
       checkForUpdate: () async => UpdateStatus.none,
       initializeLocalData: () => Future<void>.error(StateError('database')),
-      hasCurrentBudget: () async => true,
+      hasCurrentBudget: () async {
+        budgetChecked = true;
+        return true;
+      },
     );
 
     expect(outcome, BootstrapOutcome.recoverableFailure);
+    expect(budgetChecked, isFalse);
+  });
+
+  test(
+    'critical local bootstrap opens database before owner resolution',
+    () async {
+      final calls = <String>[];
+
+      await initializeCriticalLocalState(
+        openDatabase: () async => calls.add('database'),
+        readPreferences: () async => calls.add('preferences'),
+        loadSession: () async => calls.add('session'),
+      );
+
+      expect(calls, ['database', 'preferences', 'session']);
+    },
+  );
+
+  test('session resolution failure prevents setup status evaluation', () async {
+    var budgetChecked = false;
+
+    final outcome = await resolveBootstrapOutcome(
+      checkForUpdate: () async => UpdateStatus.none,
+      initializeLocalData: () => initializeCriticalLocalState(
+        openDatabase: () async {},
+        readPreferences: () async {},
+        loadSession: () => Future<void>.error(StateError('session')),
+      ),
+      hasCurrentBudget: () async {
+        budgetChecked = true;
+        return true;
+      },
+    );
+
+    expect(outcome, BootstrapOutcome.recoverableFailure);
+    expect(budgetChecked, isFalse);
   });
 }
 

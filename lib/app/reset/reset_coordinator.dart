@@ -22,6 +22,62 @@ extension ResetScopeCoverage on ResetScope {
       this == ResetScope.engagement || this == ResetScope.all;
 }
 
+typedef ResetOperation = Future<void> Function();
+
+/// The concrete work owned by each reset boundary.
+///
+/// Keeping the scope policy independent from Riverpod makes the destructive
+/// sequence directly testable and prevents new callers from accidentally
+/// omitting the required state invalidation step.
+class ResetOperations {
+  const ResetOperations({
+    required this.resetLocalData,
+    required this.clearPreferences,
+    required this.clearSession,
+    required this.cancelNotifications,
+    required this.clearEngagement,
+    required this.invalidateDependentState,
+  });
+
+  final ResetOperation resetLocalData;
+  final ResetOperation clearPreferences;
+  final ResetOperation clearSession;
+  final ResetOperation cancelNotifications;
+  final ResetOperation clearEngagement;
+  final ResetOperation invalidateDependentState;
+}
+
+/// Runs exactly the work declared by [scope], then discards derived state.
+///
+/// A failed destructive operation is intentionally surfaced to the caller and
+/// does not claim that the reset completed.  Invalidation happens only after
+/// the selected persistent operations have all succeeded.
+Future<void> runResetScope({
+  required ResetScope scope,
+  required ResetOperations operations,
+}) async {
+  switch (scope) {
+    case ResetScope.localData:
+      await operations.resetLocalData();
+      await operations.clearSession();
+    case ResetScope.preferences:
+      await operations.clearPreferences();
+    case ResetScope.session:
+      await operations.clearSession();
+    case ResetScope.notifications:
+      await operations.cancelNotifications();
+    case ResetScope.engagement:
+      await operations.clearEngagement();
+    case ResetScope.all:
+      await operations.resetLocalData();
+      await operations.clearPreferences();
+      await operations.cancelNotifications();
+      await operations.clearEngagement();
+      await operations.clearSession();
+  }
+  await operations.invalidateDependentState();
+}
+
 /// Applies a declared reset scope and invalidates every state holder whose
 /// value could otherwise describe data that no longer exists.
 class ResetCoordinator {
@@ -29,26 +85,19 @@ class ResetCoordinator {
 
   final Ref _ref;
 
-  Future<void> reset(ResetScope scope) async {
-    if (scope == ResetScope.localData || scope == ResetScope.all) {
-      await _ref.read(appDatabaseProvider).reset();
-    }
-    if (scope == ResetScope.preferences || scope == ResetScope.all) {
-      await _ref.read(appPreferencesProvider.notifier).clear();
-    }
-    if (scope == ResetScope.notifications || scope == ResetScope.all) {
-      await _ref.read(notificationSchedulerProvider).cancelAll();
-    }
-    if (scope.clearsEngagementCounters) {
-      await _ref.read(engagementResetterProvider).clear();
-    }
-    if (scope == ResetScope.session ||
-        scope == ResetScope.localData ||
-        scope == ResetScope.all) {
-      await _ref.read(sessionProvider.notifier).clearLocalOwner();
-    }
-    _invalidateDependentState();
-  }
+  Future<void> reset(ResetScope scope) => runResetScope(
+    scope: scope,
+    operations: ResetOperations(
+      resetLocalData: () => _ref.read(appDatabaseProvider).reset(),
+      clearPreferences: () =>
+          _ref.read(appPreferencesProvider.notifier).clear(),
+      clearSession: () => _ref.read(sessionProvider.notifier).clearLocalOwner(),
+      cancelNotifications: () =>
+          _ref.read(notificationSchedulerProvider).cancelAll(),
+      clearEngagement: () => _ref.read(engagementResetterProvider).clear(),
+      invalidateDependentState: () async => _invalidateDependentState(),
+    ),
+  );
 
   void _invalidateDependentState() {
     _ref.invalidate(coreExpensesProvider);

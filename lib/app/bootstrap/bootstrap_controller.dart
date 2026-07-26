@@ -30,9 +30,15 @@ class BootstrapController {
       checkForUpdate: () => _checkForUpdate(environment),
       initializeLocalData: () async {
         gate.set(BootstrapGateState.initializing);
-        await _ref.read(appDatabaseProvider).executor;
-        _ref.read(appPreferencesProvider);
-        await _ref.read(sessionContextProvider.future);
+        await initializeCriticalLocalState(
+          openDatabase: () async {
+            await _ref.read(appDatabaseProvider).executor;
+          },
+          readPreferences: () async {
+            _ref.read(appPreferencesProvider);
+          },
+          loadSession: () => _ref.read(sessionContextProvider.future),
+        );
       },
       hasCurrentBudget: () async =>
           await _ref.read(currentBudgetProvider.future) != null,
@@ -88,6 +94,7 @@ final bootstrapControllerProvider = Provider<BootstrapController>(
 typedef BootstrapUpdateCheck = Future<UpdateStatus> Function();
 typedef BootstrapLocalInitializer = Future<void> Function();
 typedef BootstrapBudgetCheck = Future<bool> Function();
+typedef BootstrapCriticalStep = Future<void> Function();
 
 /// The explicit result of the startup sequence, independent from presentation.
 ///
@@ -131,4 +138,20 @@ Future<BootstrapOutcome> resolveBootstrapOutcome({
   } catch (_) {
     return BootstrapOutcome.recoverableFailure;
   }
+}
+
+/// Opens the locally owned state in the only safe startup order.
+///
+/// The database must be migrated before preferences can select a persisted
+/// owner, and the owner must resolve before budget setup is evaluated.  This
+/// small boundary also gives host tests evidence for the critical startup
+/// sequence without loading platform SDKs.
+Future<void> initializeCriticalLocalState({
+  required BootstrapCriticalStep openDatabase,
+  required BootstrapCriticalStep readPreferences,
+  required BootstrapCriticalStep loadSession,
+}) async {
+  await openDatabase();
+  await readPreferences();
+  await loadSession();
 }

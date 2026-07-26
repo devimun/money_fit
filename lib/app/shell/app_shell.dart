@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:money_fit/features/monetization/data/google_mobile_ads_gateway.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
@@ -126,10 +125,6 @@ class MainBottomNavBar extends StatelessWidget {
   }
 
   void _onTap(int index, int currentIndex) {
-    if (index == currentIndex) return;
-    if ([1, 2, 3].contains(index)) {
-      InterstitialAdManager.instance.logActionAndShowAd();
-    }
     navigationShell.goBranch(index, initialLocation: index == currentIndex);
   }
 }
