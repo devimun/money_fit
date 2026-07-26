@@ -4,15 +4,15 @@ import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 // 뷰모델에서  coreExpenseProvider를 통해 특정 월의 데이터를 가져오면 언제 데이터인지 카테고리별로 얼마씩 썼는지 , TOP3 지출 카테고리는 뭔지 보여준다.
 class StatisticsModel {
   // 선택된 날짜(년,월)
-  int year;
-  int month;
+  final int year;
+  final int month;
   // 자율 지출 / 필수 지출 선택
-  ExpenseType expenseType;
+  final ExpenseType expenseType;
   // 카테고리별 지출 현황
-  List<TotalCategory> flexExpenses;
-  List<TotalCategory> essentialExpenses;
+  final List<TotalCategory> flexExpenses;
+  final List<TotalCategory> essentialExpenses;
   // TOP3데이터
-  List<TotalCategory> top3Expenses;
+  final List<TotalCategory> top3Expenses;
   StatisticsModel({
     required this.year,
     required this.month,
@@ -119,7 +119,7 @@ class StatisticsModel {
 }
 
 class TotalCategory {
-  String categoryId;
-  double totalAmount;
+  final String categoryId;
+  final double totalAmount;
   TotalCategory({required this.categoryId, required this.totalAmount});
 }
