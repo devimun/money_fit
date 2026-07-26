@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/models/expense_model.dart';
+import 'package:money_fit/core/providers/foundation_providers.dart';
 import 'package:money_fit/core/services/ad_service.dart';
 import 'package:money_fit/core/services/review_prompt_service.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
@@ -10,11 +13,10 @@ import 'package:money_fit/core/widgets/expense_management/category_management/ca
 import 'package:money_fit/core/widgets/expense_management/expense_form_validator.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
-import 'package:uuid/uuid.dart';
 
 class ExpenseAddForm extends ConsumerStatefulWidget {
   final String uid;
-  final void Function(Expense expense) onSubmit;
+  final Future<void> Function(Expense expense) onSubmit;
   final Expense? initExpense;
   const ExpenseAddForm({
     super.key,
@@ -31,6 +33,9 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
   final _nameController = TextEditingController();
   final _amountController = TextEditingController();
   bool _isFormValid = false;
+  bool _isSaving = false;
+  Object? _submitError;
+  String? _newExpenseId;
   String? _selectedCategoryId;
   ExpenseType _selectedType = ExpenseType.essential;
 
@@ -61,9 +66,10 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
       selectedCategoryId: _selectedCategoryId,
     );
 
-    if (_isFormValid != isValid) {
+    if (_isFormValid != isValid || _submitError != null) {
       setState(() {
         _isFormValid = isValid;
+        _submitError = null;
       });
     }
 
@@ -76,6 +82,13 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
     if (error != null) {
       debugPrint(error);
     }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _amountController.dispose();
+    super.dispose();
   }
 
   @override
@@ -101,14 +114,15 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
                 ? context.colors.brandPrimary
                 : context.colors.calendarCellBackground,
           ),
-          onPressed: () async {
-            if (!_isFormValid) return;
-            await _handleSubmit(widget.uid, l10n);
-          },
+          onPressed: !_isFormValid || _isSaving
+              ? null
+              : () async {
+                  await _handleSubmit(widget.uid, l10n);
+                },
           child: ResponsiveButtonText(
             text: l10n.register,
             style: context.textTheme.labelLarge?.copyWith(
-              color: _isFormValid
+              color: _isFormValid && !_isSaving
                   ? context.colors.textOnBrand
                   : context.colors.textSecondary,
             ),
@@ -116,44 +130,62 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
         ),
       ),
       child: SingleChildScrollView(
-        child: ExpenseFormFields(
-          nameController: _nameController,
-          amountController: _amountController,
-          selectedType: _selectedType,
-          selectedCategoryId: _selectedCategoryId,
-          onTypeChanged: () {
-            setState(() {
-              _selectedCategoryId = null; // 카테고리 초기화
-              _selectedType = _selectedType == ExpenseType.essential
-                  ? ExpenseType.discretionary
-                  : ExpenseType.essential;
-            });
-          },
-          onCategorySelected: (categoryId) {
-            setState(() {
-              _selectedCategoryId = categoryId;
-              _validateForm();
-            });
-          },
-          categoryList: CategoryList(
-            uid: widget.uid,
-            selectedType: _selectedType,
-            selectedCategoryId: _selectedCategoryId,
-            onSelected: (categoryId) {
-              setState(() {
-                _selectedCategoryId = categoryId;
-                _validateForm();
-              });
-            },
-          ),
+        child: Column(
+          children: [
+            if (_submitError != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Text(
+                  l10n.errorOccurred(_submitError.toString()),
+                  style: TextStyle(color: context.colors.error),
+                ),
+              ),
+            IgnorePointer(
+              ignoring: _isSaving,
+              child: ExpenseFormFields(
+                nameController: _nameController,
+                amountController: _amountController,
+                selectedType: _selectedType,
+                selectedCategoryId: _selectedCategoryId,
+                displayDate:
+                    widget.initExpense?.date ?? ref.read(clockProvider).now(),
+                enabled: !_isSaving,
+                onTypeChanged: (type) {
+                  setState(() {
+                    _selectedCategoryId = null;
+                    _selectedType = type;
+                    _submitError = null;
+                  });
+                },
+                onCategorySelected: (categoryId) {
+                  setState(() {
+                    _selectedCategoryId = categoryId;
+                    _submitError = null;
+                    _validateForm();
+                  });
+                },
+                categoryList: CategoryList(
+                  uid: widget.uid,
+                  selectedType: _selectedType,
+                  selectedCategoryId: _selectedCategoryId,
+                  onSelected: (categoryId) {
+                    setState(() {
+                      _selectedCategoryId = categoryId;
+                      _submitError = null;
+                      _validateForm();
+                    });
+                  },
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Future<void> _handleSubmit(String uid, AppLocalizations l10n) async {
-    // 지출 등록 액션 기록
-    await InterstitialAdManager.instance.logActionAndShowAd();
+    if (_isSaving) return;
     final name = _nameController.text.trim();
     final amount =
         double.tryParse(_amountController.text.trim().replaceAll(',', '')) ?? 0;
@@ -166,27 +198,62 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
       return;
     }
 
-    final now = DateTime.now();
-    final expense = Expense(
-      id: widget.initExpense?.id ?? const Uuid().v4(),
-      userId: uid,
-      name: name,
-      amount: amount,
-      date: now,
-      categoryId: categoryId,
-      type: _selectedType,
-      createdAt: now,
-      updatedAt: now,
+    setState(() {
+      _isSaving = true;
+      _submitError = null;
+    });
+
+    final now = ref.read(clockProvider).now();
+    final existing = widget.initExpense;
+    final expense = existing == null
+        ? Expense(
+            id: _newExpenseId ??= ref.read(idGeneratorProvider).next(),
+            userId: uid,
+            name: name,
+            amount: amount,
+            date: now,
+            categoryId: categoryId,
+            type: _selectedType,
+            createdAt: now,
+            updatedAt: now,
+          )
+        : existing.copyWith(
+            name: name,
+            amount: amount,
+            categoryId: categoryId,
+            type: _selectedType,
+            updatedAt: now,
+          );
+
+    try {
+      await widget.onSubmit(expense);
+    } catch (error) {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+          _submitError = error;
+        });
+      }
+      return;
+    }
+
+    if (!mounted) return;
+    unawaited(
+      _runBestEffort(InterstitialAdManager.instance.logActionAndShowAd),
     );
+    await _runBestEffort(
+      () => ReviewPromptService.instance.maybePromptReview(context),
+    );
+    if (mounted) {
+      Navigator.pop(context, true);
+    }
+  }
 
-    widget.onSubmit(expense);
-
-    // mounted 체크 후 리뷰 프롬프트 표시
-    if (!mounted) return;
-    await ReviewPromptService.instance.maybePromptReview(context);
-
-    // mounted 체크 후 pop 실행
-    if (!mounted) return;
-    Navigator.pop(context, true);
+  Future<void> _runBestEffort(Future<void> Function() action) async {
+    try {
+      await action();
+    } catch (_) {
+      // Optional engagement effects must not change a persisted command result.
+    }
   }
 }

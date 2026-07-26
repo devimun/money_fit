@@ -7,11 +7,18 @@ import 'package:money_fit/l10n/app_localizations.dart';
 
 /// 지출 등록 폼의 필드들을 관리하는 위젯
 class ExpenseFormFields extends StatelessWidget {
+  static const _toggleTypes = [
+    ExpenseType.essential,
+    ExpenseType.discretionary,
+  ];
+
   final TextEditingController nameController;
   final TextEditingController amountController;
   final ExpenseType selectedType;
   final String? selectedCategoryId;
-  final VoidCallback onTypeChanged;
+  final DateTime displayDate;
+  final bool enabled;
+  final ValueChanged<ExpenseType> onTypeChanged;
   final void Function(String categoryId) onCategorySelected;
   final Widget categoryList;
 
@@ -21,6 +28,8 @@ class ExpenseFormFields extends StatelessWidget {
     required this.amountController,
     required this.selectedType,
     required this.selectedCategoryId,
+    required this.displayDate,
+    required this.enabled,
     required this.onTypeChanged,
     required this.onCategorySelected,
     required this.categoryList,
@@ -36,7 +45,7 @@ class ExpenseFormFields extends StatelessWidget {
         _buildFormSection(
           label: l10n.date,
           child: Text(
-            dateFormatting(context, DateTime.now()),
+            dateFormatting(context, displayDate),
             style: context.textTheme.labelMedium,
           ),
           context: context,
@@ -45,6 +54,7 @@ class ExpenseFormFields extends StatelessWidget {
           label: l10n.expenseName,
           child: TextField(
             controller: nameController,
+            enabled: enabled,
             decoration: InputDecoration(
               hintText: l10n.enterExpenseName,
               hintStyle: context.textTheme.labelSmall,
@@ -56,6 +66,7 @@ class ExpenseFormFields extends StatelessWidget {
           label: l10n.amount,
           child: TextField(
             controller: amountController,
+            enabled: enabled,
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
               hintText: l10n.enterExpenseAmount,
@@ -90,7 +101,7 @@ class ExpenseFormFields extends StatelessWidget {
               selectedType == ExpenseType.discretionary,
             ],
             onPressed: (index) {
-              onTypeChanged();
+              onTypeChanged(_toggleTypes[index]);
             },
             borderRadius: BorderRadius.circular(10),
             selectedBorderColor: context.colors.brandPrimary,
