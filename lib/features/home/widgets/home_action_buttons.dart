@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/features/ledger/presentation/editor/expense_add_form.dart';
 import 'package:money_fit/features/ledger/presentation/editor/today_expense_list.dart';
-import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
+import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
+import 'package:money_fit/features/home/application/home_projection.dart';
 import 'package:money_fit/features/home/widgets/home_button.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
@@ -61,7 +62,7 @@ class HomeActionButtons extends ConsumerWidget {
                         onSubmit: (expense) async {
                           // 지출 등록 후 상태 업데이트
                           await ref
-                              .read(homeViewModelProvider.notifier)
+                              .read(coreExpensesProvider.notifier)
                               .addExpense(expense);
                         },
                       ),

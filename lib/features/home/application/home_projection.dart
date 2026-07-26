@@ -1,17 +1,13 @@
-// home_view_model.dart
-import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/features/budget/domain/spending_policy.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
 import 'package:money_fit/core/providers/locale_provider.dart';
-import 'package:money_fit/core/providers/select_date_provider.dart';
-import 'package:money_fit/core/theme/app_theme_colors.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 
-/// 예산 상태 레벨 (View에서 색상 결정에 사용)
+/// Presentation maps this semantic level to theme colors.
 enum SpendingLevel {
   /// 지출 없음 또는 70% 이상 남음 → brandPrimary
   excellent,
@@ -37,25 +33,6 @@ class SpendingStatus {
     required this.spendingRatio,
     required this.level,
   });
-
-  /// View에서 AppThemeColors를 사용해 색상을 결정합니다.
-  ///
-  /// Usage:
-  /// ```dart
-  /// final color = spendingStatus.getColor(context.colors);
-  /// ```
-  Color getColor(AppThemeColors colors) {
-    switch (level) {
-      case SpendingLevel.excellent:
-        return colors.brandPrimary;
-      case SpendingLevel.good:
-        return Colors.green;
-      case SpendingLevel.warning:
-        return Colors.orange;
-      case SpendingLevel.exceeded:
-        return Colors.red;
-    }
-  }
 }
 
 /// 예산 표시 모드
@@ -182,100 +159,60 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
 
   @override
   Future<HomeState> build() async {
-    final userAsyncValue = ref.watch(userSettingsProvider);
-
-    return await userAsyncValue.when(
-      data: (user) async {
-        final expensesByDate = await ref.watch(coreExpensesProvider.future);
-        double monthlyDiscretionarySpending = expensesByDate.values
-            .expand((expense) => expense)
-            .where(
-              (Expense expense) => expense.type == ExpenseType.discretionary,
-            )
-            .fold(0.0, (sum, expense) => sum + expense.amount);
-        final today = ref.watch(dateManager);
-        final todayExpenses = expensesByDate[today] ?? [];
-        final discretionaryByDay = _discretionaryByDay(expensesByDate);
-        final average = _spendingPolicy.monthlyAverage(
-          discretionaryByDay: discretionaryByDay,
-          month: today,
-          asOf: today,
-        );
-
-        // 현재 날짜를 기준으로 일일 및 월간 예산을 계산합니다.
-        final double dailyBudget = _spendingPolicy.dailyBudget(
-          budgetType: user.budgetType,
-          budget: user.budget,
-          month: today,
-          decimalDigits: ref.watch(currencyDecimalDigitsProvider),
-        );
-
-        final consecutiveDays = _spendingPolicy.currentStreak(
-          discretionaryByDay: discretionaryByDay,
-          recordedDays: expensesByDate.keys.map(_day).toSet(),
-          asOf: today,
-          dailyBudgetFor: (day) => _spendingPolicy.dailyBudget(
-            budgetType: user.budgetType,
-            budget: user.budget,
-            month: day,
-            decimalDigits: ref.read(currencyDecimalDigitsProvider),
-          ),
-        );
-
-        final double budget;
-        if (user.budgetType == BudgetType.monthly) {
-          // 월간 예산 설정 시, 그대로 사용합니다.
-          budget = user.budget;
-        } else {
-          // 일간 예산 설정 시, 현재 월의 일수를 곱해 월간 예산을 계산합니다.
-          final daysInMonth = DateTime(today.year, today.month + 1, 0).day;
-          budget = dailyBudget * daysInMonth;
-        }
-
-        return HomeState(
-          budget: budget,
-          dailyBudget: dailyBudget,
-          monthlyDiscretionarySpending: monthlyDiscretionarySpending,
-          todayExpenseList: todayExpenses,
-          monthlyDiscretionaryExpenseAvg: average,
-          consecutiveAchievementDays: consecutiveDays,
-          budgetDisplayMode: BudgetDisplayMode.daily,
-        );
-      },
-      loading: () {
-        return Completer<HomeState>().future;
-      },
-      error: (e, s) {
-        throw e;
-      },
+    final user = await ref.watch(userSettingsProvider.future);
+    final expensesByDate = await ref.watch(coreExpensesProvider.future);
+    double monthlyDiscretionarySpending = expensesByDate.values
+        .expand((expense) => expense)
+        .where((Expense expense) => expense.type == ExpenseType.discretionary)
+        .fold(0.0, (sum, expense) => sum + expense.amount);
+    final today = ref.watch(homeDayProvider);
+    final todayExpenses = expensesByDate[today] ?? [];
+    final discretionaryByDay = _discretionaryByDay(expensesByDate);
+    final average = _spendingPolicy.monthlyAverage(
+      discretionaryByDay: discretionaryByDay,
+      month: today,
+      asOf: today,
     );
-  }
 
-  Future<void> addExpense(Expense expense) async {
-    await ref.read(coreExpensesProvider.notifier).addExpense(expense);
-  }
+    // 현재 날짜를 기준으로 일일 및 월간 예산을 계산합니다.
+    final double dailyBudget = _spendingPolicy.dailyBudget(
+      budgetType: user.budgetType,
+      budget: user.budget,
+      month: today,
+      decimalDigits: ref.watch(currencyDecimalDigitsProvider),
+    );
 
-  Future<void> updateExpense(Expense expense) async {
-    await ref.read(coreExpensesProvider.notifier).updateExpense(expense);
-  }
+    final consecutiveDays = _spendingPolicy.currentStreak(
+      discretionaryByDay: discretionaryByDay,
+      recordedDays: expensesByDate.keys.map(_day).toSet(),
+      asOf: today,
+      dailyBudgetFor: (day) => _spendingPolicy.dailyBudget(
+        budgetType: user.budgetType,
+        budget: user.budget,
+        month: day,
+        decimalDigits: ref.read(currencyDecimalDigitsProvider),
+      ),
+    );
 
-  Future<void> deleteExpense(Expense expense) async {
-    await ref.read(coreExpensesProvider.notifier).deleteExpense(expense);
-  }
-
-  /// 예산 표시 모드 전환 (일일/월간)
-  void toggleBudgetDisplayMode(BudgetDisplayMode mode) {
-    final currentState = state.value!;
-    if (currentState.budgetDisplayMode == mode) {
+    final double budget;
+    if (user.budgetType == BudgetType.monthly) {
+      // 월간 예산 설정 시, 그대로 사용합니다.
+      budget = user.budget;
     } else {
-      final newMode = currentState.budgetDisplayMode == BudgetDisplayMode.daily
-          ? BudgetDisplayMode.monthly
-          : BudgetDisplayMode.daily;
-
-      state = AsyncValue.data(
-        currentState.copyWith(budgetDisplayMode: newMode),
-      );
+      // 일간 예산 설정 시, 현재 월의 일수를 곱해 월간 예산을 계산합니다.
+      final daysInMonth = DateTime(today.year, today.month + 1, 0).day;
+      budget = dailyBudget * daysInMonth;
     }
+
+    return HomeState(
+      budget: budget,
+      dailyBudget: dailyBudget,
+      monthlyDiscretionarySpending: monthlyDiscretionarySpending,
+      todayExpenseList: todayExpenses,
+      monthlyDiscretionaryExpenseAvg: average,
+      consecutiveAchievementDays: consecutiveDays,
+      budgetDisplayMode: ref.watch(homeBudgetDisplayModeProvider),
+    );
   }
 }
 
@@ -289,6 +226,14 @@ Map<DateTime, double> _discretionaryByDay(
 };
 
 DateTime _day(DateTime value) => DateTime(value.year, value.month, value.day);
+
+final homeDayProvider = StateProvider<DateTime>(
+  (ref) => _day(ref.watch(clockProvider).now()),
+);
+
+final homeBudgetDisplayModeProvider = StateProvider<BudgetDisplayMode>(
+  (ref) => BudgetDisplayMode.daily,
+);
 
 /// 💡 Provider
 final homeViewModelProvider = AsyncNotifierProvider<HomeViewModel, HomeState>(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
-import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
+import 'package:money_fit/features/home/application/home_projection.dart';
 import 'package:money_fit/features/home/widgets/animate_circular_budget.dart';
 import 'package:money_fit/features/home/widgets/budget_mode_tabs.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
@@ -74,7 +74,7 @@ class HomeMainCard extends StatelessWidget {
 
           AnimatedCircularBudget(
             ratio: status.spendingRatio,
-            color: status.getColor(context.colors),
+            color: status.level.colorFor(context),
             remainingAmount: status.remainingAmount,
             isMonthly: homeState.budgetDisplayMode == BudgetDisplayMode.monthly,
           ),
@@ -212,4 +212,13 @@ class HomeMainCard extends StatelessWidget {
       ),
     );
   }
+}
+
+extension on SpendingLevel {
+  Color colorFor(BuildContext context) => switch (this) {
+    SpendingLevel.excellent => context.colors.brandPrimary,
+    SpendingLevel.good => Colors.green,
+    SpendingLevel.warning => Colors.orange,
+    SpendingLevel.exceeded => Colors.red,
+  };
 }

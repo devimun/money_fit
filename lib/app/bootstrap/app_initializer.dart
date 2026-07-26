@@ -7,7 +7,7 @@ import 'package:money_fit/features/ledger/application/legacy/category_providers.
 // import 'package:money_fit/core/providers/repository_providers.dart';
 import 'package:money_fit/core/services/notification_service.dart';
 import 'package:money_fit/core/services/ad_service.dart';
-import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
+import 'package:money_fit/features/home/application/home_projection.dart';
 
 typedef AppInitializerAction = Future<void> Function();
 

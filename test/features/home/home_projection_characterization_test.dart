@@ -4,8 +4,7 @@ import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
 import 'package:money_fit/core/providers/locale_provider.dart';
-import 'package:money_fit/core/providers/select_date_provider.dart';
-import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
+import 'package:money_fit/features/home/application/home_projection.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 
 void main() {
@@ -69,6 +68,33 @@ void main() {
 
     expect(state.dailyBudget, 3225);
   });
+
+  test('display mode survives a projection rebuild', () async {
+    final today = DateTime(2026, 7, 3);
+    final container = ProviderContainer(
+      overrides: [
+        userSettingsProvider.overrideWith(
+          () => _FixtureUserSettingsNotifier(_dailyUser()),
+        ),
+        coreExpensesProvider.overrideWith(
+          () => _FixtureExpensesNotifier({
+            today: [_expense(date: today, amount: 1)],
+          }),
+        ),
+        homeDayProvider.overrideWith((ref) => today),
+        currencyDecimalDigitsProvider.overrideWith((ref) => 2),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await container.read(homeViewModelProvider.future);
+    container.read(homeBudgetDisplayModeProvider.notifier).state =
+        BudgetDisplayMode.monthly;
+    expect(
+      (await container.read(homeViewModelProvider.future)).budgetDisplayMode,
+      BudgetDisplayMode.monthly,
+    );
+  });
 }
 
 Future<HomeState> _readHomeState({
@@ -84,7 +110,7 @@ Future<HomeState> _readHomeState({
       coreExpensesProvider.overrideWith(
         () => _FixtureExpensesNotifier(expenses),
       ),
-      dateManager.overrideWith(() => _FixtureDateManager(selectedDay)),
+      homeDayProvider.overrideWith((ref) => selectedDay),
       currencyDecimalDigitsProvider.overrideWith(
         (ref) => _decimalDigitsFor(user.currencyCode),
       ),
@@ -118,15 +144,6 @@ class _FixtureExpensesNotifier extends CoreExpensesNotifier {
 
   @override
   Future<Map<DateTime, List<Expense>>> build() async => expenses;
-}
-
-class _FixtureDateManager extends DateManager {
-  _FixtureDateManager(this.selectedDay);
-
-  final DateTime selectedDay;
-
-  @override
-  DateTime build() => selectedDay;
 }
 
 User _dailyUser() => _monthlyUser(

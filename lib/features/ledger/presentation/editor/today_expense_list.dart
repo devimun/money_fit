@@ -9,7 +9,6 @@ import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/base_bottom_sheet.dart';
 import 'package:money_fit/features/ledger/presentation/editor/expense_add_form.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
-import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 class TodayExpenseListBottomSheet extends ConsumerWidget {
@@ -114,7 +113,7 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
                                               onSubmit: (updatedExpense) async {
                                                 await ref
                                                     .read(
-                                                      homeViewModelProvider
+                                                      coreExpensesProvider
                                                           .notifier,
                                                     )
                                                     .updateExpense(
@@ -133,9 +132,7 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
                                     onPressed: () async {
                                       if (isHome) {
                                         await ref
-                                            .read(
-                                              homeViewModelProvider.notifier,
-                                            )
+                                            .read(coreExpensesProvider.notifier)
                                             .deleteExpense(e);
                                       } else {
                                         await ref

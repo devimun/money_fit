@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
 import 'package:money_fit/core/widgets/ads/ad_banner_widget.dart';
-import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
+import 'package:money_fit/features/home/application/home_projection.dart';
 import 'package:money_fit/features/home/widgets/home_date_header.dart';
 import 'package:money_fit/features/home/widgets/home_main_card.dart';
 import 'package:money_fit/features/home/widgets/home_action_buttons.dart';

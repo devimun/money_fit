@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
-import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
+import 'package:money_fit/features/home/application/home_projection.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 class BudgetModeTabs extends ConsumerWidget {
@@ -67,9 +67,7 @@ class BudgetModeTabs extends ConsumerWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(16.0),
         onTap: () {
-          ref
-              .read(homeViewModelProvider.notifier)
-              .toggleBudgetDisplayMode(mode);
+          ref.read(homeBudgetDisplayModeProvider.notifier).state = mode;
         },
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 16.0),
