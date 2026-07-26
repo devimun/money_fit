@@ -1,6 +1,7 @@
 import 'package:money_fit/core/database/app_database.dart';
 import 'package:money_fit/core/foundation/local_date.dart';
 import 'package:money_fit/core/foundation/money.dart';
+import 'package:money_fit/core/foundation/money_minor_units.dart';
 import 'package:money_fit/features/ledger/domain/category.dart';
 import 'package:money_fit/features/ledger/domain/expense_entry.dart';
 import 'package:money_fit/features/ledger/domain/ledger_repository.dart';
@@ -12,27 +13,30 @@ import 'package:money_fit/features/ledger/domain/ledger_repository.dart';
 /// rollout and repository composition together, without exposing v6 column
 /// names or minor-unit storage to presentation code.
 class SqliteV6LedgerRepository implements LedgerRepository {
-  const SqliteV6LedgerRepository({
-    required AppDatabase database,
-    required LedgerCurrency currency,
-  }) : _database = database,
-       _currency = currency;
+  const SqliteV6LedgerRepository({required AppDatabase database})
+    : _database = database;
 
   final AppDatabase _database;
-  final LedgerCurrency _currency;
 
   @override
   Future<MonthlyLedger> readMonth(ExpenseMonthKey key) async {
     final db = await _database.executor;
+    final currency = await _currencyFor(key.ownerId);
     final rows = await db.query(
       'expenses',
-      where: 'owner_id = ? AND occurred_on LIKE ?',
-      whereArgs: [key.ownerId, '${key.month}%'],
+      where: 'owner_id = ? AND occurred_on >= ? AND occurred_on < ?',
+      whereArgs: [
+        key.ownerId,
+        key.month.firstDay.toString(),
+        key.month.addMonths(1).firstDay.toString(),
+      ],
       orderBy: 'occurred_on DESC, created_at DESC',
     );
     return MonthlyLedger(
       key: key,
-      entries: rows.map(_expenseFromRow).toList(growable: false),
+      entries: rows
+          .map((row) => _expenseFromRow(row, currency))
+          .toList(growable: false),
     );
   }
 
@@ -45,7 +49,8 @@ class SqliteV6LedgerRepository implements LedgerRepository {
       whereArgs: [id, ownerId],
       limit: 1,
     );
-    return rows.isEmpty ? null : _expenseFromRow(rows.single);
+    if (rows.isEmpty) return null;
+    return _expenseFromRow(rows.single, await _currencyFor(ownerId));
   }
 
   @override
@@ -67,8 +72,9 @@ class SqliteV6LedgerRepository implements LedgerRepository {
   Future<void> replaceExpense(ExpenseEntry expense) => _write(expense, true);
 
   Future<void> _write(ExpenseEntry expense, bool replace) async {
-    _requireRepositoryCurrency(expense.amount);
     final db = await _database.executor;
+    final currency = await _currencyFor(expense.ownerId);
+    _requireOwnerCurrency(expense.amount, currency);
     final category = await db.query(
       'categories',
       columns: const ['id'],
@@ -114,11 +120,14 @@ class SqliteV6LedgerRepository implements LedgerRepository {
     );
   }
 
-  ExpenseEntry _expenseFromRow(Map<String, Object?> row) => ExpenseEntry(
+  ExpenseEntry _expenseFromRow(
+    Map<String, Object?> row,
+    LedgerCurrency currency,
+  ) => ExpenseEntry(
     id: row['id'] as String,
     ownerId: row['owner_id'] as String,
     name: row['title'] as String,
-    amount: Money(minorUnits: row['amount_minor'] as int, currency: _currency),
+    amount: Money(minorUnits: row['amount_minor'] as int, currency: currency),
     occurredOn: LocalDate.parse(row['occurred_on'] as String),
     categoryId: row['category_id'] as String,
     createdAt: DateTime.parse(row['created_at'] as String),
@@ -147,8 +156,27 @@ class SqliteV6LedgerRepository implements LedgerRepository {
     );
   }
 
-  void _requireRepositoryCurrency(Money amount) {
-    if (amount.currency != _currency) {
+  Future<LedgerCurrency> _currencyFor(String ownerId) async {
+    final db = await _database.executor;
+    final settings = await db.query(
+      'ledger_settings',
+      columns: const ['currency_code'],
+      where: 'owner_id = ?',
+      whereArgs: [ownerId],
+      limit: 1,
+    );
+    final code = settings.isEmpty ? null : settings.single['currency_code'];
+    if (code is! String) {
+      throw StateError('Missing ledger settings for $ownerId');
+    }
+    return LedgerCurrency(
+      code: code,
+      decimalDigits: MoneyMinorUnits.fractionDigits(code),
+    );
+  }
+
+  void _requireOwnerCurrency(Money amount, LedgerCurrency currency) {
+    if (amount.currency != currency) {
       throw ArgumentError.value(
         amount.currency,
         'expense.amount.currency',

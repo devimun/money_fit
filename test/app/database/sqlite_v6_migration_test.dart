@@ -39,6 +39,20 @@ void main() {
         )).single['amount_minor'],
         50000,
       );
+      expect(
+        await db.query(
+          'ledger_settings',
+          columns: const ['owner_id', 'currency_code'],
+          orderBy: 'owner_id',
+        ),
+        [
+          {'owner_id': 'alice', 'currency_code': 'USD'},
+          {'owner_id': 'bob', 'currency_code': 'KRW'},
+        ],
+        reason:
+            'a missing v5 currency keeps the USD schema default, while '
+            'an explicit KRW preference remains owner-scoped',
+      );
 
       final migrated = await db.rawQuery('''
       SELECT e.id, e.amount_minor, e.occurred_on, c.owner_id, c.stable_code,
@@ -269,7 +283,6 @@ Future<void> _insertTypicalRows(Database db) async {
     'id': 'alice',
     'budget': 12.34,
     'budget_type': 'daily',
-    'currency_code': 'USD',
     'created_at': now,
     'updated_at': now,
   });

@@ -70,11 +70,8 @@ void main() {
       final budget = await SqliteV6CurrentBudgetRepository(
         appDatabase,
       ).read('history-owner');
-      final ledger =
-          await SqliteV6LedgerRepository(
-            database: appDatabase,
-            currency: usd,
-          ).readMonth(
+      final ledger = await SqliteV6LedgerRepository(database: appDatabase)
+          .readMonth(
             const ExpenseMonthKey(
               ownerId: 'history-owner',
               month: YearMonth(2026, 7),

@@ -61,10 +61,12 @@ class SqliteV6LegacyExpenseRepository implements IExpenseRepository {
     int month,
   ) async {
     final db = await _database.executor;
+    final start = _day(DateTime(year, month));
+    final end = _day(DateTime(year, month + 1));
     final rows = await db.query(
       'expenses',
-      where: 'owner_id = ? AND occurred_on LIKE ?',
-      whereArgs: [userId, '$year-${month.toString().padLeft(2, '0')}%'],
+      where: 'owner_id = ? AND occurred_on >= ? AND occurred_on < ?',
+      whereArgs: [userId, start, end],
       orderBy: 'occurred_on DESC, created_at DESC',
     );
     final result = <DateTime, List<Expense>>{};

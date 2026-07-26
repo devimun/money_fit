@@ -12,7 +12,8 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import '../../../support/expense_sqlite_fixture.dart';
 
 void main() {
-  const currency = LedgerCurrency(code: 'KRW', decimalDigits: 0);
+  const krw = LedgerCurrency(code: 'KRW', decimalDigits: 0);
+  const usd = LedgerCurrency(code: 'USD', decimalDigits: 2);
   late Database database;
   late SqliteV6LedgerRepository repository;
 
@@ -22,10 +23,7 @@ void main() {
     await database.execute('PRAGMA foreign_keys = ON');
     await SqliteV6Migration.createSchema(database);
     await _seed(database);
-    repository = SqliteV6LedgerRepository(
-      database: TestAppDatabase(database),
-      currency: currency,
-    );
+    repository = SqliteV6LedgerRepository(database: TestAppDatabase(database));
   });
 
   tearDown(() => database.close());
@@ -40,6 +38,10 @@ void main() {
       'expenses',
       _row(id: 'alice-june', ownerId: 'alice', occurredOn: '2026-06-30'),
     );
+    await database.insert(
+      'expenses',
+      _row(id: 'alice-august', ownerId: 'alice', occurredOn: '2026-08-01'),
+    );
 
     final ledger = await repository.readMonth(
       const ExpenseMonthKey(ownerId: 'alice', month: YearMonth(2026, 7)),
@@ -49,7 +51,7 @@ void main() {
     expect(ledger.entries.single.id, 'alice-july');
     expect(
       ledger.entries.single.amount,
-      const Money(minorUnits: 1250, currency: currency),
+      const Money(minorUnits: 1250, currency: krw),
     );
     expect(ledger.entries.single.occurredOn, const LocalDate(2026, 7, 15));
   });
@@ -97,7 +99,7 @@ void main() {
         id: 'new-expense',
         ownerId: 'alice',
         name: 'Dinner',
-        amount: Money(minorUnits: 9876, currency: currency),
+        amount: Money(minorUnits: 9876, currency: krw),
         occurredOn: LocalDate(2026, 7, 20),
         categoryId: 'alice-food',
         createdAt: DateTime.utc(2026, 7, 20, 8),
@@ -117,7 +119,7 @@ void main() {
             id: 'cross-owner',
             ownerId: 'alice',
             name: 'Invalid',
-            amount: Money(minorUnits: 1, currency: currency),
+            amount: Money(minorUnits: 1, currency: krw),
             occurredOn: LocalDate(2026, 7, 20),
             categoryId: 'bob-food',
             createdAt: DateTime.utc(2026, 7, 20, 8),
@@ -139,7 +141,7 @@ void main() {
       id: 'shared',
       ownerId: 'alice',
       name: 'Updated',
-      amount: Money(minorUnits: 3000, currency: currency),
+      amount: Money(minorUnits: 3000, currency: krw),
       occurredOn: LocalDate(2026, 7, 21),
       categoryId: 'alice-food',
       createdAt: DateTime.utc(2026, 7, 15, 8),
@@ -157,10 +159,46 @@ void main() {
     await repository.deleteExpense('shared', 'alice');
     expect(await repository.findExpense('shared', 'alice'), isNull);
   });
+
+  test(
+    'derives each expense currency from its owner ledger settings',
+    () async {
+      await database.insert(
+        'expenses',
+        _row(id: 'alice-expense', ownerId: 'alice'),
+      );
+      await database.insert(
+        'expenses',
+        _row(id: 'bob-expense', ownerId: 'bob', categoryId: 'bob-food'),
+      );
+
+      final alice = await repository.findExpense('alice-expense', 'alice');
+      final bob = await repository.findExpense('bob-expense', 'bob');
+
+      expect(alice!.amount.currency, krw);
+      expect(bob!.amount.currency, usd);
+      await expectLater(
+        repository.insertExpense(
+          ExpenseEntry(
+            id: 'wrong-currency',
+            ownerId: 'bob',
+            name: 'Invalid',
+            amount: const Money(minorUnits: 1, currency: krw),
+            occurredOn: const LocalDate(2026, 7, 20),
+            categoryId: 'bob-food',
+            createdAt: DateTime.utc(2026, 7, 20, 8),
+            updatedAt: DateTime.utc(2026, 7, 20, 8),
+          ),
+        ),
+        throwsArgumentError,
+      );
+    },
+  );
 }
 
 Future<void> _seed(Database database) async {
-  for (final owner in ['alice', 'bob']) {
+  const currencies = {'alice': 'KRW', 'bob': 'USD'};
+  for (final owner in currencies.keys) {
     await database.insert('local_users', {
       'id': owner,
       'remote_user_id': null,
@@ -168,7 +206,7 @@ Future<void> _seed(Database database) async {
     });
     await database.insert('ledger_settings', {
       'owner_id': owner,
-      'currency_code': 'KRW',
+      'currency_code': currencies[owner],
     });
     await database.insert('categories', {
       'id': '$owner-food',
