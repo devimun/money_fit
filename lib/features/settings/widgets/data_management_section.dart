@@ -1,11 +1,6 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:money_fit/app/reset/data_reset_service.dart';
-import 'package:money_fit/features/ledger/application/legacy/category_providers.dart';
-import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
+import 'package:money_fit/app/reset/reset_coordinator.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
@@ -59,18 +54,11 @@ class DataManagementSection extends ConsumerWidget {
 
               try {
                 if (confirmed == true) {
-                  // 데이터 초기화
-                  await DataResetService.resetAllData();
-                  ref.invalidate(coreExpensesProvider);
-                  ref.invalidate(categoryProvider);
-                  // 앱 재시작
-                  if (context.mounted) {
-                    Phoenix.rebirth(context);
-                  }
+                  await ref
+                      .read(resetCoordinatorProvider)
+                      .reset(ResetScope.all);
                 }
-              } catch (e) {
-                log(e.toString());
-              }
+              } catch (_) {}
             },
             trailing: Icon(
               Icons.arrow_forward_ios,

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:money_fit/app/app.dart';
@@ -31,19 +30,17 @@ Future<void> main() async {
   final sharedPreferences = await SharedPreferences.getInstance();
 
   runApp(
-    Phoenix(
-      child: ProviderScope(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(sharedPreferences),
-          appEnvironmentProvider.overrideWithValue(environment),
-          currentOwnerProvider.overrideWith(SessionCurrentOwner.new),
-          currentBudgetRepositoryProvider.overrideWith(
-            (ref) =>
-                LegacyCurrentBudgetRepository(ref.read(userRepositoryProvider)),
-          ),
-        ],
-        child: const MoneyFitApp(),
-      ),
+    ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(sharedPreferences),
+        appEnvironmentProvider.overrideWithValue(environment),
+        currentOwnerProvider.overrideWith(SessionCurrentOwner.new),
+        currentBudgetRepositoryProvider.overrideWith(
+          (ref) =>
+              LegacyCurrentBudgetRepository(ref.read(userRepositoryProvider)),
+        ),
+      ],
+      child: const MoneyFitApp(),
     ),
   );
 
