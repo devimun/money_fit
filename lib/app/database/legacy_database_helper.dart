@@ -40,6 +40,10 @@ class DatabaseHelper {
 
   // 데이터베이스가 처음 생성될 때 호출됩니다.
   Future<void> _onCreate(Database db, int version) async {
+    if (version >= DatabaseSchemaRollout.v6Version) {
+      await SqliteV6Migration.createSchema(db);
+      return;
+    }
     final batch = db.batch();
     _createTables(batch);
     _seedDatabase(batch);

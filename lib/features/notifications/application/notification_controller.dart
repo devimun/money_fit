@@ -1,8 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:money_fit/app/composition/repository_providers.dart';
-import 'package:money_fit/app/composition/platform_providers.dart';
+import 'package:money_fit/core/providers/shared_preferences_provider.dart';
 import 'package:money_fit/features/notifications/application/notification_scheduler.dart';
 import 'package:money_fit/features/notifications/data/flutter_notification_scheduler.dart';
+import 'package:money_fit/features/notifications/data/shared_preferences_notification_preference_repository.dart';
+import 'package:money_fit/features/notifications/domain/notification_preference_repository.dart';
 import 'package:money_fit/features/session/application/session_context.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -55,13 +56,21 @@ final permissionGatewayProvider = Provider<PermissionGateway>(
   (ref) => const PlatformPermissionGateway(),
 );
 
+/// Local notification intent is device behavior, not a ledger-user column.
+final notificationPreferenceRepositoryProvider =
+    Provider<NotificationPreferenceRepository>((ref) {
+      return SharedPreferencesNotificationPreferenceRepository(
+        ref.read(sharedPreferencesProvider),
+      );
+    });
+
 class NotificationController extends AsyncNotifier<bool> {
   @override
   Future<bool> build() async {
     final ownerId = await ref.watch(currentOwnerIdProvider.future);
-    final user = await ref.watch(userRepositoryProvider).getUser(ownerId);
-    if (user == null) throw StateError('Missing local session user.');
-    return user.notificationsEnabled;
+    return ref
+        .watch(notificationPreferenceRepositoryProvider)
+        .isEnabled(ownerId);
   }
 
   Future<NotificationPermissionResult> enable(NotificationText text) async {
@@ -92,15 +101,9 @@ class NotificationController extends AsyncNotifier<bool> {
 
   Future<void> _persist(bool enabled) async {
     final ownerId = await ref.read(currentOwnerIdProvider.future);
-    final users = ref.read(userRepositoryProvider);
-    final user = await users.getUser(ownerId);
-    if (user == null) throw StateError('Missing local session user.');
-    await users.updateUser(
-      user.copyWith(
-        notificationsEnabled: enabled,
-        updatedAt: ref.read(clockProvider).now(),
-      ),
-    );
+    await ref
+        .read(notificationPreferenceRepositoryProvider)
+        .setEnabled(ownerId, enabled);
     state = AsyncData(enabled);
   }
 }
