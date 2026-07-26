@@ -165,14 +165,6 @@ const allowedLegacyImports = <LegacyBoundaryAllowance>[
     removalPhase: RemovalPhase.pr2_3,
   ),
   LegacyBoundaryAllowance(
-    filePath: 'lib/core/providers/expenses_provider.dart',
-    kind: LegacyBoundaryKind.sdkSingleton,
-    target: 'FirebaseAnalytics.instance',
-    reason: 'Ledger commands have not yet received the analytics adapter.',
-    owner: LegacyOwner.ledger,
-    removalPhase: RemovalPhase.pr3_2,
-  ),
-  LegacyBoundaryAllowance(
     filePath: 'lib/core/router/app_router.dart',
     kind: LegacyBoundaryKind.sdkSingleton,
     target: 'FirebaseAnalytics.instance',

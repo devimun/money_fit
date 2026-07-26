@@ -14,6 +14,7 @@ abstract class IExpenseRepository {
     int month,
   );
   Future<List<Expense>> getExpensesByUserId(String userId);
+  Future<Expense?> findExpense(String id, String userId);
 
   Future<void> updateExpense(Expense expense);
   Future<void> deleteExpense(String id, String userId);
@@ -54,6 +55,19 @@ class ExpenseRepository implements IExpenseRepository {
           orderBy: 'date DESC, created_at DESC',
         );
         return maps.map(_expenseFromRow).toList(growable: false);
+      });
+
+  @override
+  Future<Expense?> findExpense(String id, String userId) =>
+      _runStorage('find expense', () async {
+        final db = await _database;
+        final maps = await db.query(
+          'expenses',
+          where: 'id = ? AND user_id = ?',
+          whereArgs: [id, userId],
+          limit: 1,
+        );
+        return maps.isEmpty ? null : _expenseFromRow(maps.single);
       });
 
   /// 특정 날짜의 모든 지출 내역을 가져옵니다.

@@ -1,148 +1,148 @@
-import 'dart:developer';
+import 'dart:async';
 
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_fit/core/error/app_failure.dart';
+import 'package:money_fit/core/foundation/year_month.dart';
 import 'package:money_fit/core/models/expense_model.dart';
+import 'package:money_fit/core/providers/foundation_providers.dart';
 import 'package:money_fit/core/providers/repository_providers.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 
-// 앱 전역에서 지출 데이터를 관리하기 위한 프로버이더.
-class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
-  // 조회된 월별 데이터는 캐시데이터에 저장합니다.
-  final _cache = <String, Map<DateTime, List<Expense>>>{};
+class ExpenseMonthKey {
+  const ExpenseMonthKey({required this.userId, required this.month});
 
-  // 초기 빌드시 현재 월의 데이터를 가져옵니다.
+  final String userId;
+  final YearMonth month;
+
+  @override
+  bool operator ==(Object other) =>
+      other is ExpenseMonthKey &&
+      other.userId == userId &&
+      other.month == month;
+
+  @override
+  int get hashCode => Object.hash(userId, month);
+}
+
+class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
+  final _cache = <ExpenseMonthKey, Map<DateTime, List<Expense>>>{};
+  String? _activeUserId;
+
   @override
   Future<Map<DateTime, List<Expense>>> build() async {
-    final userSettings = await ref.read(userSettingsProvider.future);
-    final now = ref.watch(dateManager);
-    return await loadMonthlyExpenses(userSettings.id, now.year, now.month);
+    final user = await ref.watch(userSettingsProvider.future);
+    if (_activeUserId != user.id) {
+      _cache.clear();
+      _activeUserId = user.id;
+    }
+    final date = ref.read(dateManager);
+    return loadMonthlyExpenses(user.id, date.year, date.month);
   }
 
-  // 특정 월의 데이터를 가져오며, 이미 캐시된 데이터가 있다면 캐시를 사용하며 없다면 조회 후 캐시데이터에 저장합니다
   Future<Map<DateTime, List<Expense>>> loadMonthlyExpenses(
     String userId,
     int year,
     int month,
   ) async {
-    final key = '$year-$month';
-    if (_cache.containsKey(key)) {
-      return _cache[key]!;
-    }
-    final repo = ref.read(expenseRepositoryProvider);
-    final expenses = await repo.getExpensesByMonth(userId, year, month);
+    final key = ExpenseMonthKey(userId: userId, month: YearMonth(year, month));
+    final cached = _cache[key];
+    if (cached != null) return cached;
+
+    final expenses = await ref
+        .read(expenseRepositoryProvider)
+        .getExpensesByMonth(userId, year, month);
     _cache[key] = expenses;
     return expenses;
   }
 
-  List<Expense> getTodayExpense(DateTime today) {
-    final dateKey = _stripTime(today);
-    final currentState = state.value ?? {};
-    return currentState[dateKey] ?? [];
-  }
+  List<Expense> getTodayExpense(DateTime today) =>
+      (state.valueOrNull ?? {})[_stripTime(today)] ?? const [];
 
-  ///  지출 추가
   Future<void> addExpense(Expense expense) async {
-    final repo = ref.read(expenseRepositoryProvider);
-    await repo.createExpense(expense);
-
-    // Log create_transaction event
-    await FirebaseAnalytics.instance.logEvent(
-      name: 'create_transaction',
-      parameters: {
-        'type': expense.type.name, // 'income' or 'expense'
-        'category': expense.categoryId,
-      },
-    );
-
-    final dateKey = _stripTime(expense.date);
-    final currentState = state.value ?? {};
-    final List<Expense> updatedList = [
-      expense,
-      ...(currentState[dateKey] ?? []),
-    ];
-
-    final Map<DateTime, List<Expense>> newState = {
-      ...currentState,
-      dateKey: updatedList,
-    };
-
-    final cacheKey = '${expense.date.year}-${expense.date.month}';
-    _cache[cacheKey] = newState;
-    log(newState.toString());
-
-    state = AsyncData(newState);
+    await ref.read(expenseRepositoryProvider).createExpense(expense);
+    await _invalidateAndReload([_keyFor(expense.userId, expense.date)]);
+    unawaited(_trackCreatedExpense(expense));
   }
 
-  ///  지출 수정
   Future<void> updateExpense(Expense updated) async {
-    final repo = ref.read(expenseRepositoryProvider);
-    await repo.updateExpense(updated);
-
-    final dateKey = _stripTime(updated.date);
-    final currentState = state.value ?? {};
-
-    final List<Expense> updatedList = (currentState[dateKey] ?? [])
-        .map((e) => e.id == updated.id ? updated : e)
-        .toList();
-
-    final Map<DateTime, List<Expense>> newState = {
-      ...currentState,
-      dateKey: updatedList,
-    };
-    final cacheKey = '${updated.date.year}-${updated.date.month}';
-    _cache[cacheKey] = newState;
-    state = AsyncData(newState);
+    final repository = ref.read(expenseRepositoryProvider);
+    final existing = await repository.findExpense(updated.id, updated.userId);
+    if (existing == null) {
+      throw NotFoundFailure(resource: 'Expense', identifier: updated.id);
+    }
+    await repository.updateExpense(updated);
+    await _invalidateAndReload([
+      _keyFor(existing.userId, existing.date),
+      _keyFor(updated.userId, updated.date),
+    ]);
   }
 
-  ///  지출 삭제
   Future<void> deleteExpense(Expense deleted) async {
-    final repo = ref.read(expenseRepositoryProvider);
-    await repo.deleteExpense(deleted.id, deleted.userId);
-
-    final dateKey = _stripTime(deleted.date);
-    final currentState = state.value ?? {};
-
-    final oldList = currentState[dateKey] ?? [];
-    final newList = oldList.where((e) => e.id != deleted.id).toList();
-
-    final Map<DateTime, List<Expense>> newState =
-        Map<DateTime, List<Expense>>.from(currentState);
-
-    if (newList.isEmpty) {
-      newState.remove(dateKey);
-    } else {
-      newState[dateKey] = newList;
-    }
-    final cacheKey = '${deleted.date.year}-${deleted.date.month}';
-    _cache[cacheKey] = newState;
-
-    state = AsyncData(newState);
+    await ref
+        .read(expenseRepositoryProvider)
+        .deleteExpense(deleted.id, deleted.userId);
+    await _invalidateAndReload([_keyFor(deleted.userId, deleted.date)]);
   }
 
-  ///  특정 월 갱신 (예: 달 바뀜, 전체 새로고침 시)
   Future<bool> refreshExpensesFor(DateTime date) async {
-    final userSettings = await ref.read(userSettingsProvider.future);
-
-    log(date.toString());
-    final newMap = await loadMonthlyExpenses(
-      userSettings.id,
-      date.year,
-      date.month,
-    );
-    log(newMap.toString());
-    if (newMap.isEmpty) {
-      return false;
-    } else {
+    final user = await ref.read(userSettingsProvider.future);
+    try {
+      final expenses = await loadMonthlyExpenses(
+        user.id,
+        date.year,
+        date.month,
+      );
       ref.read(dateManager.notifier).changeDate(date);
-      state = AsyncData(newMap);
+      state = AsyncData(expenses);
       return true;
+    } catch (error, stackTrace) {
+      state = AsyncError(error, stackTrace);
+      rethrow;
     }
   }
 
-  /// 날짜의 시간 정보 제거 (날짜별 그룹핑용)
-  DateTime _stripTime(DateTime dt) => DateTime(dt.year, dt.month, dt.day);
+  void clearCache() => _cache.clear();
+
+  Future<void> _invalidateAndReload(Iterable<ExpenseMonthKey> keys) async {
+    final affected = keys.toSet();
+    for (final key in affected) {
+      _cache.remove(key);
+    }
+
+    final user = await ref.read(userSettingsProvider.future);
+    final visible = _keyFor(user.id, ref.read(dateManager));
+    if (affected.contains(visible)) {
+      final expenses = await loadMonthlyExpenses(
+        visible.userId,
+        visible.month.year,
+        visible.month.month,
+      );
+      state = AsyncData(expenses);
+    }
+  }
+
+  Future<void> _trackCreatedExpense(Expense expense) async {
+    try {
+      await ref
+          .read(analyticsTrackerProvider)
+          .track(
+            'create_transaction',
+            parameters: {
+              'type': expense.type.name,
+              'category': expense.categoryId,
+            },
+          );
+    } catch (_) {
+      // Analytics is observational and must not reverse a committed expense.
+    }
+  }
+
+  ExpenseMonthKey _keyFor(String userId, DateTime date) =>
+      ExpenseMonthKey(userId: userId, month: YearMonth.fromDateTime(date));
+
+  DateTime _stripTime(DateTime value) =>
+      DateTime(value.year, value.month, value.day);
 }
 
 final coreExpensesProvider =
