@@ -70,7 +70,7 @@ class SqliteV6UserRepository implements IUserRepository {
   @override
   Future<void> updateUser(User user) async {
     final db = await _database.executor;
-    final currencyCode = _currencyCode(user.currencyCode);
+    final requestedCurrencyCode = _currencyCode(user.currencyCode);
     final owner = await db.query(
       'local_users',
       columns: ['id'],
@@ -81,12 +81,21 @@ class SqliteV6UserRepository implements IUserRepository {
       throw StateError('Cannot update a missing owner: ${user.id}');
     }
 
-    await db.update(
+    final settings = await db.query(
       'ledger_settings',
-      {'currency_code': currencyCode},
+      columns: const ['currency_code'],
       where: 'owner_id = ?',
       whereArgs: [user.id],
     );
+    if (settings.length != 1 || settings.single['currency_code'] is! String) {
+      throw StateError('Missing ledger settings for owner: ${user.id}');
+    }
+    final currencyCode = settings.single['currency_code']! as String;
+    if (currencyCode != requestedCurrencyCode) {
+      throw StateError(
+        'Ledger currency must be changed through LedgerCurrencyCommands.',
+      );
+    }
     if (user.budget <= 0) {
       await db.delete('budgets', where: 'owner_id = ?', whereArgs: [user.id]);
       return;

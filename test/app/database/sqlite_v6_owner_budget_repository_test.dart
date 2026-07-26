@@ -105,19 +105,15 @@ void main() {
     );
 
     await users.updateUser(
-      user.copyWith(
-        budget: 50000,
-        budgetType: BudgetType.monthly,
-        currencyCode: 'KRW',
-      ),
+      user.copyWith(budget: 50000, budgetType: BudgetType.monthly),
     );
     final updated = await users.getUser('owner');
     expect(updated!.budget, 50000);
     expect(updated.budgetType, BudgetType.monthly);
-    expect(updated.currencyCode, 'KRW');
+    expect(updated.currencyCode, 'USD');
     expect(
       (await fixture.database.query('budgets')).single['amount_minor'],
-      50000,
+      5000000,
     );
   });
 }

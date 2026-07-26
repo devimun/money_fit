@@ -6,6 +6,7 @@ import 'package:money_fit/core/config/locale_config.dart';
 import 'package:money_fit/core/providers/locale_provider.dart';
 import 'package:money_fit/core/providers/theme_provider.dart';
 import 'package:money_fit/core/widgets/ledger_currency_scope.dart';
+import 'package:money_fit/features/ledger/application/ledger_currency_provider.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 class MoneyFitApp extends ConsumerWidget {

@@ -15,7 +15,7 @@ import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/features/budget/domain/spending_policy.dart';
 import 'package:money_fit/features/budget/application/current_budget_provider.dart';
 import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
-import 'package:money_fit/core/providers/locale_provider.dart';
+import 'package:money_fit/features/ledger/application/ledger_currency_provider.dart';
 import 'package:money_fit/features/calendar/application/calendar_projection.dart';
 
 class CalendarViewModel extends AsyncNotifier<CalendarState> {

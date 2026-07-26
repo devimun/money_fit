@@ -5,7 +5,7 @@ import 'package:money_fit/features/budget/application/current_budget_provider.da
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/core/foundation/budget_type.dart';
 import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
-import 'package:money_fit/core/providers/locale_provider.dart';
+import 'package:money_fit/features/ledger/application/ledger_currency_provider.dart';
 
 /// Presentation maps this semantic level to theme colors.
 enum SpendingLevel {

@@ -7,6 +7,7 @@ import 'package:money_fit/core/providers/locale_provider.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/features/settings/widgets/language_currency_selector.dart';
+import 'package:money_fit/features/ledger/application/ledger_currency_provider.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 

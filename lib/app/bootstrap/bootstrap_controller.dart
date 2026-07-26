@@ -10,6 +10,7 @@ import 'package:money_fit/core/preferences/preferences_provider.dart';
 import 'package:money_fit/features/app_update/application/update_service.dart';
 import 'package:money_fit/features/monetization/data/google_mobile_ads_gateway.dart';
 import 'package:money_fit/features/budget/application/current_budget_provider.dart';
+import 'package:money_fit/features/ledger/application/ledger_currency_provider.dart';
 import 'package:money_fit/features/notifications/application/notification_controller.dart';
 import 'package:money_fit/features/session/application/session_context.dart';
 
@@ -40,6 +41,9 @@ class BootstrapController {
           },
           loadSession: () => _ref.read(sessionContextProvider.future),
         );
+        // Currency is loaded only after the v6 database and stable owner are
+        // available; SharedPreferences is never a financial source of truth.
+        await _ref.read(ledgerCurrencyCommandsProvider).loadForCurrentOwner();
       },
       hasCurrentBudget: () async =>
           await _ref.read(currentBudgetProvider.future) != null,

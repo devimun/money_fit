@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:money_fit/core/config/locale_config.dart';
 import 'package:money_fit/core/models/theme_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -9,42 +8,26 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Ledger currency intentionally does not live here: changing a display locale
 /// must not rewrite the currency meaning of existing financial records.
 class AppPreferences {
-  const AppPreferences({
-    required this.theme,
-    required this.languageCode,
-    required this.currencyCode,
-  });
+  const AppPreferences({required this.theme, required this.languageCode});
 
   final ThemeSettings theme;
   final String languageCode;
 
-  /// Currency is a ledger interpretation setting, not a presentation locale.
-  /// It is persisted independently so a language change cannot reinterpret
-  /// existing amounts with a different minor-unit scale.
-  final String currencyCode;
-
   factory AppPreferences.defaults() => AppPreferences(
     theme: ThemeSettings.defaultSettings(),
     languageCode: 'en',
-    currencyCode: 'USD',
   );
 
-  AppPreferences copyWith({
-    ThemeSettings? theme,
-    String? languageCode,
-    String? currencyCode,
-  }) {
+  AppPreferences copyWith({ThemeSettings? theme, String? languageCode}) {
     return AppPreferences(
       theme: theme ?? this.theme,
       languageCode: languageCode ?? this.languageCode,
-      currencyCode: currencyCode ?? this.currencyCode,
     );
   }
 
   Map<String, Object> toJson() => {
     'theme': theme.toJson(),
     'languageCode': languageCode,
-    'currencyCode': currencyCode,
   };
 
   factory AppPreferences.fromJson(Map<String, dynamic> json) {
@@ -52,17 +35,11 @@ class AppPreferences {
     final languageCode = json['languageCode'] is String
         ? json['languageCode'] as String
         : 'en';
-    // v1 preference documents did not contain a currency. Preserve the
-    // previous first-run behaviour once, then persist the separate value.
-    final currencyCode = json['currencyCode'] is String
-        ? json['currencyCode'] as String
-        : getLocaleConfig(languageCode).currencyCode;
     return AppPreferences(
       theme: theme is Map<String, dynamic>
           ? ThemeSettings.fromJson(theme)
           : ThemeSettings.defaultSettings(),
       languageCode: languageCode,
-      currencyCode: currencyCode,
     );
   }
 }
@@ -74,7 +51,8 @@ class AppPreferencesRepository {
 
   static const storageKey = 'app_preferences_v1';
   static const _migrationKey = 'app_preferences_migrated_v1';
-  static const _currencyMigrationKey = 'app_preferences_currency_migrated_v1';
+  static const _schemaVersionKey = 'app_preferences_schema_version';
+  static const _currentSchemaVersion = 2;
   static const _legacyThemeKey = 'theme_settings';
   static const _legacyLanguageKey = 'locale_language_code';
 
@@ -102,25 +80,24 @@ class AppPreferencesRepository {
     final saved = await _preferences.setString(storageKey, jsonEncode(value));
     if (saved) {
       await _preferences.setBool(_migrationKey, true);
-      await _preferences.setBool(_currencyMigrationKey, true);
+      await _preferences.setInt(_schemaVersionKey, _currentSchemaVersion);
     }
     return saved;
   }
 
   Future<bool> migrateIfNeeded() async {
-    if (_preferences.getBool(_migrationKey) == true &&
-        _preferences.getBool(_currencyMigrationKey) == true) {
+    if (_preferences.getInt(_schemaVersionKey) == _currentSchemaVersion) {
       return true;
     }
-    // [load] retains an existing v1 document (including its theme) and fills
-    // the new currency field from its original language exactly once.
+    // [load] retains an existing preference document while dropping its old
+    // currency field. v6 ledger_settings is the financial source of truth.
     return save(load());
   }
 
   Future<void> clear() async {
     await _preferences.remove(storageKey);
     await _preferences.remove(_migrationKey);
-    await _preferences.remove(_currencyMigrationKey);
+    await _preferences.remove(_schemaVersionKey);
   }
 
   AppPreferences _readLegacy() {
@@ -136,9 +113,6 @@ class AppPreferencesRepository {
     return AppPreferences(
       theme: theme,
       languageCode: _preferences.getString(_legacyLanguageKey) ?? 'en',
-      currencyCode: getLocaleConfig(
-        _preferences.getString(_legacyLanguageKey) ?? 'en',
-      ).currencyCode,
     );
   }
 }

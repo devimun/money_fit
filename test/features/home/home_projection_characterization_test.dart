@@ -5,7 +5,7 @@ import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
 import 'package:money_fit/features/budget/application/current_budget_provider.dart';
 import 'package:money_fit/features/budget/domain/current_budget.dart';
-import 'package:money_fit/core/providers/locale_provider.dart';
+import 'package:money_fit/features/ledger/application/ledger_currency_provider.dart';
 import 'package:money_fit/features/home/application/home_projection.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 

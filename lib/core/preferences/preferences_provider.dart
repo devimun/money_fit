@@ -46,14 +46,6 @@ class PreferencesController extends StateNotifier<AppPreferences> {
     if (await _repository.save(updated)) state = updated;
   }
 
-  /// Changes the ledger currency explicitly. Language selection must use
-  /// [updateLanguage] only, otherwise existing decimal amounts could be
-  /// reinterpreted with a different scale.
-  Future<void> updateLedgerCurrency(String currencyCode) async {
-    final updated = state.copyWith(currencyCode: currencyCode.toUpperCase());
-    if (await _repository.save(updated)) state = updated;
-  }
-
   Future<void> clear() => _repository.clear();
 }
 

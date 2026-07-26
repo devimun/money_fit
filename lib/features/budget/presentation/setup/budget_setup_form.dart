@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/foundation/budget_type.dart';
 import 'package:money_fit/core/config/locale_config.dart';
-import 'package:money_fit/core/providers/locale_provider.dart';
+import 'package:money_fit/features/ledger/application/ledger_currency_provider.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';

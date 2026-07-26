@@ -4,6 +4,8 @@ import 'package:money_fit/features/ledger/data/legacy/category_repository.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_repository.dart';
 import 'package:money_fit/features/ledger/data/sqlite_v6_legacy_category_repository.dart';
 import 'package:money_fit/features/ledger/data/sqlite_v6_legacy_expense_repository.dart';
+import 'package:money_fit/features/ledger/data/sqlite_v6_ledger_settings_repository.dart';
+import 'package:money_fit/features/ledger/domain/ledger_settings_repository.dart';
 import 'package:money_fit/core/repositories/user_repository.dart';
 import 'package:money_fit/core/repositories/sqlite_v6_user_repository.dart';
 import 'package:money_fit/features/session/data/sqlite_v6_local_owner_repository.dart';
@@ -31,3 +33,9 @@ final categoryRepositoryProvider = Provider<ICategoryRepository>((ref) {
 final expenseRepositoryProvider = Provider<IExpenseRepository>((ref) {
   return SqliteV6LegacyExpenseRepository(ref.read(appDatabaseProvider));
 });
+
+/// Composition root for the feature-owned v6 ledger settings store.
+final ledgerSettingsRepositoryCompositionProvider =
+    Provider<LedgerSettingsRepository>((ref) {
+      return SqliteV6LedgerSettingsRepository(ref.read(appDatabaseProvider));
+    });
