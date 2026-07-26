@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:money_fit/core/config/locale_config.dart';
-import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 import 'package:money_fit/core/foundation/spending_kind.dart';
@@ -153,44 +152,4 @@ String formatCurrencyAdaptive(BuildContext context, double value) {
     );
     return '$currencySymbol${decimalFormat.format(value)}';
   }
-}
-
-/// 사용자의 예산 설정(일간/월간)과 통화에 따라 일일 예산을 계산합니다.
-///
-/// [budgetType] - 예산 유형 (일간/월간)
-/// [budget] - 예산 금액
-/// [forDate] - 기준이 되는 날짜 (월간 예산 계산 시 필요)
-/// [decimalDigits] - 통화의 소수점 자릿수 (LocaleConfig에서 가져옴)
-double calculateDailyBudget(
-  BudgetType budgetType,
-  double budget,
-  DateTime forDate, {
-  int decimalDigits = 2,
-}) {
-  if (budgetType == BudgetType.daily) {
-    return budget;
-  } else {
-    // 월간 예산인 경우, 해당 월의 일수로 나누어 일일 예산을 계산합니다.
-    final daysInMonth = DateTime(forDate.year, forDate.month + 1, 0).day;
-    final rawDailyBudget = budget / daysInMonth;
-
-    // 통화의 소수점 자릿수에 따라 처리
-    if (decimalDigits == 0) {
-      // 소수점 없는 통화 (KRW, IDR)
-      return rawDailyBudget.floorToDouble();
-    } else {
-      // 소수점 있는 통화
-      final multiplier = _pow10(decimalDigits);
-      return (rawDailyBudget * multiplier).roundToDouble() / multiplier;
-    }
-  }
-}
-
-/// 10의 거듭제곱 계산 헬퍼 함수
-double _pow10(int exponent) {
-  double result = 1.0;
-  for (int i = 0; i < exponent; i++) {
-    result *= 10;
-  }
-  return result;
 }

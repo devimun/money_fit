@@ -10,7 +10,7 @@ import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dar
 
 void main() {
   test(
-    'current_bug_R16_home_zero_discretionary_day_breaks_streak_remove_in_PR_4_1',
+    'essential-only recorded day contributes a successful zero-spend streak',
     () async {
       final today = _today();
       final state = await _readHomeState(
@@ -23,13 +23,13 @@ void main() {
         },
       );
 
-      expect(state.consecutiveAchievementDays, 0);
+      expect(state.consecutiveAchievementDays, 1);
       expect(state.monthlyDiscretionaryExpenseAvg, 0);
     },
   );
 
   test(
-    'current_bug_R16_home_missing_day_breaks_streak_and_average_uses_expense_keys_remove_in_PR_4_1',
+    'missing day breaks streak and average uses elapsed calendar days',
     () async {
       final today = _today();
       final twoDaysAgo = today.subtract(const Duration(days: 2));
@@ -43,7 +43,10 @@ void main() {
       );
 
       expect(state.consecutiveAchievementDays, 1);
-      expect(state.monthlyDiscretionaryExpenseAvg, 60);
+      expect(
+        state.monthlyDiscretionaryExpenseAvg,
+        closeTo(120 / today.day, 0.001),
+      );
     },
   );
 

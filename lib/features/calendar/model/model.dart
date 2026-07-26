@@ -1,3 +1,4 @@
+import 'package:money_fit/features/budget/domain/spending_policy.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 
 class CalendarCellData {
@@ -14,13 +15,17 @@ class CalendarCellData {
   factory CalendarCellData.from(
     DateTime date,
     List<Expense> expenses,
-    double dailyBudget,
-  ) {
+    double dailyBudget, {
+    SpendingPolicy policy = const SpendingPolicy(),
+  }) {
     double discTotal = expenses
         .where((e) => e.type == ExpenseType.discretionary)
         .fold(0.0, (sum, e) => sum + e.amount);
 
-    final isSuccess = discTotal >= 0 && discTotal <= dailyBudget;
+    final isSuccess = policy.isSuccessfulDay(
+      discretionarySpending: discTotal,
+      dailyBudget: dailyBudget,
+    );
 
     return CalendarCellData(
       date: date,
@@ -68,19 +73,17 @@ class CalendarStat {
 
   factory CalendarStat.fromExpenses(
     Map<DateTime, List<Expense>> expensesMap,
-    double dailyBudget,
-  ) {
+    double dailyBudget, {
+    SpendingPolicy policy = const SpendingPolicy(),
+  }) {
     double discTotal = 0;
     double essTotal = 0;
-    int success = 0;
-    int fail = 0;
-    int streak = 0;
-    int maxStreak = 0;
+    final discretionaryByDay = <DateTime, double>{};
+    final recordedDays = <DateTime>{};
 
-    final sortedDates = expensesMap.keys.toList()..sort();
-
-    for (final day in sortedDates) {
-      final expenses = expensesMap[day]!;
+    for (final entry in expensesMap.entries) {
+      final day = DateTime(entry.key.year, entry.key.month, entry.key.day);
+      final expenses = entry.value;
       double dayDisc = 0;
       double dayEss = 0;
 
@@ -94,19 +97,24 @@ class CalendarStat {
 
       discTotal += dayDisc;
       essTotal += dayEss;
-
-      final isSuccess = (dayDisc <= dailyBudget);
-      if (isSuccess) {
-        success++;
-        streak++;
-        if (streak > maxStreak) maxStreak = streak;
-      } else if (dayDisc > 0 && dayDisc > dailyBudget) {
-        fail++;
-        streak = 0;
-      } else {
-        streak = 0;
-      }
+      discretionaryByDay[day] = dayDisc;
+      recordedDays.add(day);
     }
+
+    final success = recordedDays
+        .where(
+          (day) => policy.isSuccessfulDay(
+            discretionarySpending: discretionaryByDay[day] ?? 0,
+            dailyBudget: dailyBudget,
+          ),
+        )
+        .length;
+    final fail = recordedDays.length - success;
+    final maxStreak = policy.longestStreak(
+      discretionaryByDay: discretionaryByDay,
+      recordedDays: recordedDays,
+      dailyBudgetFor: (_) => dailyBudget,
+    );
 
     return CalendarStat(
       monthlyDiscretionaryExpense: discTotal,

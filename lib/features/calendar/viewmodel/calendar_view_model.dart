@@ -11,7 +11,7 @@
 // 하단 자율 지출 금액과 필수 지출 금액 표시
 // 컨테이너 클릭하면 해당 일의 지출 내역 전부 볼 수 있게함
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:money_fit/core/functions/functions.dart';
+import 'package:money_fit/features/budget/domain/spending_policy.dart';
 import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
 import 'package:money_fit/core/providers/locale_provider.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';
@@ -19,6 +19,8 @@ import 'package:money_fit/features/calendar/model/model.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 
 class CalendarViewModel extends AsyncNotifier<CalendarState> {
+  static const _spendingPolicy = SpendingPolicy();
+
   @override
   Future<CalendarState> build() async {
     final expensesMap = await ref.watch(coreExpensesProvider.future);
@@ -26,10 +28,10 @@ class CalendarViewModel extends AsyncNotifier<CalendarState> {
 
     final today = ref.watch(dateManager);
 
-    final double dailyBudget = calculateDailyBudget(
-      user.budgetType,
-      user.budget,
-      today,
+    final double dailyBudget = _spendingPolicy.dailyBudget(
+      budgetType: user.budgetType,
+      budget: user.budget,
+      month: today,
       decimalDigits: ref.watch(currencyDecimalDigitsProvider),
     );
 
@@ -39,10 +41,15 @@ class CalendarViewModel extends AsyncNotifier<CalendarState> {
         entry.key,
         entry.value,
         dailyBudget,
+        policy: _spendingPolicy,
       );
     }
 
-    final stats = CalendarStat.fromExpenses(expensesMap, dailyBudget);
+    final stats = CalendarStat.fromExpenses(
+      expensesMap,
+      dailyBudget,
+      policy: _spendingPolicy,
+    );
 
     return CalendarState(
       selectedDay: today,

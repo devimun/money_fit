@@ -2,7 +2,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:money_fit/core/functions/functions.dart';
+import 'package:money_fit/features/budget/domain/spending_policy.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
@@ -178,6 +178,8 @@ class HomeState {
 }
 
 class HomeViewModel extends AsyncNotifier<HomeState> {
+  static const _spendingPolicy = SpendingPolicy();
+
   @override
   Future<HomeState> build() async {
     final userAsyncValue = ref.watch(userSettingsProvider);
@@ -193,30 +195,31 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
             .fold(0.0, (sum, expense) => sum + expense.amount);
         final today = ref.watch(dateManager);
         final todayExpenses = expensesByDate[today] ?? [];
-        final discretionaryExpenses = expensesByDate.entries
-            .expand((entry) => entry.value)
-            .where((e) => e.type == ExpenseType.discretionary)
-            .toList();
-
-        final totalAmount = discretionaryExpenses.fold<double>(
-          0,
-          (sum, e) => sum + e.amount,
-        );
-
-        final count = expensesByDate.keys.length;
-        final average = count > 0 ? totalAmount / count : 0.0;
-
-        final consecutiveDays = _calculateConsecutiveAchievementDays(
-          user,
-          expensesByDate,
+        final discretionaryByDay = _discretionaryByDay(expensesByDate);
+        final average = _spendingPolicy.monthlyAverage(
+          discretionaryByDay: discretionaryByDay,
+          month: today,
+          asOf: today,
         );
 
         // 현재 날짜를 기준으로 일일 및 월간 예산을 계산합니다.
-        final double dailyBudget = calculateDailyBudget(
-          user.budgetType,
-          user.budget,
-          today,
+        final double dailyBudget = _spendingPolicy.dailyBudget(
+          budgetType: user.budgetType,
+          budget: user.budget,
+          month: today,
           decimalDigits: ref.watch(currencyDecimalDigitsProvider),
+        );
+
+        final consecutiveDays = _spendingPolicy.currentStreak(
+          discretionaryByDay: discretionaryByDay,
+          recordedDays: expensesByDate.keys.map(_day).toSet(),
+          asOf: today,
+          dailyBudgetFor: (day) => _spendingPolicy.dailyBudget(
+            budgetType: user.budgetType,
+            budget: user.budget,
+            month: day,
+            decimalDigits: ref.read(currencyDecimalDigitsProvider),
+          ),
         );
 
         final double budget;
@@ -274,40 +277,18 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
       );
     }
   }
-
-  /// 오늘부터 역순으로 이번 달 안에서 연속 성취일 계산
-  int _calculateConsecutiveAchievementDays(
-    User user,
-    Map<DateTime, List<Expense>> expensesByDate,
-  ) {
-    final now = DateTime.now();
-    final todayKey = DateTime(now.year, now.month, now.day);
-
-    int streak = 0;
-    final dailyBudget = calculateDailyBudget(
-      user.budgetType,
-      user.budget,
-      now,
-      decimalDigits: ref.read(currencyDecimalDigitsProvider),
-    );
-    for (int i = 0; ; i++) {
-      final date = todayKey.subtract(Duration(days: i));
-      if (date.month != now.month) break; // 이번 달만 체크
-      final expenses = expensesByDate[date] ?? [];
-      final totalDiscretionary = expenses
-          .where((e) => e.type == ExpenseType.discretionary)
-          .fold(0.0, (sum, e) => sum + e.amount);
-
-      if (totalDiscretionary <= dailyBudget && totalDiscretionary != 0) {
-        streak += 1;
-      } else {
-        break;
-      }
-    }
-
-    return streak;
-  }
 }
+
+Map<DateTime, double> _discretionaryByDay(
+  Map<DateTime, List<Expense>> expensesByDate,
+) => {
+  for (final entry in expensesByDate.entries)
+    _day(entry.key): entry.value
+        .where((expense) => expense.type == ExpenseType.discretionary)
+        .fold<double>(0, (sum, expense) => sum + expense.amount),
+};
+
+DateTime _day(DateTime value) => DateTime(value.year, value.month, value.day);
 
 /// 💡 Provider
 final homeViewModelProvider = AsyncNotifierProvider<HomeViewModel, HomeState>(

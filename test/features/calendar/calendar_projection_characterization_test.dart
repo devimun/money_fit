@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:money_fit/core/functions/functions.dart';
+import 'package:money_fit/features/budget/domain/spending_policy.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
@@ -11,40 +11,34 @@ import 'package:money_fit/features/calendar/viewmodel/calendar_view_model.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 
 void main() {
-  test(
-    'current_bug_R16_calendar_zero_discretionary_day_is_successful_remove_in_PR_4_1',
-    () {
-      final cell = CalendarCellData.from(DateTime(2026, 7, 1), const [], 100);
-      final stat = CalendarStat.fromExpenses({
-        DateTime(2026, 7, 1): const [],
-      }, 100);
+  test('zero discretionary spending is a successful recorded day', () {
+    final cell = CalendarCellData.from(DateTime(2026, 7, 1), const [], 100);
+    final stat = CalendarStat.fromExpenses({
+      DateTime(2026, 7, 1): const [],
+    }, 100);
 
-      expect(cell.isSuccess, isTrue);
-      expect(stat.successfulDays, 1);
-      expect(stat.failedDays, 0);
-    },
-  );
+    expect(cell.isSuccess, isTrue);
+    expect(stat.successfulDays, 1);
+    expect(stat.failedDays, 0);
+  });
 
-  test(
-    'current_bug_R16_calendar_missing_days_do_not_break_streak_remove_in_PR_4_1',
-    () {
-      final firstDay = DateTime(2026, 7, 1);
-      final thirdDay = DateTime(2026, 7, 3);
-      final stat = CalendarStat.fromExpenses({
-        firstDay: [_expense(date: firstDay, amount: 10)],
-        thirdDay: [_expense(date: thirdDay, amount: 10)],
-      }, 100);
+  test('missing calendar days break a streak', () {
+    final firstDay = DateTime(2026, 7, 1);
+    final thirdDay = DateTime(2026, 7, 3);
+    final stat = CalendarStat.fromExpenses({
+      firstDay: [_expense(date: firstDay, amount: 10)],
+      thirdDay: [_expense(date: thirdDay, amount: 10)],
+    }, 100);
 
-      expect(stat.successfulDays, 2);
-      expect(stat.consecutiveSuccessfulDays, 2);
-    },
-  );
+    expect(stat.successfulDays, 2);
+    expect(stat.consecutiveSuccessfulDays, 1);
+  });
 
   test('daily budget floors zero-decimal currencies', () {
-    final dailyBudget = calculateDailyBudget(
-      BudgetType.monthly,
-      10000,
-      DateTime(2026, 7, 15),
+    final dailyBudget = const SpendingPolicy().dailyBudget(
+      budgetType: BudgetType.monthly,
+      budget: 10000,
+      month: DateTime(2026, 7, 15),
       decimalDigits: 0,
     );
 
@@ -52,10 +46,10 @@ void main() {
   });
 
   test('daily budget floors IDR to whole units', () {
-    final dailyBudget = calculateDailyBudget(
-      BudgetType.monthly,
-      100000,
-      DateTime(2026, 7, 15),
+    final dailyBudget = const SpendingPolicy().dailyBudget(
+      budgetType: BudgetType.monthly,
+      budget: 100000,
+      month: DateTime(2026, 7, 15),
       decimalDigits: 0,
     );
 
@@ -63,10 +57,10 @@ void main() {
   });
 
   test('daily budget rounds USD at two decimal places', () {
-    final dailyBudget = calculateDailyBudget(
-      BudgetType.monthly,
-      10000,
-      DateTime(2026, 7, 15),
+    final dailyBudget = const SpendingPolicy().dailyBudget(
+      budgetType: BudgetType.monthly,
+      budget: 10000,
+      month: DateTime(2026, 7, 15),
       decimalDigits: 2,
     );
 
