@@ -1,16 +1,17 @@
 import 'dart:developer';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
-import 'package:money_fit/l10n/app_localizations.dart';
+import 'package:money_fit/features/notifications/application/notification_scheduler.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-class NotificationService {
+class FlutterNotificationScheduler implements NotificationScheduler {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
   /// 초기화
-  Future<void> init() async {
+  @override
+  Future<void> initialize() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
@@ -45,34 +46,16 @@ class NotificationService {
     await _configureLocalTimezone();
   }
 
+  @override
+  Future<void> init() => initialize();
+
   Future<void> _configureLocalTimezone() async {
     final String localTimezone = await FlutterTimezone.getLocalTimezone();
     tz.setLocalLocation(tz.getLocation(localTimezone));
   }
 
-  // // 알림 등록 여부 확인을 위한 디버깅용 메서드
-  // Future<void> getNotiList() async {
-  //   final List<PendingNotificationRequest> pendingNotifications =
-  //       await flutterLocalNotificationsPlugin.pendingNotificationRequests();
-
-  //   for (var notification in pendingNotifications) {
-  //     log('알림 ID: ${notification.id}');
-  //     log('제목: ${notification.title}');
-  //     log('본문: ${notification.body}');
-  //     log('페이로드: ${notification.payload}');
-  //   }
-  // }
-  /// 매일 세 번 알림 예약 (오전 10시, 오후 2시, 오후 8시)
-  Future<void> scheduleDailyNotifications(AppLocalizations l10n) async {
-    await scheduleDailyNotificationsText(
-      title: l10n.notificationTitleDaily,
-      morning: l10n.notificationBodyMorning,
-      afternoon: l10n.notificationBodyAfternoon,
-      night: l10n.notificationBodyNight,
-    );
-  }
-
-  Future<void> scheduleDailyNotificationsText({
+  @override
+  Future<void> scheduleDaily({
     required String title,
     required String morning,
     required String afternoon,
@@ -82,6 +65,21 @@ class NotificationService {
     await _scheduleNotification(1, 14, title, afternoon);
     await _scheduleNotification(2, 20, title, night);
     log('message: Daily notifications scheduled successfully.');
+  }
+
+  @override
+  Future<void> scheduleDailyNotificationsText({
+    required String title,
+    required String morning,
+    required String afternoon,
+    required String night,
+  }) {
+    return scheduleDaily(
+      title: title,
+      morning: morning,
+      afternoon: afternoon,
+      night: night,
+    );
   }
 
   /// 개별 알림 예약
@@ -127,7 +125,11 @@ class NotificationService {
   }
 
   /// 모든 알림 취소
-  Future<void> cancelAllNotifications() async {
+  @override
+  Future<void> cancelAll() async {
     await flutterLocalNotificationsPlugin.cancelAll();
   }
+
+  @override
+  Future<void> cancelAllNotifications() => cancelAll();
 }

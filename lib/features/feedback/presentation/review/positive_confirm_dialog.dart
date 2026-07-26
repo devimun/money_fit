@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:money_fit/features/feedback/application/review_prompt_dependencies.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
@@ -129,6 +130,3 @@ class PositiveConfirmDialog extends StatelessWidget {
     );
   }
 }
-
-/// 긍정적인 액션 선택 결과
-enum PositiveAction { reviewNow, later, never }

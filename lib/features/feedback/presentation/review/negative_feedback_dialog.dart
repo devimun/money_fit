@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:money_fit/features/feedback/application/review_prompt_dependencies.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
@@ -168,14 +169,4 @@ class _NegativeFeedbackDialogState extends State<NegativeFeedbackDialog> {
       ),
     );
   }
-}
-
-/// 부정적인 액션 선택 결과
-enum NegativeAction { send, later, never }
-
-/// 부정적인 피드백 결과
-class NegativeResult {
-  final NegativeAction action;
-  final String? detail;
-  const NegativeResult(this.action, this.detail);
 }

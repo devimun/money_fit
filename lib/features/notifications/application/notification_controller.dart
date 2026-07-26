@@ -1,7 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/app/composition/repository_providers.dart';
 import 'package:money_fit/app/composition/platform_providers.dart';
-import 'package:money_fit/core/services/notification_service.dart';
+import 'package:money_fit/features/notifications/application/notification_scheduler.dart';
+import 'package:money_fit/features/notifications/data/flutter_notification_scheduler.dart';
 import 'package:money_fit/features/session/application/session_context.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -42,9 +43,13 @@ class NotificationText {
   final String night;
 }
 
-final notificationServiceProvider = Provider<NotificationService>(
-  (ref) => NotificationService(),
+final notificationSchedulerProvider = Provider<NotificationScheduler>(
+  (ref) => FlutterNotificationScheduler(),
 );
+
+/// Kept as a transition alias while app-level startup and reset composition
+/// moves to the feature-owned scheduler name.
+final notificationServiceProvider = notificationSchedulerProvider;
 
 final permissionGatewayProvider = Provider<PermissionGateway>(
   (ref) => const PlatformPermissionGateway(),
@@ -65,8 +70,8 @@ class NotificationController extends AsyncNotifier<bool> {
         .requestNotifications();
     if (permission != NotificationPermissionResult.granted) return permission;
 
-    final gateway = ref.read(notificationServiceProvider);
-    await gateway.scheduleDailyNotificationsText(
+    final gateway = ref.read(notificationSchedulerProvider);
+    await gateway.scheduleDaily(
       title: text.title,
       morning: text.morning,
       afternoon: text.afternoon,
@@ -77,7 +82,7 @@ class NotificationController extends AsyncNotifier<bool> {
   }
 
   Future<void> disable() async {
-    await ref.read(notificationServiceProvider).cancelAllNotifications();
+    await ref.read(notificationSchedulerProvider).cancelAll();
     await _persist(false);
   }
 

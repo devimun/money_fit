@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:money_fit/features/feedback/domain/contact_inquiry_type.dart';
 import 'package:money_fit/features/feedback/domain/feedback_repository.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
@@ -17,7 +18,7 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _detailsController = TextEditingController();
-  String? _selectedInquiryType;
+  ContactInquiryType? _selectedInquiryType;
 
   @override
   void dispose() {
@@ -65,12 +66,12 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    final inquiryTypes = [
-      l10n.inquiryTypeBugReport,
-      l10n.inquiryTypeFeatureSuggestion,
-      l10n.inquiryTypeGeneralInquiry,
-      l10n.inquiryTypeOther,
-    ];
+    final inquiryTypes = <ContactInquiryType, String>{
+      ContactInquiryType.bugReport: l10n.inquiryTypeBugReport,
+      ContactInquiryType.featureSuggestion: l10n.inquiryTypeFeatureSuggestion,
+      ContactInquiryType.generalInquiry: l10n.inquiryTypeGeneralInquiry,
+      ContactInquiryType.other: l10n.inquiryTypeOther,
+    };
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -111,7 +112,7 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
-                DropdownButtonFormField<String>(
+                DropdownButtonFormField<ContactInquiryType>(
                   initialValue: _selectedInquiryType,
                   decoration: InputDecoration(
                     labelText: l10n.inquiryType,
@@ -129,10 +130,12 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
                     ),
                   ),
                   borderRadius: BorderRadius.circular(12),
-                  items: inquiryTypes
+                  items: inquiryTypes.entries
                       .map(
-                        (type) =>
-                            DropdownMenuItem(value: type, child: Text(type)),
+                        (entry) => DropdownMenuItem(
+                          value: entry.key,
+                          child: Text(entry.value),
+                        ),
                       )
                       .toList(),
                   onChanged: (value) {
@@ -141,7 +144,7 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
                     });
                   },
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (value == null) {
                       return l10n.fieldRequired;
                     }
                     return null;

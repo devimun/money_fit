@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:money_fit/features/feedback/domain/contact_inquiry_type.dart';
 import 'package:money_fit/features/feedback/domain/feedback_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -26,14 +27,14 @@ class SupabaseFeedbackRepository implements FeedbackRepository {
 
   @override
   Future<void> submitContactInquiry({
-    required String inquiryType,
+    required ContactInquiryType inquiryType,
     required String email,
     required String details,
   }) async {
     final uid = _client.auth.currentUser?.id;
     await _client.from('user_contact').insert({
       if (uid != null) 'uid': uid,
-      'inquiry_type': inquiryType,
+      'inquiry_type': inquiryType.backendCode,
       'email': email,
       'details': details,
       'platform': _platform,
