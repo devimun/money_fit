@@ -4,6 +4,7 @@ import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/core/providers/expenses_provider.dart';
+import 'package:money_fit/core/providers/locale_provider.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/features/calendar/model/model.dart';
 import 'package:money_fit/features/calendar/viewmodel/calendar_view_model.dart';
@@ -39,76 +40,64 @@ void main() {
     },
   );
 
-  test(
-    'current_bug_R10_daily_budget_default_rounds_KRW_as_two_decimals_remove_in_PR_1_5',
-    () {
-      final dailyBudget = calculateDailyBudget(
-        BudgetType.monthly,
-        10000,
-        DateTime(2026, 7, 15),
-      );
+  test('daily budget floors zero-decimal currencies', () {
+    final dailyBudget = calculateDailyBudget(
+      BudgetType.monthly,
+      10000,
+      DateTime(2026, 7, 15),
+      decimalDigits: 0,
+    );
 
-      expect(dailyBudget, 322.58);
-    },
-  );
+    expect(dailyBudget, 322);
+  });
 
-  test(
-    'current_bug_R10_daily_budget_default_rounds_IDR_as_two_decimals_remove_in_PR_1_5',
-    () {
-      final dailyBudget = calculateDailyBudget(
-        BudgetType.monthly,
-        100000,
-        DateTime(2026, 7, 15),
-      );
+  test('daily budget floors IDR to whole units', () {
+    final dailyBudget = calculateDailyBudget(
+      BudgetType.monthly,
+      100000,
+      DateTime(2026, 7, 15),
+      decimalDigits: 0,
+    );
 
-      expect(dailyBudget, 3225.81);
-    },
-  );
+    expect(dailyBudget, 3225);
+  });
 
-  test(
-    'current_bug_R10_daily_budget_default_keeps_USD_two_decimals_remove_in_PR_1_5',
-    () {
-      final dailyBudget = calculateDailyBudget(
-        BudgetType.monthly,
-        10000,
-        DateTime(2026, 7, 15),
-      );
+  test('daily budget rounds USD at two decimal places', () {
+    final dailyBudget = calculateDailyBudget(
+      BudgetType.monthly,
+      10000,
+      DateTime(2026, 7, 15),
+      decimalDigits: 2,
+    );
 
-      expect(dailyBudget, 322.58);
-    },
-  );
+    expect(dailyBudget, 322.58);
+  });
 
-  test(
-    'current_bug_R10_calendar_KRW_uses_two_decimal_budget_remove_in_PR_1_5',
-    () async {
-      final day = DateTime(2026, 7, 15);
-      final state = await _readCalendarState(
-        user: _monthlyUser(budget: 10000, currencyCode: 'KRW'),
-        selectedDay: day,
-        expenses: {
-          day: [_expense(date: day, amount: 322.5)],
-        },
-      );
+  test('calendar uses zero-decimal KRW threshold', () async {
+    final day = DateTime(2026, 7, 15);
+    final state = await _readCalendarState(
+      user: _monthlyUser(budget: 10000, currencyCode: 'KRW'),
+      selectedDay: day,
+      expenses: {
+        day: [_expense(date: day, amount: 322.5)],
+      },
+    );
 
-      expect(state.calendarCells[day]!.isSuccess, isTrue);
-    },
-  );
+    expect(state.calendarCells[day]!.isSuccess, isFalse);
+  });
 
-  test(
-    'current_bug_R10_calendar_IDR_uses_two_decimal_budget_remove_in_PR_1_5',
-    () async {
-      final day = DateTime(2026, 7, 15);
-      final state = await _readCalendarState(
-        user: _monthlyUser(budget: 100000, currencyCode: 'IDR'),
-        selectedDay: day,
-        expenses: {
-          day: [_expense(date: day, amount: 3225.5)],
-        },
-      );
+  test('calendar uses zero-decimal IDR threshold', () async {
+    final day = DateTime(2026, 7, 15);
+    final state = await _readCalendarState(
+      user: _monthlyUser(budget: 100000, currencyCode: 'IDR'),
+      selectedDay: day,
+      expenses: {
+        day: [_expense(date: day, amount: 3225.5)],
+      },
+    );
 
-      expect(state.calendarCells[day]!.isSuccess, isTrue);
-    },
-  );
+    expect(state.calendarCells[day]!.isSuccess, isFalse);
+  });
 }
 
 Future<CalendarState> _readCalendarState({
@@ -125,6 +114,9 @@ Future<CalendarState> _readCalendarState({
         () => _FixtureExpensesNotifier(expenses),
       ),
       dateManager.overrideWith(() => _FixtureDateManager(selectedDay)),
+      currencyDecimalDigitsProvider.overrideWith(
+        (ref) => _decimalDigitsFor(user.currencyCode),
+      ),
     ],
   );
   try {
@@ -173,6 +165,11 @@ User _monthlyUser({required double budget, required String currencyCode}) {
     currencyCode: currencyCode,
   );
 }
+
+int _decimalDigitsFor(String currencyCode) => switch (currencyCode) {
+  'KRW' || 'IDR' => 0,
+  _ => 2,
+};
 
 Expense _expense({required DateTime date, required double amount}) {
   return Expense(

@@ -6,6 +6,7 @@ import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/core/providers/expenses_provider.dart';
+import 'package:money_fit/core/providers/locale_provider.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/core/theme/app_theme_colors.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
@@ -215,6 +216,7 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
           user.budgetType,
           user.budget,
           today,
+          decimalDigits: ref.watch(currencyDecimalDigitsProvider),
         );
 
         final double budget;
@@ -282,7 +284,12 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
     final todayKey = DateTime(now.year, now.month, now.day);
 
     int streak = 0;
-    final dailyBudget = calculateDailyBudget(user.budgetType, user.budget, now);
+    final dailyBudget = calculateDailyBudget(
+      user.budgetType,
+      user.budget,
+      now,
+      decimalDigits: ref.read(currencyDecimalDigitsProvider),
+    );
     for (int i = 0; ; i++) {
       final date = todayKey.subtract(Duration(days: i));
       if (date.month != now.month) break; // 이번 달만 체크

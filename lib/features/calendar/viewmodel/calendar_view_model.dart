@@ -13,6 +13,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/providers/expenses_provider.dart';
+import 'package:money_fit/core/providers/locale_provider.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/features/calendar/model/model.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
@@ -29,6 +30,7 @@ class CalendarViewModel extends AsyncNotifier<CalendarState> {
       user.budgetType,
       user.budget,
       today,
+      decimalDigits: ref.watch(currencyDecimalDigitsProvider),
     );
 
     final calendarCells = <DateTime, CalendarCellData>{};
