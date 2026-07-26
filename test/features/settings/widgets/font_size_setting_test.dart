@@ -129,7 +129,7 @@ void main() {
 
       expect(find.byType(AlertDialog), findsNothing);
       expect(find.text('Small'), findsOneWidget);
-      expect(prefs.getString('theme_settings'), contains('0.85'));
+      expect(prefs.getString('app_preferences_v1'), contains('0.85'));
     });
 
     testWidgets('font size options have correct scale values', (tester) async {
