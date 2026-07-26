@@ -1,5 +1,7 @@
 import 'package:money_fit/core/database/database_helper.dart';
+import 'package:money_fit/core/error/app_failure.dart';
 import 'package:money_fit/core/models/category_model.dart';
+import 'package:sqflite/sqflite.dart';
 
 /// CategoryRepository의 인터페이스입니다.
 abstract class ICategoryRepository {
@@ -64,11 +66,29 @@ class CategoryRepository implements ICategoryRepository {
   @override
   Future<void> deleteCategory(String id) async {
     final db = await _dbHelper.database;
-    await db.delete(
+    final categories = await db.query(
       'categories',
-      // 기본 카테고리는 삭제할 수 없도록 is_deletable 플래그를 확인합니다.
-      where: 'id = ? AND is_deletable = 1',
+      where: 'id = ?',
       whereArgs: [id],
     );
+    if (categories.isEmpty) {
+      throw NotFoundFailure(resource: 'Category', identifier: id);
+    }
+    if (categories.single['is_deletable'] != 1) {
+      throw const ConstraintFailure(
+        constraint: 'Built-in categories cannot be deleted.',
+      );
+    }
+    final usage = Sqflite.firstIntValue(
+      await db.rawQuery('SELECT COUNT(*) FROM expenses WHERE category_id = ?', [
+        id,
+      ]),
+    );
+    if ((usage ?? 0) > 0) {
+      throw const ConstraintFailure(
+        constraint: 'Categories in use cannot be deleted.',
+      );
+    }
+    await db.delete('categories', where: 'id = ?', whereArgs: [id]);
   }
 }

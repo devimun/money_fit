@@ -79,36 +79,27 @@ void main() {
     },
   );
 
-  test(
-    'current_bug_R11_reset_logs_analytics_before_database_reset_remove_in_PR_5_4',
-    () async {
-      final calls = <String>[];
+  test('reset continues after analytics completes', () async {
+    final calls = <String>[];
 
-      await DataResetService.resetAllData(
-        logReset: _action(calls, 'analytics'),
-        resetDatabase: _action(calls, 'database'),
-      );
+    await DataResetService.resetAllData(
+      logReset: _action(calls, 'analytics'),
+      resetDatabase: _action(calls, 'database'),
+    );
 
-      expect(calls, ['analytics', 'database']);
-    },
-  );
+    expect(calls, ['analytics', 'database']);
+  });
 
-  test(
-    'current_bug_R11_analytics_failure_prevents_database_reset_remove_in_PR_5_4',
-    () async {
-      final calls = <String>[];
+  test('analytics failure does not prevent database reset', () async {
+    final calls = <String>[];
 
-      await expectLater(
-        DataResetService.resetAllData(
-          logReset: _action(calls, 'analytics', error: 'analytics'),
-          resetDatabase: _action(calls, 'database'),
-        ),
-        throwsA('analytics'),
-      );
+    await DataResetService.resetAllData(
+      logReset: _action(calls, 'analytics', error: 'analytics'),
+      resetDatabase: _action(calls, 'database'),
+    );
 
-      expect(calls, ['analytics']);
-    },
-  );
+    expect(calls, ['analytics', 'database']);
+  });
 }
 
 Future<void> Function() _action(

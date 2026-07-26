@@ -45,3 +45,10 @@ class CorruptDataFailure extends AppFailure {
 
   final String resource;
 }
+
+class ConstraintFailure extends AppFailure {
+  const ConstraintFailure({required this.constraint})
+    : super(message: 'Constraint violated: $constraint');
+
+  final String constraint;
+}

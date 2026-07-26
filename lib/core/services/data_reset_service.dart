@@ -10,7 +10,9 @@ class DataResetService {
     DataResetAction? logReset,
     DataResetAction? resetDatabase,
   }) async {
-    await (logReset ?? _logReset)();
+    try {
+      await (logReset ?? _logReset)();
+    } catch (_) {}
     await (resetDatabase ?? _resetDatabase)();
   }
 
