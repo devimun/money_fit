@@ -6,6 +6,7 @@ import 'dart:ui' show Locale;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/config/locale_config.dart';
+import 'package:money_fit/core/foundation/money.dart';
 import 'package:money_fit/core/preferences/app_preferences.dart';
 import 'package:money_fit/core/preferences/preferences_provider.dart';
 
@@ -58,14 +59,22 @@ final currentLocaleProvider = Provider<Locale>((ref) {
   return localeConfig.locale;
 });
 
+/// The persisted ledger currency. It is intentionally derived from its own
+/// preference instead of [localeProvider], so changing application language
+/// does not relabel or re-round money already stored in the ledger.
+final ledgerCurrencyProvider = Provider<LedgerCurrency>((ref) {
+  final code = ref.watch(
+    appPreferencesProvider.select((preferences) => preferences.currencyCode),
+  );
+  return ledgerCurrencyForCode(code);
+});
+
 /// 현재 화폐 심볼 제공
 final currencySymbolProvider = Provider<String>((ref) {
-  final localeConfig = ref.watch(localeProvider);
-  return localeConfig.currencySymbol;
+  return ledgerCurrencySymbol(ref.watch(ledgerCurrencyProvider).code);
 });
 
 /// 현재 화폐 소수점 자릿수 제공
 final currencyDecimalDigitsProvider = Provider<int>((ref) {
-  final localeConfig = ref.watch(localeProvider);
-  return localeConfig.decimalDigits;
+  return ref.watch(ledgerCurrencyProvider).decimalDigits;
 });

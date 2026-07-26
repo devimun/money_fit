@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:money_fit/core/config/locale_config.dart';
 import 'package:money_fit/core/foundation/budget_type.dart';
+import 'package:money_fit/core/config/locale_config.dart';
+import 'package:money_fit/core/providers/locale_provider.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
@@ -25,8 +26,7 @@ class BudgetSetupForm extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final locale = Localizations.localeOf(context);
-    final localeConfig = getLocaleConfig(locale.languageCode);
+    final currency = ref.watch(ledgerCurrencyProvider);
 
     return Form(
       key: formKey,
@@ -90,7 +90,7 @@ class BudgetSetupForm extends ConsumerWidget {
             controller: budgetController,
             keyboardType: TextInputType.numberWithOptions(decimal: true),
             decoration: InputDecoration(
-              suffixText: localeConfig.currencySymbol,
+              suffixText: ledgerCurrencySymbol(currency.code),
               suffixStyle: context.textTheme.labelMedium,
               labelText: selectedType == BudgetType.daily
                   ? l10n.dailyBudgetLabel

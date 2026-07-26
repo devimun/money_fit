@@ -1,6 +1,7 @@
 // 지원되는 언어/화폐 조합을 정의하는 설정 클래스입니다.
 // 14개 언어/화폐 조합을 제공하며, 로케일 관련 유틸리티 함수를 포함합니다.
 import 'package:flutter/material.dart';
+import 'package:money_fit/core/foundation/money.dart';
 
 /// 언어/화폐 조합을 정의하는 불변 설정 클래스
 @immutable
@@ -193,3 +194,28 @@ const LocaleConfig defaultLocaleConfig = LocaleConfig(
   currencyCode: 'USD',
   decimalDigits: 2,
 );
+
+/// Resolves immutable ledger metadata by currency code, not by display locale.
+/// Multiple languages may use the same currency and a language can be changed
+/// without changing the returned value.
+LedgerCurrency ledgerCurrencyForCode(String currencyCode) {
+  final normalized = currencyCode.toUpperCase();
+  final config = supportedLocaleConfigs.firstWhere(
+    (config) => config.currencyCode == normalized,
+    orElse: () => defaultLocaleConfig,
+  );
+  return LedgerCurrency(
+    code: config.currencyCode,
+    decimalDigits: config.decimalDigits,
+  );
+}
+
+String ledgerCurrencySymbol(String currencyCode) {
+  final normalized = currencyCode.toUpperCase();
+  return supportedLocaleConfigs
+      .firstWhere(
+        (config) => config.currencyCode == normalized,
+        orElse: () => defaultLocaleConfig,
+      )
+      .currencySymbol;
+}

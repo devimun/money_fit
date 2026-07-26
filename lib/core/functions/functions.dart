@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:money_fit/core/config/locale_config.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
+import 'package:money_fit/core/widgets/ledger_currency_scope.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 import 'package:money_fit/core/foundation/spending_kind.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -120,9 +121,11 @@ String dateFormatting(BuildContext context, DateTime date) {
 
 String formatCurrencyAdaptive(BuildContext context, double value) {
   final locale = Localizations.localeOf(context);
-  final localeConfig = getLocaleConfig(locale.languageCode);
-  final currencySymbol = localeConfig.currencySymbol;
-  final decimalDigits = localeConfig.decimalDigits;
+  final currency =
+      LedgerCurrencyScope.maybeOf(context) ??
+      ledgerCurrencyForCode(getLocaleConfig(locale.languageCode).currencyCode);
+  final currencySymbol = ledgerCurrencySymbol(currency.code);
+  final decimalDigits = currency.decimalDigits;
 
   // 소수점 자릿수가 0인 통화(KRW, IDR)는 항상 정수로 표시
   if (decimalDigits == 0) {

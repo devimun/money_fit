@@ -5,6 +5,7 @@ import 'package:money_fit/core/config/app_environment.dart';
 import 'package:money_fit/core/config/locale_config.dart';
 import 'package:money_fit/core/providers/locale_provider.dart';
 import 'package:money_fit/core/providers/theme_provider.dart';
+import 'package:money_fit/core/widgets/ledger_currency_scope.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 class MoneyFitApp extends ConsumerWidget {
@@ -17,17 +18,21 @@ class MoneyFitApp extends ConsumerWidget {
     final lightTheme = ref.watch(lightThemeProvider);
     final darkTheme = ref.watch(darkThemeProvider);
     final currentLocale = ref.watch(currentLocaleProvider);
+    final ledgerCurrency = ref.watch(ledgerCurrencyProvider);
 
-    return MaterialApp.router(
-      onGenerateTitle: (context) => AppLocalizations.of(context)!.appName,
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      debugShowCheckedModeBanner: false,
-      routerConfig: router,
-      locale: currentLocale,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: supportedLocales,
+    return LedgerCurrencyScope(
+      currency: ledgerCurrency,
+      child: MaterialApp.router(
+        onGenerateTitle: (context) => AppLocalizations.of(context)!.appName,
+        theme: lightTheme,
+        darkTheme: darkTheme,
+        themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+        debugShowCheckedModeBanner: false,
+        routerConfig: router,
+        locale: currentLocale,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: supportedLocales,
+      ),
     );
   }
 }

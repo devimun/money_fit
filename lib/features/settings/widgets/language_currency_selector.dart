@@ -1,5 +1,5 @@
-// LanguageCurrencySelector - 언어/화폐 선택 바텀시트
-// 14개 언어/화폐 조합 목록을 표시하고 선택 시 콜백을 호출합니다.
+// LanguageCurrencySelector - 언어 선택 바텀시트
+// 화폐는 기존 원장의 의미를 보존하는 별도 설정이므로 여기서 바꾸지 않습니다.
 import 'package:flutter/material.dart';
 import 'package:money_fit/core/config/locale_config.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
@@ -85,12 +85,6 @@ class LanguageCurrencySelector extends StatelessWidget {
         text: config.displayName,
         style: context.textTheme.bodyLarge?.copyWith(
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-        ),
-      ),
-      subtitle: Text(
-        '${config.currencySymbol} (${config.currencyCode})',
-        style: context.textTheme.bodySmall?.copyWith(
-          color: context.colors.textSecondary,
         ),
       ),
       trailing: isSelected
