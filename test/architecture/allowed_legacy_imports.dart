@@ -53,16 +53,6 @@ class LegacyBoundaryAllowance {
 
 const allowedLegacyImports = <LegacyBoundaryAllowance>[
   // core -> feature imports (12 import directives from six legacy files).
-  LegacyBoundaryAllowance(
-    filePath: 'lib/core/services/notification_service.dart',
-    kind: LegacyBoundaryKind.coreToFeatureImport,
-    target:
-        'package:money_fit/features/settings/viewmodel/user_settings_provider.dart',
-    reason: 'Notification permission still writes through settings state.',
-    owner: LegacyOwner.notifications,
-    removalPhase: RemovalPhase.pr5_3,
-  ),
-
   // Direct SDK/database singletons outside main/app composition.
   LegacyBoundaryAllowance(
     filePath: 'lib/core/services/review_prompt_service.dart',
@@ -92,24 +82,6 @@ const allowedLegacyImports = <LegacyBoundaryAllowance>[
   ),
 
   // data/service UI references.
-  LegacyBoundaryAllowance(
-    filePath: 'lib/core/services/notification_service.dart',
-    kind: LegacyBoundaryKind.serviceUiType,
-    target: 'BuildContext',
-    reason: 'Notification permission currently displays a dialog itself.',
-    owner: LegacyOwner.notifications,
-    removalPhase: RemovalPhase.pr5_3,
-    expectedOccurrences: 2,
-  ),
-  LegacyBoundaryAllowance(
-    filePath: 'lib/core/services/notification_service.dart',
-    kind: LegacyBoundaryKind.serviceUiType,
-    target: 'WidgetRef',
-    reason: 'Notification permission currently mutates settings state itself.',
-    owner: LegacyOwner.notifications,
-    removalPhase: RemovalPhase.pr5_3,
-    expectedOccurrences: 2,
-  ),
   LegacyBoundaryAllowance(
     filePath: 'lib/core/services/review_prompt_service.dart',
     kind: LegacyBoundaryKind.serviceUiType,

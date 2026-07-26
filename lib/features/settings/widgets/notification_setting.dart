@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
-import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
+import 'package:money_fit/features/notifications/application/notification_controller.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 class NotificationSetting extends ConsumerWidget {
@@ -13,15 +12,15 @@ class NotificationSetting extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final userSettings = ref.watch(userSettingsProvider);
+    final notificationsEnabled = ref.watch(notificationControllerProvider);
 
-    return userSettings.when(
-      data: (user) {
+    return notificationsEnabled.when(
+      data: (enabled) {
         return buildSwitchItem(
           icon: Icons.notifications_active_outlined,
           iconColor: context.colors.brandPrimary,
           title: l10n.notificationSetting,
-          value: user.notificationsEnabled,
+          value: enabled,
           onChanged: (value) =>
               _handleNotificationToggle(context, ref, value, l10n),
           context: context,
@@ -38,35 +37,31 @@ class NotificationSetting extends ConsumerWidget {
     bool value,
     AppLocalizations l10n,
   ) async {
-    final notifier = ref.read(userSettingsProvider.notifier);
+    final notifier = ref.read(notificationControllerProvider.notifier);
 
     if (value) {
-      // 알림 켜기: 권한 확인 필요
-      final status = await Permission.notification.status;
-
-      if (status.isDenied) {
-        final result = await Permission.notification.request();
-        if (result.isGranted) {
-          await notifier.enableNotifications(l10n);
-        } else {
-          if (context.mounted) {
-            _showPermissionDialog(context, l10n);
-          }
-        }
-      } else if (status.isGranted) {
-        await notifier.enableNotifications(l10n);
-      } else {
-        if (context.mounted) {
-          _showPermissionDialog(context, l10n);
-        }
+      final permission = await notifier.enable(
+        NotificationText(
+          title: l10n.notificationTitleDaily,
+          morning: l10n.notificationBodyMorning,
+          afternoon: l10n.notificationBodyAfternoon,
+          night: l10n.notificationBodyNight,
+        ),
+      );
+      if (permission != NotificationPermissionResult.granted &&
+          context.mounted) {
+        _showPermissionDialog(context, ref, l10n);
       }
     } else {
-      // 알림 끄기: 권한 체크 없이 바로 비활성화
-      await notifier.disableNotifications();
+      await notifier.disable();
     }
   }
 
-  void _showPermissionDialog(BuildContext context, AppLocalizations l10n) {
+  void _showPermissionDialog(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -82,7 +77,9 @@ class NotificationSetting extends ConsumerWidget {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              openAppSettings();
+              ref
+                  .read(notificationControllerProvider.notifier)
+                  .openPermissionSettings();
             },
             child: ResponsiveButtonText(text: l10n.goToSettings),
           ),

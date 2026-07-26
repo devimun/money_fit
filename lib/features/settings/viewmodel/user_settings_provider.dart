@@ -5,20 +5,17 @@ import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/app/composition/repository_providers.dart';
 import 'package:money_fit/core/repositories/user_repository.dart';
-import 'package:money_fit/core/services/notification_service.dart';
 import 'package:money_fit/features/session/application/session_context.dart';
 
-/// 사용자 설정을 관리하는 AsyncNotifier입니다.
-import 'package:money_fit/l10n/app_localizations.dart';
+/// Compatibility state for the remaining v5 user fields. Notification
+/// preferences are owned by NotificationController.
 
 class UserSettingsNotifier extends AsyncNotifier<User> {
   late final UserRepository _userRepository;
-  late final NotificationService _notificationService;
 
   @override
   Future<User> build() async {
     _userRepository = ref.read(userRepositoryProvider);
-    _notificationService = ref.read(notificationServiceProvider);
 
     return await _loadUser();
   }
@@ -64,46 +61,6 @@ class UserSettingsNotifier extends AsyncNotifier<User> {
 
   // Note: toggleDarkMode has been moved to themeModeProvider in theme_provider.dart
   // Dark mode is now managed by ThemeSettings instead of User model
-
-  Future<void> enableNotifications(AppLocalizations l10n) async {
-    final currentUser = state.value;
-    if (currentUser == null) return;
-
-    await _notificationService.scheduleDailyNotifications(l10n);
-    final updatedUser = currentUser.copyWith(
-      notificationsEnabled: true,
-      updatedAt: ref.read(clockProvider).now(),
-    );
-
-    state = AsyncValue.data(updatedUser);
-    try {
-      await _userRepository.updateUser(updatedUser);
-    } catch (e, st) {
-      log('Failed to enable notifications: $e', stackTrace: st);
-      state = AsyncValue.error(e, st);
-      state = AsyncValue.data(currentUser);
-    }
-  }
-
-  Future<void> disableNotifications() async {
-    final currentUser = state.value;
-    if (currentUser == null) return;
-
-    await _notificationService.cancelAllNotifications();
-    final updatedUser = currentUser.copyWith(
-      notificationsEnabled: false,
-      updatedAt: ref.read(clockProvider).now(),
-    );
-
-    state = AsyncValue.data(updatedUser);
-    try {
-      await _userRepository.updateUser(updatedUser);
-    } catch (e, st) {
-      log('Failed to disable notifications: $e', stackTrace: st);
-      state = AsyncValue.error(e, st);
-      state = AsyncValue.data(currentUser);
-    }
-  }
 
   /// 사용자 설정을 초기화합니다.
   Future<void> reset() async {

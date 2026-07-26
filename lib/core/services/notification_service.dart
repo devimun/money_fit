@@ -1,12 +1,7 @@
 import 'dart:developer';
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
-import 'package:money_fit/widgets/custom_notification_dialog.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -67,49 +62,25 @@ class NotificationService {
   //     log('페이로드: ${notification.payload}');
   //   }
   // }
-  Future<void> showNotificationDialog(
-    BuildContext context,
-    WidgetRef ref,
-  ) async {
-    final l10n = AppLocalizations.of(context)!;
-
-    await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return CustomNotificationDialog(
-          onConfirm: () async {
-            Navigator.of(context).pop();
-            await setupNotifications(l10n, ref);
-          },
-          onDeny: () {
-            Navigator.of(context).pop();
-          },
-        );
-      },
+  /// 매일 세 번 알림 예약 (오전 10시, 오후 2시, 오후 8시)
+  Future<void> scheduleDailyNotifications(AppLocalizations l10n) async {
+    await scheduleDailyNotificationsText(
+      title: l10n.notificationTitleDaily,
+      morning: l10n.notificationBodyMorning,
+      afternoon: l10n.notificationBodyAfternoon,
+      night: l10n.notificationBodyNight,
     );
   }
 
-  Future<void> setupNotifications(AppLocalizations l10n, WidgetRef ref) async {
-    log('Requesting notification permission...');
-    final permissionStatus = await Permission.notification.request();
-    log('Notification permission status: ${permissionStatus.toString()}');
-
-    if (permissionStatus.isGranted) {
-      await ref.read(userSettingsProvider.notifier).enableNotifications(l10n);
-      await ref
-          .read(notificationServiceProvider)
-          .scheduleDailyNotifications(l10n);
-    } else if (permissionStatus.isPermanentlyDenied) {
-      await openAppSettings();
-    }
-  }
-
-  /// 매일 세 번 알림 예약 (오전 10시, 오후 2시, 오후 8시)
-  Future<void> scheduleDailyNotifications(AppLocalizations l10n) async {
-    await _scheduleNotification(0, 10, l10n.notificationBodyMorning, l10n);
-    await _scheduleNotification(1, 14, l10n.notificationBodyAfternoon, l10n);
-    await _scheduleNotification(2, 20, l10n.notificationBodyNight, l10n);
+  Future<void> scheduleDailyNotificationsText({
+    required String title,
+    required String morning,
+    required String afternoon,
+    required String night,
+  }) async {
+    await _scheduleNotification(0, 10, title, morning);
+    await _scheduleNotification(1, 14, title, afternoon);
+    await _scheduleNotification(2, 20, title, night);
     log('message: Daily notifications scheduled successfully.');
   }
 
@@ -117,12 +88,12 @@ class NotificationService {
   Future<void> _scheduleNotification(
     int id,
     int hour,
+    String title,
     String body,
-    AppLocalizations l10n,
   ) async {
     await flutterLocalNotificationsPlugin.zonedSchedule(
       id,
-      l10n.notificationTitleDaily,
+      title,
       body,
       _nextInstanceOfHour(hour),
       const NotificationDetails(
@@ -160,8 +131,3 @@ class NotificationService {
     await flutterLocalNotificationsPlugin.cancelAll();
   }
 }
-
-/// Riverpod 프로바이더
-final notificationServiceProvider = Provider<NotificationService>((ref) {
-  return NotificationService();
-});

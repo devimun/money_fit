@@ -8,7 +8,7 @@ import 'package:money_fit/features/home/widgets/home_main_card.dart';
 import 'package:money_fit/features/home/widgets/home_action_buttons.dart';
 import 'package:money_fit/features/session/application/session_context.dart';
 import 'package:money_fit/widgets/custom_notification_dialog.dart';
-import 'package:money_fit/core/services/notification_service.dart';
+import 'package:money_fit/features/notifications/application/notification_controller.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -51,8 +51,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           onConfirm: () async {
             Navigator.of(context).pop();
             await ref
-                .read(notificationServiceProvider)
-                .setupNotifications(l10n, ref);
+                .read(notificationControllerProvider.notifier)
+                .enable(
+                  NotificationText(
+                    title: l10n.notificationTitleDaily,
+                    morning: l10n.notificationBodyMorning,
+                    afternoon: l10n.notificationBodyAfternoon,
+                    night: l10n.notificationBodyNight,
+                  ),
+                );
           },
           onDeny: () {
             Navigator.of(context).pop();
