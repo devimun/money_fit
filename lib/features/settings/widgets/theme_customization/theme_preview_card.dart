@@ -8,17 +8,14 @@ import 'package:money_fit/core/theme/app_theme_generator.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 
 /// Widget that displays a preview of the theme with sample UI elements
-/// 
+///
 /// Features:
 /// - Shows primary color, background, card, and text colors
 /// - Light/Dark mode toggle
 /// - Sample button, card, and text elements
 /// - Real-time updates when color changes
 class ThemePreviewCard extends StatefulWidget {
-  const ThemePreviewCard({
-    required this.seedColor,
-    super.key,
-  });
+  const ThemePreviewCard({required this.seedColor, super.key});
 
   /// Color seed to generate theme preview
   final Color seedColor;
@@ -42,9 +39,7 @@ class _ThemePreviewCardState extends State<ThemePreviewCard> {
       decoration: BoxDecoration(
         color: context.colors.cardBackground,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: context.colors.border.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: context.colors.border.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -58,9 +53,9 @@ class _ThemePreviewCardState extends State<ThemePreviewCard> {
               });
             },
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Preview content
           _PreviewContent(themeColors: themeColors),
         ],
@@ -71,10 +66,7 @@ class _ThemePreviewCardState extends State<ThemePreviewCard> {
 
 /// Header section with light/dark mode toggle
 class _PreviewHeader extends StatelessWidget {
-  const _PreviewHeader({
-    required this.isDarkMode,
-    required this.onToggle,
-  });
+  const _PreviewHeader({required this.isDarkMode, required this.onToggle});
 
   final bool isDarkMode;
   final VoidCallback onToggle;
@@ -87,8 +79,8 @@ class _PreviewHeader extends StatelessWidget {
         Text(
           'Preview',
           style: context.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+            fontWeight: FontWeight.w600,
+          ),
         ),
         Row(
           children: [
@@ -139,14 +131,14 @@ class _PreviewContent extends StatelessWidget {
         children: [
           // Sample Card
           _SampleCard(themeColors: themeColors),
-          
+
           const SizedBox(height: 12),
-          
+
           // Sample Button
           _SampleButton(themeColors: themeColors),
-          
+
           const SizedBox(height: 12),
-          
+
           // Sample Text
           _SampleText(themeColors: themeColors),
         ],
@@ -168,10 +160,7 @@ class _SampleCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: themeColors.cardBackground,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: themeColors.border,
-          width: 1,
-        ),
+        border: Border.all(color: themeColors.border, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -187,10 +176,7 @@ class _SampleCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             'Card content with secondary text',
-            style: TextStyle(
-              color: themeColors.textSecondary,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: themeColors.textSecondary, fontSize: 12),
           ),
         ],
       ),
@@ -248,10 +234,7 @@ class _SampleText extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           'Secondary Text',
-          style: TextStyle(
-            color: themeColors.textSecondary,
-            fontSize: 12,
-          ),
+          style: TextStyle(color: themeColors.textSecondary, fontSize: 12),
         ),
       ],
     );

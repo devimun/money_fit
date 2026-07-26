@@ -19,19 +19,16 @@ void main() {
       prefs = await SharedPreferences.getInstance();
     });
 
-    testWidgets('displays theme color setting with current color',
-        (tester) async {
+    testWidgets('displays theme color setting with current color', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            sharedPreferencesProvider.overrideWithValue(prefs),
-          ],
+          overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
           child: MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            home: const Scaffold(
-              body: ThemeColorSetting(),
-            ),
+            home: const Scaffold(body: ThemeColorSetting()),
           ),
         ),
       );
@@ -45,15 +42,11 @@ void main() {
     testWidgets('shows color picker dialog when tapped', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            sharedPreferencesProvider.overrideWithValue(prefs),
-          ],
+          overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
           child: MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            home: const Scaffold(
-              body: ThemeColorSetting(),
-            ),
+            home: const Scaffold(body: ThemeColorSetting()),
           ),
         ),
       );
@@ -64,21 +57,17 @@ void main() {
 
       // Verify ColorPickerDialog is shown
       expect(find.byType(ColorPickerDialog), findsOneWidget);
-      expect(find.text('테마 색상 선택'), findsOneWidget);
+      expect(find.text('Select Theme Color'), findsOneWidget);
     });
 
     testWidgets('displays color indicator circle', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            sharedPreferencesProvider.overrideWithValue(prefs),
-          ],
+          overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
           child: MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            home: const Scaffold(
-              body: ThemeColorSetting(),
-            ),
+            home: const Scaffold(body: ThemeColorSetting()),
           ),
         ),
       );

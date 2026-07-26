@@ -1,4 +1,3 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/providers/database_provider.dart';
 import 'package:money_fit/core/repositories/category_repository.dart';

@@ -65,5 +65,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'money-fit-2b3f7.firebasestorage.app',
     iosBundleId: 'com.moneyfitapp.app',
   );
-
 }

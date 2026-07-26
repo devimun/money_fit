@@ -89,8 +89,11 @@ class StatisticsModel {
     // 전체 지출을 기준으로 상위 3개 지출을 계산합니다.
     final combinedTotals = Map<String, double>.from(essentialTotals);
     flexTotals.forEach((categoryId, amount) {
-      combinedTotals.update(categoryId, (value) => value + amount,
-          ifAbsent: () => amount);
+      combinedTotals.update(
+        categoryId,
+        (value) => value + amount,
+        ifAbsent: () => amount,
+      );
     });
 
     final totalExpenses = combinedTotals.entries

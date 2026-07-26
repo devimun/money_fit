@@ -22,7 +22,8 @@ class NotificationSetting extends ConsumerWidget {
           iconColor: context.colors.brandPrimary,
           title: l10n.notificationSetting,
           value: user.notificationsEnabled,
-          onChanged: (value) => _handleNotificationToggle(context, ref, value, l10n),
+          onChanged: (value) =>
+              _handleNotificationToggle(context, ref, value, l10n),
           context: context,
         );
       },
@@ -70,7 +71,9 @@ class NotificationSetting extends ConsumerWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: ResponsiveTitleText(text: l10n.notificationPermissionRequired),
-        content: ResponsiveDescriptionText(text: l10n.notificationPermissionDescription),
+        content: ResponsiveDescriptionText(
+          text: l10n.notificationPermissionDescription,
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

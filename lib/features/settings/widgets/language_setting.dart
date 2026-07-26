@@ -57,9 +57,8 @@ class LanguageSetting extends ConsumerWidget {
     await ref.read(localeProvider.notifier).setLocaleConfig(config);
 
     // 2. UserSettings 업데이트 (DB 영속화)
-    await ref.read(userSettingsProvider.notifier).updateLocale(
-          config.languageCode,
-          config.currencyCode,
-        );
+    await ref
+        .read(userSettingsProvider.notifier)
+        .updateLocale(config.languageCode, config.currencyCode);
   }
 }

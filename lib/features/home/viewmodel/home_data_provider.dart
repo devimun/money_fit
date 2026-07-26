@@ -14,10 +14,13 @@ import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dar
 enum SpendingLevel {
   /// 지출 없음 또는 70% 이상 남음 → brandPrimary
   excellent,
+
   /// 50~69% 남음 → green
   good,
+
   /// 1~49% 남음 → orange
   warning,
+
   /// 초과 → red
   exceeded,
 }
@@ -35,7 +38,7 @@ class SpendingStatus {
   });
 
   /// View에서 AppThemeColors를 사용해 색상을 결정합니다.
-  /// 
+  ///
   /// Usage:
   /// ```dart
   /// final color = spendingStatus.getColor(context.colors);

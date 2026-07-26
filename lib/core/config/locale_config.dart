@@ -146,7 +146,20 @@ const List<LocaleConfig> supportedLocaleConfigs = [
 
 /// 필수 지원 언어 코드 목록
 const List<String> requiredLanguageCodes = [
-  'ko', 'en', 'es', 'pl', 'uk', 'cs', 'de', 'it', 'ro', 'sk', 'bg', 'id', 'ms', 'fil',
+  'ko',
+  'en',
+  'es',
+  'pl',
+  'uk',
+  'cs',
+  'de',
+  'it',
+  'ro',
+  'sk',
+  'bg',
+  'id',
+  'ms',
+  'fil',
 ];
 
 /// 언어 코드로 LocaleConfig 조회

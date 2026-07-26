@@ -8,11 +8,11 @@ class ExpenseFormValidator {
   }) {
     if (name.trim().isEmpty) return false;
     if (rawAmount.trim().isEmpty) return false;
-    
+
     final amount = double.tryParse(rawAmount.trim().replaceAll(',', ''));
     if (amount == null || amount <= 0) return false;
     if (selectedCategoryId == null) return false;
-    
+
     return true;
   }
 
@@ -24,11 +24,11 @@ class ExpenseFormValidator {
   }) {
     if (name.trim().isEmpty) return 'Name is empty';
     if (rawAmount.trim().isEmpty) return 'Amount is empty';
-    
+
     final amount = double.tryParse(rawAmount.trim().replaceAll(',', ''));
     if (amount == null || amount <= 0) return 'Amount is invalid';
     if (selectedCategoryId == null) return 'Category is not selected';
-    
+
     return null;
   }
 }

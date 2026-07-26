@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 
 /// Widget that displays preset color options in a grid
-/// 
+///
 /// Shows 8 predefined colors for quick theme selection:
 /// - Brown (default)
 /// - Blue
@@ -88,18 +88,12 @@ class _ColorButton extends StatelessWidget {
           color: color,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected
-                ? context.colors.textPrimary
-                : Colors.transparent,
+            color: isSelected ? context.colors.textPrimary : Colors.transparent,
             width: 3,
           ),
         ),
         child: isSelected
-            ? const Icon(
-                Icons.check,
-                color: Colors.white,
-                size: 32,
-              )
+            ? const Icon(Icons.check, color: Colors.white, size: 32)
             : null,
       ),
     );

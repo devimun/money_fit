@@ -42,7 +42,10 @@ class Category {
       id: json['id'] as String,
       userId: json['user_id'] as String?,
       name: json['name'] as String,
-      type: ExpenseType.values.firstWhere((e) => e.name == json['type'], orElse: () => ExpenseType.n),
+      type: ExpenseType.values.firstWhere(
+        (e) => e.name == json['type'],
+        orElse: () => ExpenseType.n,
+      ),
       isDeletable: json['is_deletable'] is bool
           ? json['is_deletable']
           : json['is_deletable'] == 1,

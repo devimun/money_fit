@@ -70,10 +70,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       width: _currentPage == index ? 24 : 10,
       margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
-        color:
-            _currentPage == index
-                ? context.colors.brandPrimary
-                : context.colors.navUnselected,
+        color: _currentPage == index
+            ? context.colors.brandPrimary
+            : context.colors.navUnselected,
         borderRadius: BorderRadius.circular(5),
       ),
     );

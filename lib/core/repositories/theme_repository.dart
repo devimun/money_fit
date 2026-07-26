@@ -26,7 +26,7 @@ class ThemeRepository {
   }
 
   /// 기존 User.isDarkMode 값으로 ThemeSettings를 마이그레이션합니다.
-  /// 
+  ///
   /// 마이그레이션이 이미 완료되었거나 ThemeSettings가 이미 존재하면 무시합니다.
   Future<bool> migrateFromUserDarkMode(bool userIsDarkMode) async {
     // 이미 마이그레이션 완료된 경우 스킵
@@ -59,12 +59,13 @@ class ThemeRepository {
   ThemeSettings loadSettings() {
     try {
       final String? jsonString = _prefs.getString(_themeSettingsKey);
-      
+
       if (jsonString == null) {
         return ThemeSettings.defaultSettings();
       }
 
-      final Map<String, dynamic> json = jsonDecode(jsonString) as Map<String, dynamic>;
+      final Map<String, dynamic> json =
+          jsonDecode(jsonString) as Map<String, dynamic>;
       return ThemeSettings.fromJson(json);
     } catch (e) {
       // JSON 파싱 실패 시 기본 설정 반환

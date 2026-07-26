@@ -26,7 +26,7 @@ class BasicSettingsSection extends StatelessWidget {
           const LanguageSetting(),
           const DarkModeSetting(),
           const ThemeColorSetting(),
-          const FontSizeSetting()
+          const FontSizeSetting(),
         ]),
       ],
     );

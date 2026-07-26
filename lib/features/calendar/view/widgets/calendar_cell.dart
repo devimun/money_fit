@@ -121,7 +121,9 @@ class CalendarCell extends ConsumerWidget {
             fit: BoxFit.scaleDown,
             child: Text(
               formatCurrencyAdaptive(context, cellData!.essentialTotal),
-              style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),
+              style: context.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w400,
+              ),
             ),
           ),
         ],

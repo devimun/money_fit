@@ -77,51 +77,63 @@ class LightAppColors {
   // ** Primary Colors **
   /// @Deprecated Use context.colors.brandPrimary instead
   static const Color primary = Color(0xFF825A3D);
+
   /// @Deprecated Use context.colors.calendarCellBackground instead
   static const Color primaryLight = Color(0xFFE5E7EB);
 
   // ** Secondary Colors **
   /// @Deprecated Use context.colors.brandSecondary instead
   static const Color secondary = Color(0xFF6B7280);
+
   /// @Deprecated Use context.colors.textSecondary instead
   static const Color secondaryLight = Color(0xFFF3F4F6);
+
   /// @Deprecated Use context.colors.brandSecondary instead
   static const Color secondaryDark = Color(0xFF4B5563);
 
   // ** Accent Colors **
   /// @Deprecated Use context.colors.brandPrimary instead
   static const Color accent = Color(0xFF3B82F6);
+
   /// @Deprecated Use context.colors.error instead
   static const Color accentRed = Color(0xFFEF4444);
 
   // ** Text Colors **
   /// @Deprecated Use context.colors.textPrimary instead
   static const Color textPrimary = Color(0xFF000000);
+
   /// @Deprecated Use context.colors.textSecondary instead
   static const Color textSecondary = Color(0xFF6B7280);
+
   /// @Deprecated Use context.colors.textOnBrand instead
   static const Color textOnPrimary = Color(0xFFFFFFFF);
+
   /// @Deprecated Use context.colors.textOnCard instead
   static const Color textOnSecondary = Color(0xFF1F2937);
 
   // ** Background Colors **
   /// @Deprecated Use context.colors.screenBackground instead
   static const Color background = Color(0xFFF8F8F8);
+
   /// @Deprecated Use context.colors.cardBackground instead
   static const Color backgroundComponent = Color(0xFFFFFFFF);
+
   /// @Deprecated Use context.colors.calendarCellBackground instead
   static const Color calendarCellColor = Color(0xffF3F4F6);
 
   // ** Border Colors **
   /// @Deprecated Use context.colors.border instead
   static const Color border = Color(0xFFE5E7EB);
+
   /// @Deprecated Use context.colors.border instead
   static const Color borderLight = Color(0xFFF3F4F6);
+
   /// @Deprecated Use context.colors.border instead
   static const Color borderDark = Color(0xFFD1D5DB);
 
   // ** Other Colors **
   static const Color transparent = Colors.transparent;
+
   /// @Deprecated Use context.colors.overlay instead
   static const Color overlay = Color(0x4D000000);
 }
@@ -137,49 +149,60 @@ class DarkAppColors {
   // ** Primary Colors **
   /// @Deprecated Use context.colors.brandPrimary instead
   static const Color primary = Color(0xFFB8956B);
+
   /// @Deprecated Use context.colors.calendarCellBackground instead
   static const Color primaryLight = Color(0xFF374151);
 
   // ** Secondary Colors **
   /// @Deprecated Use context.colors.brandSecondary instead
   static const Color secondary = Color(0xFF9CA3AF);
+
   /// @Deprecated Use context.colors.textSecondary instead
   static const Color secondaryLight = Color(0xFF4B5563);
+
   /// @Deprecated Use context.colors.brandSecondary instead
   static const Color secondaryDark = Color(0xFF6B7280);
 
   // ** Accent Colors **
   /// @Deprecated Use context.colors.brandPrimary instead
   static const Color accent = Color(0xFF60A5FA);
+
   /// @Deprecated Use context.colors.error instead
   static const Color accentRed = Color(0xFFF87171);
 
   // ** Text Colors **
   /// @Deprecated Use context.colors.textPrimary instead
   static const Color textPrimary = Color(0xFFF9FAFB);
+
   /// @Deprecated Use context.colors.textSecondary instead
   static const Color textSecondary = Color(0xFFD1D5DB);
+
   /// @Deprecated Use context.colors.textOnBrand instead
   static const Color textOnPrimary = Color(0xFF111827);
+
   /// @Deprecated Use context.colors.textOnCard instead
   static const Color textOnSecondary = Color(0xFFF9FAFB);
 
   // ** Background Colors **
   /// @Deprecated Use context.colors.screenBackground instead
   static const Color background = Color(0xFF111827);
+
   /// @Deprecated Use context.colors.cardBackground instead
   static const Color backgroundComponent = Color(0xFF1F2937);
 
   // ** Border Colors **
   /// @Deprecated Use context.colors.border instead
   static const Color border = Color(0xFF374151);
+
   /// @Deprecated Use context.colors.border instead
   static const Color borderLight = Color(0xFF4B5563);
+
   /// @Deprecated Use context.colors.border instead
   static const Color borderDark = Color(0xFF6B7280);
 
   // ** Other Colors **
   static const Color transparent = Colors.transparent;
+
   /// @Deprecated Use context.colors.overlay instead
   static const Color overlay = Color(0x4D000000);
 }

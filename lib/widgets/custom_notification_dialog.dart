@@ -25,10 +25,7 @@ class CustomNotificationDialog extends StatelessWidget {
     );
   }
 
-  Widget contentBox(
-    BuildContext context,
-    AppLocalizations l10n,
-  ) {
+  Widget contentBox(BuildContext context, AppLocalizations l10n) {
     return Container(
       padding: EdgeInsets.all(30),
       decoration: BoxDecoration(
@@ -69,9 +66,7 @@ class CustomNotificationDialog extends StatelessWidget {
                   onPressed: onDeny,
                   child: ResponsiveButtonText(
                     text: l10n.notificationDialogDeny,
-                    style: TextStyle(
-                      color: context.colors.textSecondary,
-                    ),
+                    style: TextStyle(color: context.colors.textSecondary),
                   ),
                 ),
               ),

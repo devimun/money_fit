@@ -5,6 +5,16 @@ import 'package:money_fit/features/settings/widgets/theme_customization/hsv_colo
 import 'package:money_fit/features/settings/widgets/theme_customization/preset_colors_grid.dart';
 import 'package:money_fit/features/settings/widgets/theme_customization/recent_colors_grid.dart';
 import 'package:money_fit/features/settings/widgets/theme_customization/theme_preview_card.dart';
+import 'package:money_fit/l10n/app_localizations.dart';
+
+Widget buildLocalizedTestApp({required Widget home}) {
+  return MaterialApp(
+    locale: const Locale('ko'),
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
+    home: home,
+  );
+}
 
 void main() {
   group('ColorPickerDialog', () {
@@ -16,7 +26,7 @@ void main() {
       ];
 
       await tester.pumpWidget(
-        MaterialApp(
+        buildLocalizedTestApp(
           home: Scaffold(
             body: ColorPickerDialog(
               initialColor: initialColor,
@@ -52,7 +62,7 @@ void main() {
       const List<Color> recentColors = [];
 
       await tester.pumpWidget(
-        MaterialApp(
+        buildLocalizedTestApp(
           home: Scaffold(
             body: ColorPickerDialog(
               initialColor: initialColor,
@@ -72,14 +82,15 @@ void main() {
       expect(find.text('자유 선택'), findsOneWidget);
     });
 
-    testWidgets('updates selected color when preset color is tapped',
-        (tester) async {
+    testWidgets('updates selected color when preset color is tapped', (
+      tester,
+    ) async {
       const Color initialColor = Color(0xFF1976D2);
       Color? selectedColor;
       List<Color>? updatedFavorites;
 
       await tester.pumpWidget(
-        MaterialApp(
+        buildLocalizedTestApp(
           home: Scaffold(
             body: ColorPickerDialog(
               initialColor: initialColor,
@@ -108,7 +119,7 @@ void main() {
       const Color initialColor = Color(0xFF1976D2);
 
       await tester.pumpWidget(
-        MaterialApp(
+        buildLocalizedTestApp(
           home: Scaffold(
             body: Builder(
               builder: (context) => ElevatedButton(
@@ -148,7 +159,7 @@ void main() {
       const Color initialColor = Color(0xFF1976D2);
 
       await tester.pumpWidget(
-        MaterialApp(
+        buildLocalizedTestApp(
           home: Scaffold(
             body: Builder(
               builder: (context) => ElevatedButton(
@@ -186,15 +197,13 @@ void main() {
 
     testWidgets('adds selected color to favorites on confirm', (tester) async {
       const Color initialColor = Color(0xFF1976D2);
-      final List<Color> recentColors = [
-        const Color(0xFF388E3C),
-      ];
+      final List<Color> recentColors = [const Color(0xFF388E3C)];
 
       Color? selectedColor;
       List<Color>? updatedFavorites;
 
       await tester.pumpWidget(
-        MaterialApp(
+        buildLocalizedTestApp(
           home: Scaffold(
             body: ColorPickerDialog(
               initialColor: initialColor,
@@ -229,7 +238,7 @@ void main() {
       List<Color>? updatedFavorites;
 
       await tester.pumpWidget(
-        MaterialApp(
+        buildLocalizedTestApp(
           home: Scaffold(
             body: ColorPickerDialog(
               initialColor: initialColor,
@@ -253,8 +262,9 @@ void main() {
       expect(updatedFavorites!.first, equals(initialColor));
     });
 
-    testWidgets('removes duplicate color before adding to favorites',
-        (tester) async {
+    testWidgets('removes duplicate color before adding to favorites', (
+      tester,
+    ) async {
       const Color duplicateColor = Color(0xFF1976D2);
       final List<Color> recentColors = [
         duplicateColor,
@@ -265,7 +275,7 @@ void main() {
       List<Color>? updatedFavorites;
 
       await tester.pumpWidget(
-        MaterialApp(
+        buildLocalizedTestApp(
           home: Scaffold(
             body: ColorPickerDialog(
               initialColor: duplicateColor,
@@ -297,7 +307,7 @@ void main() {
       const Color initialColor = Color(0xFF1976D2);
 
       await tester.pumpWidget(
-        MaterialApp(
+        buildLocalizedTestApp(
           home: Scaffold(
             body: ColorPickerDialog(
               initialColor: initialColor,

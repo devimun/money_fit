@@ -22,7 +22,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     try {
       // appInitializer에서 homeViewModelProvider도 초기화됨
       await ref.read(appInitializerProvider.future);
-      
+
       // 이미 초기화되었으므로 동기적으로 현재 값 읽기
       final homeState = ref.read(homeViewModelProvider).valueOrNull;
 

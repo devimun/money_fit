@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 
 /// Widget that displays recently used colors in a grid
-/// 
+///
 /// Retrieves colors from ThemeSettings.favoriteColors and displays
 /// up to 8 most recent colors. If no colors exist, the widget is hidden.
 class RecentColorsGrid extends StatelessWidget {
@@ -82,18 +82,12 @@ class _ColorButton extends StatelessWidget {
           color: color,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected
-                ? context.colors.textPrimary
-                : Colors.transparent,
+            color: isSelected ? context.colors.textPrimary : Colors.transparent,
             width: 3,
           ),
         ),
         child: isSelected
-            ? const Icon(
-                Icons.check,
-                color: Colors.white,
-                size: 32,
-              )
+            ? const Icon(Icons.check, color: Colors.white, size: 32)
             : null,
       ),
     );

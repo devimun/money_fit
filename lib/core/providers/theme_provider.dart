@@ -19,7 +19,8 @@ final themeRepositoryProvider = Provider<ThemeRepository>((ref) {
 
 /// StateNotifier for managing theme seed color
 class ThemeSeedColorNotifier extends StateNotifier<Color> {
-  ThemeSeedColorNotifier(this._repository) : super(AppThemeGenerator.defaultSeed) {
+  ThemeSeedColorNotifier(this._repository)
+    : super(AppThemeGenerator.defaultSeed) {
     _loadSeedColor();
   }
 
@@ -36,7 +37,7 @@ class ThemeSeedColorNotifier extends StateNotifier<Color> {
       colorSeedValue: color.toARGB32(),
       favoriteColors: favoriteColors.map((c) => c.toARGB32()).toList(),
     );
-    
+
     final success = await _repository.saveSettings(updatedSettings);
     if (success) {
       state = color;
@@ -48,7 +49,6 @@ class ThemeSeedColorNotifier extends StateNotifier<Color> {
     return settings.favoriteColorObjects;
   }
 }
-
 
 /// StateNotifier for managing dark mode state
 class ThemeModeNotifier extends StateNotifier<bool> {
@@ -75,10 +75,8 @@ class ThemeModeNotifier extends StateNotifier<bool> {
 
   Future<void> toggleDarkMode() async {
     final settings = _repository.loadSettings();
-    final updatedSettings = settings.copyWith(
-      isDarkMode: !state,
-    );
-    
+    final updatedSettings = settings.copyWith(isDarkMode: !state);
+
     final success = await _repository.saveSettings(updatedSettings);
     if (success) {
       state = !state;
@@ -87,10 +85,8 @@ class ThemeModeNotifier extends StateNotifier<bool> {
 
   Future<void> setDarkMode(bool isDark) async {
     final settings = _repository.loadSettings();
-    final updatedSettings = settings.copyWith(
-      isDarkMode: isDark,
-    );
-    
+    final updatedSettings = settings.copyWith(isDarkMode: isDark);
+
     final success = await _repository.saveSettings(updatedSettings);
     if (success) {
       state = isDark;
@@ -119,10 +115,10 @@ class FontSizeNotifier extends StateNotifier<double> {
     if (!FontSizeOption.isValidScale(scale)) {
       scale = 1.0; // 기본값으로 폴백
     }
-    
+
     final settings = _repository.loadSettings();
     final updatedSettings = settings.copyWith(fontSizeScale: scale);
-    
+
     final success = await _repository.saveSettings(updatedSettings);
     if (success) {
       state = scale;
@@ -136,10 +132,11 @@ class FontSizeNotifier extends StateNotifier<double> {
 }
 
 /// Provides the seed color for theme generation with state management
-final themeSeedColorProvider = StateNotifierProvider<ThemeSeedColorNotifier, Color>((ref) {
-  final repository = ref.watch(themeRepositoryProvider);
-  return ThemeSeedColorNotifier(repository);
-});
+final themeSeedColorProvider =
+    StateNotifierProvider<ThemeSeedColorNotifier, Color>((ref) {
+      final repository = ref.watch(themeRepositoryProvider);
+      return ThemeSeedColorNotifier(repository);
+    });
 
 /// Provides the dark mode state with state management
 final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, bool>((ref) {
@@ -153,31 +150,28 @@ final fontSizeProvider = StateNotifierProvider<FontSizeNotifier, double>((ref) {
   return FontSizeNotifier(repository);
 });
 
-
 /// Provides the light theme with AppThemeColors extension
 final lightThemeProvider = Provider<ThemeData>((ref) {
   final seedColor = ref.watch(themeSeedColorProvider);
   final fontSizeScale = ref.watch(fontSizeProvider);
   final appColors = AppThemeGenerator.lightFromSeed(seedColor);
-  
+
   return ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
     scaffoldBackgroundColor: appColors.screenBackground,
     primaryColor: appColors.brandPrimary,
     fontFamily: 'Pretendard Variable',
-    
+
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         backgroundColor: appColors.selectedButtonBackground,
         foregroundColor: appColors.textOnBrand,
         minimumSize: const Size(double.maxFinite, 50),
       ),
     ),
-    
+
     colorScheme: ColorScheme.light(
       primary: appColors.brandPrimary,
       secondary: appColors.brandSecondary,
@@ -188,9 +182,13 @@ final lightThemeProvider = Provider<ThemeData>((ref) {
       onSurface: appColors.textPrimary,
       onError: appColors.textOnBrand,
     ),
-    
-    textTheme: _buildTextTheme(appColors.textPrimary, appColors.textSecondary, fontSizeScale),
-    
+
+    textTheme: _buildTextTheme(
+      appColors.textPrimary,
+      appColors.textSecondary,
+      fontSizeScale,
+    ),
+
     appBarTheme: AppBarTheme(
       backgroundColor: appColors.cardBackground,
       centerTitle: false,
@@ -202,7 +200,7 @@ final lightThemeProvider = Provider<ThemeData>((ref) {
       ),
       iconTheme: IconThemeData(color: appColors.textPrimary),
     ),
-    
+
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: appColors.screenBackground,
@@ -224,7 +222,7 @@ final lightThemeProvider = Provider<ThemeData>((ref) {
         borderSide: BorderSide(color: appColors.error),
       ),
     ),
-    
+
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: appColors.cardBackground,
       selectedItemColor: appColors.brandPrimary,
@@ -240,31 +238,28 @@ final lightThemeProvider = Provider<ThemeData>((ref) {
   ).withAppColors(appColors);
 });
 
-
 /// Provides the dark theme with AppThemeColors extension
 final darkThemeProvider = Provider<ThemeData>((ref) {
   final seedColor = ref.watch(themeSeedColorProvider);
   final fontSizeScale = ref.watch(fontSizeProvider);
   final appColors = AppThemeGenerator.darkFromSeed(seedColor);
-  
+
   return ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
     scaffoldBackgroundColor: appColors.screenBackground,
     primaryColor: appColors.brandPrimary,
     fontFamily: 'Pretendard Variable',
-    
+
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         backgroundColor: appColors.selectedButtonBackground,
         foregroundColor: appColors.textOnBrand,
         minimumSize: const Size(double.maxFinite, 50),
       ),
     ),
-    
+
     colorScheme: ColorScheme.dark(
       primary: appColors.brandPrimary,
       secondary: appColors.brandSecondary,
@@ -276,9 +271,13 @@ final darkThemeProvider = Provider<ThemeData>((ref) {
       onError: appColors.textOnBrand,
       outline: appColors.border,
     ),
-    
-    textTheme: _buildTextTheme(appColors.textPrimary, appColors.textSecondary, fontSizeScale),
-    
+
+    textTheme: _buildTextTheme(
+      appColors.textPrimary,
+      appColors.textSecondary,
+      fontSizeScale,
+    ),
+
     appBarTheme: AppBarTheme(
       backgroundColor: appColors.screenBackground,
       elevation: 1,
@@ -289,7 +288,7 @@ final darkThemeProvider = Provider<ThemeData>((ref) {
       ),
       iconTheme: IconThemeData(color: appColors.textPrimary),
     ),
-    
+
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: appColors.cardBackground,
@@ -311,7 +310,7 @@ final darkThemeProvider = Provider<ThemeData>((ref) {
         borderSide: BorderSide(color: appColors.error),
       ),
     ),
-    
+
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: appColors.cardBackground,
       selectedItemColor: appColors.brandPrimary,
@@ -328,7 +327,11 @@ final darkThemeProvider = Provider<ThemeData>((ref) {
 });
 
 /// Helper function to build TextTheme with font size scale
-TextTheme _buildTextTheme(Color primaryColor, Color secondaryColor, double fontSizeScale) {
+TextTheme _buildTextTheme(
+  Color primaryColor,
+  Color secondaryColor,
+  double fontSizeScale,
+) {
   return TextTheme(
     displayLarge: AppTextStyles.h1.copyWith(
       color: primaryColor,

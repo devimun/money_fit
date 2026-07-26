@@ -48,8 +48,9 @@ class AnimatedCircularBudget extends StatelessWidget {
                     children: [
                       Text(
                         l10n.remainingAmount,
-                        style: context.textTheme.displaySmall
-                            ?.copyWith(color: context.colors.textSecondary),
+                        style: context.textTheme.displaySmall?.copyWith(
+                          color: context.colors.textSecondary,
+                        ),
                       ),
                       SizedBox(height: 8),
                       Text(

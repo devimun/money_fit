@@ -12,7 +12,7 @@ import 'package:money_fit/features/settings/widgets/theme_customization/theme_pr
 import 'package:money_fit/l10n/app_localizations.dart';
 
 /// Dialog for selecting theme colors
-/// 
+///
 /// Features:
 /// - Preset colors section (8 predefined colors)
 /// - Recent colors section (up to 8 most recent, conditional)
@@ -36,7 +36,7 @@ class ColorPickerDialog extends StatefulWidget {
   /// Callback when color is confirmed
   /// Returns the selected color and updated favorite colors list
   final void Function(Color selectedColor, List<Color> updatedFavorites)
-      onColorSelected;
+  onColorSelected;
 
   @override
   State<ColorPickerDialog> createState() => _ColorPickerDialogState();
@@ -63,9 +63,7 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
     final List<Color> updated = List.from(widget.recentColors);
 
     // Remove if already exists
-    updated.removeWhere(
-      (color) => color.toARGB32() == newColor.toARGB32(),
-    );
+    updated.removeWhere((color) => color.toARGB32() == newColor.toARGB32());
 
     // Add to front
     updated.insert(0, newColor);
@@ -91,7 +89,7 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Dialog(
       child: Container(
         constraints: const BoxConstraints(maxWidth: 500, maxHeight: 700),
@@ -104,10 +102,7 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
             // Content (scrollable)
             Expanded(
               child: ScrollbarTheme(
-                data: ScrollbarThemeData(
-                  crossAxisMargin: 4,
-                  mainAxisMargin: 8,
-                ),
+                data: ScrollbarThemeData(crossAxisMargin: 4, mainAxisMargin: 8),
                 child: Scrollbar(
                   controller: _scrollController,
                   thumbVisibility: true,
@@ -115,32 +110,17 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
                     controller: _scrollController,
                     padding: const EdgeInsets.all(24),
                     child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Theme Preview
-                      ThemePreviewCard(seedColor: _selectedColor),
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Theme Preview
+                        ThemePreviewCard(seedColor: _selectedColor),
 
-                      const SizedBox(height: 24),
-
-                      // Preset Colors Section
-                      _SectionTitle(title: l10n.quickSelect),
-                      const SizedBox(height: 12),
-                      PresetColorsGrid(
-                        selectedColor: _selectedColor,
-                        onColorSelected: (color) {
-                          setState(() {
-                            _selectedColor = color;
-                          });
-                        },
-                      ),
-
-                      // Recent Colors Section (conditional)
-                      if (widget.recentColors.isNotEmpty) ...[
                         const SizedBox(height: 24),
-                        _SectionTitle(title: l10n.recentColors),
+
+                        // Preset Colors Section
+                        _SectionTitle(title: l10n.quickSelect),
                         const SizedBox(height: 12),
-                        RecentColorsGrid(
-                          recentColors: widget.recentColors,
+                        PresetColorsGrid(
                           selectedColor: _selectedColor,
                           onColorSelected: (color) {
                             setState(() {
@@ -148,33 +128,45 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
                             });
                           },
                         ),
+
+                        // Recent Colors Section (conditional)
+                        if (widget.recentColors.isNotEmpty) ...[
+                          const SizedBox(height: 24),
+                          _SectionTitle(title: l10n.recentColors),
+                          const SizedBox(height: 12),
+                          RecentColorsGrid(
+                            recentColors: widget.recentColors,
+                            selectedColor: _selectedColor,
+                            onColorSelected: (color) {
+                              setState(() {
+                                _selectedColor = color;
+                              });
+                            },
+                          ),
+                        ],
+
+                        const SizedBox(height: 24),
+
+                        // HSV Color Picker Section
+                        _SectionTitle(title: l10n.customSelect),
+                        const SizedBox(height: 12),
+                        HSVColorPicker(
+                          initialColor: _selectedColor,
+                          onColorChanged: (color) {
+                            setState(() {
+                              _selectedColor = color;
+                            });
+                          },
+                        ),
                       ],
-
-                      const SizedBox(height: 24),
-
-                      // HSV Color Picker Section
-                      _SectionTitle(title: l10n.customSelect),
-                      const SizedBox(height: 12),
-                      HSVColorPicker(
-                        initialColor: _selectedColor,
-                        onColorChanged: (color) {
-                          setState(() {
-                            _selectedColor = color;
-                          });
-                        },
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
 
             // Footer with action buttons
-            _DialogFooter(
-              onCancel: _handleCancel,
-              onConfirm: _handleConfirm,
-            ),
+            _DialogFooter(onCancel: _handleCancel, onConfirm: _handleConfirm),
           ],
         ),
       ),
@@ -191,7 +183,7 @@ class _DialogHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
@@ -208,8 +200,8 @@ class _DialogHeader extends StatelessWidget {
             child: ResponsiveTitleText(
               text: l10n.selectThemeColor,
               style: context.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           IconButton(
@@ -234,18 +226,15 @@ class _SectionTitle extends StatelessWidget {
     return ResponsiveTitleText(
       text: title,
       style: context.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+        fontWeight: FontWeight.w600,
+      ),
     );
   }
 }
 
 /// Dialog footer with cancel and confirm buttons
 class _DialogFooter extends StatelessWidget {
-  const _DialogFooter({
-    required this.onCancel,
-    required this.onConfirm,
-  });
+  const _DialogFooter({required this.onCancel, required this.onConfirm});
 
   final VoidCallback onCancel;
   final VoidCallback onConfirm;
@@ -253,14 +242,12 @@ class _DialogFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         border: Border(
-          top: BorderSide(
-            color: context.colors.border.withValues(alpha: 0.2),
-          ),
+          top: BorderSide(color: context.colors.border.withValues(alpha: 0.2)),
         ),
       ),
       child: Row(

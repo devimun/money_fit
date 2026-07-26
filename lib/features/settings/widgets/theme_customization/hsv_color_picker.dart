@@ -7,7 +7,7 @@ import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 
 /// Widget that provides HSV (Hue, Saturation, Value) color selection
-/// 
+///
 /// Features:
 /// - Hue slider (0-360 degrees)
 /// - Saturation slider (0-100%)
@@ -63,9 +63,9 @@ class _HSVColorPickerState extends State<HSVColorPicker> {
       children: [
         // Color Preview
         _ColorPreview(color: _hsvColor.toColor()),
-        
+
         const SizedBox(height: 24),
-        
+
         // Hue Slider
         _SliderSection(
           label: 'Hue',
@@ -78,9 +78,9 @@ class _HSVColorPickerState extends State<HSVColorPicker> {
           },
           gradientColors: _buildHueGradient(),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Saturation Slider
         _SliderSection(
           label: 'Saturation',
@@ -96,9 +96,9 @@ class _HSVColorPickerState extends State<HSVColorPicker> {
             HSVColor.fromAHSV(1, _hsvColor.hue, 1, _hsvColor.value).toColor(),
           ],
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Value/Brightness Slider
         _SliderSection(
           label: 'Brightness',
@@ -110,10 +110,18 @@ class _HSVColorPickerState extends State<HSVColorPicker> {
             _updateColor(_hsvColor.withValue(value / 100));
           },
           gradientColors: [
-            HSVColor.fromAHSV(1, _hsvColor.hue, _hsvColor.saturation, 0)
-                .toColor(),
-            HSVColor.fromAHSV(1, _hsvColor.hue, _hsvColor.saturation, 1)
-                .toColor(),
+            HSVColor.fromAHSV(
+              1,
+              _hsvColor.hue,
+              _hsvColor.saturation,
+              0,
+            ).toColor(),
+            HSVColor.fromAHSV(
+              1,
+              _hsvColor.hue,
+              _hsvColor.saturation,
+              1,
+            ).toColor(),
           ],
         ),
       ],
@@ -201,9 +209,9 @@ class _SliderSection extends StatelessWidget {
             ),
           ],
         ),
-        
+
         const SizedBox(height: 8),
-        
+
         // Slider with gradient background
         Stack(
           alignment: Alignment.center,
@@ -220,7 +228,7 @@ class _SliderSection extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             // Slider
             SliderTheme(
               data: SliderTheme.of(context).copyWith(
@@ -229,13 +237,13 @@ class _SliderSection extends StatelessWidget {
                   enabledThumbRadius: 12,
                   elevation: 4,
                 ),
-                overlayShape: const RoundSliderOverlayShape(
-                  overlayRadius: 20,
-                ),
+                overlayShape: const RoundSliderOverlayShape(overlayRadius: 20),
                 activeTrackColor: Colors.transparent,
                 inactiveTrackColor: Colors.transparent,
                 thumbColor: Colors.white,
-                overlayColor: context.colors.brandPrimary.withValues(alpha: 0.2),
+                overlayColor: context.colors.brandPrimary.withValues(
+                  alpha: 0.2,
+                ),
               ),
               child: Slider(
                 value: value,

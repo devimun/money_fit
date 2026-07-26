@@ -94,9 +94,9 @@ class MainBottomNavBar extends ConsumerWidget {
 
     final color = isSelected
         ? (theme.bottomNavigationBarTheme.selectedItemColor ??
-            colorScheme.primary)
+              colorScheme.primary)
         : (theme.bottomNavigationBarTheme.unselectedItemColor ??
-            colorScheme.onSurface.withValues(alpha: 0.6));
+              colorScheme.onSurface.withValues(alpha: 0.6));
 
     return Expanded(
       child: InkWell(
@@ -105,11 +105,7 @@ class MainBottomNavBar extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              color: color,
-              size: 24,
-            ),
+            Icon(icon, color: color, size: 24),
             const SizedBox(height: 4),
             ResponsiveNavText(
               text: label,
