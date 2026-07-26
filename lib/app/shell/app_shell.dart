@@ -1,28 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:money_fit/core/providers/navigation_provider.dart';
 import 'package:money_fit/core/services/ad_service.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 class AppShell extends StatelessWidget {
-  const AppShell({required this.child, super.key});
+  const AppShell({required this.navigationShell, super.key});
 
-  final Widget child;
+  final StatefulNavigationShell navigationShell;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: child, bottomNavigationBar: const MainBottomNavBar());
+    return Scaffold(
+      body: navigationShell,
+      bottomNavigationBar: MainBottomNavBar(navigationShell: navigationShell),
+    );
   }
 }
 
-class MainBottomNavBar extends ConsumerWidget {
-  const MainBottomNavBar({super.key});
+class MainBottomNavBar extends StatelessWidget {
+  const MainBottomNavBar({required this.navigationShell, super.key});
+
+  final StatefulNavigationShell navigationShell;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final currentIndex = ref.watch(navigationIndexProvider);
+  Widget build(BuildContext context) {
+    final currentIndex = navigationShell.currentIndex;
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
 
@@ -45,7 +48,6 @@ class MainBottomNavBar extends ConsumerWidget {
             children: [
               _buildNavItem(
                 context: context,
-                ref: ref,
                 index: 0,
                 icon: Icons.home,
                 label: l10n.home,
@@ -53,7 +55,6 @@ class MainBottomNavBar extends ConsumerWidget {
               ),
               _buildNavItem(
                 context: context,
-                ref: ref,
                 index: 1,
                 icon: Icons.calendar_today,
                 label: l10n.calendar,
@@ -61,7 +62,6 @@ class MainBottomNavBar extends ConsumerWidget {
               ),
               _buildNavItem(
                 context: context,
-                ref: ref,
                 index: 2,
                 icon: Icons.assessment_outlined,
                 label: l10n.stats,
@@ -69,7 +69,6 @@ class MainBottomNavBar extends ConsumerWidget {
               ),
               _buildNavItem(
                 context: context,
-                ref: ref,
                 index: 3,
                 icon: Icons.receipt_long,
                 label: l10n.expense,
@@ -77,7 +76,6 @@ class MainBottomNavBar extends ConsumerWidget {
               ),
               _buildNavItem(
                 context: context,
-                ref: ref,
                 index: 4,
                 icon: Icons.settings,
                 label: l10n.settings,
@@ -92,7 +90,6 @@ class MainBottomNavBar extends ConsumerWidget {
 
   Widget _buildNavItem({
     required BuildContext context,
-    required WidgetRef ref,
     required int index,
     required IconData icon,
     required String label,
@@ -110,7 +107,7 @@ class MainBottomNavBar extends ConsumerWidget {
 
     return Expanded(
       child: InkWell(
-        onTap: () => _onTap(context, ref, index, currentIndex),
+        onTap: () => _onTap(index, currentIndex),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -128,33 +125,11 @@ class MainBottomNavBar extends ConsumerWidget {
     );
   }
 
-  void _onTap(
-    BuildContext context,
-    WidgetRef ref,
-    int index,
-    int currentIndex,
-  ) {
+  void _onTap(int index, int currentIndex) {
     if (index == currentIndex) return;
-    ref.read(navigationIndexProvider.notifier).state = index;
     if ([1, 2, 3].contains(index)) {
       InterstitialAdManager.instance.logActionAndShowAd();
     }
-    switch (index) {
-      case 0:
-        context.go('/home');
-        break;
-      case 1:
-        context.go('/calendar');
-        break;
-      case 2:
-        context.go('/stats');
-        break;
-      case 3:
-        context.go('/expense_list');
-        break;
-      case 4:
-        context.go('/settings');
-        break;
-    }
+    navigationShell.goBranch(index, initialLocation: index == currentIndex);
   }
 }

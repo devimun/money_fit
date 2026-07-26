@@ -80,58 +80,77 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           child: const BudgetSetupScreen(),
         ),
       ),
-      ShellRoute(
-        builder: (context, state, child) {
-          return AppShell(child: child);
-        },
-        routes: [
-          GoRoute(
-            path: '/home',
-            name: 'HomeScreen',
-            pageBuilder: (context, state) {
-              bool showNoti = false;
-              final extras = state.extra as Map<String, dynamic>?;
-              if (extras != null) {
-                showNoti = extras['showNotificationPrompt'] == true;
-              }
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            AppShell(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/home',
+                name: 'HomeScreen',
+                pageBuilder: (context, state) {
+                  bool showNoti = false;
+                  final extras = state.extra as Map<String, dynamic>?;
+                  if (extras != null) {
+                    showNoti = extras['showNotificationPrompt'] == true;
+                  }
 
-              return NoTransitionPage(
-                key: state.pageKey,
-                child: HomeScreen(showNotificationPrompt: showNoti),
-              );
-            },
+                  return NoTransitionPage(
+                    key: state.pageKey,
+                    child: HomeScreen(showNotificationPrompt: showNoti),
+                  );
+                },
+              ),
+            ],
           ),
-          GoRoute(
-            path: '/calendar',
-            name: 'CalendarScreen',
-            pageBuilder: (context, state) => NoTransitionPage(
-              key: state.pageKey,
-              child: const CalendarScreen(),
-            ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/calendar',
+                name: 'CalendarScreen',
+                pageBuilder: (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const CalendarScreen(),
+                ),
+              ),
+            ],
           ),
-          GoRoute(
-            path: '/stats',
-            name: 'StatisticsScreen',
-            pageBuilder: (context, state) => NoTransitionPage(
-              key: state.pageKey,
-              child: const StatisticsScreen(),
-            ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/stats',
+                name: 'StatisticsScreen',
+                pageBuilder: (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const StatisticsScreen(),
+                ),
+              ),
+            ],
           ),
-          GoRoute(
-            path: '/expense_list',
-            name: 'ExpenseListScreen',
-            pageBuilder: (context, state) => NoTransitionPage(
-              key: state.pageKey,
-              child: const ExpenseListScreen(),
-            ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/expense_list',
+                name: 'ExpenseListScreen',
+                pageBuilder: (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const ExpenseListScreen(),
+                ),
+              ),
+            ],
           ),
-          GoRoute(
-            path: '/settings',
-            name: 'SettingsScreen',
-            pageBuilder: (context, state) => NoTransitionPage(
-              key: state.pageKey,
-              child: const SettingsScreen(),
-            ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/settings',
+                name: 'SettingsScreen',
+                pageBuilder: (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const SettingsScreen(),
+                ),
+              ),
+            ],
           ),
         ],
       ),
