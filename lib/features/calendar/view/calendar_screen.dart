@@ -5,7 +5,7 @@ import 'package:money_fit/features/ledger/application/legacy/expenses_provider.d
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/ads/ad_banner_widget.dart';
 import 'package:money_fit/features/calendar/view/widgets/helper.dart';
-import 'package:money_fit/features/calendar/viewmodel/calendar_view_model.dart';
+import 'package:money_fit/features/calendar/application/calendar_view_model.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
@@ -38,7 +38,7 @@ class CalendarScreen extends ConsumerWidget {
                   ),
                   daysOfWeekHeight: 40,
                   rowHeight: MediaQuery.sizeOf(context).height * 0.09,
-                  focusedDay: data.selectedDay,
+                  focusedDay: data.visibleMonth,
                   selectedDayPredicate: (day) =>
                       normalizedDate(day) == data.selectedDay,
                   firstDay: DateTime(2025, 07, 01),

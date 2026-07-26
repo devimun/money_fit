@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:money_fit/core/functions/functions.dart';
-import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
-import 'package:money_fit/core/services/ad_service.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
-import 'package:money_fit/features/calendar/model/model.dart';
+import 'package:money_fit/features/calendar/application/calendar_projection.dart';
+import 'package:money_fit/features/calendar/application/calendar_view_model.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 class CalendarHeader extends ConsumerWidget {
@@ -40,24 +39,11 @@ class CalendarHeader extends ConsumerWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
-          onPressed: () async {
-            // 이전 달의 데이터를 조회한다.
-            bool refreshAvailable = await ref
-                .read(coreExpensesProvider.notifier)
-                .refreshExpensesFor(DateTime(day.year, day.month - 1));
-            if (!refreshAvailable) {
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(l10n.noDataExists),
-                    duration: const Duration(milliseconds: 800),
-                  ),
-                );
-              }
-            } else {
-              InterstitialAdManager.instance.logActionAndShowAd();
-            }
-          },
+          onPressed: () =>
+              ref.read(calendarVisibleMonthProvider.notifier).state = DateTime(
+                day.year,
+                day.month - 1,
+              ),
           icon: const Icon(Icons.arrow_back_ios),
         ),
         Text(
@@ -68,24 +54,11 @@ class CalendarHeader extends ConsumerWidget {
           style: context.textTheme.displaySmall,
         ),
         IconButton(
-          onPressed: () async {
-            // 다음 달의 데이터를 조회한다.
-            bool refreshAvailable = await ref
-                .read(coreExpensesProvider.notifier)
-                .refreshExpensesFor(DateTime(day.year, day.month + 1));
-            if (!refreshAvailable) {
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(l10n.noDataExists),
-                    duration: const Duration(milliseconds: 800),
-                  ),
-                );
-              }
-            } else {
-              InterstitialAdManager.instance.logActionAndShowAd();
-            }
-          },
+          onPressed: () =>
+              ref.read(calendarVisibleMonthProvider.notifier).state = DateTime(
+                day.year,
+                day.month + 1,
+              ),
           icon: const Icon(Icons.arrow_forward_ios),
         ),
       ],

@@ -45,11 +45,13 @@ class CalendarCellData {
 
 class CalendarState {
   final DateTime selectedDay;
+  final DateTime visibleMonth;
   final CalendarStat calendarStat;
   final Map<DateTime, CalendarCellData> calendarCells;
 
   CalendarState({
     required this.selectedDay,
+    required this.visibleMonth,
     required this.calendarStat,
     required this.calendarCells,
   });

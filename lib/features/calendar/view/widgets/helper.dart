@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:money_fit/features/calendar/model/model.dart';
+import 'package:money_fit/features/calendar/application/calendar_projection.dart';
 import 'package:money_fit/features/calendar/view/widgets/calendar_cell.dart';
 import 'package:money_fit/features/calendar/view/widgets/calendar_header.dart';
 

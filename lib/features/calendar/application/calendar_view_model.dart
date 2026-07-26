@@ -11,11 +11,11 @@
 // 하단 자율 지출 금액과 필수 지출 금액 표시
 // 컨테이너 클릭하면 해당 일의 지출 내역 전부 볼 수 있게함
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/features/budget/domain/spending_policy.dart';
 import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
 import 'package:money_fit/core/providers/locale_provider.dart';
-import 'package:money_fit/core/providers/select_date_provider.dart';
-import 'package:money_fit/features/calendar/model/model.dart';
+import 'package:money_fit/features/calendar/application/calendar_projection.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 
 class CalendarViewModel extends AsyncNotifier<CalendarState> {
@@ -26,12 +26,13 @@ class CalendarViewModel extends AsyncNotifier<CalendarState> {
     final expensesMap = await ref.watch(coreExpensesProvider.future);
     final user = await ref.watch(userSettingsProvider.future);
 
-    final today = ref.watch(dateManager);
+    final visibleMonth = ref.watch(calendarVisibleMonthProvider);
+    final selectedDay = ref.watch(calendarSelectedDayProvider);
 
     final double dailyBudget = _spendingPolicy.dailyBudget(
       budgetType: user.budgetType,
       budget: user.budget,
-      month: today,
+      month: visibleMonth,
       decimalDigits: ref.watch(currencyDecimalDigitsProvider),
     );
 
@@ -52,12 +53,25 @@ class CalendarViewModel extends AsyncNotifier<CalendarState> {
     );
 
     return CalendarState(
-      selectedDay: today,
+      selectedDay: selectedDay,
+      visibleMonth: visibleMonth,
       calendarStat: stats,
       calendarCells: calendarCells,
     );
   }
 }
+
+DateTime _normalized(DateTime value) =>
+    DateTime(value.year, value.month, value.day);
+
+final calendarVisibleMonthProvider = StateProvider<DateTime>((ref) {
+  final now = ref.watch(clockProvider).now();
+  return DateTime(now.year, now.month);
+});
+
+final calendarSelectedDayProvider = StateProvider<DateTime>(
+  (ref) => _normalized(ref.watch(clockProvider).now()),
+);
 
 final calendarViewModel =
     AsyncNotifierProvider<CalendarViewModel, CalendarState>(

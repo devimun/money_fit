@@ -14,18 +14,21 @@ import 'package:money_fit/l10n/app_localizations.dart';
 class TodayExpenseListBottomSheet extends ConsumerWidget {
   final VoidCallback onClose;
   final bool isHome;
+  final DateTime? selectedDate;
 
   const TodayExpenseListBottomSheet({
     super.key,
     required this.onClose,
     required this.isHome,
+    this.selectedDate,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final asyncState = ref.watch(coreExpensesProvider);
-    final selectedDate = ref.watch(dateManager);
+    final selectedDate =
+        this.selectedDate ?? ref.watch(dateManager) ?? DateTime.now();
     final categoryState = ref.watch(categoryProvider);
     if (categoryState.isLoading || categoryState.hasError) {
       return const Center(child: CircularProgressIndicator());

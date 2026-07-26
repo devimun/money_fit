@@ -5,9 +5,8 @@ import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
 import 'package:money_fit/core/providers/locale_provider.dart';
-import 'package:money_fit/core/providers/select_date_provider.dart';
-import 'package:money_fit/features/calendar/model/model.dart';
-import 'package:money_fit/features/calendar/viewmodel/calendar_view_model.dart';
+import 'package:money_fit/features/calendar/application/calendar_projection.dart';
+import 'package:money_fit/features/calendar/application/calendar_view_model.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 
 void main() {
@@ -107,7 +106,8 @@ Future<CalendarState> _readCalendarState({
       coreExpensesProvider.overrideWith(
         () => _FixtureExpensesNotifier(expenses),
       ),
-      dateManager.overrideWith(() => _FixtureDateManager(selectedDay)),
+      calendarVisibleMonthProvider.overrideWith((ref) => selectedDay),
+      calendarSelectedDayProvider.overrideWith((ref) => selectedDay),
       currencyDecimalDigitsProvider.overrideWith(
         (ref) => _decimalDigitsFor(user.currencyCode),
       ),
@@ -136,15 +136,6 @@ class _FixtureExpensesNotifier extends CoreExpensesNotifier {
 
   @override
   Future<Map<DateTime, List<Expense>>> build() async => expenses;
-}
-
-class _FixtureDateManager extends DateManager {
-  _FixtureDateManager(this.selectedDay);
-
-  final DateTime selectedDay;
-
-  @override
-  DateTime build() => selectedDay;
 }
 
 User _monthlyUser({required double budget, required String currencyCode}) {
