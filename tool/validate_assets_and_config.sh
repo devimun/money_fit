@@ -28,6 +28,21 @@ if git ls-files --error-unmatch .env >/dev/null 2>&1; then
   fail '.env must not be tracked'
 fi
 
+# Keep deployment secrets and generated Fastlane output ignored.  `--no-index`
+# checks the rule itself even when a fixture path is not present in this checkout.
+for ignored_path in \
+  'android/fastlane/report.xml' \
+  'ios/fastlane/Preview.html' \
+  'ios/fastlane/screenshots/example.png' \
+  'credentials/release.p12' \
+  'credentials/release.keystore' \
+  'android/key.properties' \
+  'android/local.properties'; do
+  if ! git check-ignore --no-index -q "$ignored_path"; then
+    fail "$ignored_path must be ignored"
+  fi
+done
+
 font_path='assets/fonts/PretendardVariable.ttf'
 license_path='assets/fonts/LICENSE-Pretendard-1.3.9.txt'
 
