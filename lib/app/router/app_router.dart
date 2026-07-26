@@ -17,6 +17,7 @@ import 'package:money_fit/features/settings/view/settings_screen.dart';
 import 'package:money_fit/features/budget/presentation/setup/budget_setup_screen.dart';
 import 'package:money_fit/features/app_update/presentation/update_check_screen.dart';
 
+import 'app_routes.dart';
 import 'bootstrap_failure_screen.dart';
 import 'bootstrap_gate.dart';
 import 'package:money_fit/app/bootstrap/bootstrap_controller.dart';
@@ -44,7 +45,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
   ref.read(bootstrapControllerProvider).start();
   return GoRouter(
     navigatorKey: rootNavigatorKey,
-    initialLocation: '/update-check',
+    initialLocation: AppRoutes.updateCheck,
     redirect: (context, state) {
       return redirectForBootstrapGate(
         ref.read(bootstrapGateProvider),
@@ -53,20 +54,21 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     },
     routes: [
       GoRoute(
-        path: '/update-check',
+        path: AppRoutes.updateCheck,
         name: 'UpdateCheckScreen',
         builder: (context, state) => const UpdateCheckScreen(),
       ),
       GoRoute(
-        path: '/',
+        path: AppRoutes.splash,
         name: 'SplashScreen',
         builder: (context, state) => const SplashScreen(),
       ),
       GoRoute(
-        path: '/bootstrap-failure',
+        path: AppRoutes.bootstrapFailure,
         name: 'BootstrapFailureScreen',
-        builder: (context, state) =>
-            BootstrapFailureScreen(returnTo: state.uri.queryParameters['from']),
+        builder: (context, state) => BootstrapFailureScreen(
+          arguments: BootstrapRouteArguments.fromUri(state.uri),
+        ),
       ),
       // 온보딩 과정을 줄이기 위해 바로 BudgetSetup 화면으로 이동
       // GoRoute(
@@ -78,7 +80,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       //   ),
       // ),
       GoRoute(
-        path: '/budget_setup',
+        path: AppRoutes.budgetSetup,
         name: 'BudgetSetupScreen',
         pageBuilder: (context, state) => NoTransitionPage(
           key: state.pageKey,
@@ -92,15 +94,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/home',
+                path: AppRoutes.homePath,
                 name: 'HomeScreen',
                 pageBuilder: (context, state) {
                   return NoTransitionPage(
                     key: state.pageKey,
                     child: HomeScreen(
-                      showNotificationPrompt:
-                          state.uri.queryParameters['showNotificationPrompt'] ==
-                          'true',
+                      showNotificationPrompt: HomeRouteArguments.fromUri(
+                        state.uri,
+                      ).showNotificationPrompt,
                     ),
                   );
                 },
@@ -110,7 +112,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/calendar',
+                path: AppRoutes.calendar,
                 name: 'CalendarScreen',
                 pageBuilder: (context, state) => NoTransitionPage(
                   key: state.pageKey,
@@ -122,7 +124,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/stats',
+                path: AppRoutes.statistics,
                 name: 'StatisticsScreen',
                 pageBuilder: (context, state) => NoTransitionPage(
                   key: state.pageKey,
@@ -134,7 +136,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/expense_list',
+                path: AppRoutes.expenseList,
                 name: 'ExpenseListScreen',
                 pageBuilder: (context, state) => NoTransitionPage(
                   key: state.pageKey,
@@ -146,7 +148,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/settings',
+                path: AppRoutes.settings,
                 name: 'SettingsScreen',
                 pageBuilder: (context, state) => NoTransitionPage(
                   key: state.pageKey,
@@ -164,44 +166,57 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
 String? redirectForBootstrapGate(BootstrapGateState gate, Uri uri) {
   final path = uri.path;
-  final from = uri.queryParameters['from'];
+  final arguments = BootstrapRouteArguments.fromUri(uri);
   final isProtected = _protectedPaths.contains(path);
-  final intendedPath = isProtected ? uri.toString() : from;
+  final intendedPath = isProtected
+      ? AppRouteReturnTarget.fromUri(uri)
+      : arguments.returnTo;
 
   switch (gate) {
     case BootstrapGateState.checkingUpdate:
     case BootstrapGateState.initializing:
-      if (path == '/update-check' || path == '/') return null;
-      return _withFrom('/update-check', intendedPath);
+      if (path == AppRoutes.updateCheck || path == AppRoutes.splash) {
+        return null;
+      }
+      return AppRoutes.withBootstrapReturnTo(
+        AppRoutes.updateCheck,
+        intendedPath,
+      );
     case BootstrapGateState.forceUpdate:
-      if (path == '/update-check') return null;
-      return _withFrom('/update-check', intendedPath);
+      if (path == AppRoutes.updateCheck) return null;
+      return AppRoutes.withBootstrapReturnTo(
+        AppRoutes.updateCheck,
+        intendedPath,
+      );
     case BootstrapGateState.needsSetup:
-      if (path == '/budget_setup') return null;
-      return _withFrom('/budget_setup', intendedPath);
+      if (path == AppRoutes.budgetSetup) return null;
+      return AppRoutes.withBootstrapReturnTo(
+        AppRoutes.budgetSetup,
+        intendedPath,
+      );
     case BootstrapGateState.recoverableFailure:
-      if (path == '/bootstrap-failure') return null;
-      return _withFrom('/bootstrap-failure', intendedPath);
+      if (path == AppRoutes.bootstrapFailure) return null;
+      return AppRoutes.withBootstrapReturnTo(
+        AppRoutes.bootstrapFailure,
+        intendedPath,
+      );
     case BootstrapGateState.ready:
-      if (path == '/update-check' || path == '/' || path == '/budget_setup') {
-        return from ?? '/home';
+      if (path == AppRoutes.updateCheck ||
+          path == AppRoutes.splash ||
+          path == AppRoutes.budgetSetup) {
+        return arguments.returnTo?.location ?? AppRoutes.home();
       }
       return null;
   }
 }
 
 const _protectedPaths = {
-  '/home',
-  '/calendar',
-  '/stats',
-  '/expense_list',
-  '/settings',
+  AppRoutes.homePath,
+  AppRoutes.calendar,
+  AppRoutes.statistics,
+  AppRoutes.expenseList,
+  AppRoutes.settings,
 };
-
-String _withFrom(String destination, String? from) {
-  if (from == null || from.isEmpty) return destination;
-  return '$destination?from=${Uri.encodeComponent(from)}';
-}
 
 /// Firebase analytics is optional and can initialize after the local UI.
 /// This observer turns every unavailable or plugin failure into a no-op so

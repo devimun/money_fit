@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/app/composition/repository_providers.dart';
-import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/core/providers/shared_preferences_provider.dart';
+import 'package:money_fit/features/session/domain/local_owner_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// The local identity which owns the on-device ledger.
@@ -92,14 +92,14 @@ class SessionController extends AsyncNotifier<SessionState> {
   Future<SessionState> _load() async {
     try {
       final preferences = ref.read(sharedPreferencesProvider);
-      final users = ref.read(userRepositoryProvider);
+      final owners = ref.read(localOwnerRepositoryProvider);
       final mapping = LocalSessionMapping.tryParse(
         preferences.getString(_mappingKey),
       );
       final persistedOwnerId = preferences.getString(_ownerIdKey);
 
       if (mapping != null) {
-        final existing = await users.getUser(mapping.ownerId);
+        final existing = await owners.get(mapping.ownerId);
         if (existing != null) {
           // Old app versions may have written the mapping before the marker.
           // Completing it here is safe because the single mapping value was
@@ -116,27 +116,41 @@ class SessionController extends AsyncNotifier<SessionState> {
       }
 
       if (persistedOwnerId != null) {
-        final existing = await users.getUser(persistedOwnerId);
+        final existing = await owners.get(persistedOwnerId);
         if (existing != null) {
           await _persistMapping(
             preferences,
-            LocalSessionMapping(ownerId: existing.id),
+            LocalSessionMapping(
+              ownerId: existing.id,
+              remoteUserId: existing.remoteUserId,
+            ),
           );
-          return SessionReady(SessionContext(ownerId: existing.id));
+          return SessionReady(
+            SessionContext(
+              ownerId: existing.id,
+              remoteUserId: existing.remoteUserId,
+            ),
+          );
         }
         await _clearPersistedMapping(preferences);
       }
 
-      final existingUsers = await users.getAllUsers();
-      if (existingUsers.length == 1) {
-        final ownerId = existingUsers.single.id;
+      final existingOwners = await owners.getAll();
+      if (existingOwners.length == 1) {
+        final existing = existingOwners.single;
+        final ownerId = existing.id;
         await _persistMapping(
           preferences,
-          LocalSessionMapping(ownerId: ownerId),
+          LocalSessionMapping(
+            ownerId: ownerId,
+            remoteUserId: existing.remoteUserId,
+          ),
         );
-        return SessionReady(SessionContext(ownerId: ownerId));
+        return SessionReady(
+          SessionContext(ownerId: ownerId, remoteUserId: existing.remoteUserId),
+        );
       }
-      if (existingUsers.length > 1) {
+      if (existingOwners.length > 1) {
         throw StateError(
           'Multiple local users require recovery before a ledger can be selected.',
         );
@@ -144,19 +158,7 @@ class SessionController extends AsyncNotifier<SessionState> {
 
       final now = ref.read(clockProvider).now();
       final ownerId = ref.read(idGeneratorProvider).next();
-      await users.createUser(
-        User(
-          id: ownerId,
-          email: null,
-          displayName: null,
-          budget: 0,
-          budgetType: BudgetType.daily,
-          isDarkMode: false,
-          notificationsEnabled: false,
-          createdAt: now,
-          updatedAt: now,
-        ),
-      );
+      await owners.create(LocalOwner(id: ownerId, createdAt: now));
       await _persistMapping(preferences, LocalSessionMapping(ownerId: ownerId));
       return SessionReady(SessionContext(ownerId: ownerId));
     } catch (error, stackTrace) {
@@ -187,6 +189,9 @@ class SessionController extends AsyncNotifier<SessionState> {
           ? null
           : normalizedRemoteId,
     );
+    await ref
+        .read(localOwnerRepositoryProvider)
+        .setRemoteUserId(mapping.ownerId, mapping.remoteUserId);
     await _persistMapping(ref.read(sharedPreferencesProvider), mapping);
     state = AsyncData(
       SessionReady(

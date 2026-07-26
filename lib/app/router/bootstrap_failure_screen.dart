@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'app_routes.dart';
 import 'bootstrap_gate.dart';
 
 class BootstrapFailureScreen extends ConsumerWidget {
-  const BootstrapFailureScreen({super.key, this.returnTo});
+  const BootstrapFailureScreen({
+    super.key,
+    this.arguments = const BootstrapRouteArguments(),
+  });
 
-  final String? returnTo;
+  final BootstrapRouteArguments arguments;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,7 +29,7 @@ class BootstrapFailureScreen extends ConsumerWidget {
                   ref
                       .read(bootstrapGateProvider.notifier)
                       .set(BootstrapGateState.initializing);
-                  context.go(_splashLocation(returnTo));
+                  context.go(AppRoutes.splashWith(arguments));
                 },
                 child: const Text('Retry'),
               ),
@@ -35,9 +39,4 @@ class BootstrapFailureScreen extends ConsumerWidget {
       ),
     );
   }
-}
-
-String _splashLocation(String? returnTo) {
-  if (returnTo == null || returnTo.isEmpty) return '/';
-  return '/?from=${Uri.encodeComponent(returnTo)}';
 }

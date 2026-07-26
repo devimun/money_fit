@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:money_fit/app/router/app_routes.dart';
 import 'package:money_fit/app/router/app_router.dart';
 import 'package:money_fit/app/router/bootstrap_gate.dart';
 import 'package:money_fit/core/config/app_environment.dart';
@@ -36,6 +37,36 @@ void main() {
       ),
       '/calendar',
     );
+  });
+
+  test('typed home arguments encode and decode the notification prompt', () {
+    final location = AppRoutes.home(
+      const HomeRouteArguments(showNotificationPrompt: true),
+    );
+
+    expect(location, '/home?showNotificationPrompt=true');
+    expect(
+      HomeRouteArguments.fromUri(Uri.parse(location)).showNotificationPrompt,
+      isTrue,
+    );
+    expect(
+      HomeRouteArguments.fromUri(
+        Uri.parse('/home?showNotificationPrompt=1'),
+      ).showNotificationPrompt,
+      isFalse,
+    );
+  });
+
+  test('bootstrap return target preserves local query routes only', () {
+    final returnTo = AppRouteReturnTarget.tryParse(
+      '/home?showNotificationPrompt=true',
+    );
+
+    expect(
+      AppRoutes.withBootstrapReturnTo(AppRoutes.updateCheck, returnTo),
+      '/update-check?from=%2Fhome%3FshowNotificationPrompt%3Dtrue',
+    );
+    expect(AppRouteReturnTarget.tryParse('https://example.com'), isNull);
   });
 
   test('setup, force-update, and failure states gate protected routes', () {

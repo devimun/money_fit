@@ -6,10 +6,9 @@ import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/app/composition/repository_providers.dart';
 import 'package:money_fit/core/foundation/clock.dart';
 import 'package:money_fit/core/foundation/id_generator.dart';
-import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/core/providers/shared_preferences_provider.dart';
-import 'package:money_fit/core/repositories/user_repository.dart';
 import 'package:money_fit/features/session/application/session_context.dart';
+import 'package:money_fit/features/session/domain/local_owner_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -38,24 +37,24 @@ void main() {
   test(
     'adopts a legacy owner and persists a single local/remote mapping',
     () async {
-      final user = _user('legacy-owner');
+      final owner = LocalOwner(id: 'legacy-owner', createdAt: DateTime(2026));
       final preferences = await _preferences();
-      final container = _container(preferences, _FakeUsers([user]));
+      final container = _container(preferences, _FakeOwners([owner]));
       addTearDown(container.dispose);
 
       final initial = await container.read(sessionProvider.future);
-      expect((initial as SessionReady).context.ownerId, user.id);
+      expect((initial as SessionReady).context.ownerId, owner.id);
 
       await container.read(sessionProvider.notifier).linkRemoteUser('remote-a');
       final linked =
           (container.read(sessionProvider).valueOrNull as SessionReady).context;
-      expect(linked.ownerId, user.id);
+      expect(linked.ownerId, owner.id);
       expect(linked.remoteUserId, 'remote-a');
 
       final mapping =
           jsonDecode(preferences.getString('session.local_remote_mapping_v1')!)
               as Map<String, dynamic>;
-      expect(mapping, {'ownerId': user.id, 'remoteUserId': 'remote-a'});
+      expect(mapping, {'ownerId': owner.id, 'remoteUserId': 'remote-a'});
       expect(preferences.getBool('session.local_owner_migrated_v1'), isTrue);
     },
   );
@@ -72,7 +71,7 @@ void main() {
       final preferences = await SharedPreferences.getInstance();
       final container = _container(
         preferences,
-        _FakeUsers([_user('local-owner')]),
+        _FakeOwners([LocalOwner(id: 'local-owner', createdAt: DateTime(2026))]),
       );
       addTearDown(container.dispose);
 
@@ -96,48 +95,45 @@ Future<SharedPreferences> _preferences() async {
   return SharedPreferences.getInstance();
 }
 
-ProviderContainer _container(SharedPreferences preferences, _FakeUsers users) {
+ProviderContainer _container(
+  SharedPreferences preferences,
+  _FakeOwners owners,
+) {
   return ProviderContainer(
     overrides: [
       sharedPreferencesProvider.overrideWithValue(preferences),
-      userRepositoryProvider.overrideWithValue(users),
+      localOwnerRepositoryProvider.overrideWithValue(owners),
       clockProvider.overrideWithValue(FakeClock(DateTime.utc(2026))),
       idGeneratorProvider.overrideWithValue(FakeIds(['new-owner'])),
     ],
   );
 }
 
-User _user(String id) => User(
-  id: id,
-  budget: 0,
-  budgetType: BudgetType.daily,
-  isDarkMode: false,
-  notificationsEnabled: false,
-  createdAt: DateTime.utc(2026),
-  updatedAt: DateTime.utc(2026),
-);
-
-class _FakeUsers implements IUserRepository {
-  _FakeUsers(Iterable<User> initial) {
-    for (final user in initial) {
-      _users[user.id] = user;
+class _FakeOwners implements LocalOwnerRepository {
+  _FakeOwners(Iterable<LocalOwner> initial) {
+    for (final owner in initial) {
+      _owners[owner.id] = owner;
     }
   }
 
-  final Map<String, User> _users = {};
+  final Map<String, LocalOwner> _owners = {};
 
   @override
-  Future<void> createUser(User user) async => _users[user.id] = user;
+  Future<void> create(LocalOwner owner) async => _owners[owner.id] = owner;
 
   @override
-  Future<void> deleteUser(String id) async => _users.remove(id);
+  Future<void> delete(String id) async => _owners.remove(id);
 
   @override
-  Future<List<User>> getAllUsers() async => _users.values.toList();
+  Future<List<LocalOwner>> getAll() async => _owners.values.toList();
 
   @override
-  Future<User?> getUser(String id) async => _users[id];
+  Future<LocalOwner?> get(String id) async => _owners[id];
 
   @override
-  Future<void> updateUser(User user) async => _users[user.id] = user;
+  Future<void> setRemoteUserId(String ownerId, String? remoteUserId) async {
+    final owner = _owners[ownerId];
+    if (owner == null) throw StateError('Missing owner: $ownerId');
+    _owners[ownerId] = owner.copyWith(remoteUserId: remoteUserId);
+  }
 }

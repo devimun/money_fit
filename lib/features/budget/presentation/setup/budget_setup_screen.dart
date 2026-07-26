@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:money_fit/app/composition/platform_providers.dart';
+import 'package:money_fit/app/router/app_routes.dart';
 import 'package:money_fit/core/foundation/budget_type.dart';
 import 'package:money_fit/features/budget/application/current_budget_provider.dart';
 import 'package:money_fit/features/budget/domain/current_budget.dart';
@@ -37,7 +38,11 @@ class _BudgetSetupScreenState extends ConsumerState<BudgetSetupScreen> {
 
       // 홈으로 이동시키고 알림 설정 요청 다이얼로그 띄우기
       if (mounted) {
-        context.go('/home?showNotificationPrompt=true');
+        context.go(
+          AppRoutes.home(
+            const HomeRouteArguments(showNotificationPrompt: true),
+          ),
+        );
       }
     }
   }
