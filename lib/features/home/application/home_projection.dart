@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/features/budget/domain/spending_policy.dart';
+import 'package:money_fit/features/budget/application/current_budget_provider.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
-import 'package:money_fit/core/models/user_model.dart';
+import 'package:money_fit/core/foundation/budget_type.dart';
 import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
 import 'package:money_fit/core/providers/locale_provider.dart';
-import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 
 /// Presentation maps this semantic level to theme colors.
 enum SpendingLevel {
@@ -159,7 +159,10 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
 
   @override
   Future<HomeState> build() async {
-    final user = await ref.watch(userSettingsProvider.future);
+    final currentBudget = await ref.watch(currentBudgetProvider.future);
+    if (currentBudget == null) {
+      throw StateError('Home projection requires a configured current budget.');
+    }
     final expensesByDate = await ref.watch(coreExpensesProvider.future);
     double monthlyDiscretionarySpending = expensesByDate.values
         .expand((expense) => expense)
@@ -176,8 +179,8 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
 
     // 현재 날짜를 기준으로 일일 및 월간 예산을 계산합니다.
     final double dailyBudget = _spendingPolicy.dailyBudget(
-      budgetType: user.budgetType,
-      budget: user.budget,
+      budgetType: currentBudget.type,
+      budget: currentBudget.amount,
       month: today,
       decimalDigits: ref.watch(currencyDecimalDigitsProvider),
     );
@@ -187,17 +190,17 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
       recordedDays: expensesByDate.keys.map(_day).toSet(),
       asOf: today,
       dailyBudgetFor: (day) => _spendingPolicy.dailyBudget(
-        budgetType: user.budgetType,
-        budget: user.budget,
+        budgetType: currentBudget.type,
+        budget: currentBudget.amount,
         month: day,
         decimalDigits: ref.read(currencyDecimalDigitsProvider),
       ),
     );
 
     final double budget;
-    if (user.budgetType == BudgetType.monthly) {
+    if (currentBudget.type == BudgetType.monthly) {
       // 월간 예산 설정 시, 그대로 사용합니다.
-      budget = user.budget;
+      budget = currentBudget.amount;
     } else {
       // 일간 예산 설정 시, 현재 월의 일수를 곱해 월간 예산을 계산합니다.
       final daysInMonth = DateTime(today.year, today.month + 1, 0).day;

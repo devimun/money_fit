@@ -40,6 +40,9 @@ class _FakeUsers implements IUserRepository {
   Future<User?> getUser(String id) async => id == user.id ? user : null;
 
   @override
+  Future<List<User>> getAllUsers() async => [user];
+
+  @override
   Future<void> updateUser(User user) async => this.user = user;
 }
 

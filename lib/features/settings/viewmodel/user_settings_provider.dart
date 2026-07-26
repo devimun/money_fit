@@ -6,7 +6,7 @@ import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/app/composition/repository_providers.dart';
 import 'package:money_fit/core/repositories/user_repository.dart';
 import 'package:money_fit/core/services/notification_service.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' as sb;
+import 'package:money_fit/features/session/application/session_context.dart';
 
 /// 사용자 설정을 관리하는 AsyncNotifier입니다.
 import 'package:money_fit/l10n/app_localizations.dart';
@@ -14,13 +14,11 @@ import 'package:money_fit/l10n/app_localizations.dart';
 class UserSettingsNotifier extends AsyncNotifier<User> {
   late final UserRepository _userRepository;
   late final NotificationService _notificationService;
-  late final sb.SupabaseClient _supabaseClient;
 
   @override
   Future<User> build() async {
     _userRepository = ref.read(userRepositoryProvider);
     _notificationService = ref.read(notificationServiceProvider);
-    _supabaseClient = sb.Supabase.instance.client;
 
     return await _loadUser();
   }
@@ -28,12 +26,13 @@ class UserSettingsNotifier extends AsyncNotifier<User> {
   Future<User> _loadUser() async {
     log('Attempting to load user...');
     try {
-      final supabaseUser = await _getSupabaseUser();
-      final currentUserId = supabaseUser.id;
-      log('Current User ID: $currentUserId');
-
-      User? user = await _userRepository.getUser(currentUserId);
-      user ??= await _createNewUser(currentUserId);
+      final currentUserId = await ref.read(currentOwnerIdProvider.future);
+      final user = await _userRepository.getUser(currentUserId);
+      if (user == null) {
+        throw StateError(
+          'Session owner is missing from the local users table.',
+        );
+      }
 
       log('User loaded successfully: ${user.toJson()}');
       return user;
@@ -41,40 +40,6 @@ class UserSettingsNotifier extends AsyncNotifier<User> {
       log('Error in _loadUser: $e', error: e, stackTrace: st);
       rethrow;
     }
-  }
-
-  Future<sb.User> _getSupabaseUser() async {
-    sb.User? supabaseUser = _supabaseClient.auth.currentUser;
-    if (supabaseUser == null) {
-      log('No existing Supabase user. Attempting anonymous sign-in...');
-      final sb.AuthResponse response = await _supabaseClient.auth
-          .signInAnonymously();
-      supabaseUser = response.user;
-      if (supabaseUser == null) {
-        log('Anonymous sign-in failed.');
-        throw Exception('Failed to sign in anonymously.');
-      }
-      log('Anonymous sign-in successful. User ID: ${supabaseUser.id}');
-    }
-    return supabaseUser;
-  }
-
-  Future<User> _createNewUser(String userId) async {
-    log('No user found in local DB for ID: $userId. Creating new user...');
-    final newUser = User(
-      id: userId,
-      email: null,
-      displayName: null,
-      budget: 0.0,
-      budgetType: BudgetType.daily,
-      isDarkMode: false,
-      notificationsEnabled: false,
-      createdAt: ref.read(clockProvider).now(),
-      updatedAt: ref.read(clockProvider).now(),
-    );
-    await _userRepository.createUser(newUser);
-    log('New user created and saved to local DB.');
-    return newUser;
   }
 
   Future<void> updateBudget(BudgetType budgetType, double newBudget) async {
@@ -166,10 +131,9 @@ class UserSettingsNotifier extends AsyncNotifier<User> {
   Future<void> reset() async {
     log('Resetting user settings...');
     try {
-      await _supabaseClient.auth.signOut();
       state = const AsyncValue.loading();
-      final user = await _loadUser();
-      state = AsyncValue.data(user);
+      await ref.read(sessionProvider.notifier).clearLocalOwner();
+      state = AsyncValue.data(await _loadUser());
       log('User settings reset successfully.');
     } catch (e, st) {
       log('Error resetting user settings: $e', error: e, stackTrace: st);

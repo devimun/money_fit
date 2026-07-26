@@ -6,7 +6,7 @@ import 'package:money_fit/features/home/application/home_projection.dart';
 import 'package:money_fit/features/home/widgets/home_date_header.dart';
 import 'package:money_fit/features/home/widgets/home_main_card.dart';
 import 'package:money_fit/features/home/widgets/home_action_buttons.dart';
-import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
+import 'package:money_fit/features/session/application/session_context.dart';
 import 'package:money_fit/widgets/custom_notification_dialog.dart';
 import 'package:money_fit/core/services/notification_service.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
@@ -65,15 +65,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final homeStateAsync = ref.watch(homeViewModelProvider);
-    final userAsync = ref.watch(userSettingsProvider);
+    final sessionAsync = ref.watch(sessionContextProvider);
     final l10n = AppLocalizations.of(context)!;
 
-    if (homeStateAsync.isLoading || userAsync.isLoading) {
+    if (homeStateAsync.isLoading || sessionAsync.isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    if (homeStateAsync.hasError || userAsync.hasError) {
-      final error = homeStateAsync.error ?? userAsync.error;
+    if (homeStateAsync.hasError || sessionAsync.hasError) {
+      final error = homeStateAsync.error ?? sessionAsync.error;
       return Scaffold(
         body: Center(
           child: Column(
@@ -95,7 +95,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
 
     final homeState = homeStateAsync.value!;
-    final user = userAsync.value!;
+    final session = sessionAsync.value!;
 
     return Scaffold(
       body: SafeArea(
@@ -110,7 +110,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 const SizedBox(height: 10),
                 HomeMainCard(homeState: homeState),
                 const SizedBox(height: 20),
-                HomeActionButtons(homeState: homeState, userId: user.id),
+                HomeActionButtons(
+                  homeState: homeState,
+                  userId: session.ownerId,
+                ),
                 const SizedBox(height: 10),
               ],
             ),

@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
+import 'package:money_fit/features/budget/application/current_budget_provider.dart';
+import 'package:money_fit/features/budget/domain/current_budget.dart';
 import 'package:money_fit/core/providers/locale_provider.dart';
 import 'package:money_fit/features/home/application/home_projection.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
@@ -76,6 +78,10 @@ void main() {
         userSettingsProvider.overrideWith(
           () => _FixtureUserSettingsNotifier(_dailyUser()),
         ),
+        currentBudgetProvider.overrideWith(
+          (ref) async =>
+              const CurrentBudget(amount: 100, type: BudgetType.daily),
+        ),
         coreExpensesProvider.overrideWith(
           () => _FixtureExpensesNotifier({
             today: [_expense(date: today, amount: 1)],
@@ -106,6 +112,10 @@ Future<HomeState> _readHomeState({
     overrides: [
       userSettingsProvider.overrideWith(
         () => _FixtureUserSettingsNotifier(user),
+      ),
+      currentBudgetProvider.overrideWith(
+        (ref) async =>
+            CurrentBudget(amount: user.budget, type: user.budgetType),
       ),
       coreExpensesProvider.overrideWith(
         () => _FixtureExpensesNotifier(expenses),

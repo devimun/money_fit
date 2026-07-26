@@ -4,6 +4,8 @@ import 'package:money_fit/features/budget/domain/spending_policy.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
+import 'package:money_fit/features/budget/application/current_budget_provider.dart';
+import 'package:money_fit/features/budget/domain/current_budget.dart';
 import 'package:money_fit/core/providers/locale_provider.dart';
 import 'package:money_fit/features/calendar/application/calendar_projection.dart';
 import 'package:money_fit/features/calendar/application/calendar_view_model.dart';
@@ -102,6 +104,10 @@ Future<CalendarState> _readCalendarState({
     overrides: [
       userSettingsProvider.overrideWith(
         () => _FixtureUserSettingsNotifier(user),
+      ),
+      currentBudgetProvider.overrideWith(
+        (ref) async =>
+            CurrentBudget(amount: user.budget, type: user.budgetType),
       ),
       coreExpensesProvider.overrideWith(
         () => _FixtureExpensesNotifier(expenses),

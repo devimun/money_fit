@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
-import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
+import 'package:money_fit/features/session/application/session_context.dart';
 
 enum SortType { asc, desc }
 
@@ -80,11 +80,11 @@ class ExpensesListViewModel extends AsyncNotifier<ExpensesListState> {
     required SortType sortType,
   }) async {
     state = AsyncLoading();
-    final user = await ref.read(userSettingsProvider.future);
+    final ownerId = await ref.read(currentOwnerIdProvider.future);
     // coreExpensesProvider 에서 원본 데이터 조회
     final rawData = await ref
         .read(coreExpensesProvider.notifier)
-        .loadMonthlyExpenses(user.id, searchDate.year, searchDate.month);
+        .loadMonthlyExpenses(ownerId, searchDate.year, searchDate.month);
     // 필터링 수행
     final filtered = filteringData(rawData, expenseType, categoryId, sortType);
 

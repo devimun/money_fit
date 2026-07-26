@@ -36,7 +36,7 @@ Future<void> main() async {
         overrides: [
           sharedPreferencesProvider.overrideWithValue(sharedPreferences),
           appEnvironmentProvider.overrideWithValue(environment),
-          currentOwnerProvider.overrideWith(SettingsCurrentOwner.new),
+          currentOwnerProvider.overrideWith(SessionCurrentOwner.new),
           currentBudgetRepositoryProvider.overrideWith(
             (ref) =>
                 LegacyCurrentBudgetRepository(ref.read(userRepositoryProvider)),

@@ -5,17 +5,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/features/ledger/data/legacy/category_model.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/app/composition/repository_providers.dart';
-import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
+import 'package:money_fit/features/session/application/session_context.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 class CategoryProviders extends AsyncNotifier<List<Category>> {
   // 처음 로드될 시 db에서 카테고리를 전부 가져오게 한다.
   @override
   FutureOr<List<Category>> build() async {
-    final user = await ref.read(userSettingsProvider.future);
+    final ownerId = await ref.read(currentOwnerIdProvider.future);
     List<Category> userCategory = await ref
         .read(categoryRepositoryProvider)
-        .getAllCategories(user.id);
+        .getAllCategories(ownerId);
     return userCategory;
   }
 

@@ -6,6 +6,7 @@ import 'package:money_fit/core/platform/analytics_tracker.dart';
 import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/app/composition/repository_providers.dart';
 import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
+import 'package:money_fit/features/session/application/session_context.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_repository.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -137,6 +138,7 @@ ProviderContainer _container(
   return ProviderContainer(
     overrides: [
       ledgerVisibleDateProvider.overrideWith((ref) => DateTime(2024, 1, 1)),
+      currentOwnerIdProvider.overrideWith((ref) async => 'first-user'),
       userSettingsProvider.overrideWith(_TestUserSettingsNotifier.new),
       expenseRepositoryProvider.overrideWith((ref) => repository),
       analyticsTrackerProvider.overrideWithValue(analytics),

@@ -13,10 +13,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/features/budget/domain/spending_policy.dart';
+import 'package:money_fit/features/budget/application/current_budget_provider.dart';
 import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
 import 'package:money_fit/core/providers/locale_provider.dart';
 import 'package:money_fit/features/calendar/application/calendar_projection.dart';
-import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 
 class CalendarViewModel extends AsyncNotifier<CalendarState> {
   static const _spendingPolicy = SpendingPolicy();
@@ -24,14 +24,19 @@ class CalendarViewModel extends AsyncNotifier<CalendarState> {
   @override
   Future<CalendarState> build() async {
     final expensesMap = await ref.watch(coreExpensesProvider.future);
-    final user = await ref.watch(userSettingsProvider.future);
+    final currentBudget = await ref.watch(currentBudgetProvider.future);
+    if (currentBudget == null) {
+      throw StateError(
+        'Calendar projection requires a configured current budget.',
+      );
+    }
 
     final visibleMonth = ref.watch(calendarVisibleMonthProvider);
     final selectedDay = ref.watch(calendarSelectedDayProvider);
 
     final double dailyBudget = _spendingPolicy.dailyBudget(
-      budgetType: user.budgetType,
-      budget: user.budget,
+      budgetType: currentBudget.type,
+      budget: currentBudget.amount,
       month: visibleMonth,
       decimalDigits: ref.watch(currencyDecimalDigitsProvider),
     );

@@ -9,7 +9,6 @@ enum LegacyOwner {
   appComposition,
   ledger,
   budget,
-  session,
   notifications,
   reset,
   appUpdate,
@@ -81,14 +80,6 @@ const allowedLegacyImports = <LegacyBoundaryAllowance>[
     reason: 'The app-update adapter has not yet been extracted.',
     owner: LegacyOwner.appUpdate,
     removalPhase: RemovalPhase.pr6_3,
-  ),
-  LegacyBoundaryAllowance(
-    filePath: 'lib/features/settings/viewmodel/user_settings_provider.dart',
-    kind: LegacyBoundaryKind.sdkSingleton,
-    target: 'Supabase.instance',
-    reason: 'Session identity is still owned by the settings ViewModel.',
-    owner: LegacyOwner.session,
-    removalPhase: RemovalPhase.pr5_1,
   ),
   LegacyBoundaryAllowance(
     filePath: 'lib/features/settings/widgets/contact_us_dialog.dart',

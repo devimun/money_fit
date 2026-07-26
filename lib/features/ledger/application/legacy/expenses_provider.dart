@@ -6,7 +6,7 @@ import 'package:money_fit/core/foundation/year_month.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/app/composition/repository_providers.dart';
-import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
+import 'package:money_fit/features/session/application/session_context.dart';
 
 final ledgerVisibleDateProvider = StateProvider<DateTime>(
   (ref) => ref.watch(clockProvider).now(),
@@ -34,13 +34,13 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
 
   @override
   Future<Map<DateTime, List<Expense>>> build() async {
-    final user = await ref.watch(userSettingsProvider.future);
-    if (_activeUserId != user.id) {
+    final ownerId = await ref.watch(currentOwnerIdProvider.future);
+    if (_activeUserId != ownerId) {
       _cache.clear();
-      _activeUserId = user.id;
+      _activeUserId = ownerId;
     }
     final date = ref.read(ledgerVisibleDateProvider);
-    return loadMonthlyExpenses(user.id, date.year, date.month);
+    return loadMonthlyExpenses(ownerId, date.year, date.month);
   }
 
   Future<Map<DateTime, List<Expense>>> loadMonthlyExpenses(
@@ -89,10 +89,10 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
   }
 
   Future<bool> refreshExpensesFor(DateTime date) async {
-    final user = await ref.read(userSettingsProvider.future);
+    final ownerId = await ref.read(currentOwnerIdProvider.future);
     try {
       final expenses = await loadMonthlyExpenses(
-        user.id,
+        ownerId,
         date.year,
         date.month,
       );
@@ -113,8 +113,8 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
       _cache.remove(key);
     }
 
-    final user = await ref.read(userSettingsProvider.future);
-    final visible = _keyFor(user.id, ref.read(ledgerVisibleDateProvider));
+    final ownerId = await ref.read(currentOwnerIdProvider.future);
+    final visible = _keyFor(ownerId, ref.read(ledgerVisibleDateProvider));
     if (affected.contains(visible)) {
       final expenses = await loadMonthlyExpenses(
         visible.userId,
