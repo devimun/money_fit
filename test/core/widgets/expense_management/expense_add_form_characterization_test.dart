@@ -8,7 +8,7 @@ import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/foundation/clock.dart';
 import 'package:money_fit/core/foundation/id_generator.dart';
 import 'package:money_fit/core/providers/category_providers.dart';
-import 'package:money_fit/core/providers/foundation_providers.dart';
+import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/core/widgets/expense_management/expense_add_form.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/models/expense_model.dart';
-import 'package:money_fit/core/providers/foundation_providers.dart';
+import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/core/services/ad_service.dart';
 import 'package:money_fit/core/services/review_prompt_service.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';

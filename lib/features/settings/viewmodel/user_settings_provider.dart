@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/app/composition/repository_providers.dart';
 import 'package:money_fit/core/repositories/user_repository.dart';
@@ -68,8 +69,8 @@ class UserSettingsNotifier extends AsyncNotifier<User> {
       budgetType: BudgetType.daily,
       isDarkMode: false,
       notificationsEnabled: false,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
+      createdAt: ref.read(clockProvider).now(),
+      updatedAt: ref.read(clockProvider).now(),
     );
     await _userRepository.createUser(newUser);
     log('New user created and saved to local DB.');
@@ -83,7 +84,7 @@ class UserSettingsNotifier extends AsyncNotifier<User> {
     final updatedUser = currentUser.copyWith(
       budgetType: budgetType,
       budget: newBudget,
-      updatedAt: DateTime.now(),
+      updatedAt: ref.read(clockProvider).now(),
     );
     state = AsyncValue.data(updatedUser);
 
@@ -106,7 +107,7 @@ class UserSettingsNotifier extends AsyncNotifier<User> {
     await _notificationService.scheduleDailyNotifications(l10n);
     final updatedUser = currentUser.copyWith(
       notificationsEnabled: true,
-      updatedAt: DateTime.now(),
+      updatedAt: ref.read(clockProvider).now(),
     );
 
     state = AsyncValue.data(updatedUser);
@@ -126,7 +127,7 @@ class UserSettingsNotifier extends AsyncNotifier<User> {
     await _notificationService.cancelAllNotifications();
     final updatedUser = currentUser.copyWith(
       notificationsEnabled: false,
-      updatedAt: DateTime.now(),
+      updatedAt: ref.read(clockProvider).now(),
     );
 
     state = AsyncValue.data(updatedUser);
@@ -147,7 +148,7 @@ class UserSettingsNotifier extends AsyncNotifier<User> {
     final updatedUser = currentUser.copyWith(
       languageCode: languageCode,
       currencyCode: currencyCode,
-      updatedAt: DateTime.now(),
+      updatedAt: ref.read(clockProvider).now(),
     );
 
     state = AsyncValue.data(updatedUser);

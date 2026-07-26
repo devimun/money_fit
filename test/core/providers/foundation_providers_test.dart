@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:money_fit/core/foundation/clock.dart';
 import 'package:money_fit/core/foundation/id_generator.dart';
 import 'package:money_fit/core/platform/analytics_tracker.dart';
-import 'package:money_fit/core/providers/foundation_providers.dart';
+import 'package:money_fit/app/composition/platform_providers.dart';
 
 void main() {
   test('foundation providers can be overridden without SDK access', () async {

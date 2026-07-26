@@ -4,7 +4,7 @@ import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/core/platform/analytics_tracker.dart';
 import 'package:money_fit/core/providers/expenses_provider.dart';
-import 'package:money_fit/core/providers/foundation_providers.dart';
+import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/app/composition/repository_providers.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/core/repositories/expense_repository.dart';
