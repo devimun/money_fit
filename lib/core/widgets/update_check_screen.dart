@@ -7,6 +7,7 @@ import 'package:money_fit/core/services/update_service.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
+import 'package:money_fit/core/router/bootstrap_gate.dart';
 
 class UpdateCheckScreen extends ConsumerStatefulWidget {
   const UpdateCheckScreen({super.key});
@@ -45,6 +46,9 @@ class _UpdateCheckScreenState extends ConsumerState<UpdateCheckScreen> {
       );
     }
     if (status.isForceUpdateRequired) {
+      ref
+          .read(bootstrapGateProvider.notifier)
+          .set(BootstrapGateState.forceUpdate);
       final l10n = AppLocalizations.of(context)!;
       await showDialog(
         context: context,
@@ -170,6 +174,9 @@ class _UpdateCheckScreenState extends ConsumerState<UpdateCheckScreen> {
       );
     }
 
+    ref
+        .read(bootstrapGateProvider.notifier)
+        .set(BootstrapGateState.initializing);
     setState(() => _checking = false);
   }
 
@@ -181,7 +188,8 @@ class _UpdateCheckScreenState extends ConsumerState<UpdateCheckScreen> {
     // 체크 통과 시 스플래시로 이동
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        context.go('/');
+        final from = GoRouterState.of(context).uri.queryParameters['from'];
+        context.go(from == null ? '/' : '/?from=${Uri.encodeComponent(from)}');
       }
     });
     return const Scaffold();

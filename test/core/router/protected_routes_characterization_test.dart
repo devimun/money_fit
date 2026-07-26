@@ -1,19 +1,11 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:money_fit/core/router/app_router.dart';
+import 'package:money_fit/core/router/bootstrap_gate.dart';
 
 void main() {
   test(
-    'current_bug_R12_protected_routes_bypass_bootstrap_gate_remove_in_PR_1_6',
+    'protected routes redirect to the update gate before bootstrap is ready',
     () {
-      final container = ProviderContainer(
-        overrides: [appRouterObserversProvider.overrideWithValue(const [])],
-      );
-      addTearDown(container.dispose);
-
-      final router = container.read(goRouterProvider);
-      addTearDown(router.dispose);
-
       for (final path in const [
         '/home',
         '/calendar',
@@ -21,10 +13,40 @@ void main() {
         '/expense_list',
         '/settings',
       ]) {
-        router.go(path);
-
-        expect(router.routeInformationProvider.value.uri.path, path);
+        final destination = Uri.parse(
+          redirectForBootstrapGate(
+            BootstrapGateState.checkingUpdate,
+            Uri.parse(path),
+          )!,
+        );
+        expect(destination.path, '/update-check');
+        expect(destination.queryParameters['from'], path);
       }
     },
   );
+
+  test('ready bootstrap restores the requested protected route', () {
+    expect(
+      redirectForBootstrapGate(
+        BootstrapGateState.ready,
+        Uri.parse('/?from=%2Fcalendar'),
+      ),
+      '/calendar',
+    );
+  });
+
+  test('setup, force-update, and failure states gate protected routes', () {
+    for (final expectation in [
+      (BootstrapGateState.needsSetup, '/budget_setup'),
+      (BootstrapGateState.forceUpdate, '/update-check'),
+      (BootstrapGateState.recoverableFailure, '/bootstrap-failure'),
+    ]) {
+      expect(
+        Uri.parse(
+          redirectForBootstrapGate(expectation.$1, Uri.parse('/settings'))!,
+        ).path,
+        expectation.$2,
+      );
+    }
+  });
 }

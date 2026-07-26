@@ -14,6 +14,9 @@ import 'package:money_fit/features/settings/view/settings_screen.dart';
 import 'package:money_fit/features/onboarding/view/budget_setup_screen.dart';
 import 'package:money_fit/core/widgets/update_check_screen.dart';
 
+import 'bootstrap_failure_screen.dart';
+import 'bootstrap_gate.dart';
+
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 
 /// Navigation observers used by the application router.
@@ -34,6 +37,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: '/update-check',
+    redirect: (context, state) {
+      return redirectForBootstrapGate(
+        ref.read(bootstrapGateProvider),
+        state.uri,
+      );
+    },
     routes: [
       GoRoute(
         path: '/update-check',
@@ -44,6 +53,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/',
         name: 'SplashScreen',
         builder: (context, state) => const SplashScreen(),
+      ),
+      GoRoute(
+        path: '/bootstrap-failure',
+        name: 'BootstrapFailureScreen',
+        builder: (context, state) =>
+            BootstrapFailureScreen(returnTo: state.uri.queryParameters['from']),
       ),
       // 온보딩 과정을 줄이기 위해 바로 BudgetSetup 화면으로 이동
       // GoRoute(
@@ -121,6 +136,47 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     observers: ref.watch(appRouterObserversProvider),
   );
 });
+
+String? redirectForBootstrapGate(BootstrapGateState gate, Uri uri) {
+  final path = uri.path;
+  final from = uri.queryParameters['from'];
+  final isProtected = _protectedPaths.contains(path);
+  final intendedPath = isProtected ? uri.toString() : from;
+
+  switch (gate) {
+    case BootstrapGateState.checkingUpdate:
+    case BootstrapGateState.initializing:
+      if (path == '/update-check' || path == '/') return null;
+      return _withFrom('/update-check', intendedPath);
+    case BootstrapGateState.forceUpdate:
+      if (path == '/update-check') return null;
+      return _withFrom('/update-check', intendedPath);
+    case BootstrapGateState.needsSetup:
+      if (path == '/budget_setup') return null;
+      return _withFrom('/budget_setup', intendedPath);
+    case BootstrapGateState.recoverableFailure:
+      if (path == '/bootstrap-failure') return null;
+      return _withFrom('/bootstrap-failure', intendedPath);
+    case BootstrapGateState.ready:
+      if (path == '/update-check' || path == '/' || path == '/budget_setup') {
+        return from ?? '/home';
+      }
+      return null;
+  }
+}
+
+const _protectedPaths = {
+  '/home',
+  '/calendar',
+  '/stats',
+  '/expense_list',
+  '/settings',
+};
+
+String _withFrom(String destination, String? from) {
+  if (from == null || from.isEmpty) return destination;
+  return '$destination?from=${Uri.encodeComponent(from)}';
+}
 
 class ScaffoldWithNavBar extends StatelessWidget {
   const ScaffoldWithNavBar({required this.child, super.key});
