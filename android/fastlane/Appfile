@@ -1,2 +1,4 @@
-json_key_file("/Users/jun/Desktop/money_fit/android/fastlane-api-key.json") # Path to the json secret file - Follow https://docs.fastlane.tools/actions/supply/#setup to get one
-package_name("com.moneyfitapp.app") # e.g. com.krausefx.app
+# Provide deployment credentials at execution time; never commit a workstation
+# path or service-account JSON file.
+json_key_file(ENV.fetch("GOOGLE_PLAY_SERVICE_ACCOUNT_JSON"))
+package_name(ENV.fetch("ANDROID_APPLICATION_ID", "com.moneyfitapp.app"))

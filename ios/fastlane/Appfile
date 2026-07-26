@@ -1,8 +1,7 @@
-app_identifier("com.moneyfitapp.app") # The bundle identifier of your app
-apple_id("rladudwns3956@gmail.com") # Your Apple Developer Portal username
-
-itc_team_id("127661954") # App Store Connect Team ID
-team_id("K9CY4X6X5A") # Developer Portal Team ID
+app_identifier(ENV.fetch("IOS_APPLICATION_ID", "com.moneyfitapp.app"))
+apple_id(ENV.fetch("APPLE_ID"))
+itc_team_id(ENV.fetch("APP_STORE_CONNECT_TEAM_ID"))
+team_id(ENV.fetch("APPLE_DEVELOPER_TEAM_ID"))
 
 # For more information about the Appfile, see:
 #     https://docs.fastlane.tools/advanced/#appfile
