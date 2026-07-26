@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
-import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 
 enum SortType { asc, desc }
@@ -32,7 +31,7 @@ class ExpensesListViewModel extends AsyncNotifier<ExpensesListState> {
   Future<ExpensesListState> build() async {
     state = AsyncLoading();
     // 조회 기준 당월 데이터
-    final searchDate = ref.watch(dateManager);
+    final searchDate = ref.watch(ledgerVisibleDateProvider);
     final buildData = await ref.read(coreExpensesProvider.future);
     final filtered = filteringData(buildData, null, null, SortType.desc);
 

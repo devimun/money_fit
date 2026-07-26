@@ -3,10 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/core/platform/analytics_tracker.dart';
-import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
 import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/app/composition/repository_providers.dart';
-import 'package:money_fit/core/providers/select_date_provider.dart';
+import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_repository.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -55,7 +54,7 @@ void main() {
       await Future<void>.delayed(Duration.zero);
 
       expect(didRefresh, isTrue);
-      expect(container.read(dateManager), DateTime(2024, 2, 1));
+      expect(container.read(ledgerVisibleDateProvider), DateTime(2024, 2, 1));
       expect(container.read(coreExpensesProvider).value, isEmpty);
     });
 
@@ -137,17 +136,12 @@ ProviderContainer _container(
 }) {
   return ProviderContainer(
     overrides: [
-      dateManager.overrideWith(_FixedDateManager.new),
+      ledgerVisibleDateProvider.overrideWith((ref) => DateTime(2024, 1, 1)),
       userSettingsProvider.overrideWith(_TestUserSettingsNotifier.new),
       expenseRepositoryProvider.overrideWith((ref) => repository),
       analyticsTrackerProvider.overrideWithValue(analytics),
     ],
   );
-}
-
-class _FixedDateManager extends DateManager {
-  @override
-  DateTime build() => DateTime(2024, 1, 1);
 }
 
 class _TestUserSettingsNotifier extends UserSettingsNotifier {

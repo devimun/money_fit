@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:money_fit/core/providers/navigation_provider.dart';
-import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/core/services/ad_service.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
@@ -137,7 +136,6 @@ class MainBottomNavBar extends ConsumerWidget {
   ) {
     if (index == currentIndex) return;
     ref.read(navigationIndexProvider.notifier).state = index;
-    ref.read(dateManager.notifier).changeDate(DateTime.now());
     if ([1, 2, 3].contains(index)) {
       InterstitialAdManager.instance.logActionAndShowAd();
     }

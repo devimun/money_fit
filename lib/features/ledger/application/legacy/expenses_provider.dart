@@ -6,8 +6,11 @@ import 'package:money_fit/core/foundation/year_month.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/app/composition/repository_providers.dart';
-import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
+
+final ledgerVisibleDateProvider = StateProvider<DateTime>(
+  (ref) => ref.watch(clockProvider).now(),
+);
 
 class ExpenseMonthKey {
   const ExpenseMonthKey({required this.userId, required this.month});
@@ -36,7 +39,7 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
       _cache.clear();
       _activeUserId = user.id;
     }
-    final date = ref.read(dateManager);
+    final date = ref.read(ledgerVisibleDateProvider);
     return loadMonthlyExpenses(user.id, date.year, date.month);
   }
 
@@ -93,7 +96,7 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
         date.year,
         date.month,
       );
-      ref.read(dateManager.notifier).changeDate(date);
+      ref.read(ledgerVisibleDateProvider.notifier).state = date;
       state = AsyncData(expenses);
       return true;
     } catch (error, stackTrace) {
@@ -111,7 +114,7 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
     }
 
     final user = await ref.read(userSettingsProvider.future);
-    final visible = _keyFor(user.id, ref.read(dateManager));
+    final visible = _keyFor(user.id, ref.read(ledgerVisibleDateProvider));
     if (affected.contains(visible)) {
       final expenses = await loadMonthlyExpenses(
         visible.userId,

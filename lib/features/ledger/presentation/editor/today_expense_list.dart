@@ -4,7 +4,6 @@ import 'package:money_fit/core/functions/functions.dart';
 
 import 'package:money_fit/features/ledger/application/legacy/category_providers.dart';
 import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
-import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/base_bottom_sheet.dart';
 import 'package:money_fit/features/ledger/presentation/editor/expense_add_form.dart';
@@ -28,7 +27,9 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final asyncState = ref.watch(coreExpensesProvider);
     final selectedDate =
-        this.selectedDate ?? ref.watch(dateManager) ?? DateTime.now();
+        this.selectedDate ??
+        ref.watch(ledgerVisibleDateProvider) ??
+        DateTime.now();
     final categoryState = ref.watch(categoryProvider);
     if (categoryState.isLoading || categoryState.hasError) {
       return const Center(child: CircularProgressIndicator());
