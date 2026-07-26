@@ -7,7 +7,7 @@ import 'package:money_fit/core/services/update_service.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
-import 'package:money_fit/core/router/bootstrap_gate.dart';
+import 'package:money_fit/app/router/bootstrap_gate.dart';
 
 class UpdateCheckScreen extends ConsumerStatefulWidget {
   const UpdateCheckScreen({super.key});

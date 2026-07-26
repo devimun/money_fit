@@ -5,7 +5,7 @@ import 'package:money_fit/core/error/app_failure.dart';
 import 'package:money_fit/core/foundation/year_month.dart';
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/providers/foundation_providers.dart';
-import 'package:money_fit/core/providers/repository_providers.dart';
+import 'package:money_fit/app/composition/repository_providers.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 

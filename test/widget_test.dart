@@ -5,11 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:money_fit/core/config/app_environment.dart';
 import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/core/providers/shared_preferences_provider.dart';
-import 'package:money_fit/core/router/app_router.dart';
+import 'package:money_fit/app/app.dart';
+import 'package:money_fit/app/router/app_router.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:money_fit/main.dart';
 
 void main() {
   testWidgets('app root builds without remote SDKs', (
@@ -41,7 +40,7 @@ void main() {
           ),
           userSettingsProvider.overrideWith(_TestUserSettingsNotifier.new),
         ],
-        child: const MyApp(),
+        child: const MoneyFitApp(),
       ),
     );
     await tester.pumpAndSettle();

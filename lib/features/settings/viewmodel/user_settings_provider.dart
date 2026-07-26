@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/models/user_model.dart';
-import 'package:money_fit/core/providers/repository_providers.dart';
+import 'package:money_fit/app/composition/repository_providers.dart';
 import 'package:money_fit/core/repositories/user_repository.dart';
 import 'package:money_fit/core/services/notification_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;

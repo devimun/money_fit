@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:money_fit/features/auth/view/splash_screen.dart';
 import 'package:money_fit/features/statistics/view/statistics.dart';
-import 'package:money_fit/widgets/bottom_nav_bar.dart';
+import 'package:money_fit/app/shell/app_shell.dart';
 import 'package:money_fit/features/home/view/home_screen.dart';
 import 'package:money_fit/features/calendar/view/calendar_screen.dart';
 import 'package:money_fit/features/expense/view/expense_list_screen.dart';
@@ -79,7 +79,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
       ShellRoute(
         builder: (context, state, child) {
-          return ScaffoldWithNavBar(child: child);
+          return AppShell(child: child);
         },
         routes: [
           GoRoute(
@@ -176,15 +176,4 @@ const _protectedPaths = {
 String _withFrom(String destination, String? from) {
   if (from == null || from.isEmpty) return destination;
   return '$destination?from=${Uri.encodeComponent(from)}';
-}
-
-class ScaffoldWithNavBar extends StatelessWidget {
-  const ScaffoldWithNavBar({required this.child, super.key});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(body: child, bottomNavigationBar: const MainBottomNavBar());
-  }
 }

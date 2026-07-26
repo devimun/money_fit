@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:money_fit/core/router/app_router.dart';
-import 'package:money_fit/core/router/bootstrap_gate.dart';
+import 'package:money_fit/app/router/app_router.dart';
+import 'package:money_fit/app/router/bootstrap_gate.dart';
 
 void main() {
   test(

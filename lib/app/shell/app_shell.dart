@@ -7,6 +7,17 @@ import 'package:money_fit/core/services/ad_service.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
+class AppShell extends StatelessWidget {
+  const AppShell({required this.child, super.key});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: child, bottomNavigationBar: const MainBottomNavBar());
+  }
+}
+
 class MainBottomNavBar extends ConsumerWidget {
   const MainBottomNavBar({super.key});
 

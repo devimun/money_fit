@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:money_fit/core/services/app_initializer.dart';
-import 'package:money_fit/core/router/bootstrap_gate.dart';
+import 'package:money_fit/app/router/bootstrap_gate.dart';
 import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {

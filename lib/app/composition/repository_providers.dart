@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:money_fit/core/providers/database_provider.dart';
+import 'package:money_fit/app/composition/database_providers.dart';
 import 'package:money_fit/core/repositories/category_repository.dart';
 import 'package:money_fit/core/repositories/expense_repository.dart';
 import 'package:money_fit/core/repositories/user_repository.dart';
