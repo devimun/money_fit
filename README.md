@@ -81,6 +81,9 @@ flowchart LR
 
   데이터는 위 순서대로 전달되며, 외부 서비스는 ViewModel에서 사이드 이펙트로 주입됩니다.
 
+  기능별 공개 API와 소유자는 [기능 소유권 문서](./docs/architecture/feature-owners.md)에서,
+  영속성·도메인 결정은 [ADR](./docs/adr/README.md)에서 확인할 수 있습니다.
+
 ```mermaid
 flowchart LR
     DB[(Local Data Source)]
