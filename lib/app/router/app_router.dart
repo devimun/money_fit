@@ -7,7 +7,7 @@ import 'package:money_fit/features/statistics/view/statistics.dart';
 import 'package:money_fit/app/shell/app_shell.dart';
 import 'package:money_fit/features/home/view/home_screen.dart';
 import 'package:money_fit/features/calendar/view/calendar_screen.dart';
-import 'package:money_fit/features/expense/view/expense_list_screen.dart';
+import 'package:money_fit/features/ledger/presentation/history/view/expense_list_screen.dart';
 import 'package:money_fit/features/settings/view/settings_screen.dart';
 // 온보딩 과정을 줄이기 위해 제거
 // import 'package:money_fit/features/onboarding/view/onboarding_screen.dart';

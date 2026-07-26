@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
-import 'package:money_fit/features/expense/viewmodel/expense_list_provider.dart';
+import 'package:money_fit/features/ledger/presentation/history/viewmodel/expense_list_provider.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 class SortFilterSection extends StatelessWidget {
