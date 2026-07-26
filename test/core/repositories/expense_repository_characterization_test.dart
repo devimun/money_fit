@@ -12,7 +12,7 @@ void main() {
 
     setUp(() async {
       database = await ExpenseSqliteFixture.open();
-      repository = ExpenseRepository.forTesting(databaseExecutor: database);
+      repository = ExpenseRepository(database: TestAppDatabase(database));
     });
 
     tearDown(() => database.close());

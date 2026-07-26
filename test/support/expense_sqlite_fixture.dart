@@ -1,3 +1,4 @@
+import 'package:money_fit/core/database/app_database.dart';
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -52,4 +53,16 @@ class ExpenseSqliteFixture {
       updatedAt: updatedAt ?? created,
     );
   }
+}
+
+class TestAppDatabase implements AppDatabase {
+  TestAppDatabase(this.database);
+
+  final Database database;
+
+  @override
+  Future<DatabaseExecutor> get executor async => database;
+
+  @override
+  Future<void> reset() async {}
 }

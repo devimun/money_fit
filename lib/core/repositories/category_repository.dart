@@ -1,4 +1,4 @@
-import 'package:money_fit/core/database/database_helper.dart';
+import 'package:money_fit/core/database/app_database.dart';
 import 'package:money_fit/core/error/app_failure.dart';
 import 'package:money_fit/core/models/category_model.dart';
 import 'package:sqflite/sqflite.dart';
@@ -12,14 +12,14 @@ abstract class ICategoryRepository {
 }
 
 class CategoryRepository implements ICategoryRepository {
-  final DatabaseHelper _dbHelper;
+  final AppDatabase _database;
 
-  CategoryRepository({required DatabaseHelper dbHelper}) : _dbHelper = dbHelper;
+  CategoryRepository({required AppDatabase database}) : _database = database;
 
   /// 기본 카테고리(userId가 null)와 특정 사용자가 생성한 카테고리를 모두 가져옵니다.
   @override
   Future<List<Category>> getAllCategories(String? userId) async {
-    final db = await _dbHelper.database;
+    final db = await _database.executor;
     // userId가 null인 경우, 기본 카테고리만 조회합니다.
     // userId가 제공된 경우, 기본 카테고리와 해당 사용자의 카테고리를 모두 조회합니다.
     final List<Map<String, dynamic>> maps = await db.query(
@@ -47,13 +47,13 @@ class CategoryRepository implements ICategoryRepository {
       throw ArgumentError('User-created categories must have a userId.');
     }
 
-    final db = await _dbHelper.database;
+    final db = await _database.executor;
     await db.insert('categories', category.toJson());
   }
 
   @override
   Future<void> updateCategory(Category category) async {
-    final db = await _dbHelper.database;
+    final db = await _database.executor;
     await db.update(
       'categories',
       category.toJson(),
@@ -65,7 +65,7 @@ class CategoryRepository implements ICategoryRepository {
 
   @override
   Future<void> deleteCategory(String id) async {
-    final db = await _dbHelper.database;
+    final db = await _database.executor;
     final categories = await db.query(
       'categories',
       where: 'id = ?',

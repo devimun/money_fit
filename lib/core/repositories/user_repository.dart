@@ -1,4 +1,4 @@
-import 'package:money_fit/core/database/database_helper.dart';
+import 'package:money_fit/core/database/app_database.dart';
 import 'package:money_fit/core/models/user_model.dart';
 
 /// UserRepository의 인터페이스입니다.
@@ -11,20 +11,19 @@ abstract class IUserRepository {
 }
 
 class UserRepository implements IUserRepository {
-  final DatabaseHelper _dbHelper;
+  final AppDatabase _database;
 
-  // 생성자를 통해 DatabaseHelper 인스턴스를 주입받습니다.
-  UserRepository({required DatabaseHelper dbHelper}) : _dbHelper = dbHelper;
+  UserRepository({required AppDatabase database}) : _database = database;
 
   @override
   Future<void> createUser(User user) async {
-    final db = await _dbHelper.database;
+    final db = await _database.executor;
     await db.insert('users', user.toJson());
   }
 
   @override
   Future<User?> getUser(String id) async {
-    final db = await _dbHelper.database;
+    final db = await _database.executor;
     final maps = await db.query('users', where: 'id = ?', whereArgs: [id]);
 
     if (maps.isNotEmpty) {
@@ -36,7 +35,7 @@ class UserRepository implements IUserRepository {
 
   @override
   Future<void> updateUser(User user) async {
-    final db = await _dbHelper.database;
+    final db = await _database.executor;
     await db.update(
       'users',
       user.toJson(),
@@ -47,7 +46,7 @@ class UserRepository implements IUserRepository {
 
   @override
   Future<void> deleteUser(String id) async {
-    final db = await _dbHelper.database;
+    final db = await _database.executor;
     await db.delete('users', where: 'id = ?', whereArgs: [id]);
   }
 }

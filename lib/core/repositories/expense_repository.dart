@@ -1,4 +1,4 @@
-import 'package:money_fit/core/database/database_helper.dart';
+import 'package:money_fit/core/database/app_database.dart';
 import 'package:money_fit/core/error/app_failure.dart';
 import 'package:money_fit/core/foundation/local_date.dart';
 import 'package:money_fit/core/models/expense_model.dart';
@@ -21,21 +21,21 @@ abstract class IExpenseRepository {
 }
 
 class ExpenseRepository implements IExpenseRepository {
-  final DatabaseHelper? _dbHelper;
+  final AppDatabase? _appDatabase;
   final DatabaseExecutor? _databaseExecutor;
 
-  ExpenseRepository({required DatabaseHelper dbHelper})
-    : _dbHelper = dbHelper,
+  ExpenseRepository({required AppDatabase database})
+    : _appDatabase = database,
       _databaseExecutor = null;
 
   /// Test-only SQLite seam. App composition continues to use [DatabaseHelper]
   /// until the database boundary is extracted.
   ExpenseRepository.forTesting({required DatabaseExecutor databaseExecutor})
-    : _dbHelper = null,
+    : _appDatabase = null,
       _databaseExecutor = databaseExecutor;
 
   Future<DatabaseExecutor> get _database async =>
-      _databaseExecutor ?? await _dbHelper!.database;
+      _databaseExecutor ?? await _appDatabase!.executor;
 
   @override
   Future<void> createExpense(Expense expense) =>

@@ -6,18 +6,15 @@ import 'package:money_fit/core/repositories/user_repository.dart';
 
 /// UserRepository 인스턴스를 제공하는 Provider입니다.
 final userRepositoryProvider = Provider<UserRepository>((ref) {
-  final dbHelper = ref.read(databaseHelperProvider);
-  return UserRepository(dbHelper: dbHelper);
+  return UserRepository(database: ref.read(appDatabaseProvider));
 });
 
 /// CategoryRepository 인스턴스를 제공하는 Provider입니다.
 final categoryRepositoryProvider = Provider<CategoryRepository>((ref) {
-  final dbHelper = ref.read(databaseHelperProvider);
-  return CategoryRepository(dbHelper: dbHelper);
+  return CategoryRepository(database: ref.read(appDatabaseProvider));
 });
 
 /// ExpenseRepository 인스턴스를 제공하는 Provider입니다.
 final expenseRepositoryProvider = Provider<ExpenseRepository>((ref) {
-  final dbHelper = ref.read(databaseHelperProvider);
-  return ExpenseRepository(dbHelper: dbHelper);
+  return ExpenseRepository(database: ref.read(appDatabaseProvider));
 });
