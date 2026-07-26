@@ -5,6 +5,7 @@ import 'package:money_fit/app/database/migrations/sqlite_v6_migration.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../../support/legacy_database_fixture.dart';
+import '../../support/v5_database_fixture.dart';
 
 void main() {
   setUpAll(sqfliteFfiInit);
@@ -102,6 +103,47 @@ void main() {
       );
     },
   );
+
+  for (final fixtureName in const ['v5_empty', 'v5_typical']) {
+    test(
+      'persisted $fixtureName fixture upgrades through the v6 migration',
+      () async {
+        final db = await V5DatabaseFixture.openNamed(fixtureName);
+        addTearDown(db.close);
+
+        await SqliteV6Migration.migrate(db);
+
+        expect(
+          await _count(db, 'local_users'),
+          fixtureName == 'v5_empty' ? 0 : 1,
+        );
+        expect(await _count(db, 'expenses'), fixtureName == 'v5_empty' ? 0 : 1);
+      },
+    );
+  }
+
+  for (final fixtureName in const ['v5_orphaned', 'v5_edge_amounts']) {
+    test(
+      'persisted $fixtureName fixture is rejected without replacing v5',
+      () async {
+        final db = await V5DatabaseFixture.openNamed(fixtureName);
+        addTearDown(db.close);
+
+        await expectLater(
+          SqliteV6Migration.migrate(db),
+          throwsA(isA<FormatException>()),
+        );
+
+        expect(
+          await db.query(
+            'sqlite_master',
+            where: "type = 'table' AND name = 'local_users'",
+          ),
+          isEmpty,
+        );
+      },
+    );
+  }
 
   test(
     'invalid legacy data rolls back without replacing the v5 database',

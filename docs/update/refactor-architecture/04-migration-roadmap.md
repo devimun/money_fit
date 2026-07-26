@@ -692,6 +692,11 @@ test/fixtures/database/
   v5_edge_amounts.db
 ```
 
+구현에서는 binary DB snapshot 대신 같은 이름의 review 가능한 synthetic JSON
+recipe를 `test/fixtures/database/`에 추적하고, 테스트가 이를 실제 in-memory
+SQLite v5 DB로 materialize한다. 따라서 fixture는 portable하고 customer data를
+포함하지 않으면서도 audit와 실제 migration transaction을 모두 검증한다.
+
 ### PR 7.2 — v6 schema migration
 
 [목표 schema](./03-target-architecture.md#9-sqlite-v6-후보)를 ADR 결과에 맞춰 확정한다.

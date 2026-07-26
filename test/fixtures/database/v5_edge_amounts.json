@@ -1,0 +1,68 @@
+{
+  "version": 5,
+  "users": [
+    {
+      "id": "edge-owner",
+      "budget": 50,
+      "budget_type": "daily",
+      "currency_code": "USD",
+      "created_at": "2026-07-20T12:00:00.000Z",
+      "updated_at": "2026-07-20T12:00:00.000Z"
+    }
+  ],
+  "categories": [
+    {
+      "id": "food",
+      "user_id": null,
+      "name": "Food",
+      "type": "essential",
+      "is_deletable": 0
+    }
+  ],
+  "expenses": [
+    {
+      "id": "zero-amount",
+      "user_id": "edge-owner",
+      "name": "Synthetic zero",
+      "amount": 0,
+      "date": "2026-07-20",
+      "category_id": "food",
+      "type": "essential",
+      "created_at": "2026-07-20T12:00:00.000Z",
+      "updated_at": "2026-07-20T12:00:00.000Z"
+    },
+    {
+      "id": "negative-amount",
+      "user_id": "edge-owner",
+      "name": "Synthetic negative",
+      "amount": -1,
+      "date": "2026-07-20",
+      "category_id": "food",
+      "type": "essential",
+      "created_at": "2026-07-20T12:00:00.000Z",
+      "updated_at": "2026-07-20T12:00:00.000Z"
+    },
+    {
+      "id": "null-amount",
+      "user_id": "edge-owner",
+      "name": "Synthetic null",
+      "amount": null,
+      "date": "2026-07-20",
+      "category_id": "food",
+      "type": "essential",
+      "created_at": "2026-07-20T12:00:00.000Z",
+      "updated_at": "2026-07-20T12:00:00.000Z"
+    },
+    {
+      "id": "invalid-shape",
+      "user_id": "edge-owner",
+      "name": "Synthetic invalid shape",
+      "amount": 4.5,
+      "date": "2026-02-31",
+      "category_id": "food",
+      "type": "unknown",
+      "created_at": "2026-02-31T12:00:00.000Z",
+      "updated_at": "not-a-timestamp"
+    }
+  ]
+}

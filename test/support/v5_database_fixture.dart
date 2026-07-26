@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 /// Small v5-shaped databases for migration preflight and upgrade tests.
@@ -5,9 +8,39 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 /// Fixtures deliberately use synthetic identifiers and text; no production
 /// database snapshot is checked into the repository.
 class V5DatabaseFixture {
-  static Future<Database> open({
-    bool duplicateGlobalCategoryIds = false,
-  }) async {
+  /// Opens a checked-in, synthetic v5 fixture from `test/fixtures/database`.
+  ///
+  /// The repository intentionally stores declarative JSON instead of binary
+  /// SQLite files. That keeps fixtures reviewable, portable, and guaranteed
+  /// not to contain a copied customer database while still exercising a real
+  /// SQLite schema in every migration test.
+  static Future<Database> openNamed(String name) async {
+    final fixture =
+        jsonDecode(
+              await File('test/fixtures/database/$name.json').readAsString(),
+            )
+            as Map<String, dynamic>;
+    if (fixture['version'] != 5) {
+      throw FormatException('Expected a v5 fixture: $name');
+    }
+
+    final database = await open();
+    for (final table in const ['users', 'categories', 'expenses']) {
+      final rows = fixture[table];
+      if (rows is! List) {
+        throw FormatException('Fixture $name is missing $table rows');
+      }
+      for (final row in rows) {
+        if (row is! Map) {
+          throw FormatException('Fixture $name has an invalid $table row');
+        }
+        await database.insert(table, Map<String, Object?>.from(row));
+      }
+    }
+    return database;
+  }
+
+  static Future<Database> open() async {
     sqfliteFfiInit();
     final database = await databaseFactoryFfi.openDatabase(
       inMemoryDatabasePath,
@@ -49,18 +82,6 @@ class V5DatabaseFixture {
         updated_at TEXT
       )
     ''');
-    if (duplicateGlobalCategoryIds) {
-      await database.insert('categories', {
-        'id': 'food',
-        'name': 'Food',
-        'type': 'essential',
-      });
-      await database.insert('categories', {
-        'id': 'food',
-        'name': 'Food duplicate',
-        'type': 'essential',
-      });
-    }
     return database;
   }
 

@@ -1,12 +1,11 @@
 import 'package:sqflite/sqflite.dart';
 
-/// The isolated v5 -> v6 ledger migration.
+/// The production v5 -> v6 ledger migration.
 ///
-/// This deliberately does not change [DatabaseHelper] yet: production v5
-/// repositories still read `users`, `categories`, and `expenses`. Keeping the
-/// migration here lets the rollout wire the new repositories and `onConfigure`
-/// together in one later change, without exposing a partially migrated DB to
-/// the v5 code.
+/// Runtime composition uses the v6 repositories, and [DatabaseHelper] opens
+/// the database with foreign keys enabled before invoking this migration. The
+/// implementation remains independently callable so migration fixtures can
+/// verify its transaction and recovery behavior directly.
 final class SqliteV6Migration {
   SqliteV6Migration._();
 

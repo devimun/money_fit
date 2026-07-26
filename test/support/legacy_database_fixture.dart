@@ -4,7 +4,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 ///
 /// The fixtures intentionally construct historical shapes instead of checking
 /// in customer database copies. [openUpgradedToV5] applies the same v4/v5
-/// table evolution that the production helper applies before the v6 gate.
+/// table evolution that production used before the v6 migration.
 class LegacyDatabaseFixture {
   static const timestamp = '2026-07-20T12:00:00.000Z';
 
