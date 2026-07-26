@@ -234,7 +234,9 @@ budget history는 별도의 제품 결정이다. 현재 요구만으로는 Curre
 
 ### 3.10 reset이 “전체 데이터 삭제”가 아니다
 
-[DataResetService](../../../lib/core/services/data_reset_service.dart)는 analytics event를 먼저 await한 뒤 SQLite 파일만 삭제한다.
+분석 기준선의 `DataResetService`는 analytics event를 먼저 await한 뒤 SQLite 파일만 삭제했다.
+현재 구현은 `app/reset/ResetCoordinator`가 scope별 reset과 provider invalidation을 함께
+처리한다.
 
 남을 수 있는 상태:
 

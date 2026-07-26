@@ -102,7 +102,8 @@ lib/
 ### Settings (`features/settings`)
 
 - 섹션 단위로 상태를 분리: 예산 수정, 알림, 다크 모드, 데이터 초기화, 문의, 버전/정책.
-- `DataResetService.resetAllData`가 SQLite 초기화 후 `FlutterPhoenix`로 앱을 재시작.
+- `ResetCoordinator`가 SQLite, preferences, 세션, 알림, engagement state를 선언된
+  reset scope에 따라 초기화하고 관련 provider를 무효화.
 - 문의(`ContactUsDialog`)는 Supabase `user_contact` 테이블에 저장해 고객 응대를 손쉽게 할 수 있도록 설계.
 
 ---

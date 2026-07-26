@@ -64,7 +64,7 @@ flowchart LR
 ## 기술 스택
 
 - **클라이언트**
-  Flutter 3.8, Riverpod, GoRouter, Intl, Flutter Local Notifications, fl_chart, Flutter Phoenix
+  Flutter 3.8, Riverpod, GoRouter, Intl, Flutter Local Notifications, fl_chart
 
 - **데이터 저장/백엔드**
   SQLite, Supabase, Firebase (Core, Analytics, Remote Config)
@@ -73,13 +73,15 @@ flowchart LR
   Google Mobile Ads, NotificationService, ReviewPromptService, Firebase Analytics Observer
 
 - **아키텍처**
-  Feature-first MVVM + 계층형 저장소 구조를 사용합니다.
+  Feature-first MVVM과 owner-scoped SQLite v6 저장소 구조를 사용합니다.
 
   ```text
   App composition -> Feature application state -> Feature repository -> AppDatabase
   ```
 
-  데이터는 위 순서대로 전달되며, 외부 서비스는 ViewModel에서 사이드 이펙트로 주입됩니다.
+  데이터는 위 순서대로 전달되며, 외부 서비스는 feature application의
+  port/gateway를 통해 주입됩니다. SQLite는 `app/database`가 lifecycle과
+  versioned migration을 소유하고, feature data adapter가 v6 테이블을 읽고 씁니다.
 
   기능별 공개 API와 소유자는 [기능 소유권 문서](./docs/architecture/feature-owners.md)에서,
   영속성·도메인 결정은 [ADR](./docs/adr/README.md)에서 확인할 수 있습니다.
@@ -116,11 +118,16 @@ lib/
  └── l10n/          # generated localization surface
 ```
 
+- **`app/`**
+  composition, bootstrap, router, shell, database lifecycle과 versioned migration을 담당합니다.
+
 - **`core/`**
-  DatabaseHelper, Repository 추상화, AppInitializer, 광고/알림/리뷰 서비스 등 크로스커팅 로직을 담당합니다.
+  framework-independent foundation, repository port, shared preference와 외부 SDK 경계를 담당합니다.
 
 - **`features/`**
-  각 도메인이 `View`, `ViewModel`, `Model` 3단계로 구성되며, 화면과 비즈니스 로직을 분리해 테스트와 리팩터링을 쉽게 합니다.
+  ledger, budget, session, preferences, notification 등 각 도메인이 application,
+  data, domain, presentation을 소유합니다. v6 ledger는 owner별 currency snapshot과
+  minor unit 금액을 저장해 통화와 반올림 의미를 보존합니다.
 
 - **`widgets/`**
   탭바, 공통 바텀 시트, 다이얼로그 등 재사용 가능한 프레젠테이션 컴포넌트를 모아 유지보수를 단순화합니다.

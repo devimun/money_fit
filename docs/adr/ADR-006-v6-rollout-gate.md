@@ -1,50 +1,49 @@
-# ADR-006: v6 ledger schema rollout gate
+# ADR-006: v6 ledger schema runtime
 
-- Status: Accepted for the PR 7.2 migration preparation release
+- Status: Implemented
 - Date: 2026-07-27
 
 ## Context
 
-`SqliteV6Migration` has a transaction-safe conversion from the v5 tables to
-the owner-scoped, minor-unit v6 ledger schema.  The current application
-composition still supplies the legacy `UserRepository`, `CategoryRepository`,
-and `ExpenseRepository`; they read v5 columns such as `users.budget`,
-`categories.user_id`, and `expenses.amount/date/type`.
+`SqliteV6Migration` converts v1–v5 data to the owner-scoped, minor-unit v6
+ledger schema in one SQLite transaction. The running application now opens
+schema version 6 and composes only v6-backed repositories. Historical UI
+contracts for user, category, and expense data are retained as compatibility
+projections; they do not read the removed v5 columns.
 
-Changing only `openDatabase(version: 6)` would successfully drop those
-columns, then fail on the next repository read.  A remote feature flag is not
-a safe substitute: an older binary cannot open a database once it has moved to
-v6.
+The v6 schema stores local owners, ledger currency, current budgets,
+owner-scoped categories, and expenses separately. Foreign keys and checks are
+enabled on every connection before migration or repository access.
 
 ## Decision
 
-The runtime remains at schema v5 until the v6 repository set is composed in
-the same release.  `DatabaseSchemaRollout` is the single release gate:
+`DatabaseSchemaRollout` is the single, compile-time release decision:
 
-- `runtimeVersion` supplies the version passed to `openDatabase`.
-- `v6RepositoriesAreActive` must be changed together with that version and
-  the new repository composition.
+- `runtimeVersion` is 6 and supplies the version passed to `openDatabase`.
+- `v6RepositoriesAreActive` is true and is covered by a rollout composition
+  test together with the version.
 - `shouldApplyV6Migration` is the only `onUpgrade` path that calls
-  `SqliteV6Migration`.
-- SQLite foreign keys are enabled at connection configuration time, so the
-  v6 release has the required connection behavior before its transaction
-  begins.
+  `SqliteV6Migration`; new installs create the v6 tables directly.
+- `SqliteV6UserRepository`, `SqliteV6LocalOwnerRepository`,
+  `SqliteV6CurrentBudgetRepository`, and the v6-backed legacy ledger adapters
+  are the composed persistence surface.
 
-The transaction, fixture audits, and v6 constraint tests are therefore
-production-ready migration machinery, while the destructive switch is
-explicitly blocked until its consumers are ready.
+The migration audit, v1–v5 fixtures, rollback-on-error transaction test,
+restart/idempotency test, and v6 constraint tests are release requirements for
+future schema changes as well.
 
 ## Consequences and release checklist
 
-The v6 activation commit must atomically include all of the following:
+The v6 activation was committed atomically with the following safeguards:
 
-1. Set `runtimeVersion` to 6 and `v6RepositoriesAreActive` to true.
-2. Replace every v5 repository in `appDatabaseProvider` composition.
-3. Run v1–v5 fixture upgrades, restart/idempotency checks, and owner/category
+1. `runtimeVersion` is 6 and `v6RepositoriesAreActive` is true.
+2. Every runtime repository is backed by v6 tables or a v6 compatibility
+   projection.
+3. v1–v5 fixture upgrades, restart/idempotency checks, and owner/category
    aggregate reconciliation.
-4. Test a fresh v6 database as well as upgraded copies.
-5. Use staged rollout and a forward-fix build; never roll a v6 database back
+4. A fresh v6 database and upgraded copies are tested.
+5. Releases use staged rollout and a forward-fix build; never roll a v6 database back
    to an older binary.
 
-Until then, v5 remains the deliberately supported runtime schema rather than
-an implicit partial v6 rollout.
+SQLite versions cannot be lowered. A future incompatibility must be corrected
+with a forward-fix build, not a binary rollback or remote feature flag.

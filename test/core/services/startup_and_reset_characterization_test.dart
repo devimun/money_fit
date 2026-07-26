@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:money_fit/app/bootstrap/app_initializer.dart';
-import 'package:money_fit/app/reset/data_reset_service.dart';
 
 void main() {
   test(
@@ -78,28 +77,6 @@ void main() {
       ]);
     },
   );
-
-  test('reset continues after analytics completes', () async {
-    final calls = <String>[];
-
-    await DataResetService.resetAllData(
-      logReset: _action(calls, 'analytics'),
-      resetDatabase: _action(calls, 'database'),
-    );
-
-    expect(calls, ['analytics', 'database']);
-  });
-
-  test('analytics failure does not prevent database reset', () async {
-    final calls = <String>[];
-
-    await DataResetService.resetAllData(
-      logReset: _action(calls, 'analytics', error: 'analytics'),
-      resetDatabase: _action(calls, 'database'),
-    );
-
-    expect(calls, ['analytics', 'database']);
-  });
 }
 
 Future<void> Function() _action(
