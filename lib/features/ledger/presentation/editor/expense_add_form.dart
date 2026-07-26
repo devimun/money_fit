@@ -5,10 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/app/composition/feedback_providers.dart';
 import 'package:money_fit/app/composition/platform_providers.dart';
-import 'package:money_fit/features/feedback/application/review_prompt_flow.dart';
-import 'package:money_fit/features/feedback/data/shared_preferences_review_prompt_preferences.dart';
-import 'package:money_fit/features/feedback/data/url_review_store_launcher.dart';
-import 'package:money_fit/features/feedback/presentation/review/material_review_prompt_presenter.dart';
 import 'package:money_fit/features/monetization/data/google_mobile_ads_gateway.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/base_bottom_sheet.dart';
@@ -245,14 +241,7 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
     unawaited(
       _runBestEffort(InterstitialAdManager.instance.logActionAndShowAd),
     );
-    await _runBestEffort(
-      () => ReviewPromptFlow(
-        feedback: ref.read(feedbackRepositoryProvider),
-        preferences: SharedPreferencesReviewPromptPreferences(),
-        presenter: MaterialReviewPromptPresenter(context),
-        reviewStoreLauncher: const UrlReviewStoreLauncher(),
-      ).maybePromptReview(),
-    );
+    await _runBestEffort(() => ref.read(reviewPromptProvider)(context));
     if (mounted) {
       Navigator.pop(context, true);
     }
