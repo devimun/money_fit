@@ -1,4 +1,19 @@
 require 'yaml'
+require 'base64'
+
+def analytics_dart_defines
+  key = ENV.fetch('AMPLITUDE_PROD_API_KEY', '').strip
+  enabled = ENV.fetch('AMPLITUDE_ENABLED', key.empty? ? 'false' : 'true')
+  zone = ENV.fetch('AMPLITUDE_SERVER_ZONE', 'us')
+  values = [
+    "AMPLITUDE_ENABLED=#{enabled}",
+    'ANALYTICS_ENV=prod',
+    "AMPLITUDE_SERVER_ZONE=#{zone}"
+  ]
+  values << "AMPLITUDE_API_KEY=#{key}" unless key.empty?
+  # Flutter's Xcode integration expects comma-separated base64 dart defines.
+  values.map { |value| Base64.strict_encode64(value) }.join(',')
+end
 
 default_platform(:ios)
 
@@ -26,7 +41,7 @@ platform :ios do
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
       export_method: "app-store",
-      xcargs: "-allowProvisioningUpdates" 
+      xcargs: "-allowProvisioningUpdates DART_DEFINES=#{analytics_dart_defines}"
     )
 
     upload_to_testflight(skip_waiting_for_build_processing: true)
@@ -37,13 +52,27 @@ platform :ios do
   # ==========================================
   desc "앱 빌드 없이 스토어 텍스트 정보만 업데이트"
   lane :update_metadata do
+    sh "dart run tool/validate_store_metadata.dart"
     deliver(
       submit_for_review: false,
       automatic_release: false,
-      force: true,
       skip_binary_upload: true,
       skip_screenshots: true,      # 스크린샷 스킵 (빠른 업데이트)
-      skip_metadata: false         # 텍스트 올림!
+      skip_metadata: false,        # 텍스트 올림!
+      precheck_default_rule_level: :error
+    )
+  end
+
+  desc "App Store Connect에 제출하지 않고 메타데이터 preview 생성"
+  lane :preview_metadata do
+    sh "dart run tool/validate_store_metadata.dart"
+    deliver(
+      submit_for_review: false,
+      automatic_release: false,
+      force: false,
+      skip_binary_upload: true,
+      skip_screenshots: true,
+      skip_metadata: false
     )
   end
 

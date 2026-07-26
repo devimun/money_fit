@@ -1,1 +1,1 @@
-budget,ausgaben,geld,finanzen,sparen,täglich,monatlich,haushaltsbuch
+ausgaben,tracker,finanzen,geld,sparen,limit,monatlich,kalender

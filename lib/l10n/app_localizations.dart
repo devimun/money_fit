@@ -1381,6 +1381,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select Language'**
   String get selectLanguage;
+
+  /// No description provided for @feedback_prompt_title.
+  ///
+  /// In en, this message translates to:
+  /// **'What would you like to see in MoneyFit?'**
+  String get feedback_prompt_title;
+
+  /// No description provided for @feedback_prompt_body.
+  ///
+  /// In en, this message translates to:
+  /// **'Even a small idea helps. Tell us what could make MoneyFit better.'**
+  String get feedback_prompt_body;
+
+  /// No description provided for @feedback_prompt_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: I’d like an easier way to add recurring expenses.'**
+  String get feedback_prompt_hint;
+
+  /// No description provided for @feedback_prompt_privacy_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Please don’t include personal information such as your name, email, or account details.'**
+  String get feedback_prompt_privacy_hint;
+
+  /// No description provided for @feedback_prompt_send.
+  ///
+  /// In en, this message translates to:
+  /// **'Send feedback'**
+  String get feedback_prompt_send;
+
+  /// No description provided for @feedback_prompt_later.
+  ///
+  /// In en, this message translates to:
+  /// **'Maybe later'**
+  String get feedback_prompt_later;
+
+  /// No description provided for @feedback_prompt_never.
+  ///
+  /// In en, this message translates to:
+  /// **'Don’t ask for feedback again'**
+  String get feedback_prompt_never;
+
+  /// No description provided for @feedback_prompt_empty_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your feedback.'**
+  String get feedback_prompt_empty_error;
+
+  /// No description provided for @feedback_prompt_too_short_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter at least 3 characters.'**
+  String get feedback_prompt_too_short_error;
+
+  /// No description provided for @feedback_prompt_submit_error.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn’t send it. Your text is still here—please try again.'**
+  String get feedback_prompt_submit_error;
+
+  /// No description provided for @feedback_prompt_retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get feedback_prompt_retry;
+
+  /// No description provided for @feedback_prompt_rate_limited.
+  ///
+  /// In en, this message translates to:
+  /// **'You’ve sent feedback too frequently. Please try again later.'**
+  String get feedback_prompt_rate_limited;
+
+  /// No description provided for @feedback_prompt_thanks.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks for helping us improve MoneyFit.'**
+  String get feedback_prompt_thanks;
+
+  /// No description provided for @feedback_prompt_discard_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard what you’ve written?'**
+  String get feedback_prompt_discard_confirm;
+
+  /// No description provided for @analytics_collection.
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics data collection'**
+  String get analytics_collection;
 }
 
 class _AppLocalizationsDelegate

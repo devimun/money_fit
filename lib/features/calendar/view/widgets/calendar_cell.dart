@@ -24,7 +24,9 @@ class CalendarCell extends ConsumerWidget {
           borderRadius: BorderRadius.circular(12.0),
           onTap: () {
             // 캘린더 셀 선택 액션 기록
-            InterstitialAdManager.instance.logActionAndShowAd();
+            InterstitialAdManager.instance.recordMeaningfulAction(
+              'calendar_date_open',
+            );
 
             ref.read(dateManager.notifier).changeDate(day);
             showModalBottomSheet(

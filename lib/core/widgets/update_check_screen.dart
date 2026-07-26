@@ -3,15 +3,18 @@ import 'package:money_fit/core/services/update_service.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_fit/core/providers/prompt_providers.dart';
+import 'package:money_fit/core/services/prompt_coordinator.dart';
 
-class UpdateCheckScreen extends StatefulWidget {
+class UpdateCheckScreen extends ConsumerStatefulWidget {
   const UpdateCheckScreen({super.key});
 
   @override
-  State<UpdateCheckScreen> createState() => _UpdateCheckScreenState();
+  ConsumerState<UpdateCheckScreen> createState() => _UpdateCheckScreenState();
 }
 
-class _UpdateCheckScreenState extends State<UpdateCheckScreen> {
+class _UpdateCheckScreenState extends ConsumerState<UpdateCheckScreen> {
   bool _checking = true;
 
   @override
@@ -24,49 +27,57 @@ class _UpdateCheckScreenState extends State<UpdateCheckScreen> {
     final status = await UpdateService.fetchUpdateStatus();
     if (!mounted) return;
     if (status.isForceUpdateRequired) {
+      final lease = ref
+          .read(promptCoordinatorProvider)
+          .tryAcquire(PromptSurface.update);
+      if (lease == null) return;
       final l10n = AppLocalizations.of(context)!;
-      await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => AlertDialog(
-          title: ResponsiveTitleText(text: l10n.updateRequiredTitle),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ResponsiveDescriptionText(text: l10n.updateRequiredBody),
-              if (status.changelogLines.isNotEmpty) ...[
-                const SizedBox(height: 12),
-                ResponsiveDescriptionText(
-                  text: l10n.updateChangelogTitle,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                ...status.changelogLines.map(
-                  (e) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('• '),
-                        Expanded(child: ResponsiveDescriptionText(text: e)),
-                      ],
+      try {
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => AlertDialog(
+            title: ResponsiveTitleText(text: l10n.updateRequiredTitle),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ResponsiveDescriptionText(text: l10n.updateRequiredBody),
+                if (status.changelogLines.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  ResponsiveDescriptionText(
+                    text: l10n.updateChangelogTitle,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  ...status.changelogLines.map(
+                    (e) => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 2),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('• '),
+                          Expanded(child: ResponsiveDescriptionText(text: e)),
+                        ],
+                      ),
                     ),
                   ),
-                ),
+                ],
               ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  await UpdateService.openStorePage(null);
+                },
+                child: ResponsiveButtonText(text: l10n.updateButton),
+              ),
             ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                await UpdateService.openStorePage(null);
-              },
-              child: ResponsiveButtonText(text: l10n.updateButton),
-            ),
-          ],
-        ),
-      );
+        );
+      } finally {
+        lease.release();
+      }
       // 강제 업데이트는 이 화면에서 머뭅니다. (스토어로 이동 유도)
       return;
     }
@@ -80,58 +91,72 @@ class _UpdateCheckScreenState extends State<UpdateCheckScreen> {
           action: SnackBarAction(
             label: l10n.updateDetails,
             onPressed: () async {
-              await showModalBottomSheet(
-                context: context,
-                showDragHandle: true,
-                isScrollControlled: true,
-                builder: (_) => SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ResponsiveTitleText(
-                          text: l10n.updateSheetTitle,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        ResponsiveDescriptionText(text: l10n.updateAvailableBody),
-                        const SizedBox(height: 12),
-                        ResponsiveDescriptionText(
-                          text: l10n.updateChangelogTitle,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 8),
-                        ...status.changelogLines.map(
-                          (e) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 2),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text('• '),
-                                Expanded(child: ResponsiveDescriptionText(text: e)),
-                              ],
+              final lease = ref
+                  .read(promptCoordinatorProvider)
+                  .tryAcquire(PromptSurface.update);
+              if (lease == null) return;
+              try {
+                await showModalBottomSheet(
+                  context: context,
+                  showDragHandle: true,
+                  isScrollControlled: true,
+                  builder: (_) => SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ResponsiveTitleText(
+                            text: l10n.updateSheetTitle,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 16),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: ElevatedButton(
-                            onPressed: () async =>
-                                UpdateService.openStorePage(null),
-                            child: ResponsiveButtonText(text: l10n.updateButtonGo),
+                          const SizedBox(height: 8),
+                          ResponsiveDescriptionText(
+                            text: l10n.updateAvailableBody,
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 12),
+                          ResponsiveDescriptionText(
+                            text: l10n.updateChangelogTitle,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 8),
+                          ...status.changelogLines.map(
+                            (e) => Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 2),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('• '),
+                                  Expanded(
+                                    child: ResponsiveDescriptionText(text: e),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: ElevatedButton(
+                              onPressed: () async =>
+                                  UpdateService.openStorePage(null),
+                              child: ResponsiveButtonText(
+                                text: l10n.updateButtonGo,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              );
+                );
+              } finally {
+                lease.release();
+              }
             },
           ),
         ),

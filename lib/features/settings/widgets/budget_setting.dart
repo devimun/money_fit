@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:money_fit/core/functions/functions.dart';
+import 'package:money_fit/core/analytics/analytics_event.dart';
+import 'package:money_fit/core/providers/analytics_provider.dart';
 import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
@@ -172,7 +174,15 @@ class _BudgetSettingState extends ConsumerState<BudgetSetting> {
 
     if (result != null) {
       final (newBudget, newType) = result;
-      await notifier.updateBudget(newType, newBudget);
+      final saved = await notifier.updateBudget(newType, newBudget);
+      if (saved) {
+        await ref.read(analyticsProvider).track(AnalyticsEvent.budgetSet, {
+          'is_initial': false,
+          'budget_period': newType.name,
+          if (newType != currentUser.budgetType)
+            'previous_budget_period': currentUser.budgetType.name,
+        });
+      }
     }
   }
 }

@@ -1,1 +1,1 @@
-bajet,perbelanjaan,kewangan,wang,simpanan,harian,bulanan,jimat,budget
+kewangan,wang,simpanan,had,bulanan,jejak,jimat,kalendar

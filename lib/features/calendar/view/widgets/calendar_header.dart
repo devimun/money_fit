@@ -55,7 +55,9 @@ class CalendarHeader extends ConsumerWidget {
                 );
               }
             } else {
-              InterstitialAdManager.instance.logActionAndShowAd();
+              InterstitialAdManager.instance.recordMeaningfulAction(
+                'calendar_previous_month',
+              );
             }
           },
           icon: const Icon(Icons.arrow_back_ios),
@@ -83,7 +85,9 @@ class CalendarHeader extends ConsumerWidget {
                 );
               }
             } else {
-              InterstitialAdManager.instance.logActionAndShowAd();
+              InterstitialAdManager.instance.recordMeaningfulAction(
+                'calendar_next_month',
+              );
             }
           },
           icon: const Icon(Icons.arrow_forward_ios),

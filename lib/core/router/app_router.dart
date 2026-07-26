@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:money_fit/core/analytics/analytics_service.dart';
+import 'package:money_fit/core/providers/analytics_provider.dart';
 import 'package:money_fit/features/auth/view/splash_screen.dart';
 import 'package:money_fit/features/statistics/view/statistics.dart';
 import 'package:money_fit/widgets/bottom_nav_bar.dart';
@@ -109,12 +110,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         ],
       ),
     ],
-    observers: [
-      FirebaseAnalyticsObserver(
-        analytics: FirebaseAnalytics.instance,
-        nameExtractor: (settings) => settings.name,
-      ),
-    ],
+    observers: [AnalyticsNavigatorObserver(ref.read(analyticsProvider))],
   );
 });
 

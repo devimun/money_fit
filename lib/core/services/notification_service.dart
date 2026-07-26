@@ -4,6 +4,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
+import 'package:money_fit/core/providers/prompt_providers.dart';
+import 'package:money_fit/core/services/prompt_coordinator.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 import 'package:money_fit/widgets/custom_notification_dialog.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -70,23 +72,28 @@ class NotificationService {
     BuildContext context,
     WidgetRef ref,
   ) async {
+    final lease = ref
+        .read(promptCoordinatorProvider)
+        .tryAcquire(PromptSurface.notificationPermission);
+    if (lease == null) return;
     final l10n = AppLocalizations.of(context)!;
-
-    await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return CustomNotificationDialog(
-          onConfirm: () async {
-            Navigator.of(context).pop();
-            await setupNotifications(l10n, ref);
-          },
-          onDeny: () {
-            Navigator.of(context).pop();
-          },
-        );
-      },
-    );
+    try {
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return CustomNotificationDialog(
+            onConfirm: () async {
+              Navigator.of(context).pop();
+              await setupNotifications(l10n, ref);
+            },
+            onDeny: () => Navigator.of(context).pop(),
+          );
+        },
+      );
+    } finally {
+      lease.release();
+    }
   }
 
   Future<void> setupNotifications(AppLocalizations l10n, WidgetRef ref) async {

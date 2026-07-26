@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
@@ -9,6 +10,12 @@ import 'package:money_fit/core/providers/locale_provider.dart';
 import 'package:money_fit/core/router/app_router.dart';
 import 'package:money_fit/core/providers/theme_provider.dart';
 import 'package:money_fit/core/providers/shared_preferences_provider.dart';
+import 'package:money_fit/core/providers/analytics_provider.dart';
+import 'package:money_fit/core/providers/prompt_providers.dart';
+import 'package:money_fit/core/config/remote_config_service.dart';
+import 'package:money_fit/core/analytics/analytics_service.dart';
+import 'package:money_fit/core/config/analytics_config.dart';
+import 'package:money_fit/core/repositories/analytics_consent_repository.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 import 'package:money_fit/firebase_options.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
@@ -28,12 +35,28 @@ Future<void> main() async {
 
   // Initialize SharedPreferences
   final sharedPreferences = await SharedPreferences.getInstance();
+  final remoteConfig = RemoteConfigService(FirebaseRemoteConfig.instance);
+  await remoteConfig.initialize();
+  final analytics = DualAnalyticsService(AnalyticsConfig.fromEnvironment());
+  final consent = AnalyticsConsentRepository(sharedPreferences);
+  await analytics.setCollectionEnabled(
+    consent.isEnabled && remoteConfig.boolValue('amplitude_collection_enabled'),
+  );
+  await analytics.initialize();
+  remoteConfig.updates.listen((_) {
+    analytics.setCollectionEnabled(
+      consent.isEnabled &&
+          remoteConfig.boolValue('amplitude_collection_enabled'),
+    );
+  });
 
   runApp(
     Phoenix(
       child: ProviderScope(
         overrides: [
           sharedPreferencesProvider.overrideWithValue(sharedPreferences),
+          remoteConfigServiceProvider.overrideWithValue(remoteConfig),
+          analyticsProvider.overrideWithValue(analytics),
         ],
         child: const MyApp(),
       ),
@@ -64,6 +87,7 @@ class _MyAppState extends ConsumerState<MyApp> {
               .read(themeModeProvider.notifier)
               .migrateFromUserSettings(user.isDarkMode);
         }
+        ref.read(analyticsProvider).setUserId(user.id);
       });
     });
 

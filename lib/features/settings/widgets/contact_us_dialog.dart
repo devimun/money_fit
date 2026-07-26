@@ -1,23 +1,32 @@
-import 'dart:io';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:money_fit/core/analytics/analytics_event.dart';
+import 'package:money_fit/core/providers/analytics_provider.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:money_fit/features/settings/model/inquiry_type.dart';
+import 'package:money_fit/features/settings/repository/contact_repository.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ContactUsDialog extends StatefulWidget {
+final contactRepositoryProvider = Provider<ContactRepository>(
+  (ref) => ContactRepository(),
+);
+
+class ContactUsDialog extends ConsumerStatefulWidget {
   const ContactUsDialog({super.key});
 
   @override
-  State<ContactUsDialog> createState() => _ContactUsDialogState();
+  ConsumerState<ContactUsDialog> createState() => _ContactUsDialogState();
 }
 
-class _ContactUsDialogState extends State<ContactUsDialog> {
+class _ContactUsDialogState extends ConsumerState<ContactUsDialog> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _detailsController = TextEditingController();
-  String? _selectedInquiryType;
+  InquiryType? _selectedInquiryType;
+  bool _submitting = false;
 
   @override
   void dispose() {
@@ -27,41 +36,44 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
   }
 
   Future<void> _submit() async {
-    if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.pleaseWait)),
+    if (!_formKey.currentState!.validate() || _submitting) return;
+    setState(() => _submitting = true);
+
+    try {
+      await ref
+          .read(contactRepositoryProvider)
+          .submit(
+            type: _selectedInquiryType!,
+            email: _emailController.text,
+            details: _detailsController.text,
+            locale: Localizations.localeOf(context).languageCode,
+          );
+
+      unawaited(
+        ref.read(analyticsProvider).track(AnalyticsEvent.inquirySubmitted, {
+          'inquiry_type': _selectedInquiryType!.wire,
+          'result': 'success',
+        }),
       );
 
-      try {
-        final uid = Supabase.instance.client.auth.currentUser?.id;
-        await Supabase.instance.client.from('user_contact').insert({
-          if (uid != null) 'uid': uid,
-          'inquiry_type': _selectedInquiryType,
-          'email': _emailController.text,
-          'details': _detailsController.text,
-          'platform': Platform.isIOS
-              ? 'ios'
-              : (Platform.isAndroid ? 'android' : 'other'),
-        });
-
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context)!.inquirySuccess),
-            ),
-          );
-          Navigator.of(context).pop();
-        }
-      } catch (error) {
-        debugPrint('Contact us error: $error');
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context)!.inquiryFailure),
-            ),
-          );
-          Navigator.of(context).pop();
-        }
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.inquirySuccess)),
+        );
+        Navigator.of(context).pop();
+      }
+    } catch (error) {
+      unawaited(
+        ref.read(analyticsProvider).track(AnalyticsEvent.inquirySubmitted, {
+          'inquiry_type': _selectedInquiryType!.wire,
+          'result': 'failure',
+        }),
+      );
+      if (mounted) {
+        setState(() => _submitting = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.inquiryFailure)),
+        );
       }
     }
   }
@@ -70,11 +82,11 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    final inquiryTypes = [
-      l10n.inquiryTypeBugReport,
-      l10n.inquiryTypeFeatureSuggestion,
-      l10n.inquiryTypeGeneralInquiry,
-      l10n.inquiryTypeOther,
+    final inquiryTypes = <(InquiryType, String)>[
+      (InquiryType.bugReport, l10n.inquiryTypeBugReport),
+      (InquiryType.featureSuggestion, l10n.inquiryTypeFeatureSuggestion),
+      (InquiryType.generalInquiry, l10n.inquiryTypeGeneralInquiry),
+      (InquiryType.other, l10n.inquiryTypeOther),
     ];
 
     return Dialog(
@@ -116,7 +128,7 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
-                DropdownButtonFormField<String>(
+                DropdownButtonFormField<InquiryType>(
                   initialValue: _selectedInquiryType,
                   decoration: InputDecoration(
                     labelText: l10n.inquiryType,
@@ -136,8 +148,10 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
                   borderRadius: BorderRadius.circular(12),
                   items: inquiryTypes
                       .map(
-                        (type) =>
-                            DropdownMenuItem(value: type, child: Text(type)),
+                        (type) => DropdownMenuItem(
+                          value: type.$1,
+                          child: Text(type.$2),
+                        ),
                       )
                       .toList(),
                   onChanged: (value) {
@@ -146,7 +160,7 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
                     });
                   },
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (value == null) {
                       return l10n.fieldRequired;
                     }
                     return null;
@@ -193,7 +207,7 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
-                  onPressed: _submit,
+                  onPressed: _submitting ? null : _submit,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: context.colors.brandPrimary,
                     foregroundColor: context.colors.textOnBrand,
@@ -204,10 +218,16 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
                     elevation: 0,
                   ),
                   child: Center(
-                    child: ResponsiveButtonText(
-                      text: l10n.submit,
-                      style: context.textTheme.labelLarge,
-                    ),
+                    child: _submitting
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : ResponsiveButtonText(
+                            text: l10n.submit,
+                            style: context.textTheme.labelLarge,
+                          ),
                   ),
                 ),
               ],

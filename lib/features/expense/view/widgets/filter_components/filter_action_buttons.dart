@@ -48,7 +48,9 @@ class FilterActionButtons extends ConsumerWidget {
               backgroundColor: context.colors.brandPrimary,
             ),
             onPressed: () {
-              InterstitialAdManager.instance.logActionAndShowAd();
+              InterstitialAdManager.instance.recordMeaningfulAction(
+                'expense_filter_apply',
+              );
               ref
                   .read(expenseListProvider.notifier)
                   .applyFilters(

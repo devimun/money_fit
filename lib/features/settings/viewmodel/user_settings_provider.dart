@@ -76,9 +76,9 @@ class UserSettingsNotifier extends AsyncNotifier<User> {
     return newUser;
   }
 
-  Future<void> updateBudget(BudgetType budgetType, double newBudget) async {
+  Future<bool> updateBudget(BudgetType budgetType, double newBudget) async {
     final currentUser = state.value;
-    if (currentUser == null) return;
+    if (currentUser == null) return false;
 
     final updatedUser = currentUser.copyWith(
       budgetType: budgetType,
@@ -89,10 +89,12 @@ class UserSettingsNotifier extends AsyncNotifier<User> {
 
     try {
       await _userRepository.updateUser(updatedUser);
+      return true;
     } catch (e, st) {
       log('Failed to update user: $e', stackTrace: st);
       state = AsyncValue.error(e, st);
       state = AsyncValue.data(currentUser); // rollback
+      return false;
     }
   }
 

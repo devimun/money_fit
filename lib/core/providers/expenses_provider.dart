@@ -1,11 +1,13 @@
+import 'dart:async';
 import 'dart:developer';
 
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/providers/repository_providers.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
+import 'package:money_fit/core/providers/analytics_provider.dart';
+import 'package:money_fit/core/analytics/analytics_event.dart';
 
 // 앱 전역에서 지출 데이터를 관리하기 위한 프로버이더.
 class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
@@ -47,13 +49,11 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
     final repo = ref.read(expenseRepositoryProvider);
     await repo.createExpense(expense);
 
-    // Log create_transaction event
-    await FirebaseAnalytics.instance.logEvent(
-      name: 'create_transaction',
-      parameters: {
-        'type': expense.type.name, // 'income' or 'expense'
-        'category': expense.categoryId,
-      },
+    unawaited(
+      ref.read(analyticsProvider).track(AnalyticsEvent.transactionCreated, {
+        'transaction_type': expense.type.name,
+        'category_key': expense.categoryId,
+      }),
     );
 
     final dateKey = _stripTime(expense.date);
@@ -94,6 +94,11 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
     final cacheKey = '${updated.date.year}-${updated.date.month}';
     _cache[cacheKey] = newState;
     state = AsyncData(newState);
+    unawaited(
+      ref.read(analyticsProvider).track(AnalyticsEvent.transactionUpdated, {
+        'transaction_type': updated.type.name,
+      }),
+    );
   }
 
   ///  지출 삭제
@@ -119,6 +124,11 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
     _cache[cacheKey] = newState;
 
     state = AsyncData(newState);
+    unawaited(
+      ref.read(analyticsProvider).track(AnalyticsEvent.transactionDeleted, {
+        'transaction_type': deleted.type.name,
+      }),
+    );
   }
 
   ///  특정 월 갱신 (예: 달 바뀜, 전체 새로고침 시)

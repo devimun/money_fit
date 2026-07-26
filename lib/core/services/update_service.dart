@@ -43,23 +43,7 @@ class UpdateService {
     log('currentVersion: $currentVersion');
 
     final remoteConfig = FirebaseRemoteConfig.instance;
-    await remoteConfig.setConfigSettings(
-      RemoteConfigSettings(
-        fetchTimeout: const Duration(seconds: 10),
-        minimumFetchInterval: const Duration(minutes: 30),
-      ),
-    );
-    await remoteConfig.setDefaults(<String, dynamic>{
-      rcKeyLatestVersion: currentVersion,
-      rcKeyMinSupportedVersion: '',
-      rcKeyUpdateChangelog: '',
-    });
-
-    try {
-      await remoteConfig.fetchAndActivate();
-    } catch (_) {
-      // 네트워크 실패 시 기본값으로 진행
-    }
+    // RemoteConfigService owns setup/fetch/defaults during app initialization.
 
     final latest = remoteConfig.getString(rcKeyLatestVersion).trim();
     log('latest: $latest');

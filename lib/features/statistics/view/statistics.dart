@@ -81,7 +81,9 @@ class StatisticsScreen extends ConsumerWidget {
               },
             );
             if (selectedDate != null) {
-              InterstitialAdManager.instance.logActionAndShowAd();
+              InterstitialAdManager.instance.recordMeaningfulAction(
+                'statistics_month_changed',
+              );
               ref
                   .read(statisticsViewModelProvider.notifier)
                   .changeDate(selectedDate.year, selectedDate.month);
@@ -323,7 +325,9 @@ class StatisticsScreen extends ConsumerWidget {
     return Expanded(
       child: InkWell(
         onTap: () {
-          InterstitialAdManager.instance.logActionAndShowAd();
+          InterstitialAdManager.instance.recordMeaningfulAction(
+            'statistics_type_changed',
+          );
           ref
               .read(statisticsViewModelProvider.notifier)
               .changeExpenseType(type);

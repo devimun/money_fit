@@ -7,7 +7,10 @@ import 'package:money_fit/core/widgets/review_system/experience_binary_dialog.da
 import 'package:money_fit/core/widgets/review_system/positive_confirm_dialog.dart';
 import 'package:money_fit/core/widgets/review_system/negative_feedback_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:money_fit/core/services/prompt_coordinator.dart';
+import 'package:money_fit/core/models/feedback_submission.dart';
+import 'package:money_fit/core/repositories/feedback_repository.dart';
+import 'package:uuid/uuid.dart';
 
 class ReviewPromptService {
   ReviewPromptService._();
@@ -66,65 +69,83 @@ class ReviewPromptService {
 
   Future<void> _markPrompted() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_kLastPromptAt, DateTime.now().toIso8601String());
+    final promptedAt = DateTime.now().toUtc().toIso8601String();
+    await prefs.setString(_kLastPromptAt, promptedAt);
+    // FeedbackPromptService reads this shared timestamp so a review prompt
+    // cannot be followed by the proactive feedback dialog within 30 days.
+    await prefs.setString('engagement_prompt_last_shown_at', promptedAt);
     final count = prefs.getInt(_kPromptCount) ?? 0;
     await prefs.setInt(_kPromptCount, count + 1);
   }
 
-  Future<void> maybePromptReview(BuildContext context) async {
+  Future<bool> maybePromptReview(
+    BuildContext context, {
+    PromptCoordinator? coordinator,
+  }) async {
     await ensureFirstRunTimestamp();
-    if (!await isEligible) return;
-    if (_requestedThisSession) return;
+    if (!await isEligible) return false;
+    if (_requestedThisSession) return false;
+    final lease = coordinator?.tryAcquire(PromptSurface.review);
+    if (coordinator != null && lease == null) return false;
     _requestedThisSession = true;
+    var shown = false;
+    try {
+      // 1단계: 이분화 질문
+      if (!context.mounted) return false;
+      final bin = await ReviewDialogFactory.showExperienceBinaryDialog(context);
+      shown = true;
+      if (bin == null) {
+        await _markPrompted();
+        return true;
+      }
+      await _markPrompted();
 
-    // 1단계: 이분화 질문
-    if (!context.mounted) return;
-    final bin = await ReviewDialogFactory.showExperienceBinaryDialog(context);
-    if (bin == null) return;
-    await _markPrompted();
-
-    if (bin == BinaryExperience.good) {
-      // 긍정 분기: 확인 모달
-      if (!context.mounted) return;
-      final pa = await ReviewDialogFactory.showPositiveConfirmDialog(context);
-      if (pa == null) return;
-      switch (pa) {
-        case PositiveAction.reviewNow:
-          try {
+      if (bin == BinaryExperience.good) {
+        // 긍정 분기: 확인 모달
+        if (!context.mounted) return shown;
+        final pa = await ReviewDialogFactory.showPositiveConfirmDialog(context);
+        if (pa == null) return shown;
+        switch (pa) {
+          case PositiveAction.reviewNow:
+            try {
+              await setOptedOut(true);
+              launchReviewURL();
+            } catch (e) {
+              log(e.toString());
+            }
+            break;
+          case PositiveAction.later:
+            await _setSnoozeUntil(DateTime.now().add(const Duration(days: 7)));
+            break;
+          case PositiveAction.never:
             await setOptedOut(true);
-            launchReviewURL();
-          } catch (e) {
-            log(e.toString());
+            break;
+        }
+        return shown;
+      }
+
+      // 부정 분기: 자유 입력 모달
+      if (!context.mounted) return shown;
+      final neg = await ReviewDialogFactory.showNegativeFeedbackDialog(context);
+      if (neg == null) return shown;
+      switch (neg.action) {
+        case NegativeAction.send:
+          final sent = await submitNegativeFeedback(neg.detail);
+          // 감사 안내
+          if (sent && context.mounted) {
+            await ReviewDialogFactory.showThanksDialog(context);
           }
           break;
-        case PositiveAction.later:
+        case NegativeAction.later:
           await _setSnoozeUntil(DateTime.now().add(const Duration(days: 7)));
           break;
-        case PositiveAction.never:
+        case NegativeAction.never:
           await setOptedOut(true);
           break;
       }
-      return;
-    }
-
-    // 부정 분기: 자유 입력 모달
-    if (!context.mounted) return;
-    final neg = await ReviewDialogFactory.showNegativeFeedbackDialog(context);
-    if (neg == null) return;
-    switch (neg.action) {
-      case NegativeAction.send:
-        await submitNegativeFeedback(neg.detail);
-        // 감사 안내
-        if (context.mounted) {
-          await ReviewDialogFactory.showThanksDialog(context);
-        }
-        break;
-      case NegativeAction.later:
-        await _setSnoozeUntil(DateTime.now().add(const Duration(days: 7)));
-        break;
-      case NegativeAction.never:
-        await setOptedOut(true);
-        break;
+      return shown;
+    } finally {
+      lease?.release();
     }
   }
 
@@ -135,17 +156,15 @@ class ReviewPromptService {
   }
 
   /// 부정적인 피드백 제출
-  Future<void> submitNegativeFeedback(String? detail) async {
-    try {
-      final client = Supabase.instance.client;
-      final uid = Supabase.instance.client.auth.currentUser?.id;
-      await client.from('app_feedback').insert({
-        if (uid != null) 'uid': uid,
-        'detail': detail ?? '',
-        'platform': Platform.isIOS
-            ? 'ios'
-            : (Platform.isAndroid ? 'android' : 'other'),
-      });
-    } catch (_) {}
+  Future<bool> submitNegativeFeedback(String? detail) async {
+    final result = await FeedbackRepository().submit(
+      FeedbackSubmission(
+        detail: detail ?? '',
+        source: FeedbackSource.reviewNegative,
+        clientSubmissionId: const Uuid().v4(),
+        locale: Platform.localeName.split('_').first,
+      ),
+    );
+    return result is FeedbackSubmitSuccess;
   }
 }

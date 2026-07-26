@@ -1,5 +1,19 @@
 require 'yaml'
 
+def analytics_dart_defines
+  key = ENV.fetch('AMPLITUDE_PROD_API_KEY', '').strip
+  enabled = ENV.fetch('AMPLITUDE_ENABLED', key.empty? ? 'false' : 'true')
+  zone = ENV.fetch('AMPLITUDE_SERVER_ZONE', 'us')
+  defines = [
+    "--dart-define=AMPLITUDE_ENABLED=#{enabled}",
+    '--dart-define=ANALYTICS_ENV=prod',
+    "--dart-define=AMPLITUDE_SERVER_ZONE=#{zone}"
+  ]
+  # Do not print this command: Fastlane logs must never expose the key.
+  defines << "--dart-define=AMPLITUDE_API_KEY=#{key}" unless key.empty?
+  defines.join(' ')
+end
+
 default_platform(:android)
 
 platform :android do
@@ -20,7 +34,7 @@ platform :android do
     puts "------------------------------------------------"
 
     Dir.chdir ".." do
-      sh "flutter build appbundle --release"
+      sh "flutter build appbundle --release #{analytics_dart_defines}"
     end
 
     upload_to_play_store(
@@ -36,6 +50,7 @@ platform :android do
   # ==========================================
   desc "앱 빌드 없이 스토어 텍스트 정보만 업데이트"
   lane :update_metadata do
+    sh "dart run tool/validate_store_metadata.dart"
     upload_to_play_store(
       track: 'internal',
       skip_upload_aab: true,           # 앱은 안 올림
@@ -43,6 +58,19 @@ platform :android do
       skip_upload_screenshots: true,   # 스크린샷 스킵
       skip_upload_metadata: false,     # 텍스트 올림!
       skip_upload_changelogs: true     # changelog는 릴리즈 때
+    )
+  end
+
+  desc "Play Console에 변경하지 않고 스토어 메타데이터를 검증"
+  lane :validate_metadata do
+    sh "dart run tool/validate_store_metadata.dart"
+    upload_to_play_store(
+      validate_only: true,
+      skip_upload_aab: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      skip_upload_metadata: false,
+      skip_upload_changelogs: true
     )
   end
 

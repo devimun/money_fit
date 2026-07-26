@@ -699,4 +699,56 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get selectLanguage => 'Pilih Bahasa';
+
+  @override
+  String get feedback_prompt_title => 'What would you like to see in MoneyFit?';
+
+  @override
+  String get feedback_prompt_body =>
+      'Even a small idea helps. Tell us what could make MoneyFit better.';
+
+  @override
+  String get feedback_prompt_hint =>
+      'Example: I’d like an easier way to add recurring expenses.';
+
+  @override
+  String get feedback_prompt_privacy_hint =>
+      'Please don’t include personal information such as your name, email, or account details.';
+
+  @override
+  String get feedback_prompt_send => 'Send feedback';
+
+  @override
+  String get feedback_prompt_later => 'Maybe later';
+
+  @override
+  String get feedback_prompt_never => 'Don’t ask for feedback again';
+
+  @override
+  String get feedback_prompt_empty_error => 'Please enter your feedback.';
+
+  @override
+  String get feedback_prompt_too_short_error =>
+      'Please enter at least 3 characters.';
+
+  @override
+  String get feedback_prompt_submit_error =>
+      'We couldn’t send it. Your text is still here—please try again.';
+
+  @override
+  String get feedback_prompt_retry => 'Try again';
+
+  @override
+  String get feedback_prompt_rate_limited =>
+      'You’ve sent feedback too frequently. Please try again later.';
+
+  @override
+  String get feedback_prompt_thanks =>
+      'Thanks for helping us improve MoneyFit.';
+
+  @override
+  String get feedback_prompt_discard_confirm => 'Discard what you’ve written?';
+
+  @override
+  String get analytics_collection => 'Pengumpulan data analitik';
 }

@@ -1,1 +1,1 @@
-buget,cheltuieli,bani,finanțe,economii,zilnic,lunar
+bani,finanțe,economii,zilnic,lunar,monitorizare,simplu,personal

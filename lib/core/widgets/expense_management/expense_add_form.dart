@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/models/expense_model.dart';
-import 'package:money_fit/core/services/ad_service.dart';
-import 'package:money_fit/core/services/review_prompt_service.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/base_bottom_sheet.dart';
 import 'package:money_fit/core/widgets/expense_management/expense_form_fields.dart';
@@ -14,7 +12,7 @@ import 'package:uuid/uuid.dart';
 
 class ExpenseAddForm extends ConsumerStatefulWidget {
   final String uid;
-  final void Function(Expense expense) onSubmit;
+  final Future<void> Function(Expense expense) onSubmit;
   final Expense? initExpense;
   const ExpenseAddForm({
     super.key,
@@ -31,6 +29,7 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
   final _nameController = TextEditingController();
   final _amountController = TextEditingController();
   bool _isFormValid = false;
+  bool _isSubmitting = false;
   String? _selectedCategoryId;
   ExpenseType _selectedType = ExpenseType.essential;
 
@@ -102,17 +101,23 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
                 : context.colors.calendarCellBackground,
           ),
           onPressed: () async {
-            if (!_isFormValid) return;
+            if (!_isFormValid || _isSubmitting) return;
             await _handleSubmit(widget.uid, l10n);
           },
-          child: ResponsiveButtonText(
-            text: l10n.register,
-            style: context.textTheme.labelLarge?.copyWith(
-              color: _isFormValid
-                  ? context.colors.textOnBrand
-                  : context.colors.textSecondary,
-            ),
-          ),
+          child: _isSubmitting
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : ResponsiveButtonText(
+                  text: l10n.register,
+                  style: context.textTheme.labelLarge?.copyWith(
+                    color: _isFormValid
+                        ? context.colors.textOnBrand
+                        : context.colors.textSecondary,
+                  ),
+                ),
         ),
       ),
       child: SingleChildScrollView(
@@ -152,8 +157,6 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
   }
 
   Future<void> _handleSubmit(String uid, AppLocalizations l10n) async {
-    // 지출 등록 액션 기록
-    await InterstitialAdManager.instance.logActionAndShowAd();
     final name = _nameController.text.trim();
     final amount =
         double.tryParse(_amountController.text.trim().replaceAll(',', '')) ?? 0;
@@ -179,14 +182,25 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
       updatedAt: now,
     );
 
-    widget.onSubmit(expense);
-
-    // mounted 체크 후 리뷰 프롬프트 표시
-    if (!mounted) return;
-    await ReviewPromptService.instance.maybePromptReview(context);
-
-    // mounted 체크 후 pop 실행
-    if (!mounted) return;
-    Navigator.pop(context, true);
+    setState(() => _isSubmitting = true);
+    try {
+      await widget.onSubmit(expense);
+      if (!mounted) return;
+      Navigator.pop(
+        context,
+        widget.initExpense == null
+            ? ExpenseSubmitOutcome.created
+            : ExpenseSubmitOutcome.updated,
+      );
+    } catch (_) {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.errorOccurred(''))));
+      }
+    }
   }
 }
+
+enum ExpenseSubmitOutcome { created, updated }

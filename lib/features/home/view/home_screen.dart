@@ -6,7 +6,6 @@ import 'package:money_fit/features/home/widgets/home_date_header.dart';
 import 'package:money_fit/features/home/widgets/home_main_card.dart';
 import 'package:money_fit/features/home/widgets/home_action_buttons.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
-import 'package:money_fit/widgets/custom_notification_dialog.dart';
 import 'package:money_fit/core/services/notification_service.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
@@ -40,25 +39,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Future<void> _showNotificationDialog() async {
     if (!mounted) return;
-    final l10n = AppLocalizations.of(context)!;
-
-    await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return CustomNotificationDialog(
-          onConfirm: () async {
-            Navigator.of(context).pop();
-            await ref
-                .read(notificationServiceProvider)
-                .setupNotifications(l10n, ref);
-          },
-          onDeny: () {
-            Navigator.of(context).pop();
-          },
-        );
-      },
-    );
+    await ref
+        .read(notificationServiceProvider)
+        .showNotificationDialog(context, ref);
   }
 
   @override

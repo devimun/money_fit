@@ -1,1 +1,1 @@
-MoneyFit
+MoneyFit - Control de gastos

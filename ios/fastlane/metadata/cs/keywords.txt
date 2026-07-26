@@ -1,1 +1,1 @@
-rozpočet,výdaje,peníze,finance,úspory,denní,měsíční
+finance,peníze,úspory,limit,měsíční,evidence,kalendář

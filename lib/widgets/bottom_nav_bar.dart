@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:money_fit/core/providers/navigation_provider.dart';
+import 'package:money_fit/core/providers/prompt_providers.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/core/services/ad_service.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
@@ -122,18 +123,25 @@ class MainBottomNavBar extends ConsumerWidget {
     );
   }
 
-  void _onTap(
+  Future<void> _onTap(
     BuildContext context,
     WidgetRef ref,
     int index,
     int currentIndex,
-  ) {
+  ) async {
     if (index == currentIndex) return;
+    if ([1, 2, 3].contains(index)) {
+      await InterstitialAdManager.instance.recordMeaningfulAction(
+        'top_level_tab',
+      );
+      await InterstitialAdManager.instance.maybeShowInterstitial(
+        'top_level_tab',
+        coordinator: ref.read(promptCoordinatorProvider),
+      );
+    }
+    if (!context.mounted) return;
     ref.read(navigationIndexProvider.notifier).state = index;
     ref.read(dateManager.notifier).changeDate(DateTime.now());
-    if ([1, 2, 3].contains(index)) {
-      InterstitialAdManager.instance.logActionAndShowAd();
-    }
     switch (index) {
       case 0:
         context.go('/home');

@@ -1,0 +1,4 @@
+project_id = "moneyfit"
+
+[functions.notify-slack-delivery]
+verify_jwt = false
