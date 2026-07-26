@@ -4,7 +4,7 @@ import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/core/services/ad_service.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
-import 'package:money_fit/core/widgets/today_expense_list.dart';
+import 'package:money_fit/features/ledger/presentation/editor/today_expense_list.dart';
 import 'package:money_fit/features/calendar/model/model.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 

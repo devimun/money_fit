@@ -7,7 +7,7 @@ import 'package:money_fit/core/providers/expenses_provider.dart';
 import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/base_bottom_sheet.dart';
-import 'package:money_fit/core/widgets/expense_management/expense_add_form.dart';
+import 'package:money_fit/features/ledger/presentation/editor/expense_add_form.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/features/home/viewmodel/home_data_provider.dart';
 import 'package:money_fit/l10n/app_localizations.dart';

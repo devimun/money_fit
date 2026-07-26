@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/models/expense_model.dart';
 import 'package:money_fit/core/providers/category_providers.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
-import 'package:money_fit/core/widgets/expense_management/category_management/category_dialogs.dart';
+import 'package:money_fit/features/ledger/presentation/categories/category_dialogs.dart';
 
 /// 카테고리 목록을 표시하는 위젯
 class CategoryList extends ConsumerWidget {

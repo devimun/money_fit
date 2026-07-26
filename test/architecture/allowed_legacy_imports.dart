@@ -89,14 +89,6 @@ const allowedLegacyImports = <LegacyBoundaryAllowance>[
     owner: LegacyOwner.notifications,
     removalPhase: RemovalPhase.pr5_3,
   ),
-  LegacyBoundaryAllowance(
-    filePath: 'lib/core/widgets/today_expense_list.dart',
-    kind: LegacyBoundaryKind.coreToFeatureImport,
-    target: 'package:money_fit/features/home/viewmodel/home_data_provider.dart',
-    reason: 'The core widget still consumes home presentation state.',
-    owner: LegacyOwner.ledger,
-    removalPhase: RemovalPhase.pr3_2,
-  ),
 
   // Direct SDK/database singletons outside main/app composition.
   LegacyBoundaryAllowance(

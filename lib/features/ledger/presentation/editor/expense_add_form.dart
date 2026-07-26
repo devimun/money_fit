@@ -8,9 +8,9 @@ import 'package:money_fit/core/services/ad_service.dart';
 import 'package:money_fit/core/services/review_prompt_service.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/base_bottom_sheet.dart';
-import 'package:money_fit/core/widgets/expense_management/expense_form_fields.dart';
-import 'package:money_fit/core/widgets/expense_management/category_management/category_list.dart';
-import 'package:money_fit/core/widgets/expense_management/expense_form_validator.dart';
+import 'package:money_fit/features/ledger/presentation/categories/category_list.dart';
+import 'package:money_fit/features/ledger/presentation/editor/expense_form_fields.dart';
+import 'package:money_fit/features/ledger/presentation/editor/expense_form_validator.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
