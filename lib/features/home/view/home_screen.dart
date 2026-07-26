@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
-import 'package:money_fit/core/widgets/ads/ad_banner_widget.dart';
+import 'package:money_fit/features/monetization/widgets/ad_banner_widget.dart';
 import 'package:money_fit/features/home/application/home_projection.dart';
 import 'package:money_fit/features/home/widgets/home_date_header.dart';
 import 'package:money_fit/features/home/widgets/home_main_card.dart';
@@ -111,7 +111,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                const AdBannerWidget(screenType: ScreenType.home),
+                const AdBannerWidget(placement: AdPlacement.home),
                 const SizedBox(height: 10),
                 const HomeDateHeader(),
                 const SizedBox(height: 10),

@@ -3,9 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
+import 'package:money_fit/app/composition/feedback_providers.dart';
 import 'package:money_fit/app/composition/platform_providers.dart';
-import 'package:money_fit/core/services/ad_service.dart';
-import 'package:money_fit/core/services/review_prompt_service.dart';
+import 'package:money_fit/features/feedback/application/review_prompt_flow.dart';
+import 'package:money_fit/features/monetization/data/google_mobile_ads_gateway.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/base_bottom_sheet.dart';
 import 'package:money_fit/features/ledger/presentation/categories/category_list.dart';
@@ -242,7 +243,9 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
       _runBestEffort(InterstitialAdManager.instance.logActionAndShowAd),
     );
     await _runBestEffort(
-      () => ReviewPromptService.instance.maybePromptReview(context),
+      () => ReviewPromptFlow(
+        ref.read(feedbackRepositoryProvider),
+      ).maybePromptReview(context),
     );
     if (mounted) {
       Navigator.pop(context, true);

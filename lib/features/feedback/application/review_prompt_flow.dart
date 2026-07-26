@@ -1,17 +1,17 @@
 import 'dart:developer';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:money_fit/core/functions/functions.dart';
-import 'package:money_fit/core/widgets/review_system/review_dialog_factory.dart';
-import 'package:money_fit/core/widgets/review_system/experience_binary_dialog.dart';
-import 'package:money_fit/core/widgets/review_system/positive_confirm_dialog.dart';
-import 'package:money_fit/core/widgets/review_system/negative_feedback_dialog.dart';
+import 'package:money_fit/features/feedback/domain/feedback_repository.dart';
+import 'package:money_fit/features/feedback/presentation/review/experience_binary_dialog.dart';
+import 'package:money_fit/features/feedback/presentation/review/negative_feedback_dialog.dart';
+import 'package:money_fit/features/feedback/presentation/review/positive_confirm_dialog.dart';
+import 'package:money_fit/features/feedback/presentation/review/review_dialog_factory.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
-class ReviewPromptService {
-  ReviewPromptService._();
-  static final instance = ReviewPromptService._();
+class ReviewPromptFlow {
+  ReviewPromptFlow(this._feedback);
+
+  final FeedbackRepository _feedback;
 
   static const String _kFirstRunAt = 'review_first_run_at';
   static const String _kOptedOut = 'review_opted_out';
@@ -137,15 +137,7 @@ class ReviewPromptService {
   /// 부정적인 피드백 제출
   Future<void> submitNegativeFeedback(String? detail) async {
     try {
-      final client = Supabase.instance.client;
-      final uid = Supabase.instance.client.auth.currentUser?.id;
-      await client.from('app_feedback').insert({
-        if (uid != null) 'uid': uid,
-        'detail': detail ?? '',
-        'platform': Platform.isIOS
-            ? 'ios'
-            : (Platform.isAndroid ? 'android' : 'other'),
-      });
+      await _feedback.submitReviewFeedback(detail ?? '');
     } catch (_) {}
   }
 }

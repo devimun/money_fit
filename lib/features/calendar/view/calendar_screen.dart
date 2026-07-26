@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
-import 'package:money_fit/core/widgets/ads/ad_banner_widget.dart';
+import 'package:money_fit/features/monetization/widgets/ad_banner_widget.dart';
 import 'package:money_fit/features/calendar/view/widgets/helper.dart';
 import 'package:money_fit/features/calendar/application/calendar_view_model.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -21,7 +21,7 @@ class CalendarScreen extends ConsumerWidget {
         backgroundColor: context.colors.screenBackground,
         body: Column(
           children: [
-            const AdBannerWidget(screenType: ScreenType.calendar),
+            const AdBannerWidget(placement: AdPlacement.calendar),
             Expanded(
               child: SingleChildScrollView(
                 child: TableCalendar(

@@ -62,6 +62,7 @@ class UpdateService {
 
   static Future<UpdateStatus> fetchUpdateStatus({
     AppEnvironment? environment,
+    FirebaseRemoteConfig? remoteConfig,
   }) async {
     final activeEnvironment = environment ?? AppEnvironment.fromDartDefines();
     if (!activeEnvironment.firebase.isAvailable) {
@@ -74,14 +75,18 @@ class UpdateService {
     final currentVersion = packageInfo.version;
     log('currentVersion: $currentVersion');
 
-    final remoteConfig = FirebaseRemoteConfig.instance;
-    await remoteConfig.setConfigSettings(
+    final config =
+        remoteConfig ??
+        (throw StateError(
+          'An update source must be supplied by app composition.',
+        ));
+    await config.setConfigSettings(
       RemoteConfigSettings(
         fetchTimeout: const Duration(seconds: 10),
         minimumFetchInterval: const Duration(minutes: 30),
       ),
     );
-    await remoteConfig.setDefaults(<String, dynamic>{
+    await config.setDefaults(<String, dynamic>{
       rcKeyLatestVersion: currentVersion,
       rcKeyMinSupportedVersion: '',
       rcKeyUpdateChangelog: '',
@@ -90,7 +95,7 @@ class UpdateService {
     Object? remoteCheckError;
     StackTrace? remoteCheckStackTrace;
     try {
-      await remoteConfig.fetchAndActivate();
+      await config.fetchAndActivate();
     } catch (error, stackTrace) {
       // Cached/default values can still produce a valid update decision, but
       // callers must be able to distinguish that from a successful refresh.
@@ -98,15 +103,13 @@ class UpdateService {
       remoteCheckStackTrace = stackTrace;
     }
 
-    final latest = remoteConfig.getString(rcKeyLatestVersion).trim();
+    final latest = config.getString(rcKeyLatestVersion).trim();
     log('latest: $latest');
-    final minSupported = remoteConfig
-        .getString(rcKeyMinSupportedVersion)
-        .trim();
+    final minSupported = config.getString(rcKeyMinSupportedVersion).trim();
     log('minSupported: $minSupported');
     // 메시지는 l10n에서 처리하고, Remote Config는 변경 내역만 관리
     final String message = '';
-    String changelogRaw = remoteConfig.getString(rcKeyUpdateChangelog).trim();
+    String changelogRaw = config.getString(rcKeyUpdateChangelog).trim();
     List<String> changelogLines;
     if (changelogRaw.startsWith('{')) {
       try {

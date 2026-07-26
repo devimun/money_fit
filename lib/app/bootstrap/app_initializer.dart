@@ -6,7 +6,7 @@ import 'package:money_fit/features/ledger/application/legacy/category_providers.
 // import 'package:money_fit/core/database/database_seeder.dart';
 // import 'package:money_fit/core/providers/repository_providers.dart';
 import 'package:money_fit/features/notifications/application/notification_controller.dart';
-import 'package:money_fit/core/services/ad_service.dart';
+import 'package:money_fit/features/monetization/data/google_mobile_ads_gateway.dart';
 import 'package:money_fit/features/home/application/home_projection.dart';
 
 typedef AppInitializerAction = Future<void> Function();

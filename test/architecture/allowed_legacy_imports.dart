@@ -51,43 +51,4 @@ class LegacyBoundaryAllowance {
       '$filePath: $target (${kind.name}; ${owner.name}; ${removalPhase.name})';
 }
 
-const allowedLegacyImports = <LegacyBoundaryAllowance>[
-  // core -> feature imports (12 import directives from six legacy files).
-  // Direct SDK/database singletons outside main/app composition.
-  LegacyBoundaryAllowance(
-    filePath: 'lib/core/services/review_prompt_service.dart',
-    kind: LegacyBoundaryKind.sdkSingleton,
-    target: 'Supabase.instance',
-    reason: 'Feedback submission has not moved behind its repository.',
-    owner: LegacyOwner.feedback,
-    removalPhase: RemovalPhase.pr6_3,
-    expectedOccurrences: 2,
-  ),
-  LegacyBoundaryAllowance(
-    filePath: 'lib/core/services/update_service.dart',
-    kind: LegacyBoundaryKind.sdkSingleton,
-    target: 'FirebaseRemoteConfig.instance',
-    reason: 'The app-update adapter has not yet been extracted.',
-    owner: LegacyOwner.appUpdate,
-    removalPhase: RemovalPhase.pr6_3,
-  ),
-  LegacyBoundaryAllowance(
-    filePath: 'lib/features/settings/widgets/contact_us_dialog.dart',
-    kind: LegacyBoundaryKind.sdkSingleton,
-    target: 'Supabase.instance',
-    reason: 'Feedback presentation still sends directly to Supabase.',
-    owner: LegacyOwner.feedback,
-    removalPhase: RemovalPhase.pr6_3,
-    expectedOccurrences: 2,
-  ),
-
-  // data/service UI references.
-  LegacyBoundaryAllowance(
-    filePath: 'lib/core/services/review_prompt_service.dart',
-    kind: LegacyBoundaryKind.serviceUiType,
-    target: 'BuildContext',
-    reason: 'Review prompting currently owns dialog presentation.',
-    owner: LegacyOwner.feedback,
-    removalPhase: RemovalPhase.pr6_3,
-  ),
-];
+const allowedLegacyImports = <LegacyBoundaryAllowance>[];

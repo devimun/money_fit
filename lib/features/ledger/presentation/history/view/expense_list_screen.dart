@@ -6,7 +6,7 @@ import 'package:money_fit/features/ledger/data/legacy/category_model.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/features/ledger/application/legacy/category_providers.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
-import 'package:money_fit/core/widgets/ads/ad_banner_widget.dart';
+import 'package:money_fit/features/monetization/widgets/ad_banner_widget.dart';
 import 'package:money_fit/features/ledger/presentation/history/view/widgets/expense_filter_bottom_sheet.dart';
 import 'package:money_fit/features/ledger/presentation/history/viewmodel/expense_list_provider.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
@@ -48,7 +48,7 @@ class ExpenseListScreen extends ConsumerWidget {
                 locale,
               ),
 
-              const AdBannerWidget(screenType: ScreenType.expenses),
+              const AdBannerWidget(placement: AdPlacement.expenses),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),

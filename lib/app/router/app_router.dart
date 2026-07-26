@@ -12,7 +12,7 @@ import 'package:money_fit/features/settings/view/settings_screen.dart';
 // 온보딩 과정을 줄이기 위해 제거
 // import 'package:money_fit/features/onboarding/view/onboarding_screen.dart';
 import 'package:money_fit/features/budget/presentation/setup/budget_setup_screen.dart';
-import 'package:money_fit/core/widgets/update_check_screen.dart';
+import 'package:money_fit/features/app_update/presentation/update_check_screen.dart';
 
 import 'bootstrap_failure_screen.dart';
 import 'bootstrap_gate.dart';

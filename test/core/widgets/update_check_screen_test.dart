@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:money_fit/core/config/app_environment.dart';
-import 'package:money_fit/core/widgets/update_check_screen.dart';
+import 'package:money_fit/features/app_update/presentation/update_check_screen.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 void main() {

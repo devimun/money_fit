@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:money_fit/core/services/ad_service.dart';
+import 'package:money_fit/features/monetization/data/google_mobile_ads_gateway.dart';
 
-enum ScreenType { home, calendar, expenses, stats, settings }
+export 'package:money_fit/features/monetization/data/google_mobile_ads_gateway.dart'
+    show AdPlacement;
 
 /// 배너 광고를 표시하는 위젯 (320x50)
 class AdBannerWidget extends StatefulWidget {
-  const AdBannerWidget({super.key, required this.screenType});
-  final ScreenType screenType;
+  const AdBannerWidget({super.key, required this.placement});
+  final AdPlacement placement;
 
   @override
   State<AdBannerWidget> createState() => _AdBannerWidgetState();
@@ -21,7 +22,7 @@ class _AdBannerWidgetState extends State<AdBannerWidget> {
   @override
   void initState() {
     super.initState();
-    _bannerId = AdService.bannerId(widget.screenType);
+    _bannerId = AdService.bannerId(widget.placement);
     _loadAd();
   }
 

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:money_fit/core/widgets/review_system/experience_binary_dialog.dart';
-import 'package:money_fit/core/widgets/review_system/negative_feedback_dialog.dart';
-import 'package:money_fit/core/widgets/review_system/positive_confirm_dialog.dart';
-import 'package:money_fit/core/widgets/review_system/thanks_dialog.dart';
+import 'package:money_fit/features/feedback/presentation/review/experience_binary_dialog.dart';
+import 'package:money_fit/features/feedback/presentation/review/negative_feedback_dialog.dart';
+import 'package:money_fit/features/feedback/presentation/review/positive_confirm_dialog.dart';
+import 'package:money_fit/features/feedback/presentation/review/thanks_dialog.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 /// 리뷰 다이얼로그들을 생성하는 팩토리 클래스

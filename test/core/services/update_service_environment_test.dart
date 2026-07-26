@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:money_fit/core/config/app_environment.dart';
-import 'package:money_fit/core/services/update_service.dart';
+import 'package:money_fit/features/app_update/application/update_service.dart';
 
 void main() {
   test(

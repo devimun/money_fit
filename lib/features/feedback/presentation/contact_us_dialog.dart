@@ -1,13 +1,13 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:money_fit/features/feedback/domain/feedback_repository.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ContactUsDialog extends StatefulWidget {
-  const ContactUsDialog({super.key});
+  const ContactUsDialog({required this.repository, super.key});
+
+  final FeedbackRepository repository;
 
   @override
   State<ContactUsDialog> createState() => _ContactUsDialogState();
@@ -33,16 +33,11 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
       );
 
       try {
-        final uid = Supabase.instance.client.auth.currentUser?.id;
-        await Supabase.instance.client.from('user_contact').insert({
-          if (uid != null) 'uid': uid,
-          'inquiry_type': _selectedInquiryType,
-          'email': _emailController.text,
-          'details': _detailsController.text,
-          'platform': Platform.isIOS
-              ? 'ios'
-              : (Platform.isAndroid ? 'android' : 'other'),
-        });
+        await widget.repository.submitContactInquiry(
+          inquiryType: _selectedInquiryType!,
+          email: _emailController.text,
+          details: _detailsController.text,
+        );
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

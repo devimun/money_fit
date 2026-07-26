@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/app/router/bootstrap_gate.dart';
 import 'package:money_fit/core/config/app_environment.dart';
-import 'package:money_fit/core/services/update_service.dart';
+import 'package:money_fit/features/app_update/application/update_service.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 

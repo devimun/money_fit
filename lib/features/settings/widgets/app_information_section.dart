@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_fit/app/composition/feedback_providers.dart';
 import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
-import 'package:money_fit/features/settings/widgets/contact_us_dialog.dart';
+import 'package:money_fit/features/feedback/presentation/contact_us_dialog.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class AppInformationSection extends StatefulWidget {
+class AppInformationSection extends ConsumerStatefulWidget {
   const AppInformationSection({super.key});
 
   @override
-  State<AppInformationSection> createState() => _AppInformationSectionState();
+  ConsumerState<AppInformationSection> createState() =>
+      _AppInformationSectionState();
 }
 
-class _AppInformationSectionState extends State<AppInformationSection> {
+class _AppInformationSectionState extends ConsumerState<AppInformationSection> {
   String _appVersion = '...';
 
   @override
@@ -35,7 +38,8 @@ class _AppInformationSectionState extends State<AppInformationSection> {
   Future<void> _showContactUsDialog() async {
     await showDialog(
       context: context,
-      builder: (context) => const ContactUsDialog(),
+      builder: (context) =>
+          ContactUsDialog(repository: ref.read(feedbackRepositoryProvider)),
     );
   }
 

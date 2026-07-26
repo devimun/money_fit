@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:money_fit/core/widgets/ads/ad_banner_widget.dart';
+
+enum AdPlacement { home, calendar, expenses, stats, settings }
 
 /// AdMob 광고 서비스를 관리하는 클래스
 class AdService {
@@ -15,20 +16,20 @@ class AdService {
     await MobileAds.instance.initialize();
   }
 
-  static const Map<ScreenType, String> _androidBannerIds = {
-    ScreenType.home: 'ca-app-pub-4769455621618933/8690634882',
-    ScreenType.calendar: 'ca-app-pub-4769455621618933/9888166487',
-    ScreenType.settings: 'ca-app-pub-4769455621618933/1690445406',
-    ScreenType.stats: 'ca-app-pub-4769455621618933/9537095506',
-    ScreenType.expenses: 'ca-app-pub-4769455621618933/3003527071',
+  static const Map<AdPlacement, String> _androidBannerIds = {
+    AdPlacement.home: 'ca-app-pub-4769455621618933/8690634882',
+    AdPlacement.calendar: 'ca-app-pub-4769455621618933/9888166487',
+    AdPlacement.settings: 'ca-app-pub-4769455621618933/1690445406',
+    AdPlacement.stats: 'ca-app-pub-4769455621618933/9537095506',
+    AdPlacement.expenses: 'ca-app-pub-4769455621618933/3003527071',
   };
 
-  static const Map<ScreenType, String> _iosBannerIds = {
-    ScreenType.home: 'ca-app-pub-4769455621618933/3825654152',
-    ScreenType.calendar: 'ca-app-pub-4769455621618933/1870075669',
-    ScreenType.settings: 'ca-app-pub-4769455621618933/9556993992',
-    ScreenType.stats: 'ca-app-pub-4769455621618933/5901102823',
-    ScreenType.expenses: 'ca-app-pub-4769455621618933/2277269778',
+  static const Map<AdPlacement, String> _iosBannerIds = {
+    AdPlacement.home: 'ca-app-pub-4769455621618933/3825654152',
+    AdPlacement.calendar: 'ca-app-pub-4769455621618933/1870075669',
+    AdPlacement.settings: 'ca-app-pub-4769455621618933/9556993992',
+    AdPlacement.stats: 'ca-app-pub-4769455621618933/5901102823',
+    AdPlacement.expenses: 'ca-app-pub-4769455621618933/3003527071',
   };
   static const String _testBannerAdId =
       'ca-app-pub-3940256099942544/6300978111';
@@ -63,14 +64,14 @@ class AdService {
   }
 
   /// 배너 광고 ID
-  static String bannerId(ScreenType screenType) {
+  static String bannerId(AdPlacement placement) {
     if (isDebugMode) {
       return _testBannerAdId;
     } else {
       if (Platform.isAndroid) {
-        return _androidBannerIds[screenType] ?? _testBannerAdId;
+        return _androidBannerIds[placement] ?? _testBannerAdId;
       } else if (Platform.isIOS) {
-        return _iosBannerIds[screenType] ?? _testBannerAdId;
+        return _iosBannerIds[placement] ?? _testBannerAdId;
       }
     }
     throw UnsupportedError('Unsupported platform');

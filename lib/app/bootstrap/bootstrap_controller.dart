@@ -1,12 +1,13 @@
 import 'dart:async';
 
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/app/composition/database_providers.dart';
 import 'package:money_fit/app/router/bootstrap_gate.dart';
 import 'package:money_fit/core/config/app_environment.dart';
 import 'package:money_fit/core/preferences/preferences_provider.dart';
-import 'package:money_fit/core/services/ad_service.dart';
-import 'package:money_fit/core/services/update_service.dart';
+import 'package:money_fit/features/app_update/application/update_service.dart';
+import 'package:money_fit/features/monetization/data/google_mobile_ads_gateway.dart';
 import 'package:money_fit/features/budget/application/current_budget_provider.dart';
 import 'package:money_fit/features/notifications/application/notification_controller.dart';
 import 'package:money_fit/features/session/application/session_context.dart';
@@ -29,6 +30,7 @@ class BootstrapController {
       try {
         update = await UpdateService.fetchUpdateStatus(
           environment: _ref.read(appEnvironmentProvider),
+          remoteConfig: FirebaseRemoteConfig.instance,
         );
       } catch (_) {
         // Remote Config is observational; a local session can still start.

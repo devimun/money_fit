@@ -5,9 +5,9 @@ import 'package:intl/intl.dart';
 import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/features/ledger/application/legacy/category_providers.dart';
-import 'package:money_fit/core/services/ad_service.dart';
+import 'package:money_fit/features/monetization/data/google_mobile_ads_gateway.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
-import 'package:money_fit/core/widgets/ads/ad_banner_widget.dart';
+import 'package:money_fit/features/monetization/widgets/ad_banner_widget.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/features/ledger/presentation/history/view/widgets/filter_components/month_year_picker_dialog.dart';
 import 'package:money_fit/features/statistics/application/statistics_ui_state.dart';
@@ -36,7 +36,7 @@ class StatisticsScreen extends ConsumerWidget {
                   const SizedBox(height: 12),
                   _buildCategorySpendingChart(context, ref, data),
                   const SizedBox(height: 12),
-                  AdBannerWidget(screenType: ScreenType.stats),
+                  AdBannerWidget(placement: AdPlacement.stats),
                   const SizedBox(height: 24),
                   _buildTop3Expenses(context, ref, data),
                 ] else ...[

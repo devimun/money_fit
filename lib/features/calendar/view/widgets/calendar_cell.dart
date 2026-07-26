@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/functions/functions.dart';
-import 'package:money_fit/core/services/ad_service.dart';
+import 'package:money_fit/features/monetization/data/google_mobile_ads_gateway.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/features/ledger/presentation/editor/today_expense_list.dart';
 import 'package:money_fit/features/calendar/application/calendar_projection.dart';
