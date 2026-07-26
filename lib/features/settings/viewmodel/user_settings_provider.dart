@@ -11,7 +11,7 @@ import 'package:money_fit/features/session/application/session_context.dart';
 /// preferences are owned by NotificationController.
 
 class UserSettingsNotifier extends AsyncNotifier<User> {
-  late final UserRepository _userRepository;
+  late final IUserRepository _userRepository;
 
   @override
   Future<User> build() async {

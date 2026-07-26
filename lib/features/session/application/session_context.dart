@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/app/composition/repository_providers.dart';
@@ -15,6 +17,42 @@ class SessionContext {
 
   final String ownerId;
   final String? remoteUserId;
+}
+
+/// The durable, device-local association between a ledger owner and a remote
+/// account.  The remote value is metadata only: it is never used as a ledger
+/// owner key.
+class LocalSessionMapping {
+  const LocalSessionMapping({required this.ownerId, this.remoteUserId});
+
+  final String ownerId;
+  final String? remoteUserId;
+
+  Map<String, Object?> toJson() => {
+    'ownerId': ownerId,
+    'remoteUserId': remoteUserId,
+  };
+
+  static LocalSessionMapping? tryParse(String? encoded) {
+    if (encoded == null) return null;
+    try {
+      final decoded = jsonDecode(encoded);
+      if (decoded is! Map<String, dynamic>) return null;
+      final ownerId = decoded['ownerId'];
+      final remoteUserId = decoded['remoteUserId'];
+      if (ownerId is! String || ownerId.isEmpty) return null;
+      if (remoteUserId != null &&
+          (remoteUserId is! String || remoteUserId.isEmpty)) {
+        return null;
+      }
+      return LocalSessionMapping(
+        ownerId: ownerId,
+        remoteUserId: remoteUserId as String?,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
 }
 
 sealed class SessionState {
@@ -45,6 +83,7 @@ class SessionRecoverableFailure extends SessionState {
 /// arbitrary person's ledger.
 class SessionController extends AsyncNotifier<SessionState> {
   static const _ownerIdKey = 'session.local_owner_id';
+  static const _mappingKey = 'session.local_remote_mapping_v1';
   static const _migrationCompleteKey = 'session.local_owner_migrated_v1';
 
   @override
@@ -54,21 +93,47 @@ class SessionController extends AsyncNotifier<SessionState> {
     try {
       final preferences = ref.read(sharedPreferencesProvider);
       final users = ref.read(userRepositoryProvider);
+      final mapping = LocalSessionMapping.tryParse(
+        preferences.getString(_mappingKey),
+      );
       final persistedOwnerId = preferences.getString(_ownerIdKey);
+
+      if (mapping != null) {
+        final existing = await users.getUser(mapping.ownerId);
+        if (existing != null) {
+          // Old app versions may have written the mapping before the marker.
+          // Completing it here is safe because the single mapping value was
+          // already written atomically by SharedPreferences.
+          await _persistMapping(preferences, mapping);
+          return SessionReady(
+            SessionContext(
+              ownerId: existing.id,
+              remoteUserId: mapping.remoteUserId,
+            ),
+          );
+        }
+        await _clearPersistedMapping(preferences);
+      }
 
       if (persistedOwnerId != null) {
         final existing = await users.getUser(persistedOwnerId);
         if (existing != null) {
+          await _persistMapping(
+            preferences,
+            LocalSessionMapping(ownerId: existing.id),
+          );
           return SessionReady(SessionContext(ownerId: existing.id));
         }
-        await preferences.remove(_ownerIdKey);
-        await preferences.remove(_migrationCompleteKey);
+        await _clearPersistedMapping(preferences);
       }
 
       final existingUsers = await users.getAllUsers();
       if (existingUsers.length == 1) {
         final ownerId = existingUsers.single.id;
-        await _persistOwner(preferences, ownerId);
+        await _persistMapping(
+          preferences,
+          LocalSessionMapping(ownerId: ownerId),
+        );
         return SessionReady(SessionContext(ownerId: ownerId));
       }
       if (existingUsers.length > 1) {
@@ -92,7 +157,7 @@ class SessionController extends AsyncNotifier<SessionState> {
           updatedAt: now,
         ),
       );
-      await _persistOwner(preferences, ownerId);
+      await _persistMapping(preferences, LocalSessionMapping(ownerId: ownerId));
       return SessionReady(SessionContext(ownerId: ownerId));
     } catch (error, stackTrace) {
       return SessionRecoverableFailure(error, stackTrace);
@@ -107,18 +172,47 @@ class SessionController extends AsyncNotifier<SessionState> {
 
   Future<void> clearLocalOwner() async {
     final preferences = ref.read(sharedPreferencesProvider);
-    await preferences.remove(_ownerIdKey);
-    await preferences.remove(_migrationCompleteKey);
+    await _clearPersistedMapping(preferences);
     await retry();
   }
 
-  Future<void> _persistOwner(
+  /// Records a remote identity without ever changing the local ledger owner.
+  /// Authentication integrations should call this after their session changes.
+  Future<void> linkRemoteUser(String? remoteUserId) async {
+    final current = await ref.read(sessionContextProvider.future);
+    final normalizedRemoteId = remoteUserId?.trim();
+    final mapping = LocalSessionMapping(
+      ownerId: current.ownerId,
+      remoteUserId: normalizedRemoteId == null || normalizedRemoteId.isEmpty
+          ? null
+          : normalizedRemoteId,
+    );
+    await _persistMapping(ref.read(sharedPreferencesProvider), mapping);
+    state = AsyncData(
+      SessionReady(
+        SessionContext(
+          ownerId: mapping.ownerId,
+          remoteUserId: mapping.remoteUserId,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _persistMapping(
     SharedPreferences preferences,
-    String ownerId,
+    LocalSessionMapping mapping,
   ) async {
-    // Mark completion only after the owner mapping has been durably written.
-    await preferences.setString(_ownerIdKey, ownerId);
+    // A single JSON document prevents a partial local/remote association. The
+    // legacy owner key remains for compatibility with an installed older app.
+    await preferences.setString(_mappingKey, jsonEncode(mapping.toJson()));
+    await preferences.setString(_ownerIdKey, mapping.ownerId);
     await preferences.setBool(_migrationCompleteKey, true);
+  }
+
+  Future<void> _clearPersistedMapping(SharedPreferences preferences) async {
+    await preferences.remove(_mappingKey);
+    await preferences.remove(_ownerIdKey);
+    await preferences.remove(_migrationCompleteKey);
   }
 }
 

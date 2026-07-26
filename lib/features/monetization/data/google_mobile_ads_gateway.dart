@@ -172,6 +172,12 @@ class InterstitialAdManager {
     }
   }
 
+  /// Clears frequency state when the local profile is explicitly reset.
+  void resetCounters() {
+    _actionCount = 0;
+    _lastAdShowTime = null;
+  }
+
   /// 리소스 정리
   void dispose() {
     _interstitialAd?.dispose();

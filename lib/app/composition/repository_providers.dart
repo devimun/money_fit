@@ -5,7 +5,9 @@ import 'package:money_fit/features/ledger/data/legacy/expense_repository.dart';
 import 'package:money_fit/core/repositories/user_repository.dart';
 
 /// UserRepository 인스턴스를 제공하는 Provider입니다.
-final userRepositoryProvider = Provider<UserRepository>((ref) {
+/// Expose the contract so application controllers can be tested without a
+/// sqflite database and do not take a dependency on the legacy implementation.
+final userRepositoryProvider = Provider<IUserRepository>((ref) {
   return UserRepository(database: ref.read(appDatabaseProvider));
 });
 
