@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/models/theme_settings.dart';
+import 'package:money_fit/core/preferences/preferences_provider.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/providers/theme_provider.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
@@ -53,7 +54,7 @@ class FontSizeSetting extends ConsumerWidget {
       builder: (context) => _FontSizeDialog(
         currentOption: currentOption,
         onApply: (option) {
-          ref.read(fontSizeProvider.notifier).setFontSizeOption(option);
+          ref.read(appPreferencesProvider.notifier).setFontSizeOption(option);
         },
       ),
     );

@@ -4,6 +4,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
+import 'package:money_fit/core/preferences/preferences_provider.dart';
 import 'package:money_fit/core/providers/theme_provider.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
 import 'package:money_fit/features/settings/widgets/theme_customization/color_picker_dialog.dart';
@@ -40,9 +41,10 @@ class ThemeColorSetting extends ConsumerWidget {
     WidgetRef ref,
     Color currentColor,
   ) {
-    // Get favorite colors from repository
-    final notifier = ref.read(themeSeedColorProvider.notifier);
-    final favoriteColors = notifier.getFavoriteColors();
+    final favoriteColors = ref
+        .read(appPreferencesProvider)
+        .theme
+        .favoriteColorObjects;
 
     showDialog<void>(
       context: context,
@@ -51,7 +53,9 @@ class ThemeColorSetting extends ConsumerWidget {
         recentColors: favoriteColors,
         onColorSelected: (selectedColor, updatedFavorites) {
           // Update theme color and save to repository
-          notifier.setSeedColor(selectedColor, updatedFavorites);
+          ref
+              .read(appPreferencesProvider.notifier)
+              .setThemeSeedColor(selectedColor, updatedFavorites);
         },
       ),
     );

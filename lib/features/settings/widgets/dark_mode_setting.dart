@@ -1,7 +1,8 @@
-// Dark Mode Setting Widget - Uses themeModeProvider for state management
+// Dark Mode Setting Widget - derives its value from persisted preferences.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
+import 'package:money_fit/core/preferences/preferences_provider.dart';
 import 'package:money_fit/core/providers/theme_provider.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
@@ -20,7 +21,7 @@ class DarkModeSetting extends ConsumerWidget {
       title: l10n.darkMode,
       value: isDarkMode,
       onChanged: (value) async {
-        await ref.read(themeModeProvider.notifier).toggleDarkMode();
+        await ref.read(appPreferencesProvider.notifier).setDarkMode(value);
       },
       context: context,
     );

@@ -4,286 +4,140 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_fit/core/theme/app_theme_colors.dart';
 import 'package:money_fit/core/theme/app_theme_generator.dart';
 import 'package:money_fit/core/theme/app_text_styles.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
-import 'package:money_fit/core/models/theme_settings.dart';
-import 'package:money_fit/core/preferences/app_preferences.dart';
 import 'package:money_fit/core/preferences/preferences_provider.dart';
 
-/// StateNotifier for managing theme seed color
-class ThemeSeedColorNotifier extends StateNotifier<Color> {
-  ThemeSeedColorNotifier(this._ref)
-    : super(_ref.read(appPreferencesProvider).theme.colorSeed) {
-    _ref.listen<AppPreferences>(appPreferencesProvider, (_, next) {
-      state = next.theme.colorSeed;
-    });
-  }
+/// Read-only projections of the one persisted theme preference.  Mutations
+/// belong to [PreferencesController], avoiding three independent copies of
+/// the same state.
+final themeSeedColorProvider = Provider<Color>(
+  (ref) => ref.watch(
+    appPreferencesProvider.select((value) => value.theme.colorSeed),
+  ),
+);
 
-  final Ref _ref;
+final themeModeProvider = Provider<bool>(
+  (ref) => ref.watch(
+    appPreferencesProvider.select((value) => value.theme.isDarkMode),
+  ),
+);
 
-  Future<void> setSeedColor(Color color, List<Color> favoriteColors) async {
-    final settings = _ref.read(appPreferencesProvider).theme;
-    final updatedSettings = settings.copyWith(
-      colorSeedValue: color.toARGB32(),
-      favoriteColors: favoriteColors.map((c) => c.toARGB32()).toList(),
-    );
-
-    await _ref
-        .read(appPreferencesProvider.notifier)
-        .updateTheme(updatedSettings);
-  }
-
-  List<Color> getFavoriteColors() {
-    return _ref.read(appPreferencesProvider).theme.favoriteColorObjects;
-  }
-}
-
-/// StateNotifier for managing dark mode state
-class ThemeModeNotifier extends StateNotifier<bool> {
-  ThemeModeNotifier(this._ref)
-    : super(_ref.read(appPreferencesProvider).theme.isDarkMode) {
-    _ref.listen<AppPreferences>(appPreferencesProvider, (_, next) {
-      state = next.theme.isDarkMode;
-    });
-  }
-
-  final Ref _ref;
-
-  Future<void> toggleDarkMode() async {
-    final settings = _ref.read(appPreferencesProvider).theme;
-    final updatedSettings = settings.copyWith(isDarkMode: !state);
-
-    await _ref
-        .read(appPreferencesProvider.notifier)
-        .updateTheme(updatedSettings);
-  }
-
-  Future<void> setDarkMode(bool isDark) async {
-    final settings = _ref.read(appPreferencesProvider).theme;
-    final updatedSettings = settings.copyWith(isDarkMode: isDark);
-
-    await _ref
-        .read(appPreferencesProvider.notifier)
-        .updateTheme(updatedSettings);
-  }
-}
-
-/// StateNotifier for managing font size scale
-class FontSizeNotifier extends StateNotifier<double> {
-  FontSizeNotifier(this._ref)
-    : super(_ref.read(appPreferencesProvider).theme.fontSizeScale) {
-    _ref.listen<AppPreferences>(appPreferencesProvider, (_, next) {
-      state = next.theme.fontSizeScale;
-    });
-  }
-
-  final Ref _ref;
-
-  /// 현재 폰트 크기 옵션 반환
-  FontSizeOption get currentOption => FontSizeOption.fromScale(state);
-
-  Future<void> setFontSize(double scale) async {
-    // 유효한 스케일 값인지 검증
-    if (!FontSizeOption.isValidScale(scale)) {
-      scale = 1.0; // 기본값으로 폴백
-    }
-
-    final settings = _ref.read(appPreferencesProvider).theme;
-    final updatedSettings = settings.copyWith(fontSizeScale: scale);
-
-    await _ref
-        .read(appPreferencesProvider.notifier)
-        .updateTheme(updatedSettings);
-  }
-
-  /// FontSizeOption으로 폰트 크기 설정
-  Future<void> setFontSizeOption(FontSizeOption option) async {
-    await setFontSize(option.scale);
-  }
-}
-
-/// Provides the seed color for theme generation with state management
-final themeSeedColorProvider =
-    StateNotifierProvider<ThemeSeedColorNotifier, Color>((ref) {
-      return ThemeSeedColorNotifier(ref);
-    });
-
-/// Provides the dark mode state with state management
-final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, bool>((ref) {
-  return ThemeModeNotifier(ref);
-});
-
-/// Provides the font size scale with state management
-final fontSizeProvider = StateNotifierProvider<FontSizeNotifier, double>((ref) {
-  return FontSizeNotifier(ref);
-});
+final fontSizeProvider = Provider<double>(
+  (ref) => ref.watch(
+    appPreferencesProvider.select((value) => value.theme.fontSizeScale),
+  ),
+);
 
 /// Provides the light theme with AppThemeColors extension
 final lightThemeProvider = Provider<ThemeData>((ref) {
   final seedColor = ref.watch(themeSeedColorProvider);
   final fontSizeScale = ref.watch(fontSizeProvider);
-  final appColors = AppThemeGenerator.lightFromSeed(seedColor);
-
-  return ThemeData(
-    useMaterial3: true,
+  return _buildAppTheme(
+    colors: AppThemeGenerator.lightFromSeed(seedColor),
     brightness: Brightness.light,
-    scaffoldBackgroundColor: appColors.screenBackground,
-    primaryColor: appColors.brandPrimary,
-    fontFamily: 'Pretendard Variable',
-
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        backgroundColor: appColors.selectedButtonBackground,
-        foregroundColor: appColors.textOnBrand,
-        minimumSize: const Size(double.maxFinite, 50),
-      ),
-    ),
-
-    colorScheme: ColorScheme.light(
-      primary: appColors.brandPrimary,
-      secondary: appColors.brandSecondary,
-      surface: appColors.cardBackground,
-      error: appColors.error,
-      onPrimary: appColors.textOnBrand,
-      onSecondary: appColors.textOnBrand,
-      onSurface: appColors.textPrimary,
-      onError: appColors.textOnBrand,
-    ),
-
-    textTheme: _buildTextTheme(
-      appColors.textPrimary,
-      appColors.textSecondary,
-      fontSizeScale,
-    ),
-
-    appBarTheme: AppBarTheme(
-      backgroundColor: appColors.cardBackground,
-      centerTitle: false,
-      elevation: 1,
-      shadowColor: appColors.cardBackground,
-      titleTextStyle: AppTextStyles.h3.copyWith(
-        color: appColors.brandPrimary,
-        fontSize: AppTextStyles.h3.fontSize! * fontSizeScale,
-      ),
-      iconTheme: IconThemeData(color: appColors.textPrimary),
-    ),
-
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      fillColor: appColors.screenBackground,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: appColors.border),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: appColors.border),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: appColors.brandPrimary),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: appColors.error),
-      ),
-    ),
-
-    bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      backgroundColor: appColors.cardBackground,
-      selectedItemColor: appColors.brandPrimary,
-      unselectedItemColor: appColors.brandSecondary,
-      selectedLabelStyle: AppTextStyles.navSelected.copyWith(
-        fontSize: AppTextStyles.navSelected.fontSize! * fontSizeScale,
-      ),
-      unselectedLabelStyle: AppTextStyles.nav.copyWith(
-        fontSize: AppTextStyles.nav.fontSize! * fontSizeScale,
-      ),
-      type: BottomNavigationBarType.fixed,
-    ),
-  ).withAppColors(appColors);
+    fontSizeScale: fontSizeScale,
+  );
 });
 
 /// Provides the dark theme with AppThemeColors extension
 final darkThemeProvider = Provider<ThemeData>((ref) {
   final seedColor = ref.watch(themeSeedColorProvider);
   final fontSizeScale = ref.watch(fontSizeProvider);
-  final appColors = AppThemeGenerator.darkFromSeed(seedColor);
+  return _buildAppTheme(
+    colors: AppThemeGenerator.darkFromSeed(seedColor),
+    brightness: Brightness.dark,
+    fontSizeScale: fontSizeScale,
+  );
+});
+
+ThemeData _buildAppTheme({
+  required AppThemeColors colors,
+  required Brightness brightness,
+  required double fontSizeScale,
+}) {
+  final isDark = brightness == Brightness.dark;
+  final colorScheme = isDark
+      ? ColorScheme.dark(
+          primary: colors.brandPrimary,
+          secondary: colors.brandSecondary,
+          surface: colors.cardBackground,
+          error: colors.error,
+          onPrimary: colors.textOnBrand,
+          onSecondary: colors.textOnBrand,
+          onSurface: colors.textPrimary,
+          onError: colors.textOnBrand,
+          outline: colors.border,
+        )
+      : ColorScheme.light(
+          primary: colors.brandPrimary,
+          secondary: colors.brandSecondary,
+          surface: colors.cardBackground,
+          error: colors.error,
+          onPrimary: colors.textOnBrand,
+          onSecondary: colors.textOnBrand,
+          onSurface: colors.textPrimary,
+          onError: colors.textOnBrand,
+        );
 
   return ThemeData(
     useMaterial3: true,
-    brightness: Brightness.dark,
-    scaffoldBackgroundColor: appColors.screenBackground,
-    primaryColor: appColors.brandPrimary,
+    brightness: brightness,
+    scaffoldBackgroundColor: colors.screenBackground,
+    primaryColor: colors.brandPrimary,
     fontFamily: 'Pretendard Variable',
-
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        backgroundColor: appColors.selectedButtonBackground,
-        foregroundColor: appColors.textOnBrand,
+        backgroundColor: colors.selectedButtonBackground,
+        foregroundColor: colors.textOnBrand,
         minimumSize: const Size(double.maxFinite, 50),
       ),
     ),
-
-    colorScheme: ColorScheme.dark(
-      primary: appColors.brandPrimary,
-      secondary: appColors.brandSecondary,
-      surface: appColors.cardBackground,
-      error: appColors.error,
-      onPrimary: appColors.textOnBrand,
-      onSecondary: appColors.textOnBrand,
-      onSurface: appColors.textPrimary,
-      onError: appColors.textOnBrand,
-      outline: appColors.border,
-    ),
-
+    colorScheme: colorScheme,
     textTheme: _buildTextTheme(
-      appColors.textPrimary,
-      appColors.textSecondary,
+      colors.textPrimary,
+      colors.textSecondary,
       fontSizeScale,
     ),
-
     appBarTheme: AppBarTheme(
-      backgroundColor: appColors.screenBackground,
+      backgroundColor: isDark ? colors.screenBackground : colors.cardBackground,
+      centerTitle: false,
       elevation: 1,
-      shadowColor: Colors.black,
+      shadowColor: isDark ? Colors.black : colors.cardBackground,
       titleTextStyle: AppTextStyles.h3.copyWith(
-        color: appColors.textPrimary,
+        color: isDark ? colors.textPrimary : colors.brandPrimary,
         fontSize: AppTextStyles.h3.fontSize! * fontSizeScale,
       ),
-      iconTheme: IconThemeData(color: appColors.textPrimary),
+      iconTheme: IconThemeData(color: colors.textPrimary),
     ),
-
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: appColors.cardBackground,
+      fillColor: isDark ? colors.cardBackground : colors.screenBackground,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: appColors.border),
+        borderSide: BorderSide(color: colors.border),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: appColors.border),
+        borderSide: BorderSide(color: colors.border),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: appColors.brandPrimary),
+        borderSide: BorderSide(color: colors.brandPrimary),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: appColors.error),
+        borderSide: BorderSide(color: colors.error),
       ),
     ),
-
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      backgroundColor: appColors.cardBackground,
-      selectedItemColor: appColors.brandPrimary,
-      unselectedItemColor: appColors.brandSecondary,
+      backgroundColor: colors.cardBackground,
+      selectedItemColor: colors.brandPrimary,
+      unselectedItemColor: colors.brandSecondary,
       selectedLabelStyle: AppTextStyles.navSelected.copyWith(
         fontSize: AppTextStyles.navSelected.fontSize! * fontSizeScale,
       ),
@@ -292,8 +146,8 @@ final darkThemeProvider = Provider<ThemeData>((ref) {
       ),
       type: BottomNavigationBarType.fixed,
     ),
-  ).withAppColors(appColors);
-});
+  ).withAppColors(colors);
+}
 
 /// Helper function to build TextTheme with font size scale
 TextTheme _buildTextTheme(
