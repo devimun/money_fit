@@ -1,5 +1,5 @@
 /// 버튼 텍스트용 반응형 위젯
-/// 텍스트가 길어지면 자동 축소하며, 말줄임표 처리
+/// 텍스트가 길어져도 사용자가 선택한 글자 크기는 유지하고 말줄임표 처리한다.
 library;
 
 import 'package:flutter/material.dart';
@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 /// 버튼 내 텍스트를 위한 반응형 위젯
 ///
 /// 특징:
-/// - FittedBox로 텍스트 크기 자동 축소
-/// - 단일 줄 유지
+/// - 사용자의 텍스트 크기를 축소하지 않음
+/// - 단일 줄에서 말줄임표 처리
 /// - IntrinsicWidth/SegmentedButton 등과 호환
 ///
 /// 요구사항: 2.1, 2.2, 2.3, 2.4
@@ -30,17 +30,15 @@ class ResponsiveButtonText extends StatelessWidget {
   Widget build(BuildContext context) {
     if (text.isEmpty) return const SizedBox.shrink();
 
-    return FittedBox(
-      fit: BoxFit.scaleDown,
-      child: Text(
-        text,
-        // 부모 위젯(SegmentedButton 등)의 foregroundColor를 상속받기 위해
-        // DefaultTextStyle을 기본값으로 사용
-        style: style ?? DefaultTextStyle.of(context).style,
-        textAlign: textAlign ?? TextAlign.center,
-        maxLines: maxLines,
-        overflow: TextOverflow.ellipsis,
-      ),
+    return Text(
+      text,
+      // 부모 위젯(SegmentedButton 등)의 foregroundColor를 상속받기 위해
+      // DefaultTextStyle을 기본값으로 사용
+      style: style ?? DefaultTextStyle.of(context).style,
+      textAlign: textAlign ?? TextAlign.center,
+      maxLines: maxLines,
+      softWrap: false,
+      overflow: TextOverflow.ellipsis,
     );
   }
 }

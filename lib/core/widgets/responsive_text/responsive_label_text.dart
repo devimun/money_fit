@@ -8,8 +8,8 @@ import '../../theme/theme_extensions.dart';
 /// 폼 라벨용 반응형 위젯
 ///
 /// 특징:
-/// - FittedBox로 텍스트 크기 자동 축소
-/// - 단일 줄 유지
+/// - 사용자의 텍스트 크기를 축소하지 않음
+/// - 단일 줄에서 말줄임표 처리
 /// - IntrinsicHeight/IntrinsicWidth와 호환
 ///
 /// 요구사항: 5.1, 5.2, 5.3
@@ -31,15 +31,13 @@ class ResponsiveLabelText extends StatelessWidget {
   Widget build(BuildContext context) {
     if (text.isEmpty) return const SizedBox.shrink();
 
-    return FittedBox(
-      fit: BoxFit.scaleDown,
-      child: Text(
-        text,
-        style: style ?? context.textTheme.labelMedium,
-        textAlign: textAlign,
-        maxLines: maxLines,
-        overflow: TextOverflow.ellipsis,
-      ),
+    return Text(
+      text,
+      style: style ?? context.textTheme.labelMedium,
+      textAlign: textAlign,
+      maxLines: maxLines,
+      softWrap: false,
+      overflow: TextOverflow.ellipsis,
     );
   }
 }

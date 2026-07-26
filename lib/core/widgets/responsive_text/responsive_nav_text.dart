@@ -8,8 +8,8 @@ import '../../theme/theme_extensions.dart';
 /// 하단 네비게이션 라벨용 반응형 위젯
 ///
 /// 특징:
-/// - FittedBox로 텍스트 크기 자동 축소
-/// - 단일 줄 유지
+/// - 사용자의 텍스트 크기를 축소하지 않음
+/// - 단일 줄에서 말줄임표 처리
 ///
 /// 요구사항: 7.1, 7.2, 7.3
 class ResponsiveNavText extends StatelessWidget {
@@ -30,15 +30,13 @@ class ResponsiveNavText extends StatelessWidget {
   Widget build(BuildContext context) {
     if (text.isEmpty) return const SizedBox.shrink();
 
-    return FittedBox(
-      fit: BoxFit.scaleDown,
-      child: Text(
-        text,
-        style: style ?? context.textTheme.labelSmall,
-        textAlign: textAlign,
-        maxLines: maxLines,
-        overflow: TextOverflow.ellipsis,
-      ),
+    return Text(
+      text,
+      style: style ?? context.textTheme.labelSmall,
+      textAlign: textAlign,
+      maxLines: maxLines,
+      softWrap: false,
+      overflow: TextOverflow.ellipsis,
     );
   }
 }

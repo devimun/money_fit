@@ -58,4 +58,55 @@ void main() {
     expect(text.maxLines, ResponsiveMessageText.maxLines);
     expect(find.byType(FittedBox), findsNothing);
   });
+
+  testWidgets(
+    'button, label, and navigation labels preserve multilingual text scale without overflow',
+    (tester) async {
+      const button = '계속 진행하여 월간 예산을 설정합니다';
+      const label = 'Límite mensual disponible para gastos esenciales';
+      const navigation = '設定と通知';
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: MediaQuery(
+            data: MediaQueryData(textScaler: TextScaler.linear(2.5)),
+            child: Scaffold(
+              body: SizedBox(
+                width: 320,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 160,
+                      child: ElevatedButton(
+                        onPressed: null,
+                        child: ResponsiveButtonText(text: button),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 180,
+                      child: ResponsiveLabelText(text: label),
+                    ),
+                    SizedBox(
+                      width: 120,
+                      child: ResponsiveNavText(text: navigation),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(find.byType(FittedBox), findsNothing);
+
+      for (final value in [button, label, navigation]) {
+        final text = tester.widget<Text>(find.text(value));
+        expect(text.maxLines, 1);
+        expect(text.softWrap, isFalse);
+        expect(text.overflow, TextOverflow.ellipsis);
+      }
+    },
+  );
 }
