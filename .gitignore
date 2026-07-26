@@ -44,6 +44,11 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Local packaging artifacts
+/ios/*.ipa
+/ios/*.app.dSYM.zip
+/package-lock.json
+
 have_to_ignore.md
 # Secrets and environment variables
 .env
