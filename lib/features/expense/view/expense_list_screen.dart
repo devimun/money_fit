@@ -141,10 +141,7 @@ class ExpenseListScreen extends ConsumerWidget {
             ),
           ),
           IconButton(
-            icon: Icon(
-              Icons.manage_search,
-              color: context.colors.textPrimary,
-            ),
+            icon: Icon(Icons.manage_search, color: context.colors.textPrimary),
             onPressed: () {
               showModalBottomSheet(
                 context: context,
@@ -176,14 +173,8 @@ class ExpenseListScreen extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          dateFormat.format(date),
-          style: context.textTheme.labelMedium,
-        ),
-        Divider(
-          color: context.colors.divider,
-          thickness: 0.6,
-        ),
+        Text(dateFormat.format(date), style: context.textTheme.labelMedium),
+        Divider(color: context.colors.divider, thickness: 0.6),
         for (Expense e in expenses)
           _buildExpenseWidget(e, context, ref, categories, l10n),
         const SizedBox(height: 8),
@@ -226,10 +217,7 @@ class ExpenseListScreen extends ConsumerWidget {
         children: [
           const Icon(Icons.receipt_long_outlined, size: 64),
           const SizedBox(height: 16),
-          Text(
-            l10n.noExpenseData,
-            style: context.textTheme.titleMedium,
-          ),
+          Text(l10n.noExpenseData, style: context.textTheme.titleMedium),
           const SizedBox(height: 8),
           Text(
             l10n.changeFilterPrompt,

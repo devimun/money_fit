@@ -8,10 +8,10 @@ import 'app_theme_generator.dart';
 
 extension ThemeExtensions on BuildContext {
   /// Access AppThemeColors from the current theme
-  /// 
+  ///
   /// Returns the custom theme colors defined in AppThemeColors.
   /// If AppThemeColors is not found in the theme, returns a default light theme.
-  /// 
+  ///
   /// Usage:
   /// ```dart
   /// Container(
@@ -19,45 +19,45 @@ extension ThemeExtensions on BuildContext {
   ///   child: Text('Hello', style: TextStyle(color: context.colors.textOnBrand)),
   /// )
   /// ```
-  /// 
+  ///
   /// Migration from LightAppColors/DarkAppColors:
   /// - LightAppColors.primary → context.colors.brandPrimary
   /// - LightAppColors.background → context.colors.screenBackground
   /// - LightAppColors.textPrimary → context.colors.textPrimary
-  /// 
+  ///
   /// See design.md Migration Guide for complete mapping.
   AppThemeColors get colors {
     final themeColors = Theme.of(this).extension<AppThemeColors>();
-    
+
     // Null safety: provide default theme if extension is missing
     if (themeColors == null) {
       debugPrint('Warning: AppThemeColors not found in theme, using default');
       return AppThemeGenerator.lightFromSeed(AppThemeGenerator.defaultSeed);
     }
-    
+
     return themeColors;
   }
-  
+
   /// Alias for [colors] - Access AppThemeColors from the current theme
-  /// 
+  ///
   /// Both `context.theme` and `context.colors` are valid and equivalent.
   /// Use whichever feels more natural in your code.
   AppThemeColors get theme => colors;
-  
+
   /// Access TextTheme from the current theme
-  /// 
+  ///
   /// Provides convenient access to text styles defined in the theme.
-  /// 
+  ///
   /// Usage:
   /// ```dart
   /// Text('Title', style: context.textTheme.displayLarge)
   /// ```
   TextTheme get textTheme => Theme.of(this).textTheme;
-  
+
   /// Get the current brightness (light or dark)
-  /// 
+  ///
   /// Returns Brightness.light or Brightness.dark based on the current theme.
-  /// 
+  ///
   /// Usage:
   /// ```dart
   /// if (context.brightness == Brightness.dark) {
@@ -65,11 +65,11 @@ extension ThemeExtensions on BuildContext {
   /// }
   /// ```
   Brightness get brightness => Theme.of(this).brightness;
-  
+
   /// Check if the current theme is in dark mode
-  /// 
+  ///
   /// Returns true if the current theme brightness is dark, false otherwise.
-  /// 
+  ///
   /// Usage:
   /// ```dart
   /// if (context.isDarkMode) {
@@ -79,10 +79,10 @@ extension ThemeExtensions on BuildContext {
   bool get isDarkMode => brightness == Brightness.dark;
 
   /// Get a standard card/box decoration with shadow
-  /// 
+  ///
   /// Provides a consistent BoxDecoration for cards and containers.
   /// Automatically adjusts shadow opacity for dark mode.
-  /// 
+  ///
   /// Usage:
   /// ```dart
   /// Container(
@@ -110,9 +110,9 @@ extension ThemeExtensions on BuildContext {
 /// ThemeData extensions for adding AppThemeColors
 extension ThemeDataExtensions on ThemeData {
   /// Add AppThemeColors extension to ThemeData
-  /// 
+  ///
   /// This method creates a new ThemeData with the AppThemeColors extension added.
-  /// 
+  ///
   /// Usage:
   /// ```dart
   /// final theme = ThemeData.light().withAppColors(myColors);
@@ -125,12 +125,12 @@ extension ThemeDataExtensions on ThemeData {
       ],
     );
   }
-  
+
   /// Get AppThemeColors from ThemeData
-  /// 
+  ///
   /// Throws StateError if AppThemeColors is not found.
   /// Use this when you're certain the extension exists.
-  /// 
+  ///
   /// Usage:
   /// ```dart
   /// final colors = theme.appColors;

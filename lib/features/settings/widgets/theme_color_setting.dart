@@ -28,10 +28,7 @@ class ThemeColorSetting extends ConsumerWidget {
         decoration: BoxDecoration(
           color: currentSeedColor,
           shape: BoxShape.circle,
-          border: Border.all(
-            color: context.colors.border,
-            width: 2,
-          ),
+          border: Border.all(color: context.colors.border, width: 2),
         ),
       ),
       onTap: () => _showColorPicker(context, ref, currentSeedColor),

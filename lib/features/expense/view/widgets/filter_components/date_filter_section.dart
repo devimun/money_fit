@@ -25,10 +25,7 @@ class DateFilterSection extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            border: Border.all(
-              color: context.colors.border,
-              width: 0.3,
-            ),
+            border: Border.all(color: context.colors.border, width: 0.3),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(

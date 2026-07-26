@@ -25,8 +25,8 @@ class FontSizeSetting extends ConsumerWidget {
       trailing: ResponsiveLabelText(
         text: _getFontSizeLabel(currentOption, l10n),
         style: context.textTheme.bodyMedium?.copyWith(
-              color: context.colors.brandPrimary,
-            ),
+          color: context.colors.brandPrimary,
+        ),
       ),
       onTap: () => _showFontSizeDialog(context, ref, currentOption),
     );
@@ -43,7 +43,11 @@ class FontSizeSetting extends ConsumerWidget {
     }
   }
 
-  void _showFontSizeDialog(BuildContext context, WidgetRef ref, FontSizeOption currentOption) {
+  void _showFontSizeDialog(
+    BuildContext context,
+    WidgetRef ref,
+    FontSizeOption currentOption,
+  ) {
     showDialog<void>(
       context: context,
       builder: (context) => _FontSizeDialog(
@@ -57,10 +61,7 @@ class FontSizeSetting extends ConsumerWidget {
 }
 
 class _FontSizeDialog extends StatefulWidget {
-  const _FontSizeDialog({
-    required this.currentOption,
-    required this.onApply,
-  });
+  const _FontSizeDialog({required this.currentOption, required this.onApply});
 
   final FontSizeOption currentOption;
   final ValueChanged<FontSizeOption> onApply;

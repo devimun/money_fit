@@ -135,7 +135,8 @@ class HomeMainCard extends StatelessWidget {
               const SizedBox(width: 8),
               Flexible(
                 child: ResponsiveLabelText(
-                  text: '$budgetLabel ${formatCurrencyAdaptive(context, budget)}',
+                  text:
+                      '$budgetLabel ${formatCurrencyAdaptive(context, budget)}',
                   style: context.textTheme.bodyMedium?.copyWith(
                     color: context.colors.textPrimary,
                   ),

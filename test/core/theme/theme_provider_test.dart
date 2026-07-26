@@ -18,9 +18,7 @@ void main() {
 
     test('themeSeedColorProvider returns default brown color', () {
       final container = ProviderContainer(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(prefs),
-        ],
+        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
       );
       addTearDown(container.dispose);
 
@@ -31,9 +29,7 @@ void main() {
 
     test('lightThemeProvider returns light theme with AppThemeColors', () {
       final container = ProviderContainer(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(prefs),
-        ],
+        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
       );
       addTearDown(container.dispose);
 
@@ -45,9 +41,7 @@ void main() {
 
     test('darkThemeProvider returns dark theme with AppThemeColors', () {
       final container = ProviderContainer(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(prefs),
-        ],
+        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
       );
       addTearDown(container.dispose);
 
@@ -59,9 +53,7 @@ void main() {
 
     test('light and dark themes have consistent hue', () {
       final container = ProviderContainer(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(prefs),
-        ],
+        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
       );
       addTearDown(container.dispose);
 
@@ -79,9 +71,7 @@ void main() {
 
     test('light theme has proper component styling', () {
       final container = ProviderContainer(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(prefs),
-        ],
+        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
       );
       addTearDown(container.dispose);
 
@@ -90,15 +80,15 @@ void main() {
       expect(theme.elevatedButtonTheme.style, isNotNull);
       expect(theme.appBarTheme.backgroundColor, isNotNull);
       expect(theme.inputDecorationTheme.filled, isTrue);
-      expect(theme.bottomNavigationBarTheme.type, 
-        equals(BottomNavigationBarType.fixed));
+      expect(
+        theme.bottomNavigationBarTheme.type,
+        equals(BottomNavigationBarType.fixed),
+      );
     });
 
     test('dark theme has proper component styling', () {
       final container = ProviderContainer(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(prefs),
-        ],
+        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
       );
       addTearDown(container.dispose);
 
@@ -107,8 +97,10 @@ void main() {
       expect(theme.elevatedButtonTheme.style, isNotNull);
       expect(theme.appBarTheme.backgroundColor, isNotNull);
       expect(theme.inputDecorationTheme.filled, isTrue);
-      expect(theme.bottomNavigationBarTheme.type, 
-        equals(BottomNavigationBarType.fixed));
+      expect(
+        theme.bottomNavigationBarTheme.type,
+        equals(BottomNavigationBarType.fixed),
+      );
     });
   });
 
@@ -122,9 +114,7 @@ void main() {
 
     test('themeModeProvider returns false by default', () {
       final container = ProviderContainer(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(prefs),
-        ],
+        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
       );
       addTearDown(container.dispose);
 
@@ -135,9 +125,7 @@ void main() {
 
     test('toggleDarkMode changes state from false to true', () async {
       final container = ProviderContainer(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(prefs),
-        ],
+        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
       );
       addTearDown(container.dispose);
 
@@ -150,9 +138,7 @@ void main() {
 
     test('toggleDarkMode changes state from true to false', () async {
       final container = ProviderContainer(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(prefs),
-        ],
+        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
       );
       addTearDown(container.dispose);
 
@@ -167,9 +153,7 @@ void main() {
 
     test('setDarkMode sets specific value', () async {
       final container = ProviderContainer(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(prefs),
-        ],
+        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
       );
       addTearDown(container.dispose);
 
@@ -183,19 +167,15 @@ void main() {
     test('dark mode state persists across provider recreations', () async {
       // First container - set dark mode
       final container1 = ProviderContainer(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(prefs),
-        ],
+        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
       );
-      
+
       await container1.read(themeModeProvider.notifier).setDarkMode(true);
       container1.dispose();
 
       // Second container - should load persisted state
       final container2 = ProviderContainer(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(prefs),
-        ],
+        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
       );
       addTearDown(container2.dispose);
 

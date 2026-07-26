@@ -23,27 +23,28 @@ class NotificationService {
 
     const DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings(
-      requestAlertPermission: false,
-      requestBadgePermission: false,
-      requestSoundPermission: false,
-    );
+          requestAlertPermission: false,
+          requestBadgePermission: false,
+          requestSoundPermission: false,
+        );
 
     final InitializationSettings initializationSettings =
         InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-    );
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsIOS,
+        );
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(
-      const AndroidNotificationChannel(
-        'daily_notification_channel_id',
-        'Daily Notifications',
-        description: 'Channel for daily notifications',
-        importance: Importance.max,
-      ),
-    );
+          const AndroidNotificationChannel(
+            'daily_notification_channel_id',
+            'Daily Notifications',
+            description: 'Channel for daily notifications',
+            importance: Importance.max,
+          ),
+        );
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
     // 시간대 초기화

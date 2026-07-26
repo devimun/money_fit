@@ -11,11 +11,11 @@ void main() {
     /// Helper function to create a random AppThemeColors instance
     AppThemeColors createRandomTheme(Random random) {
       Color randomColor() => Color.fromARGB(
-            255,
-            random.nextInt(256),
-            random.nextInt(256),
-            random.nextInt(256),
-          );
+        255,
+        random.nextInt(256),
+        random.nextInt(256),
+        random.nextInt(256),
+      );
 
       return AppThemeColors(
         brandPrimary: randomColor(),
@@ -54,14 +54,38 @@ void main() {
       }
 
       // For 0 < t < 1, each component should be between start and end
-      final rMin = min((start.r * 255.0).round() & 0xff, (end.r * 255.0).round() & 0xff);
-      final rMax = max((start.r * 255.0).round() & 0xff, (end.r * 255.0).round() & 0xff);
-      final gMin = min((start.g * 255.0).round() & 0xff, (end.g * 255.0).round() & 0xff);
-      final gMax = max((start.g * 255.0).round() & 0xff, (end.g * 255.0).round() & 0xff);
-      final bMin = min((start.b * 255.0).round() & 0xff, (end.b * 255.0).round() & 0xff);
-      final bMax = max((start.b * 255.0).round() & 0xff, (end.b * 255.0).round() & 0xff);
-      final aMin = min((start.a * 255.0).round() & 0xff, (end.a * 255.0).round() & 0xff);
-      final aMax = max((start.a * 255.0).round() & 0xff, (end.a * 255.0).round() & 0xff);
+      final rMin = min(
+        (start.r * 255.0).round() & 0xff,
+        (end.r * 255.0).round() & 0xff,
+      );
+      final rMax = max(
+        (start.r * 255.0).round() & 0xff,
+        (end.r * 255.0).round() & 0xff,
+      );
+      final gMin = min(
+        (start.g * 255.0).round() & 0xff,
+        (end.g * 255.0).round() & 0xff,
+      );
+      final gMax = max(
+        (start.g * 255.0).round() & 0xff,
+        (end.g * 255.0).round() & 0xff,
+      );
+      final bMin = min(
+        (start.b * 255.0).round() & 0xff,
+        (end.b * 255.0).round() & 0xff,
+      );
+      final bMax = max(
+        (start.b * 255.0).round() & 0xff,
+        (end.b * 255.0).round() & 0xff,
+      );
+      final aMin = min(
+        (start.a * 255.0).round() & 0xff,
+        (end.a * 255.0).round() & 0xff,
+      );
+      final aMax = max(
+        (start.a * 255.0).round() & 0xff,
+        (end.a * 255.0).round() & 0xff,
+      );
 
       final resultR = (result.r * 255.0).round() & 0xff;
       final resultG = (result.g * 255.0).round() & 0xff;
@@ -78,205 +102,254 @@ void main() {
           resultA <= aMax;
     }
 
-    test(
-      'Property 6: Lerp Interpolation Bounds - '
-      'For any two AppThemeColors and t in [0,1], '
-      'lerp returns colors between the two inputs',
-      () {
-        final random = Random(42); // Fixed seed for reproducibility
-        const numRuns = 100;
+    test('Property 6: Lerp Interpolation Bounds - '
+        'For any two AppThemeColors and t in [0,1], '
+        'lerp returns colors between the two inputs', () {
+      final random = Random(42); // Fixed seed for reproducibility
+      const numRuns = 100;
 
-        for (int i = 0; i < numRuns; i++) {
-          // Generate two random themes
-          final theme1 = createRandomTheme(random);
-          final theme2 = createRandomTheme(random);
+      for (int i = 0; i < numRuns; i++) {
+        // Generate two random themes
+        final theme1 = createRandomTheme(random);
+        final theme2 = createRandomTheme(random);
 
-          // Test multiple interpolation values
-          final tValues = [
-            0.0,
-            0.25,
-            0.5,
-            0.75,
-            1.0,
-            random.nextDouble(),
-          ];
+        // Test multiple interpolation values
+        final tValues = [0.0, 0.25, 0.5, 0.75, 1.0, random.nextDouble()];
 
-          for (final t in tValues) {
-            final result = theme1.lerp(theme2, t);
+        for (final t in tValues) {
+          final result = theme1.lerp(theme2, t);
 
-            // Verify all color properties are properly interpolated
-            expect(
-              isColorBetween(
-                  result.brandPrimary, theme1.brandPrimary, theme2.brandPrimary, t),
-              isTrue,
-              reason:
-                  'brandPrimary should be between start and end at t=$t (run $i)',
-            );
+          // Verify all color properties are properly interpolated
+          expect(
+            isColorBetween(
+              result.brandPrimary,
+              theme1.brandPrimary,
+              theme2.brandPrimary,
+              t,
+            ),
+            isTrue,
+            reason:
+                'brandPrimary should be between start and end at t=$t (run $i)',
+          );
 
-            expect(
-              isColorBetween(result.brandSecondary, theme1.brandSecondary,
-                  theme2.brandSecondary, t),
-              isTrue,
-              reason:
-                  'brandSecondary should be between start and end at t=$t (run $i)',
-            );
+          expect(
+            isColorBetween(
+              result.brandSecondary,
+              theme1.brandSecondary,
+              theme2.brandSecondary,
+              t,
+            ),
+            isTrue,
+            reason:
+                'brandSecondary should be between start and end at t=$t (run $i)',
+          );
 
-            expect(
-              isColorBetween(result.error, theme1.error, theme2.error, t),
-              isTrue,
-              reason: 'error should be between start and end at t=$t (run $i)',
-            );
+          expect(
+            isColorBetween(result.error, theme1.error, theme2.error, t),
+            isTrue,
+            reason: 'error should be between start and end at t=$t (run $i)',
+          );
 
-            expect(
-              isColorBetween(result.screenBackground, theme1.screenBackground,
-                  theme2.screenBackground, t),
-              isTrue,
-              reason:
-                  'screenBackground should be between start and end at t=$t (run $i)',
-            );
+          expect(
+            isColorBetween(
+              result.screenBackground,
+              theme1.screenBackground,
+              theme2.screenBackground,
+              t,
+            ),
+            isTrue,
+            reason:
+                'screenBackground should be between start and end at t=$t (run $i)',
+          );
 
-            expect(
-              isColorBetween(result.cardBackground, theme1.cardBackground,
-                  theme2.cardBackground, t),
-              isTrue,
-              reason:
-                  'cardBackground should be between start and end at t=$t (run $i)',
-            );
+          expect(
+            isColorBetween(
+              result.cardBackground,
+              theme1.cardBackground,
+              theme2.cardBackground,
+              t,
+            ),
+            isTrue,
+            reason:
+                'cardBackground should be between start and end at t=$t (run $i)',
+          );
 
-            expect(
-              isColorBetween(result.inputBackground, theme1.inputBackground,
-                  theme2.inputBackground, t),
-              isTrue,
-              reason:
-                  'inputBackground should be between start and end at t=$t (run $i)',
-            );
+          expect(
+            isColorBetween(
+              result.inputBackground,
+              theme1.inputBackground,
+              theme2.inputBackground,
+              t,
+            ),
+            isTrue,
+            reason:
+                'inputBackground should be between start and end at t=$t (run $i)',
+          );
 
-            expect(
-              isColorBetween(
-                  result.calendarCellBackground,
-                  theme1.calendarCellBackground,
-                  theme2.calendarCellBackground,
-                  t),
-              isTrue,
-              reason:
-                  'calendarCellBackground should be between start and end at t=$t (run $i)',
-            );
+          expect(
+            isColorBetween(
+              result.calendarCellBackground,
+              theme1.calendarCellBackground,
+              theme2.calendarCellBackground,
+              t,
+            ),
+            isTrue,
+            reason:
+                'calendarCellBackground should be between start and end at t=$t (run $i)',
+          );
 
-            expect(
-              isColorBetween(
-                  result.selectedButtonBackground,
-                  theme1.selectedButtonBackground,
-                  theme2.selectedButtonBackground,
-                  t),
-              isTrue,
-              reason:
-                  'selectedButtonBackground should be between start and end at t=$t (run $i)',
-            );
+          expect(
+            isColorBetween(
+              result.selectedButtonBackground,
+              theme1.selectedButtonBackground,
+              theme2.selectedButtonBackground,
+              t,
+            ),
+            isTrue,
+            reason:
+                'selectedButtonBackground should be between start and end at t=$t (run $i)',
+          );
 
-            expect(
-              isColorBetween(
-                  result.textPrimary, theme1.textPrimary, theme2.textPrimary, t),
-              isTrue,
-              reason:
-                  'textPrimary should be between start and end at t=$t (run $i)',
-            );
+          expect(
+            isColorBetween(
+              result.textPrimary,
+              theme1.textPrimary,
+              theme2.textPrimary,
+              t,
+            ),
+            isTrue,
+            reason:
+                'textPrimary should be between start and end at t=$t (run $i)',
+          );
 
-            expect(
-              isColorBetween(result.textSecondary, theme1.textSecondary,
-                  theme2.textSecondary, t),
-              isTrue,
-              reason:
-                  'textSecondary should be between start and end at t=$t (run $i)',
-            );
+          expect(
+            isColorBetween(
+              result.textSecondary,
+              theme1.textSecondary,
+              theme2.textSecondary,
+              t,
+            ),
+            isTrue,
+            reason:
+                'textSecondary should be between start and end at t=$t (run $i)',
+          );
 
-            expect(
-              isColorBetween(
-                  result.textOnBrand, theme1.textOnBrand, theme2.textOnBrand, t),
-              isTrue,
-              reason:
-                  'textOnBrand should be between start and end at t=$t (run $i)',
-            );
+          expect(
+            isColorBetween(
+              result.textOnBrand,
+              theme1.textOnBrand,
+              theme2.textOnBrand,
+              t,
+            ),
+            isTrue,
+            reason:
+                'textOnBrand should be between start and end at t=$t (run $i)',
+          );
 
-            expect(
-              isColorBetween(
-                  result.textOnCard, theme1.textOnCard, theme2.textOnCard, t),
-              isTrue,
-              reason:
-                  'textOnCard should be between start and end at t=$t (run $i)',
-            );
+          expect(
+            isColorBetween(
+              result.textOnCard,
+              theme1.textOnCard,
+              theme2.textOnCard,
+              t,
+            ),
+            isTrue,
+            reason:
+                'textOnCard should be between start and end at t=$t (run $i)',
+          );
 
-            expect(
-              isColorBetween(result.border, theme1.border, theme2.border, t),
-              isTrue,
-              reason: 'border should be between start and end at t=$t (run $i)',
-            );
+          expect(
+            isColorBetween(result.border, theme1.border, theme2.border, t),
+            isTrue,
+            reason: 'border should be between start and end at t=$t (run $i)',
+          );
 
-            expect(
-              isColorBetween(result.divider, theme1.divider, theme2.divider, t),
-              isTrue,
-              reason: 'divider should be between start and end at t=$t (run $i)',
-            );
+          expect(
+            isColorBetween(result.divider, theme1.divider, theme2.divider, t),
+            isTrue,
+            reason: 'divider should be between start and end at t=$t (run $i)',
+          );
 
-            expect(
-              isColorBetween(result.borderFocused, theme1.borderFocused,
-                  theme2.borderFocused, t),
-              isTrue,
-              reason:
-                  'borderFocused should be between start and end at t=$t (run $i)',
-            );
+          expect(
+            isColorBetween(
+              result.borderFocused,
+              theme1.borderFocused,
+              theme2.borderFocused,
+              t,
+            ),
+            isTrue,
+            reason:
+                'borderFocused should be between start and end at t=$t (run $i)',
+          );
 
-            expect(
-              isColorBetween(result.navUnselected, theme1.navUnselected,
-                  theme2.navUnselected, t),
-              isTrue,
-              reason:
-                  'navUnselected should be between start and end at t=$t (run $i)',
-            );
+          expect(
+            isColorBetween(
+              result.navUnselected,
+              theme1.navUnselected,
+              theme2.navUnselected,
+              t,
+            ),
+            isTrue,
+            reason:
+                'navUnselected should be between start and end at t=$t (run $i)',
+          );
 
-            expect(
-              isColorBetween(
-                  result.navSelected, theme1.navSelected, theme2.navSelected, t),
-              isTrue,
-              reason:
-                  'navSelected should be between start and end at t=$t (run $i)',
-            );
+          expect(
+            isColorBetween(
+              result.navSelected,
+              theme1.navSelected,
+              theme2.navSelected,
+              t,
+            ),
+            isTrue,
+            reason:
+                'navSelected should be between start and end at t=$t (run $i)',
+          );
 
-            expect(
-              isColorBetween(
-                  result.switchActive, theme1.switchActive, theme2.switchActive, t),
-              isTrue,
-              reason:
-                  'switchActive should be between start and end at t=$t (run $i)',
-            );
+          expect(
+            isColorBetween(
+              result.switchActive,
+              theme1.switchActive,
+              theme2.switchActive,
+              t,
+            ),
+            isTrue,
+            reason:
+                'switchActive should be between start and end at t=$t (run $i)',
+          );
 
-            expect(
-              isColorBetween(
-                  result.switchInactiveTrack,
-                  theme1.switchInactiveTrack,
-                  theme2.switchInactiveTrack,
-                  t),
-              isTrue,
-              reason:
-                  'switchInactiveTrack should be between start and end at t=$t (run $i)',
-            );
+          expect(
+            isColorBetween(
+              result.switchInactiveTrack,
+              theme1.switchInactiveTrack,
+              theme2.switchInactiveTrack,
+              t,
+            ),
+            isTrue,
+            reason:
+                'switchInactiveTrack should be between start and end at t=$t (run $i)',
+          );
 
-            expect(
-              isColorBetween(result.overlay, theme1.overlay, theme2.overlay, t),
-              isTrue,
-              reason: 'overlay should be between start and end at t=$t (run $i)',
-            );
+          expect(
+            isColorBetween(result.overlay, theme1.overlay, theme2.overlay, t),
+            isTrue,
+            reason: 'overlay should be between start and end at t=$t (run $i)',
+          );
 
-            expect(
-              isColorBetween(result.budgetProgress, theme1.budgetProgress,
-                  theme2.budgetProgress, t),
-              isTrue,
-              reason:
-                  'budgetProgress should be between start and end at t=$t (run $i)',
-            );
-          }
+          expect(
+            isColorBetween(
+              result.budgetProgress,
+              theme1.budgetProgress,
+              theme2.budgetProgress,
+              t,
+            ),
+            isTrue,
+            reason:
+                'budgetProgress should be between start and end at t=$t (run $i)',
+          );
         }
-      },
-    );
+      }
+    });
 
     test('Lerp boundary conditions - t=0 returns first theme', () {
       final theme1 = AppThemeColors(

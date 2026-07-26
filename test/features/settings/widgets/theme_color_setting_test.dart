@@ -19,19 +19,17 @@ void main() {
       prefs = await SharedPreferences.getInstance();
     });
 
-    testWidgets('displays theme color setting with current color',
-        (tester) async {
+    testWidgets('displays theme color setting with current color', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            sharedPreferencesProvider.overrideWithValue(prefs),
-          ],
+          overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
           child: MaterialApp(
+            locale: const Locale('ko'),
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            home: const Scaffold(
-              body: ThemeColorSetting(),
-            ),
+            home: const Scaffold(body: ThemeColorSetting()),
           ),
         ),
       );
@@ -39,21 +37,18 @@ void main() {
       // Verify the widget displays
       expect(find.byType(ThemeColorSetting), findsOneWidget);
       expect(find.byIcon(Icons.palette_outlined), findsOneWidget);
-      expect(find.text('Theme Color'), findsOneWidget);
+      expect(find.text('테마 색상'), findsOneWidget);
     });
 
     testWidgets('shows color picker dialog when tapped', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            sharedPreferencesProvider.overrideWithValue(prefs),
-          ],
+          overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
           child: MaterialApp(
+            locale: const Locale('ko'),
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            home: const Scaffold(
-              body: ThemeColorSetting(),
-            ),
+            home: const Scaffold(body: ThemeColorSetting()),
           ),
         ),
       );
@@ -70,15 +65,12 @@ void main() {
     testWidgets('displays color indicator circle', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            sharedPreferencesProvider.overrideWithValue(prefs),
-          ],
+          overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
           child: MaterialApp(
+            locale: const Locale('ko'),
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            home: const Scaffold(
-              body: ThemeColorSetting(),
-            ),
+            home: const Scaffold(body: ThemeColorSetting()),
           ),
         ),
       );

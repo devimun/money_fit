@@ -11,7 +11,7 @@ class AppThemeGenerator {
   /// ColorSeed로부터 라이트 모드 테마 생성
   static AppThemeColors lightFromSeed(Color seed) {
     // 브랜드 색상
-    final Color brandPrimary = seed;
+    final Color brandPrimary = _darkenForLightMode(seed);
     final Color brandSecondary = const Color(0xFF6B7280); // 회색 계열
 
     // 배경 색상
@@ -69,8 +69,10 @@ class AppThemeGenerator {
 
   /// ColorSeed로부터 다크 모드 테마 생성
   static AppThemeColors darkFromSeed(Color seed) {
-    // 다크 모드에서도 원본 seed 색상 그대로 사용
-    final Color brandPrimary = seed;
+    // Dark surfaces need a lighter brand color than light surfaces. Keeping the
+    // hue while lifting lightness preserves a user's chosen color and makes the
+    // primary affordances visible against the dark background.
+    final Color brandPrimary = _lightenForDarkMode(seed);
     final Color brandSecondary = const Color(0xFF9CA3AF);
 
     // 배경 색상 (어두운 톤)
@@ -130,5 +132,15 @@ class AppThemeGenerator {
   static Color _getContrastColor(Color background) {
     final double luminance = background.computeLuminance();
     return luminance > 0.5 ? Colors.black : Colors.white;
+  }
+
+  static Color _lightenForDarkMode(Color seed) {
+    final hsl = HSLColor.fromColor(seed);
+    return hsl.withLightness((hsl.lightness + 0.18).clamp(0.0, 0.98)).toColor();
+  }
+
+  static Color _darkenForLightMode(Color seed) {
+    final hsl = HSLColor.fromColor(seed);
+    return hsl.withLightness(hsl.lightness.clamp(0.0, 0.80)).toColor();
   }
 }

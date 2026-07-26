@@ -35,10 +35,7 @@ class FilterActionButtons extends ConsumerWidget {
                   : context.colors.calendarCellBackground,
             ),
             onPressed: onReset,
-            child: Text(
-              l10n.reset,
-              style: context.textTheme.labelMedium,
-            ),
+            child: Text(l10n.reset, style: context.textTheme.labelMedium),
           ),
         ),
         const SizedBox(width: 12),

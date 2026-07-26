@@ -54,11 +54,18 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.receipt_long, size: 64, color: context.colors.navUnselected),
+                    Icon(
+                      Icons.receipt_long,
+                      size: 64,
+                      color: context.colors.navUnselected,
+                    ),
                     const SizedBox(height: 16),
                     ResponsiveMessageText(
                       text: l10n.noExpenseHistory,
-                      style: TextStyle(fontSize: 16, color: context.colors.textSecondary),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: context.colors.textSecondary,
+                      ),
                     ),
                   ],
                 ),
@@ -86,8 +93,12 @@ class TodayExpenseListBottomSheet extends ConsumerWidget {
                         context: context,
                         builder: (context) {
                           return AlertDialog(
-                            title: ResponsiveTitleText(text: l10n.editDeleteExpense),
-                            content: ResponsiveDescriptionText(text: l10n.editDeleteExpensePrompt(e.name)),
+                            title: ResponsiveTitleText(
+                              text: l10n.editDeleteExpense,
+                            ),
+                            content: ResponsiveDescriptionText(
+                              text: l10n.editDeleteExpensePrompt(e.name),
+                            ),
                             actions: [
                               if (isHome)
                                 TextButton(

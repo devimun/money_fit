@@ -76,7 +76,7 @@ void main() {
 
         // Assert
         expect(result, isTrue);
-        
+
         // 저장된 설정을 다시 불러와서 확인
         final loadedSettings = repository.loadSettings();
         expect(loadedSettings, equals(testSettings));
@@ -95,14 +95,17 @@ void main() {
 
         // Assert
         expect(result, isTrue);
-        
+
         final loadedSettings = repository.loadSettings();
         expect(loadedSettings.favoriteColors, isEmpty);
       });
 
       test('큰 즐겨찾기 리스트도 올바르게 저장해야 함', () async {
         // Arrange
-        final largeList = List.generate(50, (i) => Colors.primaries[i % Colors.primaries.length].toARGB32());
+        final largeList = List.generate(
+          50,
+          (i) => Colors.primaries[i % Colors.primaries.length].toARGB32(),
+        );
         final testSettings = ThemeSettings(
           isDarkMode: true,
           colorSeedValue: Colors.amber.toARGB32(),
@@ -114,7 +117,7 @@ void main() {
 
         // Assert
         expect(result, isTrue);
-        
+
         final loadedSettings = repository.loadSettings();
         expect(loadedSettings.favoriteColors, hasLength(50));
         expect(loadedSettings.favoriteColors, equals(largeList));
@@ -136,7 +139,7 @@ void main() {
 
         // Assert
         expect(result, isTrue);
-        
+
         // 삭제 후 기본 설정이 반환되어야 함
         final loadedSettings = repository.loadSettings();
         expect(loadedSettings, equals(ThemeSettings.defaultSettings()));
@@ -175,7 +178,10 @@ void main() {
 
         // Act & Assert - 삭제
         await repository.clearSettings();
-        expect(repository.loadSettings(), equals(ThemeSettings.defaultSettings()));
+        expect(
+          repository.loadSettings(),
+          equals(ThemeSettings.defaultSettings()),
+        );
       });
 
       test('모든 극단적인 값들이 올바르게 저장되고 불러와져야 함', () async {

@@ -158,13 +158,23 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
       brandPrimary: Color.lerp(brandPrimary, other.brandPrimary, t)!,
       brandSecondary: Color.lerp(brandSecondary, other.brandSecondary, t)!,
       error: Color.lerp(error, other.error, t)!,
-      screenBackground: Color.lerp(screenBackground, other.screenBackground, t)!,
+      screenBackground: Color.lerp(
+        screenBackground,
+        other.screenBackground,
+        t,
+      )!,
       cardBackground: Color.lerp(cardBackground, other.cardBackground, t)!,
       inputBackground: Color.lerp(inputBackground, other.inputBackground, t)!,
-      calendarCellBackground:
-          Color.lerp(calendarCellBackground, other.calendarCellBackground, t)!,
+      calendarCellBackground: Color.lerp(
+        calendarCellBackground,
+        other.calendarCellBackground,
+        t,
+      )!,
       selectedButtonBackground: Color.lerp(
-          selectedButtonBackground, other.selectedButtonBackground, t)!,
+        selectedButtonBackground,
+        other.selectedButtonBackground,
+        t,
+      )!,
       textPrimary: Color.lerp(textPrimary, other.textPrimary, t)!,
       textSecondary: Color.lerp(textSecondary, other.textSecondary, t)!,
       textOnBrand: Color.lerp(textOnBrand, other.textOnBrand, t)!,
@@ -175,8 +185,11 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
       navUnselected: Color.lerp(navUnselected, other.navUnselected, t)!,
       navSelected: Color.lerp(navSelected, other.navSelected, t)!,
       switchActive: Color.lerp(switchActive, other.switchActive, t)!,
-      switchInactiveTrack:
-          Color.lerp(switchInactiveTrack, other.switchInactiveTrack, t)!,
+      switchInactiveTrack: Color.lerp(
+        switchInactiveTrack,
+        other.switchInactiveTrack,
+        t,
+      )!,
       overlay: Color.lerp(overlay, other.overlay, t)!,
       budgetProgress: Color.lerp(budgetProgress, other.budgetProgress, t)!,
     );

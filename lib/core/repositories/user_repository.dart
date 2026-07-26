@@ -1,4 +1,3 @@
-
 import 'package:money_fit/core/database/database_helper.dart';
 import 'package:money_fit/core/models/user_model.dart';
 
@@ -20,20 +19,13 @@ class UserRepository implements IUserRepository {
   @override
   Future<void> createUser(User user) async {
     final db = await _dbHelper.database;
-    await db.insert(
-      'users',
-      user.toJson(),
-    );
+    await db.insert('users', user.toJson());
   }
 
   @override
   Future<User?> getUser(String id) async {
     final db = await _dbHelper.database;
-    final maps = await db.query(
-      'users',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    final maps = await db.query('users', where: 'id = ?', whereArgs: [id]);
 
     if (maps.isNotEmpty) {
       return User.fromJson(maps.first);
@@ -56,10 +48,6 @@ class UserRepository implements IUserRepository {
   @override
   Future<void> deleteUser(String id) async {
     final db = await _dbHelper.database;
-    await db.delete(
-      'users',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    await db.delete('users', where: 'id = ?', whereArgs: [id]);
   }
 }

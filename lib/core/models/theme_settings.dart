@@ -33,7 +33,7 @@ enum FontSizeOption {
 }
 
 /// Theme settings data model for persistence
-/// 
+///
 /// Stores user's theme preferences including:
 /// - Dark mode state
 /// - Selected color seed value
@@ -147,8 +147,12 @@ class ThemeSettings {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(isDarkMode, colorSeedValue, fontSizeScale, Object.hashAll(favoriteColors));
+  int get hashCode => Object.hash(
+    isDarkMode,
+    colorSeedValue,
+    fontSizeScale,
+    Object.hashAll(favoriteColors),
+  );
 
   /// Helper to compare lists
   bool _listEquals(List<int> a, List<int> b) {

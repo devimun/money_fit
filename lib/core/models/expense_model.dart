@@ -60,7 +60,10 @@ class Expense {
       // 날짜만 저장되므로, 자정(UTC)으로 파싱
       date: DateTime.parse(json['date'] as String),
       categoryId: json['category_id'] as String,
-      type: ExpenseType.values.firstWhere((e) => e.name == json['type'], orElse: () => ExpenseType.n),
+      type: ExpenseType.values.firstWhere(
+        (e) => e.name == json['type'],
+        orElse: () => ExpenseType.n,
+      ),
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );

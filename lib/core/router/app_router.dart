@@ -44,11 +44,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/budget_setup',
         name: 'BudgetSetupScreen',
-        pageBuilder:
-            (context, state) => NoTransitionPage(
-              key: state.pageKey,
-              child: const BudgetSetupScreen(),
-            ),
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const BudgetSetupScreen(),
+        ),
       ),
       ShellRoute(
         builder: (context, state, child) {
@@ -74,38 +73,34 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/calendar',
             name: 'CalendarScreen',
-            pageBuilder:
-                (context, state) => NoTransitionPage(
-                  key: state.pageKey,
-                  child: const CalendarScreen(),
-                ),
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const CalendarScreen(),
+            ),
           ),
           GoRoute(
             path: '/stats',
             name: 'StatisticsScreen',
-            pageBuilder:
-                (context, state) => NoTransitionPage(
-                  key: state.pageKey,
-                  child: const StatisticsScreen(),
-                ),
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const StatisticsScreen(),
+            ),
           ),
           GoRoute(
             path: '/expense_list',
             name: 'ExpenseListScreen',
-            pageBuilder:
-                (context, state) => NoTransitionPage(
-                  key: state.pageKey,
-                  child: const ExpenseListScreen(),
-                ),
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const ExpenseListScreen(),
+            ),
           ),
           GoRoute(
             path: '/settings',
             name: 'SettingsScreen',
-            pageBuilder:
-                (context, state) => NoTransitionPage(
-                  key: state.pageKey,
-                  child: const SettingsScreen(),
-                ),
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const SettingsScreen(),
+            ),
           ),
         ],
       ),

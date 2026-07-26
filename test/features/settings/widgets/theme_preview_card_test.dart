@@ -10,9 +10,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ThemePreviewCard(seedColor: testSeed),
-          ),
+          home: Scaffold(body: ThemePreviewCard(seedColor: testSeed)),
         ),
       );
 
@@ -36,9 +34,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ThemePreviewCard(seedColor: testSeed),
-          ),
+          home: Scaffold(body: ThemePreviewCard(seedColor: testSeed)),
         ),
       );
 
@@ -77,9 +73,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ThemePreviewCard(seedColor: initialSeed),
-          ),
+          home: Scaffold(body: ThemePreviewCard(seedColor: initialSeed)),
         ),
       );
 
@@ -98,9 +92,7 @@ void main() {
       // Update with new seed color
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ThemePreviewCard(seedColor: newSeed),
-          ),
+          home: Scaffold(body: ThemePreviewCard(seedColor: newSeed)),
         ),
       );
       await tester.pumpAndSettle();
@@ -127,9 +119,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ThemePreviewCard(seedColor: testSeed),
-          ),
+          home: Scaffold(body: ThemePreviewCard(seedColor: testSeed)),
         ),
       );
 
@@ -158,9 +148,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ThemePreviewCard(seedColor: testSeed),
-          ),
+          home: Scaffold(body: ThemePreviewCard(seedColor: testSeed)),
         ),
       );
 
@@ -192,9 +180,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ThemePreviewCard(seedColor: testSeed),
-          ),
+          home: Scaffold(body: ThemePreviewCard(seedColor: testSeed)),
         ),
       );
 
@@ -221,9 +207,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ThemePreviewCard(seedColor: testSeed),
-          ),
+          home: Scaffold(body: ThemePreviewCard(seedColor: testSeed)),
         ),
       );
 

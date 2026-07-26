@@ -19,15 +19,11 @@ void main() {
   group('LanguageSetting Widget Tests', () {
     Widget createTestWidget() {
       return ProviderScope(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(prefs),
-        ],
+        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
         child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: supportedLocales,
-          home: const Scaffold(
-            body: LanguageSetting(),
-          ),
+          home: const Scaffold(body: LanguageSetting()),
         ),
       );
     }
@@ -55,8 +51,11 @@ void main() {
 
     test('all required language codes are supported', () {
       for (final code in requiredLanguageCodes) {
-        expect(isLanguageSupported(code), isTrue,
-            reason: 'Language $code should be supported');
+        expect(
+          isLanguageSupported(code),
+          isTrue,
+          reason: 'Language $code should be supported',
+        );
       }
     });
 
