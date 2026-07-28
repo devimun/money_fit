@@ -496,16 +496,3 @@ class InterstitialAdManager {
     _releaseLease();
   }
 }
-
-/// App-open is intentionally excluded from this release. The policy retains
-/// its disabled flag so the deployed Remote Config contract remains stable.
-@Deprecated('App-open lifecycle is intentionally not implemented.')
-class AppOpenAdManager {
-  AppOpenAdManager._();
-
-  static final instance = AppOpenAdManager._();
-
-  Future<void> loadAd() async {}
-
-  Future<bool> maybeShowAppOpen() async => false;
-}

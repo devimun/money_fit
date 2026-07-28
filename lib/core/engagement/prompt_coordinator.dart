@@ -8,7 +8,6 @@ enum PromptSurface {
   review,
   productFeedback,
   interstitialAd,
-  appOpenAd,
   update,
 }
 

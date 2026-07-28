@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:money_fit/app/composition/monetization_providers.dart';
 import 'package:money_fit/app/router/analytics_navigation_observer.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
+import 'package:money_fit/features/app_update/presentation/recommended_update_prompt.dart';
 import 'package:money_fit/features/monetization/domain/ad_suppression.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
@@ -21,14 +22,16 @@ class AppShell extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      // Every tab shares this shell. Consume the top system inset here so a
-      // screen cannot accidentally render under the status bar on edge-to-edge
-      // Android versions. The navigation bar owns its own bottom SafeArea.
-      body: SafeArea(bottom: false, child: navigationShell),
-      bottomNavigationBar: MainBottomNavBar(
-        navigationShell: navigationShell,
-        screenViewTracker: screenViewTracker,
+    return RecommendedUpdatePrompt(
+      child: Scaffold(
+        // Every tab shares this shell. Consume the top system inset here so a
+        // screen cannot accidentally render under the status bar on edge-to-edge
+        // Android versions. The navigation bar owns its own bottom SafeArea.
+        body: SafeArea(bottom: false, child: navigationShell),
+        bottomNavigationBar: MainBottomNavBar(
+          navigationShell: navigationShell,
+          screenViewTracker: screenViewTracker,
+        ),
       ),
     );
   }

@@ -22,9 +22,21 @@ final adPolicyReaderProvider = Provider<AdPolicyReader>(
   (ref) => RemoteConfigAdPolicyReader(ref.watch(remoteConfigReaderProvider)),
 );
 
-final adPolicyProvider = Provider<AdPolicy>(
-  (ref) => AdPolicy.fromReader(ref.watch(adPolicyReaderProvider)),
-);
+/// Increments only after the platform Remote Config owner has activated a
+/// real-time update. Features consume this signal but never fetch, activate,
+/// or replace defaults themselves.
+final adPolicyRemoteConfigRevisionProvider = StreamProvider<int>((ref) async* {
+  var revision = 0;
+  yield revision;
+  await for (final _ in ref.watch(remoteConfigServiceProvider).updates) {
+    yield ++revision;
+  }
+});
+
+final adPolicyProvider = Provider<AdPolicy>((ref) {
+  ref.watch(adPolicyRemoteConfigRevisionProvider);
+  return AdPolicy.fromReader(ref.watch(adPolicyReaderProvider));
+});
 
 final adFrequencyStateStoreProvider = Provider<AdFrequencyStateStore>(
   (ref) => SharedPreferencesAdFrequencyStateStore(
@@ -101,7 +113,7 @@ final monetizationSafePointProvider =
       final remoteConfig = ref.watch(remoteConfigReaderProvider);
       final gate = PromptCoordinatorInterstitialGate(
         ref.watch(promptCoordinatorProvider),
-        quietPeriod: Duration(
+        quietPeriodProvider: () => Duration(
           seconds: readValidatedProactiveFullscreenQuietSeconds(remoteConfig),
         ),
       );
@@ -122,19 +134,20 @@ final monetizationStateClearerProvider = Provider<Future<void> Function()>(
 
 /// Ad adapter for the app-wide full-screen prompt arbiter.
 class PromptCoordinatorInterstitialGate implements FullscreenExperienceGate {
-  const PromptCoordinatorInterstitialGate(
+  PromptCoordinatorInterstitialGate(
     this._coordinator, {
-    this.quietPeriod = Duration.zero,
-  });
+    Duration quietPeriod = Duration.zero,
+    Duration Function()? quietPeriodProvider,
+  }) : _quietPeriod = quietPeriodProvider ?? (() => quietPeriod);
 
   final PromptCoordinator _coordinator;
-  final Duration quietPeriod;
+  final Duration Function() _quietPeriod;
 
   @override
   Future<FullscreenExperienceLease?> tryAcquireInterstitial() async {
     final lease = _coordinator.tryAcquire(
       PromptSurface.interstitialAd,
-      quietPeriod: quietPeriod,
+      quietPeriod: _quietPeriod(),
     );
     return lease == null ? null : _PromptCoordinatorFullscreenLease(lease);
   }

@@ -29,4 +29,26 @@ void main() {
       expect(coordinator.activeSurface, isNull);
     },
   );
+
+  test(
+    'interstitial gate reads the latest quiet-period policy at acquisition',
+    () async {
+      var now = DateTime.utc(2026, 7, 28, 12);
+      var quietPeriod = const Duration(seconds: 120);
+      final coordinator = PromptCoordinator(now: () => now);
+      final gate = PromptCoordinatorInterstitialGate(
+        coordinator,
+        quietPeriodProvider: () => quietPeriod,
+      );
+
+      final review = coordinator.tryAcquire(PromptSurface.review)!;
+      review.release();
+      now = now.add(const Duration(seconds: 30));
+      quietPeriod = const Duration(seconds: 30);
+
+      final interstitial = await gate.tryAcquireInterstitial();
+      expect(interstitial, isNotNull);
+      interstitial!.release();
+    },
+  );
 }

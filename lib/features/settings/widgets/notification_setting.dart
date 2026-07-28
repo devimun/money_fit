@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_fit/app/composition/analytics_providers.dart';
+import 'package:money_fit/app/composition/engagement_providers.dart';
+import 'package:money_fit/core/platform/remote_config.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/features/notifications/application/notification_controller.dart';
+import 'package:money_fit/features/notifications/application/notification_permission_prompt.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
@@ -40,29 +44,38 @@ class NotificationSetting extends ConsumerWidget {
     final notifier = ref.read(notificationControllerProvider.notifier);
 
     if (value) {
-      final permission = await notifier.enable(
-        NotificationText(
-          title: l10n.notificationTitleDaily,
-          morning: l10n.notificationBodyMorning,
-          afternoon: l10n.notificationBodyAfternoon,
-          night: l10n.notificationBodyNight,
+      final request = NotificationPermissionSettingsRequestController(
+        ref.read(promptCoordinatorProvider),
+        quietPeriod: () => Duration(
+          seconds: readValidatedProactiveFullscreenQuietSeconds(
+            ref.read(remoteConfigReaderProvider),
+          ),
         ),
       );
-      if (permission != NotificationPermissionResult.granted &&
-          context.mounted) {
-        _showPermissionDialog(context, ref, l10n);
-      }
+      await request.request(
+        requestPermission: () => notifier.enable(
+          NotificationText(
+            title: l10n.notificationTitleDaily,
+            morning: l10n.notificationBodyMorning,
+            afternoon: l10n.notificationBodyAfternoon,
+            night: l10n.notificationBodyNight,
+          ),
+        ),
+        presentDeniedFallback: (_) =>
+            _showPermissionDialog(context, notifier, l10n),
+      );
     } else {
       await notifier.disable();
     }
   }
 
-  void _showPermissionDialog(
+  Future<void> _showPermissionDialog(
     BuildContext context,
-    WidgetRef ref,
+    NotificationController notifier,
     AppLocalizations l10n,
-  ) {
-    showDialog(
+  ) async {
+    if (!context.mounted) return;
+    final action = await showDialog<_PermissionDialogAction>(
       context: context,
       builder: (context) => AlertDialog(
         title: ResponsiveTitleText(text: l10n.notificationPermissionRequired),
@@ -71,20 +84,22 @@ class NotificationSetting extends ConsumerWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () =>
+                Navigator.pop(context, _PermissionDialogAction.cancel),
             child: ResponsiveButtonText(text: l10n.cancel),
           ),
           TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ref
-                  .read(notificationControllerProvider.notifier)
-                  .openPermissionSettings();
-            },
+            onPressed: () =>
+                Navigator.pop(context, _PermissionDialogAction.openSettings),
             child: ResponsiveButtonText(text: l10n.goToSettings),
           ),
         ],
       ),
     );
+    if (action == _PermissionDialogAction.openSettings) {
+      await notifier.openPermissionSettings();
+    }
   }
 }
+
+enum _PermissionDialogAction { cancel, openSettings }
