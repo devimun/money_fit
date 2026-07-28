@@ -124,6 +124,7 @@
   "dataManagement": "Správa dat",
   "resetDataConfirmation": "Opravdu chcete resetovat všechna data? Tuto akci nelze vrátit.",
   "notificationSetting": "Nastavení oznámení",
+  "analyticsCollection": "Shromažďování analytických údajů",
   "category": "Kategorie",
   "selectExpenseTypeFirst": "Nejprve vyberte typ výdaje",
   "errorLoadingCategories": "Chyba načítání kategorií",
@@ -209,5 +210,19 @@
   "customSelect": "Vlastní výběr",
   "close": "Zavřít",
   "languageSetting": "Jazyk a měna",
-  "selectLanguage": "Vybrat jazyk"
+  "selectLanguage": "Vybrat jazyk",
+  "feedback_prompt_title": "Co byste chtěli v MoneyFit vidět?",
+  "feedback_prompt_body": "I malý nápad pomůže. Řekněte nám, co by MoneyFit mohlo zlepšit.",
+  "feedback_prompt_hint": "Například: Chci snadněji přidávat pravidelné výdaje.",
+  "feedback_prompt_privacy_hint": "Neuvádějte prosím osobní údaje, jako je jméno, e-mail nebo údaje o účtu.",
+  "feedback_prompt_send": "Odeslat zpětnou vazbu",
+  "feedback_prompt_later": "Možná později",
+  "feedback_prompt_never": "Už se na zpětnou vazbu neptat",
+  "feedback_prompt_empty_error": "Zadejte prosím zpětnou vazbu.",
+  "feedback_prompt_too_short_error": "Zadejte alespoň 3 znaky.",
+  "feedback_prompt_submit_error": "Nepodařilo se odeslat. Váš text zde zůstává — zkuste to prosím znovu.",
+  "feedback_prompt_rate_limited": "Zpětnou vazbu odesíláte příliš často. Zkuste to prosím později.",
+  "feedback_prompt_discard_confirm": "Zahodit, co jste napsali?",
+  "review_negative_validation_error": "Zadejte alespoň 3 znaky.",
+  "review_negative_submit_error": "Nepodařilo se odeslat zpětnou vazbu. Zkuste to prosím znovu."
 }

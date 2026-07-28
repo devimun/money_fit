@@ -423,6 +423,9 @@ class AppLocalizationsBg extends AppLocalizations {
   String get notificationSetting => 'Настройка на известия';
 
   @override
+  String get analyticsCollection => 'Събиране на аналитични данни';
+
+  @override
   String get category => 'Категория';
 
   @override
@@ -695,4 +698,54 @@ class AppLocalizationsBg extends AppLocalizations {
 
   @override
   String get selectLanguage => 'Избери език';
+
+  @override
+  String get feedback_prompt_title =>
+      'Какво бихте искали да видите в MoneyFit?';
+
+  @override
+  String get feedback_prompt_body =>
+      'Дори малка идея помага. Кажете ни какво би направило MoneyFit по-добър.';
+
+  @override
+  String get feedback_prompt_hint =>
+      'Пример: Искам по-лесно да добавям повтарящи се разходи.';
+
+  @override
+  String get feedback_prompt_privacy_hint =>
+      'Моля, не включвайте лична информация като име, имейл или данни за сметката.';
+
+  @override
+  String get feedback_prompt_send => 'Изпратете обратна връзка';
+
+  @override
+  String get feedback_prompt_later => 'Може би по-късно';
+
+  @override
+  String get feedback_prompt_never => 'Не питайте отново за обратна връзка';
+
+  @override
+  String get feedback_prompt_empty_error =>
+      'Моля, въведете обратната си връзка.';
+
+  @override
+  String get feedback_prompt_too_short_error => 'Моля, въведете поне 3 знака.';
+
+  @override
+  String get feedback_prompt_submit_error =>
+      'Не успяхме да го изпратим. Текстът ви все още е тук — опитайте отново.';
+
+  @override
+  String get feedback_prompt_rate_limited =>
+      'Изпращате обратна връзка твърде често. Опитайте отново по-късно.';
+
+  @override
+  String get feedback_prompt_discard_confirm => 'Да изхвърлим написаното?';
+
+  @override
+  String get review_negative_validation_error => 'Моля, въведете поне 3 знака.';
+
+  @override
+  String get review_negative_submit_error =>
+      'Не успяхме да изпратим обратната ви връзка. Опитайте отново.';
 }

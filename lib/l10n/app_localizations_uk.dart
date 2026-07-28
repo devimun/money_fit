@@ -421,6 +421,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get notificationSetting => 'Налаштування сповіщень';
 
   @override
+  String get analyticsCollection => 'Збір аналітичних даних';
+
+  @override
   String get category => 'Категорія';
 
   @override
@@ -693,4 +696,53 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get selectLanguage => 'Вибрати мову';
+
+  @override
+  String get feedback_prompt_title => 'Що б ви хотіли бачити в MoneyFit?';
+
+  @override
+  String get feedback_prompt_body =>
+      'Навіть невелика ідея важлива. Розкажіть, що могло б зробити MoneyFit кращим.';
+
+  @override
+  String get feedback_prompt_hint =>
+      'Наприклад: Я хочу простіше додавати регулярні витрати.';
+
+  @override
+  String get feedback_prompt_privacy_hint =>
+      'Будь ласка, не вказуйте особисту інформацію, як-от ім’я, електронну пошту чи дані облікового запису.';
+
+  @override
+  String get feedback_prompt_send => 'Надіслати відгук';
+
+  @override
+  String get feedback_prompt_later => 'Можливо, пізніше';
+
+  @override
+  String get feedback_prompt_never => 'Більше не запитувати відгук';
+
+  @override
+  String get feedback_prompt_empty_error => 'Введіть свій відгук.';
+
+  @override
+  String get feedback_prompt_too_short_error => 'Введіть щонайменше 3 символи.';
+
+  @override
+  String get feedback_prompt_submit_error =>
+      'Не вдалося надіслати. Ваш текст залишився тут — спробуйте ще раз.';
+
+  @override
+  String get feedback_prompt_rate_limited =>
+      'Ви надсилаєте відгуки надто часто. Спробуйте пізніше.';
+
+  @override
+  String get feedback_prompt_discard_confirm => 'Видалити написане?';
+
+  @override
+  String get review_negative_validation_error =>
+      'Введіть щонайменше 3 символи.';
+
+  @override
+  String get review_negative_submit_error =>
+      'Не вдалося надіслати відгук. Спробуйте ще раз.';
 }

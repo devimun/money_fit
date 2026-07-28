@@ -39,7 +39,7 @@ Widget buildSwitchItem({
   required Color iconColor,
   required String title,
   required bool value,
-  required ValueChanged<bool> onChanged,
+  required ValueChanged<bool>? onChanged,
   required BuildContext context,
 }) {
   return buildSettingsItem(

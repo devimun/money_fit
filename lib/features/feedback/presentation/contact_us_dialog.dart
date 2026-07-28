@@ -1,14 +1,24 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:money_fit/core/platform/analytics_event.dart';
+import 'package:money_fit/core/platform/analytics_tracker.dart';
 import 'package:money_fit/features/feedback/domain/contact_inquiry_type.dart';
+import 'package:money_fit/features/feedback/domain/contact_inquiry_validation.dart';
 import 'package:money_fit/features/feedback/domain/feedback_repository.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 class ContactUsDialog extends StatefulWidget {
-  const ContactUsDialog({required this.repository, super.key});
+  const ContactUsDialog({
+    required this.repository,
+    this.analytics = const NoopAnalyticsTracker(),
+    super.key,
+  });
 
   final FeedbackRepository repository;
+  final AnalyticsTracker analytics;
 
   @override
   State<ContactUsDialog> createState() => _ContactUsDialogState();
@@ -19,6 +29,7 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
   final _emailController = TextEditingController();
   final _detailsController = TextEditingController();
   ContactInquiryType? _selectedInquiryType;
+  bool _submitting = false;
 
   @override
   void dispose() {
@@ -28,37 +39,48 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
   }
 
   Future<void> _submit() async {
-    if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.pleaseWait)),
+    if (!_formKey.currentState!.validate() || _submitting) return;
+    setState(() => _submitting = true);
+
+    try {
+      await widget.repository.submitContactInquiry(
+        inquiryType: _selectedInquiryType!,
+        email: _emailController.text,
+        details: _detailsController.text,
+        locale: Localizations.localeOf(context).toString(),
       );
+      unawaited(_track('success'));
 
-      try {
-        await widget.repository.submitContactInquiry(
-          inquiryType: _selectedInquiryType!,
-          email: _emailController.text,
-          details: _detailsController.text,
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.inquirySuccess)),
         );
-
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context)!.inquirySuccess),
-            ),
-          );
-          Navigator.of(context).pop();
-        }
-      } catch (error) {
-        debugPrint('Contact us error: $error');
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context)!.inquiryFailure),
-            ),
-          );
-          Navigator.of(context).pop();
-        }
+        Navigator.of(context).pop();
       }
+    } catch (error) {
+      debugPrint('Contact us error: $error');
+      unawaited(_track('failure'));
+      if (mounted) {
+        setState(() => _submitting = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.inquiryFailure)),
+        );
+      }
+    }
+  }
+
+  Future<void> _track(String result) async {
+    try {
+      await widget.analytics.track(
+        AnalyticsEvent.inquirySubmitted.canonicalName,
+        parameters: {
+          'inquiry_type': _selectedInquiryType!.backendCode,
+          'result': result,
+        },
+      );
+    } catch (_) {
+      // Contact delivery must retain its success/failure UX when analytics is
+      // unavailable.
     }
   }
 
@@ -163,9 +185,9 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
                   ),
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
-                    if (value != null &&
-                        value.isNotEmpty &&
-                        !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                    if (!FeedbackContactInquiryValidation.hasValidOptionalEmail(
+                      value ?? '',
+                    )) {
                       return l10n.invalidEmail;
                     }
                     return null;
@@ -183,7 +205,9 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
                   maxLines: 5,
                   maxLength: 500,
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (!FeedbackContactInquiryValidation.hasValidDetails(
+                      value ?? '',
+                    )) {
                       return l10n.fieldRequired;
                     }
                     return null;
@@ -191,7 +215,7 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
-                  onPressed: _submit,
+                  onPressed: _submitting ? null : _submit,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: context.colors.brandPrimary,
                     foregroundColor: context.colors.textOnBrand,
@@ -202,10 +226,16 @@ class _ContactUsDialogState extends State<ContactUsDialog> {
                     elevation: 0,
                   ),
                   child: Center(
-                    child: ResponsiveButtonText(
-                      text: l10n.submit,
-                      style: context.textTheme.labelLarge,
-                    ),
+                    child: _submitting
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : ResponsiveButtonText(
+                            text: l10n.submit,
+                            style: context.textTheme.labelLarge,
+                          ),
                   ),
                 ),
               ],

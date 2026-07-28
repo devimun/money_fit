@@ -1,14 +1,15 @@
 import 'dart:async';
 
-import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_fit/app/composition/analytics_providers.dart';
 import 'package:money_fit/app/composition/database_providers.dart';
+import 'package:money_fit/app/composition/feedback_providers.dart';
+import 'package:money_fit/app/composition/monetization_providers.dart';
 import 'package:money_fit/app/bootstrap/optional_remote_capabilities.dart';
 import 'package:money_fit/app/router/bootstrap_gate.dart';
 import 'package:money_fit/core/config/app_environment.dart';
 import 'package:money_fit/core/preferences/preferences_provider.dart';
 import 'package:money_fit/features/app_update/application/update_service.dart';
-import 'package:money_fit/features/monetization/data/google_mobile_ads_gateway.dart';
 import 'package:money_fit/features/budget/application/current_budget_provider.dart';
 import 'package:money_fit/features/ledger/application/ledger_currency_provider.dart';
 import 'package:money_fit/features/notifications/application/notification_controller.dart';
@@ -67,9 +68,14 @@ class BootstrapController {
     if (!environment.firebase.isAvailable) return UpdateStatus.none;
 
     try {
+      await _ref
+          .read(optionalRemoteCapabilitiesProvider)
+          .startFirebase(environment);
+      final remoteConfig = _ref.read(remoteConfigServiceProvider);
+      await remoteConfig.initialize();
       return UpdateService.fetchUpdateStatus(
         environment: environment,
-        remoteConfig: FirebaseRemoteConfig.instance,
+        remoteConfig: remoteConfig,
       );
     } catch (_) {
       // Firebase can be configured but still unavailable while its optional
@@ -80,15 +86,22 @@ class BootstrapController {
 
   Future<void> _startBestEffortCapabilities(AppEnvironment environment) async {
     await Future.wait([
-      _ignoreFailure(
-        () => _ref.read(optionalRemoteCapabilitiesProvider).start(environment),
-      ),
+      _ignoreFailure(() => _startRemoteCapabilities(environment)),
       _ignoreFailure(
         () => _ref.read(notificationSchedulerProvider).initialize(),
       ),
-      _ignoreFailure(AdService.initialize),
-      _ignoreFailure(InterstitialAdManager.instance.loadAd),
+      _ignoreFailure(() => _ref.read(feedbackPromptStartupProvider)()),
     ]);
+    // The policy reader consumes the Remote Config snapshot initialized above.
+    // Advertising remains optional: an SDK, consent, or policy failure cannot
+    // affect the already usable local application.
+    await _ignoreFailure(() => _ref.read(monetizationStartupProvider)());
+  }
+
+  Future<void> _startRemoteCapabilities(AppEnvironment environment) async {
+    await _ref.read(optionalRemoteCapabilitiesProvider).start(environment);
+    await _ref.read(remoteConfigServiceProvider).initialize();
+    await _ref.read(analyticsRuntimeProvider).start();
   }
 
   Future<void> _ignoreFailure(Future<void> Function() action) async {

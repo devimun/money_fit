@@ -126,6 +126,7 @@
   "dataManagement": "Pamamahala ng Data",
   "resetDataConfirmation": "Sigurado ka bang i-reset ang lahat ng data? Hindi na ito maibabalik.",
   "notificationSetting": "Setting ng Notification",
+  "analyticsCollection": "Pangongolekta ng analytics",
   "category": "Kategorya",
   "selectExpenseTypeFirst": "Pumili muna ng uri ng gastos.",
   "errorLoadingCategories": "Error sa pag-load ng mga kategorya.",
@@ -211,5 +212,19 @@
   "customSelect": "Sariling Pagpili",
   "close": "Isara",
   "languageSetting": "Wika at Pera",
-  "selectLanguage": "Pumili ng Wika"
+  "selectLanguage": "Pumili ng Wika",
+  "feedback_prompt_title": "Ano ang gusto mong makita sa MoneyFit?",
+  "feedback_prompt_body": "Kahit maliit na ideya ay makatutulong. Sabihin sa amin kung ano ang makapagpapaganda pa sa MoneyFit.",
+  "feedback_prompt_hint": "Halimbawa: Gusto ko ng mas madaling paraan para magdagdag ng paulit-ulit na gastusin.",
+  "feedback_prompt_privacy_hint": "Huwag magsama ng personal na impormasyon tulad ng iyong pangalan, email, o detalye ng account.",
+  "feedback_prompt_send": "Ipadala ang feedback",
+  "feedback_prompt_later": "Siguro mamaya",
+  "feedback_prompt_never": "Huwag nang magtanong ng feedback",
+  "feedback_prompt_empty_error": "Ilagay ang iyong feedback.",
+  "feedback_prompt_too_short_error": "Maglagay ng hindi bababa sa 3 character.",
+  "feedback_prompt_submit_error": "Hindi namin maipadala. Nananatili ang iyong teksto rito—subukan muli.",
+  "feedback_prompt_rate_limited": "Masyado kang madalas magpadala ng feedback. Subukan muli mamaya.",
+  "feedback_prompt_discard_confirm": "Itapon ang isinulat mo?",
+  "review_negative_validation_error": "Maglagay ng hindi bababa sa 3 character.",
+  "review_negative_submit_error": "Hindi namin maipadala ang iyong feedback. Subukan muli."
 }

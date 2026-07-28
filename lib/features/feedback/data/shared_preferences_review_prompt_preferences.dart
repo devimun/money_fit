@@ -8,6 +8,7 @@ class SharedPreferencesReviewPromptPreferences
   static const _lastPromptAt = 'review_last_prompt_at';
   static const _promptCount = 'review_prompt_count';
   static const _snoozeUntil = 'review_snooze_until';
+  static const _engagementPromptAt = 'engagement_prompt_last_shown_at';
 
   Future<SharedPreferences> get _prefs => SharedPreferences.getInstance();
 
@@ -45,5 +46,11 @@ class SharedPreferencesReviewPromptPreferences
     final prefs = await _prefs;
     await prefs.setString(_lastPromptAt, value.toIso8601String());
     await prefs.setInt(_promptCount, (prefs.getInt(_promptCount) ?? 0) + 1);
+    await prefs.setString(_engagementPromptAt, value.toUtc().toIso8601String());
   }
+
+  @override
+  Future<DateTime?> readEngagementPromptAt() async => DateTime.tryParse(
+    (await _prefs).getString(_engagementPromptAt) ?? '',
+  )?.toUtc();
 }

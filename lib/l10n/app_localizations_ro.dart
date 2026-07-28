@@ -426,6 +426,9 @@ class AppLocalizationsRo extends AppLocalizations {
   String get notificationSetting => 'Setare notificări';
 
   @override
+  String get analyticsCollection => 'Colectarea datelor analitice';
+
+  @override
   String get category => 'Categorie';
 
   @override
@@ -701,4 +704,54 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get selectLanguage => 'Selectează limba';
+
+  @override
+  String get feedback_prompt_title => 'Ce ai vrea să vezi în MoneyFit?';
+
+  @override
+  String get feedback_prompt_body =>
+      'Chiar și o idee mică ajută. Spune-ne ce ar putea face MoneyFit mai bun.';
+
+  @override
+  String get feedback_prompt_hint =>
+      'Exemplu: Aș vrea să pot adăuga mai ușor cheltuieli recurente.';
+
+  @override
+  String get feedback_prompt_privacy_hint =>
+      'Nu include informații personale, precum numele, adresa de e-mail sau datele contului.';
+
+  @override
+  String get feedback_prompt_send => 'Trimite feedback';
+
+  @override
+  String get feedback_prompt_later => 'Poate mai târziu';
+
+  @override
+  String get feedback_prompt_never => 'Nu mai întreba despre feedback';
+
+  @override
+  String get feedback_prompt_empty_error => 'Introdu feedbackul tău.';
+
+  @override
+  String get feedback_prompt_too_short_error =>
+      'Introdu cel puțin 3 caractere.';
+
+  @override
+  String get feedback_prompt_submit_error =>
+      'Nu am putut trimite. Textul tău este încă aici — încearcă din nou.';
+
+  @override
+  String get feedback_prompt_rate_limited =>
+      'Ai trimis feedback prea des. Încearcă din nou mai târziu.';
+
+  @override
+  String get feedback_prompt_discard_confirm => 'Renunți la ce ai scris?';
+
+  @override
+  String get review_negative_validation_error =>
+      'Introdu cel puțin 3 caractere.';
+
+  @override
+  String get review_negative_submit_error =>
+      'Nu am putut trimite feedbackul. Încearcă din nou.';
 }

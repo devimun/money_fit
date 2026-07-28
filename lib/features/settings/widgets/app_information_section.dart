@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/app/composition/feedback_providers.dart';
+import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/features/feedback/presentation/contact_us_dialog.dart';
@@ -38,8 +39,10 @@ class _AppInformationSectionState extends ConsumerState<AppInformationSection> {
   Future<void> _showContactUsDialog() async {
     await showDialog(
       context: context,
-      builder: (context) =>
-          ContactUsDialog(repository: ref.read(feedbackRepositoryProvider)),
+      builder: (context) => ContactUsDialog(
+        repository: ref.read(feedbackRepositoryProvider),
+        analytics: ref.read(analyticsTrackerProvider),
+      ),
     );
   }
 

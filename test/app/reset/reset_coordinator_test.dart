@@ -16,6 +16,7 @@ void main() {
         'notifications',
         'engagement',
         'session',
+        'in-process-engagement',
         'invalidate',
       ],
     ),
@@ -60,6 +61,11 @@ ResetOperations _operations(List<String> calls, {String? failingOperation}) =>
       clearSession: _operation(calls, 'session', failingOperation),
       cancelNotifications: _operation(calls, 'notifications', failingOperation),
       clearEngagement: _operation(calls, 'engagement', failingOperation),
+      resetInProcessEngagement: _operation(
+        calls,
+        'in-process-engagement',
+        failingOperation,
+      ),
       invalidateDependentState: _operation(
         calls,
         'invalidate',

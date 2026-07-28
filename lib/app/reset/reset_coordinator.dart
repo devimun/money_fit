@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/app/composition/database_providers.dart';
+import 'package:money_fit/app/composition/engagement_providers.dart';
+import 'package:money_fit/app/composition/feedback_providers.dart';
 import 'package:money_fit/app/reset/engagement_reset.dart';
 import 'package:money_fit/core/preferences/preferences_provider.dart';
 import 'package:money_fit/features/budget/application/current_budget_provider.dart';
@@ -24,6 +26,15 @@ extension ResetScopeCoverage on ResetScope {
 
 typedef ResetOperation = Future<void> Function();
 
+/// Clears only the process-local engagement state that would otherwise retain
+/// a lease, quiet period, or one-session prompt flag after persistence reset.
+void resetInProcessEngagement(Ref ref) {
+  ref.read(promptCoordinatorProvider).reset();
+  ref.invalidate(feedbackPromptStartupProvider);
+  ref.invalidate(feedbackPromptServiceProvider);
+  ref.invalidate(feedbackPromptStateProvider);
+}
+
 /// The concrete work owned by each reset boundary.
 ///
 /// Keeping the scope policy independent from Riverpod makes the destructive
@@ -36,6 +47,7 @@ class ResetOperations {
     required this.clearSession,
     required this.cancelNotifications,
     required this.clearEngagement,
+    required this.resetInProcessEngagement,
     required this.invalidateDependentState,
   });
 
@@ -44,6 +56,7 @@ class ResetOperations {
   final ResetOperation clearSession;
   final ResetOperation cancelNotifications;
   final ResetOperation clearEngagement;
+  final ResetOperation resetInProcessEngagement;
   final ResetOperation invalidateDependentState;
 }
 
@@ -74,6 +87,7 @@ Future<void> runResetScope({
       await operations.cancelNotifications();
       await operations.clearEngagement();
       await operations.clearSession();
+      await operations.resetInProcessEngagement();
   }
   await operations.invalidateDependentState();
 }
@@ -95,6 +109,7 @@ class ResetCoordinator {
       cancelNotifications: () =>
           _ref.read(notificationSchedulerProvider).cancelAll(),
       clearEngagement: () => _ref.read(engagementResetterProvider).clear(),
+      resetInProcessEngagement: () async => resetInProcessEngagement(_ref),
       invalidateDependentState: () async => _invalidateDependentState(),
     ),
   );

@@ -124,6 +124,7 @@
   "dataManagement": "Управління даними",
   "resetDataConfirmation": "Ви впевнені, що хочете скинути всі дані? Цю дію не можна скасувати.",
   "notificationSetting": "Налаштування сповіщень",
+  "analyticsCollection": "Збір аналітичних даних",
   "category": "Категорія",
   "selectExpenseTypeFirst": "Спочатку виберіть тип витрати",
   "errorLoadingCategories": "Помилка завантаження категорій",
@@ -209,5 +210,19 @@
   "customSelect": "Власний вибір",
   "close": "Закрити",
   "languageSetting": "Мова та валюта",
-  "selectLanguage": "Вибрати мову"
+  "selectLanguage": "Вибрати мову",
+  "feedback_prompt_title": "Що б ви хотіли бачити в MoneyFit?",
+  "feedback_prompt_body": "Навіть невелика ідея важлива. Розкажіть, що могло б зробити MoneyFit кращим.",
+  "feedback_prompt_hint": "Наприклад: Я хочу простіше додавати регулярні витрати.",
+  "feedback_prompt_privacy_hint": "Будь ласка, не вказуйте особисту інформацію, як-от ім’я, електронну пошту чи дані облікового запису.",
+  "feedback_prompt_send": "Надіслати відгук",
+  "feedback_prompt_later": "Можливо, пізніше",
+  "feedback_prompt_never": "Більше не запитувати відгук",
+  "feedback_prompt_empty_error": "Введіть свій відгук.",
+  "feedback_prompt_too_short_error": "Введіть щонайменше 3 символи.",
+  "feedback_prompt_submit_error": "Не вдалося надіслати. Ваш текст залишився тут — спробуйте ще раз.",
+  "feedback_prompt_rate_limited": "Ви надсилаєте відгуки надто часто. Спробуйте пізніше.",
+  "feedback_prompt_discard_confirm": "Видалити написане?",
+  "review_negative_validation_error": "Введіть щонайменше 3 символи.",
+  "review_negative_submit_error": "Не вдалося надіслати відгук. Спробуйте ще раз."
 }

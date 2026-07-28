@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_fit/features/feedback/application/review_prompt_dependencies.dart';
+import 'package:money_fit/features/feedback/domain/feedback_submission.dart';
 import 'package:money_fit/features/feedback/presentation/review/experience_binary_dialog.dart';
 import 'package:money_fit/features/feedback/presentation/review/negative_feedback_dialog.dart';
 import 'package:money_fit/features/feedback/presentation/review/positive_confirm_dialog.dart';
@@ -30,11 +31,14 @@ class ReviewDialogFactory {
 
   /// 부정적인 피드백 다이얼로그를 표시
   static Future<NegativeResult?> showNegativeFeedbackDialog(
-    BuildContext context,
-  ) {
+    BuildContext context, {
+    required FeedbackSubmission submission,
+    required Future<FeedbackSubmitResult> Function(FeedbackSubmission) submit,
+  }) {
     return showDialog<NegativeResult>(
       context: context,
-      builder: (ctx) => const NegativeFeedbackDialog(),
+      builder: (ctx) =>
+          NegativeFeedbackDialog(submission: submission, submit: submit),
     );
   }
 

@@ -423,6 +423,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notificationSetting => 'Benachrichtigungseinstellung';
 
   @override
+  String get analyticsCollection => 'Analysedatenerfassung';
+
+  @override
   String get category => 'Kategorie';
 
   @override
@@ -698,4 +701,54 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get selectLanguage => 'Sprache auswählen';
+
+  @override
+  String get feedback_prompt_title => 'Was möchten Sie in MoneyFit sehen?';
+
+  @override
+  String get feedback_prompt_body =>
+      'Auch eine kleine Idee hilft. Sagen Sie uns, was MoneyFit besser machen könnte.';
+
+  @override
+  String get feedback_prompt_hint =>
+      'Beispiel: Ich möchte wiederkehrende Ausgaben einfacher hinzufügen.';
+
+  @override
+  String get feedback_prompt_privacy_hint =>
+      'Bitte geben Sie keine persönlichen Informationen wie Ihren Namen, Ihre E-Mail-Adresse oder Kontodaten an.';
+
+  @override
+  String get feedback_prompt_send => 'Feedback senden';
+
+  @override
+  String get feedback_prompt_later => 'Vielleicht später';
+
+  @override
+  String get feedback_prompt_never => 'Nicht mehr nach Feedback fragen';
+
+  @override
+  String get feedback_prompt_empty_error => 'Bitte geben Sie Ihr Feedback ein.';
+
+  @override
+  String get feedback_prompt_too_short_error =>
+      'Bitte geben Sie mindestens 3 Zeichen ein.';
+
+  @override
+  String get feedback_prompt_submit_error =>
+      'Wir konnten es nicht senden. Ihr Text ist noch da — bitte versuchen Sie es erneut.';
+
+  @override
+  String get feedback_prompt_rate_limited =>
+      'Sie haben Feedback zu häufig gesendet. Bitte versuchen Sie es später erneut.';
+
+  @override
+  String get feedback_prompt_discard_confirm => 'Geschriebenes verwerfen?';
+
+  @override
+  String get review_negative_validation_error =>
+      'Bitte geben Sie mindestens 3 Zeichen ein.';
+
+  @override
+  String get review_negative_submit_error =>
+      'Wir konnten Ihr Feedback nicht senden. Bitte versuchen Sie es erneut.';
 }

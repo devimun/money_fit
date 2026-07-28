@@ -124,6 +124,7 @@
   "dataManagement": "Gestione dati",
   "resetDataConfirmation": "Sei sicuro di voler reimpostare tutti i dati? Questa azione non può essere annullata.",
   "notificationSetting": "Impostazione notifiche",
+  "analyticsCollection": "Raccolta dati analitici",
   "category": "Categoria",
   "selectExpenseTypeFirst": "Prima seleziona il tipo di spesa",
   "errorLoadingCategories": "Errore nel caricamento delle categorie",
@@ -209,5 +210,19 @@
   "customSelect": "Selezione personalizzata",
   "close": "Chiudi",
   "languageSetting": "Lingua e valuta",
-  "selectLanguage": "Seleziona lingua"
+  "selectLanguage": "Seleziona lingua",
+  "feedback_prompt_title": "Cosa vorresti vedere in MoneyFit?",
+  "feedback_prompt_body": "Anche una piccola idea è utile. Dicci cosa potrebbe rendere MoneyFit migliore.",
+  "feedback_prompt_hint": "Esempio: Vorrei poter aggiungere più facilmente le spese ricorrenti.",
+  "feedback_prompt_privacy_hint": "Non includere informazioni personali come nome, email o dati del conto.",
+  "feedback_prompt_send": "Invia feedback",
+  "feedback_prompt_later": "Forse più tardi",
+  "feedback_prompt_never": "Non chiedere più feedback",
+  "feedback_prompt_empty_error": "Inserisci il tuo feedback.",
+  "feedback_prompt_too_short_error": "Inserisci almeno 3 caratteri.",
+  "feedback_prompt_submit_error": "Non siamo riusciti a inviarlo. Il tuo testo è ancora qui: riprova.",
+  "feedback_prompt_rate_limited": "Hai inviato feedback troppo spesso. Riprova più tardi.",
+  "feedback_prompt_discard_confirm": "Eliminare ciò che hai scritto?",
+  "review_negative_validation_error": "Inserisci almeno 3 caratteri.",
+  "review_negative_submit_error": "Non siamo riusciti a inviare il tuo feedback. Riprova."
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_fit/features/feedback/application/review_prompt_dependencies.dart';
+import 'package:money_fit/features/feedback/domain/feedback_submission.dart';
 import 'package:money_fit/features/feedback/presentation/review/review_dialog_factory.dart';
 
 class MaterialReviewPromptPresenter implements ReviewPromptPresenter {
@@ -22,9 +23,16 @@ class MaterialReviewPromptPresenter implements ReviewPromptPresenter {
   }
 
   @override
-  Future<NegativeResult?> collectNegativeFeedback() {
+  Future<NegativeResult?> collectNegativeFeedback({
+    required FeedbackSubmission submission,
+    required Future<FeedbackSubmitResult> Function(FeedbackSubmission) submit,
+  }) {
     if (!_mounted) return Future.value();
-    return ReviewDialogFactory.showNegativeFeedbackDialog(_context);
+    return ReviewDialogFactory.showNegativeFeedbackDialog(
+      _context,
+      submission: submission,
+      submit: submit,
+    );
   }
 
   @override

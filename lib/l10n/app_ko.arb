@@ -124,6 +124,7 @@
   "dataManagement": "데이터 관리",
   "resetDataConfirmation": "모든 데이터를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
   "notificationSetting": "알림 설정",
+  "analyticsCollection": "분석 데이터 수집",
   "category": "카테고리",
   "selectExpenseTypeFirst": "지출 유형을 먼저 선택해주세요",
   "errorLoadingCategories": "카테고리를 불러오는 중 오류 발생",
@@ -210,5 +211,19 @@
   "customSelect": "자유 선택",
   "close": "닫기",
   "languageSetting": "언어 및 화폐",
-  "selectLanguage": "언어 선택"
+  "selectLanguage": "언어 선택",
+  "feedback_prompt_title": "MoneyFit에 바라는 점이 있나요?",
+  "feedback_prompt_body": "작은 아이디어도 좋아요. 더 나아졌으면 하는 점을 자유롭게 알려주세요.",
+  "feedback_prompt_hint": "예: 반복 지출을 더 쉽게 입력하고 싶어요.",
+  "feedback_prompt_privacy_hint": "이름, 이메일, 계좌정보 등 개인정보는 적지 마세요.",
+  "feedback_prompt_send": "보내기",
+  "feedback_prompt_later": "나중에",
+  "feedback_prompt_never": "의견 요청 안 보기",
+  "feedback_prompt_empty_error": "바라는 점을 입력해 주세요.",
+  "feedback_prompt_too_short_error": "3자 이상 입력해 주세요.",
+  "feedback_prompt_submit_error": "보내지 못했어요. 내용을 유지했으니 다시 시도해 주세요.",
+  "feedback_prompt_rate_limited": "의견을 너무 자주 보냈어요. 잠시 후 다시 시도해 주세요.",
+  "feedback_prompt_discard_confirm": "작성 중인 내용을 버릴까요?",
+  "review_negative_validation_error": "3자 이상 입력해 주세요.",
+  "review_negative_submit_error": "보내지 못했어요. 내용을 유지했으니 다시 시도해 주세요."
 }

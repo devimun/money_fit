@@ -422,6 +422,9 @@ class AppLocalizationsFil extends AppLocalizations {
   String get notificationSetting => 'Setting ng Notification';
 
   @override
+  String get analyticsCollection => 'Pangongolekta ng analytics';
+
+  @override
   String get category => 'Kategorya';
 
   @override
@@ -695,4 +698,54 @@ class AppLocalizationsFil extends AppLocalizations {
 
   @override
   String get selectLanguage => 'Pumili ng Wika';
+
+  @override
+  String get feedback_prompt_title => 'Ano ang gusto mong makita sa MoneyFit?';
+
+  @override
+  String get feedback_prompt_body =>
+      'Kahit maliit na ideya ay makatutulong. Sabihin sa amin kung ano ang makapagpapaganda pa sa MoneyFit.';
+
+  @override
+  String get feedback_prompt_hint =>
+      'Halimbawa: Gusto ko ng mas madaling paraan para magdagdag ng paulit-ulit na gastusin.';
+
+  @override
+  String get feedback_prompt_privacy_hint =>
+      'Huwag magsama ng personal na impormasyon tulad ng iyong pangalan, email, o detalye ng account.';
+
+  @override
+  String get feedback_prompt_send => 'Ipadala ang feedback';
+
+  @override
+  String get feedback_prompt_later => 'Siguro mamaya';
+
+  @override
+  String get feedback_prompt_never => 'Huwag nang magtanong ng feedback';
+
+  @override
+  String get feedback_prompt_empty_error => 'Ilagay ang iyong feedback.';
+
+  @override
+  String get feedback_prompt_too_short_error =>
+      'Maglagay ng hindi bababa sa 3 character.';
+
+  @override
+  String get feedback_prompt_submit_error =>
+      'Hindi namin maipadala. Nananatili ang iyong teksto rito—subukan muli.';
+
+  @override
+  String get feedback_prompt_rate_limited =>
+      'Masyado kang madalas magpadala ng feedback. Subukan muli mamaya.';
+
+  @override
+  String get feedback_prompt_discard_confirm => 'Itapon ang isinulat mo?';
+
+  @override
+  String get review_negative_validation_error =>
+      'Maglagay ng hindi bababa sa 3 character.';
+
+  @override
+  String get review_negative_submit_error =>
+      'Hindi namin maipadala ang iyong feedback. Subukan muli.';
 }

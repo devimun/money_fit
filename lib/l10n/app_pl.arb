@@ -124,6 +124,7 @@
   "dataManagement": "Zarządzanie danymi",
   "resetDataConfirmation": "Czy na pewno chcesz zresetować wszystkie dane? Tej operacji nie można cofnąć.",
   "notificationSetting": "Ustawienia powiadomień",
+  "analyticsCollection": "Zbieranie danych analitycznych",
   "category": "Kategoria",
   "selectExpenseTypeFirst": "Najpierw wybierz typ wydatku",
   "errorLoadingCategories": "Błąd ładowania kategorii",
@@ -209,5 +210,19 @@
   "customSelect": "Własny wybór",
   "close": "Zamknij",
   "languageSetting": "Język i waluta",
-  "selectLanguage": "Wybierz język"
+  "selectLanguage": "Wybierz język",
+  "feedback_prompt_title": "Co chcesz zobaczyć w MoneyFit?",
+  "feedback_prompt_body": "Każdy, nawet drobny pomysł, pomaga. Powiedz nam, co mogłoby ulepszyć MoneyFit.",
+  "feedback_prompt_hint": "Przykład: Chcę łatwiej dodawać cykliczne wydatki.",
+  "feedback_prompt_privacy_hint": "Nie podawaj danych osobowych, takich jak imię, adres e-mail czy dane konta.",
+  "feedback_prompt_send": "Wyślij opinię",
+  "feedback_prompt_later": "Może później",
+  "feedback_prompt_never": "Nie pytaj ponownie o opinię",
+  "feedback_prompt_empty_error": "Wpisz swoją opinię.",
+  "feedback_prompt_too_short_error": "Wpisz co najmniej 3 znaki.",
+  "feedback_prompt_submit_error": "Nie udało się wysłać. Twój tekst nadal tu jest — spróbuj ponownie.",
+  "feedback_prompt_rate_limited": "Wysyłasz opinie zbyt często. Spróbuj ponownie później.",
+  "feedback_prompt_discard_confirm": "Usunąć to, co zostało napisane?",
+  "review_negative_validation_error": "Podaj co najmniej 3 znaki.",
+  "review_negative_submit_error": "Nie udało się wysłać opinii. Spróbuj ponownie."
 }

@@ -422,6 +422,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get notificationSetting => 'Impostazione notifiche';
 
   @override
+  String get analyticsCollection => 'Raccolta dati analitici';
+
+  @override
   String get category => 'Categoria';
 
   @override
@@ -693,4 +696,54 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get selectLanguage => 'Seleziona lingua';
+
+  @override
+  String get feedback_prompt_title => 'Cosa vorresti vedere in MoneyFit?';
+
+  @override
+  String get feedback_prompt_body =>
+      'Anche una piccola idea è utile. Dicci cosa potrebbe rendere MoneyFit migliore.';
+
+  @override
+  String get feedback_prompt_hint =>
+      'Esempio: Vorrei poter aggiungere più facilmente le spese ricorrenti.';
+
+  @override
+  String get feedback_prompt_privacy_hint =>
+      'Non includere informazioni personali come nome, email o dati del conto.';
+
+  @override
+  String get feedback_prompt_send => 'Invia feedback';
+
+  @override
+  String get feedback_prompt_later => 'Forse più tardi';
+
+  @override
+  String get feedback_prompt_never => 'Non chiedere più feedback';
+
+  @override
+  String get feedback_prompt_empty_error => 'Inserisci il tuo feedback.';
+
+  @override
+  String get feedback_prompt_too_short_error => 'Inserisci almeno 3 caratteri.';
+
+  @override
+  String get feedback_prompt_submit_error =>
+      'Non siamo riusciti a inviarlo. Il tuo testo è ancora qui: riprova.';
+
+  @override
+  String get feedback_prompt_rate_limited =>
+      'Hai inviato feedback troppo spesso. Riprova più tardi.';
+
+  @override
+  String get feedback_prompt_discard_confirm =>
+      'Eliminare ciò che hai scritto?';
+
+  @override
+  String get review_negative_validation_error =>
+      'Inserisci almeno 3 caratteri.';
+
+  @override
+  String get review_negative_submit_error =>
+      'Non siamo riusciti a inviare il tuo feedback. Riprova.';
 }

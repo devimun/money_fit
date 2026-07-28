@@ -1,13 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
-import 'package:money_fit/app/composition/feedback_providers.dart';
 import 'package:money_fit/app/composition/platform_providers.dart';
-import 'package:money_fit/features/monetization/data/google_mobile_ads_gateway.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/base_bottom_sheet.dart';
+import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/features/ledger/presentation/categories/category_list.dart';
 import 'package:money_fit/features/ledger/presentation/editor/expense_form_fields.dart';
 import 'package:money_fit/features/ledger/presentation/editor/expense_form_validator.dart';
@@ -238,20 +234,8 @@ class _ExpenseAddFormState extends ConsumerState<ExpenseAddForm> {
     }
 
     if (!mounted) return;
-    unawaited(
-      _runBestEffort(InterstitialAdManager.instance.logActionAndShowAd),
-    );
-    await _runBestEffort(() => ref.read(reviewPromptProvider)(context));
-    if (mounted) {
-      Navigator.pop(context, true);
-    }
-  }
-
-  Future<void> _runBestEffort(Future<void> Function() action) async {
-    try {
-      await action();
-    } catch (_) {
-      // Optional engagement effects must not change a persisted command result.
-    }
+    // The presenting screen waits for this sheet to close before it considers
+    // optional full-screen experiences. Do not place prompts over this editor.
+    if (mounted) Navigator.pop(context, true);
   }
 }

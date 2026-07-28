@@ -125,6 +125,7 @@
   "dataManagement": "Pengurusan Data",
   "resetDataConfirmation": "Anda pasti ingin tetap semula semua data? Tindakan ini tidak boleh dibatalkan.",
   "notificationSetting": "Tetapan Notifikasi",
+  "analyticsCollection": "Pengumpulan analitik",
   "category": "Kategori",
   "selectExpenseTypeFirst": "Sila pilih jenis perbelanjaan dahulu.",
   "errorLoadingCategories": "Ralat memuatkan kategori.",
@@ -211,5 +212,19 @@
   "customSelect": "Pilihan Tersuai",
   "close": "Tutup",
   "languageSetting": "Bahasa & Mata Wang",
-  "selectLanguage": "Pilih Bahasa"
+  "selectLanguage": "Pilih Bahasa",
+  "feedback_prompt_title": "Apa yang anda ingin lihat dalam MoneyFit?",
+  "feedback_prompt_body": "Idea kecil pun membantu. Beritahu kami apa yang boleh menjadikan MoneyFit lebih baik.",
+  "feedback_prompt_hint": "Contoh: Saya ingin cara yang lebih mudah untuk menambah perbelanjaan berulang.",
+  "feedback_prompt_privacy_hint": "Jangan sertakan maklumat peribadi seperti nama, e-mel atau butiran akaun anda.",
+  "feedback_prompt_send": "Hantar maklum balas",
+  "feedback_prompt_later": "Mungkin kemudian",
+  "feedback_prompt_never": "Jangan tanya tentang maklum balas lagi",
+  "feedback_prompt_empty_error": "Masukkan maklum balas anda.",
+  "feedback_prompt_too_short_error": "Masukkan sekurang-kurangnya 3 aksara.",
+  "feedback_prompt_submit_error": "Kami tidak dapat menghantarnya. Teks anda masih di sini—cuba lagi.",
+  "feedback_prompt_rate_limited": "Anda terlalu kerap menghantar maklum balas. Cuba lagi kemudian.",
+  "feedback_prompt_discard_confirm": "Buang apa yang telah anda tulis?",
+  "review_negative_validation_error": "Masukkan sekurang-kurangnya 3 aksara.",
+  "review_negative_submit_error": "Kami tidak dapat menghantar maklum balas anda. Cuba lagi."
 }

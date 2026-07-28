@@ -124,6 +124,7 @@
   "dataManagement": "Datenverwaltung",
   "resetDataConfirmation": "Möchten Sie wirklich alle Daten zurücksetzen? Diese Aktion kann nicht rückgängig gemacht werden.",
   "notificationSetting": "Benachrichtigungseinstellung",
+  "analyticsCollection": "Analysedatenerfassung",
   "category": "Kategorie",
   "selectExpenseTypeFirst": "Wählen Sie zuerst den Ausgabentyp",
   "errorLoadingCategories": "Fehler beim Laden der Kategorien",
@@ -209,5 +210,19 @@
   "customSelect": "Eigene Auswahl",
   "close": "Schließen",
   "languageSetting": "Sprache & Währung",
-  "selectLanguage": "Sprache auswählen"
+  "selectLanguage": "Sprache auswählen",
+  "feedback_prompt_title": "Was möchten Sie in MoneyFit sehen?",
+  "feedback_prompt_body": "Auch eine kleine Idee hilft. Sagen Sie uns, was MoneyFit besser machen könnte.",
+  "feedback_prompt_hint": "Beispiel: Ich möchte wiederkehrende Ausgaben einfacher hinzufügen.",
+  "feedback_prompt_privacy_hint": "Bitte geben Sie keine persönlichen Informationen wie Ihren Namen, Ihre E-Mail-Adresse oder Kontodaten an.",
+  "feedback_prompt_send": "Feedback senden",
+  "feedback_prompt_later": "Vielleicht später",
+  "feedback_prompt_never": "Nicht mehr nach Feedback fragen",
+  "feedback_prompt_empty_error": "Bitte geben Sie Ihr Feedback ein.",
+  "feedback_prompt_too_short_error": "Bitte geben Sie mindestens 3 Zeichen ein.",
+  "feedback_prompt_submit_error": "Wir konnten es nicht senden. Ihr Text ist noch da — bitte versuchen Sie es erneut.",
+  "feedback_prompt_rate_limited": "Sie haben Feedback zu häufig gesendet. Bitte versuchen Sie es später erneut.",
+  "feedback_prompt_discard_confirm": "Geschriebenes verwerfen?",
+  "review_negative_validation_error": "Bitte geben Sie mindestens 3 Zeichen ein.",
+  "review_negative_submit_error": "Wir konnten Ihr Feedback nicht senden. Bitte versuchen Sie es erneut."
 }

@@ -406,6 +406,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get notificationSetting => '알림 설정';
 
   @override
+  String get analyticsCollection => '분석 데이터 수집';
+
+  @override
   String get category => '카테고리';
 
   @override
@@ -665,4 +668,46 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get selectLanguage => '언어 선택';
+
+  @override
+  String get feedback_prompt_title => 'MoneyFit에 바라는 점이 있나요?';
+
+  @override
+  String get feedback_prompt_body => '작은 아이디어도 좋아요. 더 나아졌으면 하는 점을 자유롭게 알려주세요.';
+
+  @override
+  String get feedback_prompt_hint => '예: 반복 지출을 더 쉽게 입력하고 싶어요.';
+
+  @override
+  String get feedback_prompt_privacy_hint => '이름, 이메일, 계좌정보 등 개인정보는 적지 마세요.';
+
+  @override
+  String get feedback_prompt_send => '보내기';
+
+  @override
+  String get feedback_prompt_later => '나중에';
+
+  @override
+  String get feedback_prompt_never => '의견 요청 안 보기';
+
+  @override
+  String get feedback_prompt_empty_error => '바라는 점을 입력해 주세요.';
+
+  @override
+  String get feedback_prompt_too_short_error => '3자 이상 입력해 주세요.';
+
+  @override
+  String get feedback_prompt_submit_error => '보내지 못했어요. 내용을 유지했으니 다시 시도해 주세요.';
+
+  @override
+  String get feedback_prompt_rate_limited => '의견을 너무 자주 보냈어요. 잠시 후 다시 시도해 주세요.';
+
+  @override
+  String get feedback_prompt_discard_confirm => '작성 중인 내용을 버릴까요?';
+
+  @override
+  String get review_negative_validation_error => '3자 이상 입력해 주세요.';
+
+  @override
+  String get review_negative_submit_error => '보내지 못했어요. 내용을 유지했으니 다시 시도해 주세요.';
 }

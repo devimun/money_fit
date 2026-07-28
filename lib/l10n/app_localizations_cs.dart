@@ -421,6 +421,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get notificationSetting => 'Nastavení oznámení';
 
   @override
+  String get analyticsCollection => 'Shromažďování analytických údajů';
+
+  @override
   String get category => 'Kategorie';
 
   @override
@@ -692,4 +695,52 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get selectLanguage => 'Vybrat jazyk';
+
+  @override
+  String get feedback_prompt_title => 'Co byste chtěli v MoneyFit vidět?';
+
+  @override
+  String get feedback_prompt_body =>
+      'I malý nápad pomůže. Řekněte nám, co by MoneyFit mohlo zlepšit.';
+
+  @override
+  String get feedback_prompt_hint =>
+      'Například: Chci snadněji přidávat pravidelné výdaje.';
+
+  @override
+  String get feedback_prompt_privacy_hint =>
+      'Neuvádějte prosím osobní údaje, jako je jméno, e-mail nebo údaje o účtu.';
+
+  @override
+  String get feedback_prompt_send => 'Odeslat zpětnou vazbu';
+
+  @override
+  String get feedback_prompt_later => 'Možná později';
+
+  @override
+  String get feedback_prompt_never => 'Už se na zpětnou vazbu neptat';
+
+  @override
+  String get feedback_prompt_empty_error => 'Zadejte prosím zpětnou vazbu.';
+
+  @override
+  String get feedback_prompt_too_short_error => 'Zadejte alespoň 3 znaky.';
+
+  @override
+  String get feedback_prompt_submit_error =>
+      'Nepodařilo se odeslat. Váš text zde zůstává — zkuste to prosím znovu.';
+
+  @override
+  String get feedback_prompt_rate_limited =>
+      'Zpětnou vazbu odesíláte příliš často. Zkuste to prosím později.';
+
+  @override
+  String get feedback_prompt_discard_confirm => 'Zahodit, co jste napsali?';
+
+  @override
+  String get review_negative_validation_error => 'Zadejte alespoň 3 znaky.';
+
+  @override
+  String get review_negative_submit_error =>
+      'Nepodařilo se odeslat zpětnou vazbu. Zkuste to prosím znovu.';
 }

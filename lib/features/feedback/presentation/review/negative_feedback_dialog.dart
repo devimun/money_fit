@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:money_fit/features/feedback/application/review_prompt_dependencies.dart';
+import 'package:money_fit/features/feedback/domain/feedback_submission.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 /// 부정적인 경험에 대한 피드백 다이얼로그
 class NegativeFeedbackDialog extends StatefulWidget {
-  const NegativeFeedbackDialog({super.key});
+  const NegativeFeedbackDialog({
+    required this.submission,
+    required this.submit,
+    super.key,
+  });
+
+  final FeedbackSubmission submission;
+  final Future<FeedbackSubmitResult> Function(FeedbackSubmission) submit;
 
   @override
   State<NegativeFeedbackDialog> createState() => _NegativeFeedbackDialogState();
@@ -15,6 +23,36 @@ class NegativeFeedbackDialog extends StatefulWidget {
 class _NegativeFeedbackDialogState extends State<NegativeFeedbackDialog> {
   final TextEditingController _controller = TextEditingController();
   static const int _maxLen = 300;
+  bool _submitting = false;
+  String? _error;
+
+  Future<void> _submit() async {
+    final detail = _controller.text.trim();
+    if (detail.length < 3) {
+      setState(
+        () => _error = AppLocalizations.of(
+          context,
+        )!.review_negative_validation_error,
+      );
+      return;
+    }
+    setState(() {
+      _submitting = true;
+      _error = null;
+    });
+    final result = await widget.submit(
+      widget.submission.copyWith(detail: detail),
+    );
+    if (!mounted) return;
+    if (result is FeedbackSubmitSuccess) {
+      Navigator.of(context).pop(NegativeResult(NegativeAction.send, detail));
+      return;
+    }
+    setState(() {
+      _submitting = false;
+      _error = AppLocalizations.of(context)!.review_negative_submit_error;
+    });
+  }
 
   @override
   void dispose() {
@@ -90,6 +128,7 @@ class _NegativeFeedbackDialogState extends State<NegativeFeedbackDialog> {
                 counterStyle: context.textTheme.bodySmall?.copyWith(
                   color: context.colors.textPrimary.withValues(alpha: 0.5),
                 ),
+                errorText: _error,
               ),
             ),
             const SizedBox(height: 24),
@@ -98,12 +137,7 @@ class _NegativeFeedbackDialogState extends State<NegativeFeedbackDialog> {
             Column(
               children: [
                 ElevatedButton(
-                  onPressed: () => Navigator.of(context).pop(
-                    NegativeResult(
-                      NegativeAction.send,
-                      _controller.text.trim(),
-                    ),
-                  ),
+                  onPressed: _submitting ? null : _submit,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: context.colors.brandPrimary,
                     foregroundColor: context.colors.textOnBrand,
@@ -113,18 +147,26 @@ class _NegativeFeedbackDialogState extends State<NegativeFeedbackDialog> {
                     ),
                     elevation: 0,
                   ),
-                  child: ResponsiveButtonText(
-                    text: l10n.review_negative_button_send,
-                    style: context.textTheme.labelLarge,
-                  ),
+                  child: _submitting
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : ResponsiveButtonText(
+                          text: l10n.review_negative_button_send,
+                          style: context.textTheme.labelLarge,
+                        ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     TextButton(
-                      onPressed: () => Navigator.of(
-                        context,
-                      ).pop(NegativeResult(NegativeAction.later, null)),
+                      onPressed: _submitting
+                          ? null
+                          : () => Navigator.of(
+                              context,
+                            ).pop(NegativeResult(NegativeAction.later, null)),
                       style: TextButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
@@ -142,9 +184,11 @@ class _NegativeFeedbackDialogState extends State<NegativeFeedbackDialog> {
                     ),
                     const SizedBox(width: 12),
                     TextButton(
-                      onPressed: () => Navigator.of(
-                        context,
-                      ).pop(NegativeResult(NegativeAction.never, null)),
+                      onPressed: _submitting
+                          ? null
+                          : () => Navigator.of(
+                              context,
+                            ).pop(NegativeResult(NegativeAction.never, null)),
                       style: TextButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(

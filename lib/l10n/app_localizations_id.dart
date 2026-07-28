@@ -424,6 +424,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get notificationSetting => 'Pengaturan Notifikasi';
 
   @override
+  String get analyticsCollection => 'Pengumpulan analitik';
+
+  @override
   String get category => 'Kategori';
 
   @override
@@ -699,4 +702,54 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get selectLanguage => 'Pilih Bahasa';
+
+  @override
+  String get feedback_prompt_title => 'Apa yang ingin Anda lihat di MoneyFit?';
+
+  @override
+  String get feedback_prompt_body =>
+      'Bahkan ide kecil pun membantu. Ceritakan apa yang dapat membuat MoneyFit lebih baik.';
+
+  @override
+  String get feedback_prompt_hint =>
+      'Contoh: Saya ingin cara yang lebih mudah untuk menambahkan pengeluaran berulang.';
+
+  @override
+  String get feedback_prompt_privacy_hint =>
+      'Jangan sertakan informasi pribadi seperti nama, email, atau detail akun Anda.';
+
+  @override
+  String get feedback_prompt_send => 'Kirim masukan';
+
+  @override
+  String get feedback_prompt_later => 'Mungkin nanti';
+
+  @override
+  String get feedback_prompt_never => 'Jangan tanyakan masukan lagi';
+
+  @override
+  String get feedback_prompt_empty_error => 'Masukkan masukan Anda.';
+
+  @override
+  String get feedback_prompt_too_short_error =>
+      'Masukkan setidaknya 3 karakter.';
+
+  @override
+  String get feedback_prompt_submit_error =>
+      'Kami tidak dapat mengirimkannya. Teks Anda masih ada di sini—silakan coba lagi.';
+
+  @override
+  String get feedback_prompt_rate_limited =>
+      'Anda terlalu sering mengirim masukan. Silakan coba lagi nanti.';
+
+  @override
+  String get feedback_prompt_discard_confirm => 'Buang yang sudah Anda tulis?';
+
+  @override
+  String get review_negative_validation_error =>
+      'Masukkan setidaknya 3 karakter.';
+
+  @override
+  String get review_negative_submit_error =>
+      'Kami tidak dapat mengirim masukan Anda. Silakan coba lagi.';
 }
