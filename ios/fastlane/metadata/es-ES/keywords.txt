@@ -1,1 +1,1 @@
-presupuesto,gastos,dinero,finanzas,ahorro,diario,mensual,budget
+dinero,finanzas,ahorro,gestor,límite,mensual,seguimiento,calendario

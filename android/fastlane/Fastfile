@@ -1,4 +1,46 @@
+require 'dotenv'
+require 'shellwords'
 require 'yaml'
+
+# CI-provided variables win because Dotenv.load never overwrites an existing
+# environment entry. The local file is intentionally ignored by Git.
+local_fastlane_env = File.expand_path('../../.fastlane.env.local', __dir__)
+Dotenv.load(local_fastlane_env) if File.file?(local_fastlane_env)
+
+def repository_root
+  File.expand_path('../..', __dir__)
+end
+
+def dart_define_values
+  amplitude_key = ENV.fetch('AMPLITUDE_PROD_API_KEY', '').strip
+  values = {
+    'AMPLITUDE_ENABLED' => ENV.fetch(
+      'AMPLITUDE_ENABLED',
+      amplitude_key.empty? ? 'false' : 'true'
+    ).strip,
+    'ANALYTICS_ENV' => ENV.fetch('ANALYTICS_ENV', 'prod').strip,
+    'AMPLITUDE_SERVER_ZONE' => ENV.fetch('AMPLITUDE_SERVER_ZONE', 'us').strip,
+    'MONEY_FIT_APP_FLAVOR' => ENV.fetch('MONEY_FIT_APP_FLAVOR', 'production').strip,
+    'FIREBASE_ENABLED' => ENV.fetch('FIREBASE_ENABLED', 'true').strip,
+    'SUPABASE_URL' => ENV.fetch('SUPABASE_URL', '').strip,
+    'SUPABASE_ANON_KEY' => ENV.fetch('SUPABASE_ANON_KEY', '').strip,
+    'IOS_APP_ID' => ENV.fetch('IOS_APP_ID', '').strip
+  }
+  values['AMPLITUDE_API_KEY'] = amplitude_key unless amplitude_key.empty?
+  values.reject { |_key, value| value.empty? }
+end
+
+def flutter_dart_defines
+  dart_define_values.map do |key, value|
+    "--dart-define=#{Shellwords.shellescape("#{key}=#{value}")}"
+  end.join(' ')
+end
+
+def validate_store_metadata
+  Dir.chdir(repository_root) do
+    sh 'dart run tool/validate_store_metadata.dart'
+  end
+end
 
 default_platform(:android)
 
@@ -19,8 +61,9 @@ platform :android do
     puts "📌 버전: #{version_name} (빌드코드: #{build_number})"
     puts "------------------------------------------------"
 
-    Dir.chdir ".." do
-      sh "flutter build appbundle --release"
+    Dir.chdir(repository_root) do
+      # Do not print this command: it can contain the Amplitude ingestion key.
+      sh "flutter build appbundle --release #{flutter_dart_defines}", log: false
     end
 
     upload_to_play_store(
@@ -36,6 +79,7 @@ platform :android do
   # ==========================================
   desc "앱 빌드 없이 스토어 텍스트 정보만 업데이트"
   lane :update_metadata do
+    validate_store_metadata
     upload_to_play_store(
       track: 'internal',
       skip_upload_aab: true,           # 앱은 안 올림
@@ -43,6 +87,19 @@ platform :android do
       skip_upload_screenshots: true,   # 스크린샷 스킵
       skip_upload_metadata: false,     # 텍스트 올림!
       skip_upload_changelogs: true     # changelog는 릴리즈 때
+    )
+  end
+
+  desc "Play Console을 변경하지 않고 스토어 메타데이터를 검증"
+  lane :validate_metadata do
+    validate_store_metadata
+    upload_to_play_store(
+      validate_only: true,
+      skip_upload_aab: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      skip_upload_metadata: false,
+      skip_upload_changelogs: true
     )
   end
 

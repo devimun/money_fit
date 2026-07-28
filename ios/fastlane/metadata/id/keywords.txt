@@ -1,1 +1,1 @@
-anggaran,pengeluaran,keuangan,uang,belanja,tabungan,harian,bulanan,budget,hemat
+anggaran,pengeluaran,uang,hemat,tabungan,harian,bulanan,pencatat,kalender

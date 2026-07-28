@@ -1,4 +1,46 @@
+require 'base64'
+require 'dotenv'
 require 'yaml'
+
+# CI-provided variables win because Dotenv.load never overwrites an existing
+# environment entry. The local file is intentionally ignored by Git.
+local_fastlane_env = File.expand_path('../../.fastlane.env.local', __dir__)
+Dotenv.load(local_fastlane_env) if File.file?(local_fastlane_env)
+
+def repository_root
+  File.expand_path('../..', __dir__)
+end
+
+def dart_define_values
+  amplitude_key = ENV.fetch('AMPLITUDE_PROD_API_KEY', '').strip
+  values = {
+    'AMPLITUDE_ENABLED' => ENV.fetch(
+      'AMPLITUDE_ENABLED',
+      amplitude_key.empty? ? 'false' : 'true'
+    ).strip,
+    'ANALYTICS_ENV' => ENV.fetch('ANALYTICS_ENV', 'prod').strip,
+    'AMPLITUDE_SERVER_ZONE' => ENV.fetch('AMPLITUDE_SERVER_ZONE', 'us').strip,
+    'MONEY_FIT_APP_FLAVOR' => ENV.fetch('MONEY_FIT_APP_FLAVOR', 'production').strip,
+    'FIREBASE_ENABLED' => ENV.fetch('FIREBASE_ENABLED', 'true').strip,
+    'SUPABASE_URL' => ENV.fetch('SUPABASE_URL', '').strip,
+    'SUPABASE_ANON_KEY' => ENV.fetch('SUPABASE_ANON_KEY', '').strip,
+    'IOS_APP_ID' => ENV.fetch('IOS_APP_ID', '').strip
+  }
+  values['AMPLITUDE_API_KEY'] = amplitude_key unless amplitude_key.empty?
+  values.reject { |_key, value| value.empty? }
+end
+
+def flutter_dart_defines
+  dart_define_values.map do |key, value|
+    Base64.strict_encode64("#{key}=#{value}")
+  end.join(',')
+end
+
+def validate_store_metadata
+  Dir.chdir(repository_root) do
+    sh 'dart run tool/validate_store_metadata.dart'
+  end
+end
 
 default_platform(:ios)
 
@@ -26,7 +68,9 @@ platform :ios do
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
       export_method: "app-store",
-      xcargs: "-allowProvisioningUpdates" 
+      # Flutter's Xcode integration expects comma-separated base64 dart
+      # defines. Keep AMPLITUDE_PROD_API_KEY in CI/.fastlane.env.local only.
+      xcargs: "-allowProvisioningUpdates DART_DEFINES=#{flutter_dart_defines}"
     )
 
     upload_to_testflight(skip_waiting_for_build_processing: true)
@@ -37,13 +81,27 @@ platform :ios do
   # ==========================================
   desc "앱 빌드 없이 스토어 텍스트 정보만 업데이트"
   lane :update_metadata do
+    validate_store_metadata
     deliver(
       submit_for_review: false,
       automatic_release: false,
-      force: true,
       skip_binary_upload: true,
       skip_screenshots: true,      # 스크린샷 스킵 (빠른 업데이트)
-      skip_metadata: false         # 텍스트 올림!
+      skip_metadata: false,        # 텍스트 올림!
+      precheck_default_rule_level: :error
+    )
+  end
+
+  desc "App Store Connect에 제출하지 않고 스토어 메타데이터 preview 생성"
+  lane :preview_metadata do
+    validate_store_metadata
+    deliver(
+      submit_for_review: false,
+      automatic_release: false,
+      force: false,
+      skip_binary_upload: true,
+      skip_screenshots: true,
+      skip_metadata: false
     )
   end
 

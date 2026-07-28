@@ -1,1 +1,1 @@
-budget,spese,soldi,finanze,risparmi,giornaliero,mensile
+soldi,finanze,risparmio,limite,mensile,registro,semplice,calendario

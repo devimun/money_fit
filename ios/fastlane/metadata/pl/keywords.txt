@@ -1,1 +1,1 @@
-budżet,wydatki,pieniądze,finanse,oszczędności,dzienny,miesięczny
+finanse,pieniądze,oszczędności,limity,miesięczny,rejestr,portfel,kalendarz
