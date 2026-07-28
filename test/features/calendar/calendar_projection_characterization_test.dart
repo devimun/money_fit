@@ -9,6 +9,7 @@ import 'package:money_fit/features/budget/domain/current_budget.dart';
 import 'package:money_fit/features/ledger/application/ledger_currency_provider.dart';
 import 'package:money_fit/features/calendar/application/calendar_projection.dart';
 import 'package:money_fit/features/calendar/application/calendar_view_model.dart';
+import 'package:money_fit/features/calendar/view/widgets/calendar_header.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 
 void main() {
@@ -66,6 +67,17 @@ void main() {
     );
 
     expect(dailyBudget, 322.58);
+  });
+
+  test('calendar month action predicate rejects a no-op month selection', () {
+    expect(
+      isSameCalendarMonth(DateTime(2026, 7, 1), DateTime(2026, 7, 31)),
+      isTrue,
+    );
+    expect(
+      isSameCalendarMonth(DateTime(2026, 7, 1), DateTime(2026, 8, 1)),
+      isFalse,
+    );
   });
 
   test('calendar uses zero-decimal KRW threshold', () async {

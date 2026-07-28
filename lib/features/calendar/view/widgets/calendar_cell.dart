@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_fit/app/composition/monetization_providers.dart';
 import 'package:money_fit/core/functions/functions.dart';
-import 'package:money_fit/features/monetization/data/google_mobile_ads_gateway.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/features/ledger/presentation/editor/today_expense_list.dart';
 import 'package:money_fit/features/calendar/application/calendar_projection.dart';
 import 'package:money_fit/features/calendar/application/calendar_view_model.dart';
+import 'package:money_fit/features/monetization/domain/ad_suppression.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 class CalendarCell extends ConsumerWidget {
@@ -22,12 +23,9 @@ class CalendarCell extends ConsumerWidget {
         borderRadius: BorderRadius.circular(12.0),
         child: InkWell(
           borderRadius: BorderRadius.circular(12.0),
-          onTap: () {
-            // 캘린더 셀 선택 액션 기록
-            InterstitialAdManager.instance.logActionAndShowAd();
-
+          onTap: () async {
             ref.read(calendarSelectedDayProvider.notifier).state = day;
-            showModalBottomSheet(
+            await showModalBottomSheet<void>(
               isDismissible: false,
               context: context,
               builder: (context) => TodayExpenseListBottomSheet(
@@ -35,6 +33,9 @@ class CalendarCell extends ConsumerWidget {
                 isHome: false,
                 selectedDate: day,
               ),
+            );
+            await ref.read(monetizationSafePointProvider)(
+              MeaningfulAdAction.calendarDateOpened,
             );
           },
           child: Container(

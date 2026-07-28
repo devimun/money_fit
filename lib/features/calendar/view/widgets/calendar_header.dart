@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:money_fit/app/composition/monetization_providers.dart';
 import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/features/calendar/application/calendar_projection.dart';
 import 'package:money_fit/features/calendar/application/calendar_view_model.dart';
+import 'package:money_fit/features/monetization/domain/ad_suppression.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 class CalendarHeader extends ConsumerWidget {
@@ -39,11 +43,7 @@ class CalendarHeader extends ConsumerWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
-          onPressed: () =>
-              ref.read(calendarVisibleMonthProvider.notifier).state = DateTime(
-                day.year,
-                day.month - 1,
-              ),
+          onPressed: () => _changeMonth(ref, DateTime(day.year, day.month - 1)),
           icon: const Icon(Icons.arrow_back_ios),
         ),
         Text(
@@ -54,14 +54,21 @@ class CalendarHeader extends ConsumerWidget {
           style: context.textTheme.displaySmall,
         ),
         IconButton(
-          onPressed: () =>
-              ref.read(calendarVisibleMonthProvider.notifier).state = DateTime(
-                day.year,
-                day.month + 1,
-              ),
+          onPressed: () => _changeMonth(ref, DateTime(day.year, day.month + 1)),
           icon: const Icon(Icons.arrow_forward_ios),
         ),
       ],
+    );
+  }
+
+  void _changeMonth(WidgetRef ref, DateTime targetMonth) {
+    final currentMonth = ref.read(calendarVisibleMonthProvider);
+    if (isSameCalendarMonth(currentMonth, targetMonth)) return;
+    ref.read(calendarVisibleMonthProvider.notifier).state = targetMonth;
+    unawaited(
+      ref.read(monetizationSafePointProvider)(
+        MeaningfulAdAction.calendarMonthChanged,
+      ),
     );
   }
 
@@ -167,3 +174,6 @@ class CalendarHeader extends ConsumerWidget {
     );
   }
 }
+
+bool isSameCalendarMonth(DateTime first, DateTime second) =>
+    first.year == second.year && first.month == second.month;

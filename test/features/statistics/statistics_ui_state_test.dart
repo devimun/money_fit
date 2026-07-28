@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/features/statistics/application/statistics_ui_state.dart';
+import 'package:money_fit/features/statistics/view/widgets/statistics_category_spending_chart.dart';
+import 'package:money_fit/features/statistics/view/widgets/statistics_date_selector.dart';
 
 void main() {
   test('builds immutable category totals from a month projection', () {
@@ -21,6 +23,27 @@ void main() {
     expect(state.flexExpenses.single.totalAmount, 30);
     expect(state.essentialExpenses.single.categoryId, 'rent');
     expect(state.top3Expenses.map((item) => item.totalAmount), [30.0, 30.0]);
+  });
+
+  test('statistics selection predicates reject no-op month and type taps', () {
+    expect(
+      isSameStatisticsMonth(DateTime(2026, 7, 1), DateTime(2026, 7, 31)),
+      isTrue,
+    );
+    expect(
+      isStatisticsExpenseTypeChange(
+        selectedType: ExpenseType.discretionary,
+        requestedType: ExpenseType.discretionary,
+      ),
+      isFalse,
+    );
+    expect(
+      isStatisticsExpenseTypeChange(
+        selectedType: ExpenseType.discretionary,
+        requestedType: ExpenseType.essential,
+      ),
+      isTrue,
+    );
   });
 }
 

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:money_fit/app/composition/monetization_providers.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/features/ledger/presentation/history/view/widgets/filter_components/month_year_picker_dialog.dart';
-import 'package:money_fit/features/monetization/data/google_mobile_ads_gateway.dart';
+import 'package:money_fit/features/monetization/domain/ad_suppression.dart';
 import 'package:money_fit/features/statistics/application/statistics_projection.dart';
 import 'package:money_fit/features/statistics/application/statistics_ui_state.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
@@ -32,12 +33,16 @@ class StatisticsDateSelector extends ConsumerWidget {
                 lastDate: DateTime.now(),
               ),
             );
-            if (selectedDate != null) {
-              InterstitialAdManager.instance.logActionAndShowAd();
-              ref
-                  .read(statisticsViewModelProvider.notifier)
-                  .changeDate(selectedDate.year, selectedDate.month);
+            if (selectedDate == null ||
+                isSameStatisticsMonth(selectedDate, selectedMonth)) {
+              return;
             }
+            ref
+                .read(statisticsViewModelProvider.notifier)
+                .changeDate(selectedDate.year, selectedDate.month);
+            await ref.read(monetizationSafePointProvider)(
+              MeaningfulAdAction.statisticsMonthChanged,
+            );
           },
           child: Row(
             children: [
@@ -58,3 +63,6 @@ class StatisticsDateSelector extends ConsumerWidget {
     );
   }
 }
+
+bool isSameStatisticsMonth(DateTime first, DateTime second) =>
+    first.year == second.year && first.month == second.month;

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:money_fit/app/router/app_routes.dart';
+import 'package:money_fit/app/router/analytics_navigation_observer.dart';
 import 'package:money_fit/app/router/app_router.dart';
 import 'package:money_fit/app/router/bootstrap_gate.dart';
 import 'package:money_fit/core/config/app_environment.dart';
+import 'package:money_fit/core/platform/analytics_tracker.dart';
 
 void main() {
   test(
@@ -84,7 +86,7 @@ void main() {
     }
   });
 
-  test('disabled Firebase uses no router analytics observer', () {
+  test('disabled Firebase still uses the consent-aware router observer', () {
     final container = ProviderContainer(
       overrides: [
         appEnvironmentProvider.overrideWithValue(AppEnvironment.test()),
@@ -92,15 +94,16 @@ void main() {
     );
     addTearDown(container.dispose);
 
-    expect(container.read(appRouterObserversProvider), isEmpty);
+    expect(container.read(appRouterObserversProvider), hasLength(1));
   });
 
-  testWidgets('analytics observer ignores an unavailable Firebase app', (
+  testWidgets('analytics observer ignores an unavailable analytics facade', (
     tester,
   ) async {
-    final observer = FailOpenFirebaseAnalyticsObserver(
-      analytics: () => throw StateError('Firebase not initialized'),
-      nameExtractor: (settings) => settings.name,
+    final observer = AnalyticsNavigatorObserver(
+      AnalyticsScreenViewTracker(
+        ThrowingAnalyticsTracker(StateError('offline')),
+      ),
     );
     final route = MaterialPageRoute<void>(
       settings: const RouteSettings(name: 'HomeScreen'),

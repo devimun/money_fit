@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_fit/app/composition/monetization_providers.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
-import 'package:money_fit/features/monetization/data/google_mobile_ads_gateway.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/features/ledger/presentation/history/viewmodel/expense_list_provider.dart';
+import 'package:money_fit/features/monetization/domain/ad_suppression.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
 class FilterActionButtons extends ConsumerWidget {
@@ -45,7 +48,6 @@ class FilterActionButtons extends ConsumerWidget {
               backgroundColor: context.colors.brandPrimary,
             ),
             onPressed: () {
-              InterstitialAdManager.instance.logActionAndShowAd();
               ref
                   .read(expenseListProvider.notifier)
                   .applyFilters(
@@ -55,6 +57,11 @@ class FilterActionButtons extends ConsumerWidget {
                     sortType: selectedSortType,
                   );
               Navigator.pop(context);
+              unawaited(
+                ref.read(monetizationSafePointProvider)(
+                  MeaningfulAdAction.expenseFilterApplied,
+                ),
+              );
             },
             child: Text(
               l10n.apply,

@@ -1,19 +1,176 @@
+import 'dart:async';
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:money_fit/features/monetization/application/ad_policy_service.dart';
+import 'package:money_fit/features/monetization/application/ad_telemetry.dart';
+import 'package:money_fit/features/monetization/domain/ad_policy.dart';
+import 'package:money_fit/features/monetization/domain/ad_suppression.dart';
 
 enum AdPlacement { home, calendar, expenses, stats, settings }
 
-/// AdMob 광고 서비스를 관리하는 클래스
-class AdService {
-  static AdService? _instance;
-  static AdService get instance => _instance ??= AdService._internal();
+abstract interface class MobileAdsConsentSdk {
+  Future<void> requestConsentInfoUpdate();
 
-  AdService._internal();
+  Future<void> loadAndShowConsentFormIfRequired();
 
-  /// AdMob SDK 초기화
-  static Future<void> initialize() async {
+  Future<bool> canRequestAds();
+
+  Future<void> initializeMobileAds();
+
+  Future<bool> isPrivacyOptionsFormAvailable();
+
+  Future<void> showPrivacyOptionsForm();
+}
+
+class GoogleMobileAdsConsentSdk implements MobileAdsConsentSdk {
+  const GoogleMobileAdsConsentSdk();
+
+  @override
+  Future<bool> canRequestAds() => ConsentInformation.instance.canRequestAds();
+
+  @override
+  Future<void> initializeMobileAds() async {
     await MobileAds.instance.initialize();
+  }
+
+  @override
+  Future<bool> isPrivacyOptionsFormAvailable() =>
+      ConsentInformation.instance.isConsentFormAvailable();
+
+  @override
+  Future<void> loadAndShowConsentFormIfRequired() {
+    final completion = Completer<void>();
+    ConsentForm.loadAndShowConsentFormIfRequired((_) => completion.complete());
+    return completion.future;
+  }
+
+  @override
+  Future<void> requestConsentInfoUpdate() {
+    final completion = Completer<void>();
+    ConsentInformation.instance.requestConsentInfoUpdate(
+      ConsentRequestParameters(),
+      completion.complete,
+      (_) => completion.complete(),
+    );
+    return completion.future;
+  }
+
+  @override
+  Future<void> showPrivacyOptionsForm() {
+    final completion = Completer<void>();
+    ConsentForm.showPrivacyOptionsForm((_) => completion.complete());
+    return completion.future;
+  }
+}
+
+/// The only Mobile Ads SDK boundary. UMP must grant [canRequestAds] before
+/// this adapter initializes the SDK or a caller requests an ad.
+class GoogleMobileAdsGateway {
+  GoogleMobileAdsGateway({MobileAdsConsentSdk? sdk})
+    : _sdk = sdk ?? const GoogleMobileAdsConsentSdk();
+
+  final MobileAdsConsentSdk _sdk;
+  Future<bool>? _initializing;
+  bool _initialized = false;
+  bool _canRequestAds = false;
+
+  bool get canRequestAds => _canRequestAds;
+
+  Future<bool> initialize() {
+    if (_initialized) return Future<bool>.value(_canRequestAds);
+    return _initializing ??= _initialize();
+  }
+
+  Future<bool> _initialize() async {
+    try {
+      await _sdk.requestConsentInfoUpdate();
+      await _sdk.loadAndShowConsentFormIfRequired();
+      _canRequestAds = await _sdk.canRequestAds();
+      if (_canRequestAds) await _sdk.initializeMobileAds();
+    } catch (_) {
+      // A failed UMP flow is fail-closed for advertising but not for the app.
+      _canRequestAds = false;
+    } finally {
+      _initialized = true;
+      _initializing = null;
+    }
+    return _canRequestAds;
+  }
+
+  /// Settings can invoke this when UMP exposes a privacy-options entry point.
+  Future<void> showPrivacyOptions() async {
+    try {
+      if (await _sdk.isPrivacyOptionsFormAvailable()) {
+        await _sdk.showPrivacyOptionsForm();
+      }
+    } catch (_) {
+      // The form is optional and must not disrupt settings.
+    }
+  }
+}
+
+/// Compatibility façade for the pre-refactor bootstrap and banner widgets.
+/// New composition should inject [GoogleMobileAdsGateway] through
+/// `monetization_providers.dart` rather than introducing another SDK singleton.
+class AdService {
+  static GoogleMobileAdsGateway _gateway = GoogleMobileAdsGateway();
+  static AdPolicy Function() _policy = () => AdPolicy.defaults;
+  static AdTelemetry _telemetry = const NoopAdTelemetry();
+
+  static bool get canRequestAds => _gateway.canRequestAds;
+  static GoogleMobileAdsGateway get gateway => _gateway;
+
+  static void configure({
+    required GoogleMobileAdsGateway gateway,
+    required AdPolicy Function() policy,
+    required AdTelemetry telemetry,
+  }) {
+    _gateway = gateway;
+    _policy = policy;
+    _telemetry = telemetry;
+  }
+
+  static Future<bool> initialize() async {
+    final canRequestAds = await _gateway.initialize();
+    final policy = _policy();
+    await track(AdTelemetryEvent.opportunity, <String, Object>{
+      'opportunity': 'sdk_initialization',
+      'eligible': canRequestAds && policy.masterEnabled,
+      if (!canRequestAds)
+        'suppress_reason': AdSuppressionReason.consentNotReady.value,
+      if (canRequestAds && !policy.masterEnabled)
+        'suppress_reason': AdSuppressionReason.masterDisabled.value,
+      'ad_policy_version': policy.version,
+    });
+    return canRequestAds;
+  }
+
+  static Future<void> showPrivacyOptions() => _gateway.showPrivacyOptions();
+
+  static bool get bannerEnabled {
+    final policy = _policy();
+    return canRequestAds && policy.masterEnabled && policy.bannerEnabled;
+  }
+
+  static AdSuppressionReason? get bannerSuppressionReason {
+    final policy = _policy();
+    if (!canRequestAds) return AdSuppressionReason.consentNotReady;
+    if (!policy.masterEnabled) return AdSuppressionReason.masterDisabled;
+    if (!policy.bannerEnabled) return AdSuppressionReason.formatDisabled;
+    return null;
+  }
+
+  static Future<void> track(
+    String event,
+    Map<String, Object> attributes,
+  ) async {
+    try {
+      await _telemetry.track(event, attributes);
+    } catch (_) {
+      // Telemetry must never prevent an ad decision or a local app action.
+    }
   }
 
   static const Map<AdPlacement, String> _androidBannerIds = {
@@ -23,262 +180,332 @@ class AdService {
     AdPlacement.stats: 'ca-app-pub-4769455621618933/9537095506',
     AdPlacement.expenses: 'ca-app-pub-4769455621618933/3003527071',
   };
-
   static const Map<AdPlacement, String> _iosBannerIds = {
     AdPlacement.home: 'ca-app-pub-4769455621618933/3825654152',
     AdPlacement.calendar: 'ca-app-pub-4769455621618933/1870075669',
     AdPlacement.settings: 'ca-app-pub-4769455621618933/9556993992',
     AdPlacement.stats: 'ca-app-pub-4769455621618933/5901102823',
-    AdPlacement.expenses: 'ca-app-pub-4769455621618933/3003527071',
+    AdPlacement.expenses: 'ca-app-pub-4769455621618933/2277269778',
   };
-  static const String _testBannerAdId =
+  static const _androidTestBannerAdId =
       'ca-app-pub-3940256099942544/6300978111';
-  static const String _testInterstitialAdId =
+  static const _iosTestBannerAdId = 'ca-app-pub-3940256099942544/2934735716';
+  static const _androidTestInterstitialAdId =
       'ca-app-pub-3940256099942544/1033173712';
-  static const String _iosReleaseInterstitialAdId =
+  static const _iosTestInterstitialAdId =
+      'ca-app-pub-3940256099942544/4411468910';
+  static const _iosReleaseInterstitialAdId =
       'ca-app-pub-4769455621618933/7377553211';
-  static const String _aosReleaseInterstitialAdId =
+  static const _androidReleaseInterstitialAdId =
       'ca-app-pub-4769455621618933/8064282065';
 
-  static const String _testAppOpenAdId =
-      'ca-app-pub-3940256099942544/9257395921';
-  static const String _iosReleaseAppOpenAdId =
-      'ca-app-pub-4769455621618933/7035055241';
-  static const String _aosReleaseAppOpenAdId =
-      'ca-app-pub-4769455621618933/4879665193';
+  static bool get isDebugMode => kDebugMode;
 
-  static String get appOpenAdId {
-    if (Platform.isAndroid) {
-      return isDebugMode ? _testAppOpenAdId : _aosReleaseAppOpenAdId;
-    } else if (Platform.isIOS) {
-      return isDebugMode ? _testAppOpenAdId : _iosReleaseAppOpenAdId;
-    }
-    throw UnsupportedError('Unsupported platform');
-  }
-
-  /// 개발/릴리스 모드에 따른 광고 ID 반환
-  static bool get isDebugMode {
-    bool inDebugMode = false;
-    assert(inDebugMode = true);
-    return inDebugMode;
-  }
-
-  /// 배너 광고 ID
   static String bannerId(AdPlacement placement) {
     if (isDebugMode) {
-      return _testBannerAdId;
-    } else {
-      if (Platform.isAndroid) {
-        return _androidBannerIds[placement] ?? _testBannerAdId;
-      } else if (Platform.isIOS) {
-        return _iosBannerIds[placement] ?? _testBannerAdId;
-      }
+      return Platform.isIOS ? _iosTestBannerAdId : _androidTestBannerAdId;
     }
-    throw UnsupportedError('Unsupported platform');
+    if (Platform.isAndroid) {
+      return _androidBannerIds[placement] ?? _androidTestBannerAdId;
+    }
+    if (Platform.isIOS) return _iosBannerIds[placement] ?? _iosTestBannerAdId;
+    return _androidTestBannerAdId;
   }
 
-  /// 전면 광고 ID
   static String get interstitialAdId {
     if (Platform.isAndroid) {
-      return isDebugMode ? _testInterstitialAdId : _aosReleaseInterstitialAdId;
-    } else if (Platform.isIOS) {
-      return isDebugMode ? _testInterstitialAdId : _iosReleaseInterstitialAdId;
+      return isDebugMode
+          ? _androidTestInterstitialAdId
+          : _androidReleaseInterstitialAdId;
     }
-    throw UnsupportedError('Unsupported platform');
+    if (Platform.isIOS) {
+      return isDebugMode
+          ? _iosTestInterstitialAdId
+          : _iosReleaseInterstitialAdId;
+    }
+    return _androidTestInterstitialAdId;
   }
 }
 
-/// 전면 광고 관리 클래스
+/// Owns a single interstitial. The only public display method requires a
+/// safe opportunity and a full-screen lease; action recording is separate.
 class InterstitialAdManager {
-  static InterstitialAdManager? _instance;
-  static InterstitialAdManager get instance =>
-      _instance ??= InterstitialAdManager._internal();
+  InterstitialAdManager({GoogleMobileAdsGateway? gateway})
+    : _gateway = gateway ?? GoogleMobileAdsGateway();
 
-  InterstitialAdManager._internal();
+  static final instance = InterstitialAdManager();
 
-  InterstitialAd? _interstitialAd;
-  bool _isAdReady = false;
+  GoogleMobileAdsGateway _gateway;
+  AdPolicyService? _policyService;
+  AdTelemetry _telemetry = const NoopAdTelemetry();
+  InterstitialAd? _ad;
+  bool _loading = false;
+  bool _showing = false;
+  FullscreenExperienceLease? _lease;
+  DateTime? _shownAt;
+  Completer<bool>? _showCompletion;
 
-  // --- 광고 정책 변수 ---
-  int _actionCount = 0;
-  DateTime? _lastAdShowTime;
-  final int _actionsPerAd = 12; // 몇 번의 액션마다 광고를 보여줄지
-  final Duration _adCooldown = const Duration(minutes: 10); // 광고 사이의 최소 간격
+  void configure({
+    required GoogleMobileAdsGateway gateway,
+    required AdPolicyService policyService,
+    required AdTelemetry telemetry,
+  }) {
+    _gateway = gateway;
+    _policyService = policyService;
+    _telemetry = telemetry;
+  }
 
-  /// 전면 광고 로드
+  Future<void> initialize() async {
+    final policy = _policyService;
+    if (policy == null) return;
+    await policy.initializeSession();
+    await _gateway.initialize();
+    await loadAd();
+  }
+
   Future<void> loadAd() async {
-    if (_isAdReady) return;
-
+    final policy = _policyService;
+    if (_loading || _ad != null || policy == null || !_gateway.canRequestAds) {
+      return;
+    }
+    final config = policy.policy;
+    if (!config.masterEnabled || !config.interstitialEnabled) return;
+    _loading = true;
+    final startedAt = DateTime.now();
+    unawaited(
+      _track(AdTelemetryEvent.request, <String, Object>{
+        'ad_format': 'interstitial',
+        'placement': 'natural_break',
+        'ad_policy_version': config.version,
+      }),
+    );
     await InterstitialAd.load(
       adUnitId: AdService.interstitialAdId,
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
-          _interstitialAd = ad;
-          _isAdReady = true;
-          _setupAdCallbacks(ad);
+          _loading = false;
+          _ad = ad;
+          _setCallbacks(ad);
+          unawaited(
+            _track(AdTelemetryEvent.loadCompleted, <String, Object>{
+              'ad_format': 'interstitial',
+              'placement': 'natural_break',
+              'result': 'success',
+              'latency_ms': DateTime.now().difference(startedAt).inMilliseconds,
+            }),
+          );
         },
         onAdFailedToLoad: (error) {
-          _isAdReady = false;
+          _loading = false;
+          unawaited(
+            _track(AdTelemetryEvent.loadCompleted, <String, Object>{
+              'ad_format': 'interstitial',
+              'placement': 'natural_break',
+              'result': 'failure',
+              'latency_ms': DateTime.now().difference(startedAt).inMilliseconds,
+              'error_code': error.code,
+              'error_domain': error.domain,
+            }),
+          );
         },
       ),
     );
   }
 
-  void _setupAdCallbacks(InterstitialAd ad) {
-    ad.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: (ad) {
-        _lastAdShowTime = DateTime.now();
-        _actionCount = 0; // 광고 표시 후 액션 카운트 초기화
-      },
-      onAdDismissedFullScreenContent: (ad) async {
-        ad.dispose();
-        _isAdReady = false;
-        await loadAd(); // 다음 광고 미리 로드
-      },
-      onAdFailedToShowFullScreenContent: (ad, error) async {
-        ad.dispose();
-        _isAdReady = false;
-        await loadAd(); // 재시도
-      },
+  Future<bool> recordSuccessfulMeaningfulAction(
+    MeaningfulAdAction action,
+  ) async {
+    final policy = _policyService;
+    if (policy == null) return false;
+    final recorded = await policy.recordSuccessfulMeaningfulAction(action);
+    if (recorded) {
+      await _track(AdTelemetryEvent.actionRecorded, <String, Object>{
+        'trigger': action.trigger,
+        'action_count': await _actionCount(policy),
+        'ad_policy_version': policy.policy.version,
+      });
+    }
+    return recorded;
+  }
+
+  /// Legacy call sites may invoke this during a transition. It deliberately
+  /// records only an action and can never create an interstitial by itself.
+  @Deprecated('Use recordSuccessfulMeaningfulAction after success.')
+  Future<bool> logActionAndShowAd() =>
+      recordSuccessfulMeaningfulAction(MeaningfulAdAction.legacy);
+
+  Future<bool> maybeShowAtSafePoint(
+    String opportunity, {
+    required FullscreenExperienceGate gate,
+  }) async {
+    final policy = _policyService;
+    if (policy == null) {
+      await _opportunity(opportunity, AdSuppressionReason.notConfigured);
+      return false;
+    }
+    final eligibility = await policy.interstitialEligibility(
+      canRequestAds: _gateway.canRequestAds,
     );
-  }
-
-  /// 사용자의 주요 액션을 기록하고, 조건이 맞으면 광고를 표시
-  Future<void> logActionAndShowAd() async {
-    _actionCount++;
-
-    // 쿨다운 확인: 마지막 광고 표시 후 충분한 시간이 지났는가?
-    final now = DateTime.now();
-    if (_lastAdShowTime != null &&
-        now.difference(_lastAdShowTime!) < _adCooldown) {
-      return;
+    if (!eligibility.allowed) {
+      await _opportunity(opportunity, eligibility.reason!);
+      return false;
+    }
+    if (_ad == null) {
+      await _opportunity(opportunity, AdSuppressionReason.adNotReady);
+      unawaited(loadAd());
+      return false;
+    }
+    if (_showing) {
+      await _opportunity(opportunity, AdSuppressionReason.fullscreenUiBusy);
+      return false;
+    }
+    final lease = await gate.tryAcquireInterstitial();
+    if (lease == null) {
+      await _opportunity(opportunity, AdSuppressionReason.fullscreenUiBusy);
+      return false;
     }
 
-    // 액션 카운트 확인: 정해진 횟수의 액션을 수행했는가?
-    if (_actionCount >= _actionsPerAd) {
-      await _showAd();
-    } else {}
-  }
-
-  Future<void> _showAd() async {
-    if (_isAdReady && _interstitialAd != null) {
-      await _interstitialAd!.show();
-    } else {
-      if (kDebugMode) {
-        print('Ad not ready.');
-      }
-      await loadAd(); // 혹시 광고가 로드되지 않았다면 다시 시도
+    await _opportunity(opportunity, null);
+    _lease = lease;
+    _showing = true;
+    final completion = Completer<bool>();
+    _showCompletion = completion;
+    try {
+      await _ad!.show();
+      return await completion.future;
+    } catch (_) {
+      _showing = false;
+      _releaseLease();
+      if (!completion.isCompleted) completion.complete(false);
+      if (identical(_showCompletion, completion)) _showCompletion = null;
+      await _track(AdTelemetryEvent.displayFailed, <String, Object>{
+        'ad_format': 'interstitial',
+        'placement': 'natural_break',
+        'error_code': 'show_exception',
+      });
+      return false;
     }
   }
 
-  /// Clears frequency state when the local profile is explicitly reset.
+  void _setCallbacks(InterstitialAd ad) {
+    ad.fullScreenContentCallback = FullScreenContentCallback(
+      onAdShowedFullScreenContent: (_) => unawaited(_onShown()),
+      onAdImpression: (_) => unawaited(
+        _track(AdTelemetryEvent.impression, <String, Object>{
+          'ad_format': 'interstitial',
+          'placement': 'natural_break',
+          'ad_policy_version': _policyService?.policy.version ?? 'unknown',
+        }),
+      ),
+      onAdClicked: (_) => unawaited(
+        _track(AdTelemetryEvent.clicked, <String, Object>{
+          'ad_format': 'interstitial',
+          'placement': 'natural_break',
+        }),
+      ),
+      onAdDismissedFullScreenContent: (shownAd) => unawaited(_finish(shownAd)),
+      onAdFailedToShowFullScreenContent: (shownAd, error) =>
+          unawaited(_finish(shownAd, errorCode: error.code)),
+    );
+    ad.onPaidEvent = (_, value, precision, currencyCode) {
+      unawaited(
+        _track(AdTelemetryEvent.revenueTracked, <String, Object>{
+          'ad_format': 'interstitial',
+          'placement': 'natural_break',
+          'value_micros': value,
+          'currency_code': currencyCode,
+          'precision': precision.name,
+        }),
+      );
+    };
+  }
+
+  Future<void> _onShown() async {
+    _shownAt = DateTime.now();
+    await _policyService?.recordFullscreenShown();
+    await _track(AdTelemetryEvent.displayed, <String, Object>{
+      'ad_format': 'interstitial',
+      'placement': 'natural_break',
+      'ad_policy_version': _policyService?.policy.version ?? 'unknown',
+    });
+  }
+
+  Future<void> _finish(InterstitialAd ad, {Object? errorCode}) async {
+    ad.dispose();
+    _ad = null;
+    _showing = false;
+    _releaseLease();
+    if (errorCode != null) {
+      await _track(AdTelemetryEvent.displayFailed, <String, Object>{
+        'ad_format': 'interstitial',
+        'placement': 'natural_break',
+        'error_code': '$errorCode',
+      });
+    } else if (_shownAt != null) {
+      await _track(AdTelemetryEvent.dismissed, <String, Object>{
+        'ad_format': 'interstitial',
+        'placement': 'natural_break',
+        'visible_duration_ms': DateTime.now()
+            .difference(_shownAt!)
+            .inMilliseconds,
+      });
+    }
+    _shownAt = null;
+    if (!(_showCompletion?.isCompleted ?? true)) {
+      _showCompletion!.complete(errorCode == null);
+    }
+    _showCompletion = null;
+    await loadAd();
+  }
+
+  Future<void> _opportunity(String opportunity, AdSuppressionReason? reason) {
+    return _track(AdTelemetryEvent.opportunity, <String, Object>{
+      'opportunity': opportunity,
+      'eligible': reason == null,
+      if (reason != null) 'suppress_reason': reason.value,
+      'ad_policy_version': _policyService?.policy.version ?? 'unknown',
+    });
+  }
+
+  Future<int> _actionCount(AdPolicyService policy) async {
+    return policy.pendingMeaningfulActionCount();
+  }
+
+  Future<void> _track(String event, Map<String, Object> attributes) async {
+    try {
+      await _telemetry.track(event, attributes);
+    } catch (_) {
+      // Optional telemetry must not alter ad behaviour.
+    }
+  }
+
+  void _releaseLease() {
+    _lease?.release();
+    _lease = null;
+  }
+
+  /// Compatibility entry point used by the current engagement resetter.
   void resetCounters() {
-    _actionCount = 0;
-    _lastAdShowTime = null;
+    unawaited(_policyService?.clear() ?? Future<void>.value());
   }
 
-  /// 리소스 정리
   void dispose() {
-    _interstitialAd?.dispose();
+    _ad?.dispose();
+    _ad = null;
+    _releaseLease();
   }
 }
 
-/// 앱 오프닝 광고(App Open Ad) 관리 클래스
+/// App-open is intentionally excluded from this release. The policy retains
+/// its disabled flag so the deployed Remote Config contract remains stable.
+@Deprecated('App-open lifecycle is intentionally not implemented.')
 class AppOpenAdManager {
-  static AppOpenAdManager? _instance;
-  static AppOpenAdManager get instance =>
-      _instance ??= AppOpenAdManager._internal();
+  AppOpenAdManager._();
 
-  AppOpenAdManager._internal();
+  static final instance = AppOpenAdManager._();
 
-  AppOpenAd? _appOpenAd;
-  DateTime? _adLoadTime;
-  bool _isShowingAd = false;
-  bool _isLoading = false;
-  bool _deferShowUntilLoaded = false;
+  Future<void> loadAd() async {}
 
-  final Duration _maxCacheDuration = const Duration(hours: 4);
-
-  bool get _isAdFresh {
-    if (_adLoadTime == null) return false;
-    return DateTime.now().difference(_adLoadTime!) < _maxCacheDuration;
-  }
-
-  bool get isAdAvailable => _appOpenAd != null && _isAdFresh;
-
-  Future<void> loadAd({bool showOnLoad = false}) async {
-    if (_isLoading) {
-      debugPrint('[AppOpenAd] load skipped: already loading');
-      return;
-    }
-    if (isAdAvailable) {
-      debugPrint('[AppOpenAd] load skipped: ad is fresh and available');
-      return;
-    }
-
-    _isLoading = true;
-    debugPrint('[AppOpenAd] start loading...');
-
-    await AppOpenAd.load(
-      adUnitId: AdService.appOpenAdId,
-      request: const AdRequest(),
-      adLoadCallback: AppOpenAdLoadCallback(
-        onAdLoaded: (ad) async {
-          _appOpenAd = ad;
-          _adLoadTime = DateTime.now();
-          _isLoading = false;
-          debugPrint('[AppOpenAd] loaded successfully');
-          if (_deferShowUntilLoaded || showOnLoad) {
-            _deferShowUntilLoaded = false;
-            await showAdIfAvailable();
-          }
-        },
-        onAdFailedToLoad: (error) {
-          _appOpenAd = null;
-          _adLoadTime = null;
-          _isLoading = false;
-          debugPrint('[AppOpenAd] failed to load: ${error.message}');
-        },
-      ),
-    );
-  }
-
-  Future<void> showAdIfAvailable({VoidCallback? onDismissed}) async {
-    if (_isShowingAd) {
-      debugPrint('[AppOpenAd] show skipped: already showing');
-      return;
-    }
-    if (!isAdAvailable) {
-      _deferShowUntilLoaded = true;
-      await loadAd();
-      return;
-    }
-
-    _isShowingAd = true;
-    debugPrint('[AppOpenAd] showing ad');
-
-    _appOpenAd!.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: (ad) {},
-      onAdDismissedFullScreenContent: (ad) async {
-        ad.dispose();
-        _appOpenAd = null;
-        _adLoadTime = null;
-        _isShowingAd = false;
-        debugPrint('[AppOpenAd] dismissed');
-        onDismissed?.call();
-        await loadAd();
-      },
-      onAdFailedToShowFullScreenContent: (ad, error) async {
-        ad.dispose();
-        _appOpenAd = null;
-        _adLoadTime = null;
-        _isShowingAd = false;
-        debugPrint('[AppOpenAd] failed to show: $error');
-        await loadAd();
-      },
-    );
-
-    await _appOpenAd!.show();
-  }
+  Future<bool> maybeShowAppOpen() async => false;
 }

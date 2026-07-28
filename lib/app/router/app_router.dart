@@ -1,10 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:money_fit/core/config/app_environment.dart';
+import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/features/auth/view/splash_screen.dart';
 import 'package:money_fit/features/statistics/view/statistics.dart';
 import 'package:money_fit/app/shell/app_shell.dart';
@@ -18,31 +15,32 @@ import 'package:money_fit/features/budget/presentation/setup/budget_setup_screen
 import 'package:money_fit/features/app_update/presentation/update_check_screen.dart';
 
 import 'app_routes.dart';
+import 'analytics_navigation_observer.dart';
 import 'bootstrap_failure_screen.dart';
 import 'bootstrap_gate.dart';
 import 'package:money_fit/app/bootstrap/bootstrap_controller.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 
-/// Navigation observers used by the application router.
-///
-/// Production records navigation with Firebase Analytics. Tests can override
-/// this provider with a regular no-op [NavigatorObserver] without initializing
-/// the Firebase SDK.
-final appRouterObserversProvider = Provider<List<NavigatorObserver>>((ref) {
-  final environment = ref.watch(appEnvironmentProvider);
-  if (!environment.firebase.isAvailable) return const [];
-  return [
-    FailOpenFirebaseAnalyticsObserver(
-      analytics: () => FirebaseAnalytics.instance,
-      nameExtractor: (settings) => settings.name,
-    ),
-  ];
-});
+/// Navigation observers used by the root navigator. Branch navigators receive
+/// fresh observer instances below, all sharing this tracker for de-duplication.
+final analyticsScreenViewTrackerProvider = Provider<AnalyticsScreenViewTracker>(
+  (ref) => AnalyticsScreenViewTracker(ref.watch(analyticsTrackerProvider)),
+);
+
+final appRouterObserversProvider = Provider<List<NavigatorObserver>>(
+  (ref) => [
+    AnalyticsNavigatorObserver(ref.watch(analyticsScreenViewTrackerProvider)),
+  ],
+);
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   ref.watch(bootstrapGateProvider);
   ref.read(bootstrapControllerProvider).start();
+  List<NavigatorObserver> branchObservers() => [
+    AnalyticsNavigatorObserver(ref.read(analyticsScreenViewTrackerProvider)),
+  ];
+
   return GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: AppRoutes.updateCheck,
@@ -88,10 +86,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         ),
       ),
       StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) =>
-            AppShell(navigationShell: navigationShell),
+        builder: (context, state, navigationShell) => AppShell(
+          navigationShell: navigationShell,
+          screenViewTracker: ref.read(analyticsScreenViewTrackerProvider),
+        ),
         branches: [
           StatefulShellBranch(
+            observers: branchObservers(),
             routes: [
               GoRoute(
                 path: AppRoutes.homePath,
@@ -110,6 +111,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             ],
           ),
           StatefulShellBranch(
+            observers: branchObservers(),
             routes: [
               GoRoute(
                 path: AppRoutes.calendar,
@@ -122,6 +124,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             ],
           ),
           StatefulShellBranch(
+            observers: branchObservers(),
             routes: [
               GoRoute(
                 path: AppRoutes.statistics,
@@ -134,6 +137,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             ],
           ),
           StatefulShellBranch(
+            observers: branchObservers(),
             routes: [
               GoRoute(
                 path: AppRoutes.expenseList,
@@ -146,6 +150,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             ],
           ),
           StatefulShellBranch(
+            observers: branchObservers(),
             routes: [
               GoRoute(
                 path: AppRoutes.settings,
@@ -217,48 +222,3 @@ const _protectedPaths = {
   AppRoutes.expenseList,
   AppRoutes.settings,
 };
-
-/// Firebase analytics is optional and can initialize after the local UI.
-/// This observer turns every unavailable or plugin failure into a no-op so
-/// route transitions never depend on a remote SDK being ready.
-class FailOpenFirebaseAnalyticsObserver extends NavigatorObserver {
-  FailOpenFirebaseAnalyticsObserver({
-    required FirebaseAnalytics Function() analytics,
-    required this.nameExtractor,
-  }) : _analytics = analytics;
-
-  final FirebaseAnalytics Function() _analytics;
-  final String? Function(RouteSettings settings) nameExtractor;
-
-  @override
-  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    super.didPush(route, previousRoute);
-    _sendScreenView(route);
-  }
-
-  @override
-  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
-    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
-    if (newRoute != null) _sendScreenView(newRoute);
-  }
-
-  @override
-  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    super.didPop(route, previousRoute);
-    if (previousRoute != null) _sendScreenView(previousRoute);
-  }
-
-  void _sendScreenView(Route<dynamic> route) {
-    final screenName = nameExtractor(route.settings);
-    if (screenName == null || screenName.isEmpty) return;
-    unawaited(_logScreenView(screenName));
-  }
-
-  Future<void> _logScreenView(String screenName) async {
-    try {
-      await _analytics().logScreenView(screenName: screenName);
-    } catch (_) {
-      // Remote analytics is observational and therefore deliberately ignored.
-    }
-  }
-}

@@ -1,12 +1,15 @@
+import 'dart:async';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_fit/app/composition/monetization_providers.dart';
 import 'package:money_fit/core/functions/functions.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/features/ledger/application/legacy/category_providers.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
-import 'package:money_fit/features/monetization/data/google_mobile_ads_gateway.dart';
+import 'package:money_fit/features/monetization/domain/ad_suppression.dart';
 import 'package:money_fit/features/statistics/application/statistics_projection.dart';
 import 'package:money_fit/features/statistics/application/statistics_ui_state.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
@@ -50,12 +53,12 @@ class CategorySpendingChart extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  _ExpenseTypeTab(
+                  ExpenseTypeTab(
                     title: l10n.discretionaryExpense,
                     type: ExpenseType.discretionary,
                     selectedType: data.expenseType,
                   ),
-                  _ExpenseTypeTab(
+                  ExpenseTypeTab(
                     title: l10n.essentialExpense,
                     type: ExpenseType.essential,
                     selectedType: data.expenseType,
@@ -166,11 +169,12 @@ class CategorySpendingChart extends ConsumerWidget {
   }
 }
 
-class _ExpenseTypeTab extends ConsumerWidget {
-  const _ExpenseTypeTab({
+class ExpenseTypeTab extends ConsumerWidget {
+  const ExpenseTypeTab({
     required this.title,
     required this.type,
     required this.selectedType,
+    super.key,
   });
 
   final String title;
@@ -183,10 +187,20 @@ class _ExpenseTypeTab extends ConsumerWidget {
     return Expanded(
       child: InkWell(
         onTap: () {
-          InterstitialAdManager.instance.logActionAndShowAd();
+          if (!isStatisticsExpenseTypeChange(
+            selectedType: selectedType,
+            requestedType: type,
+          )) {
+            return;
+          }
           ref
               .read(statisticsViewModelProvider.notifier)
               .changeExpenseType(type);
+          unawaited(
+            ref.read(monetizationSafePointProvider)(
+              MeaningfulAdAction.statisticsTypeChanged,
+            ),
+          );
         },
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12.0),
@@ -209,6 +223,11 @@ class _ExpenseTypeTab extends ConsumerWidget {
     );
   }
 }
+
+bool isStatisticsExpenseTypeChange({
+  required ExpenseType selectedType,
+  required ExpenseType requestedType,
+}) => selectedType != requestedType;
 
 Color categoryChartColor(BuildContext context, int index, int total) {
   final base = HSLColor.fromColor(context.colors.brandPrimary);
