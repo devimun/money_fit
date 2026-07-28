@@ -1,4 +1,4 @@
-• Personalizare temă adăugată
-• Ajustare dimensiune font adăugată (S/M/L)
-• Acum disponibil în română
-• Setări limbă și monedă adăugate
+• Am adăugat un mesaj opțional în aplicație pentru trimiterea feedbackului.
+• Am îmbunătățit fiabilitatea trimiterii feedbackului și a solicitărilor de asistență.
+• Am adăugat o setare pentru controlul colectării datelor analitice.
+• Am îmbunătățit momentul afișării reclamelor pentru a reduce întreruperile în timpul acțiunilor importante.

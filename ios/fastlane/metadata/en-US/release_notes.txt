@@ -1,4 +1,4 @@
-• Theme customization added
-• Font size adjustment added (S/M/L)
-• Added: Spanish, Polish, Ukrainian, Czech, German, Italian, Bulgarian, Romanian, Slovak
-• Language and currency settings added
+• Added an optional in-app prompt for sharing feedback.
+• Improved reliability when sending feedback and support inquiries.
+• Added a setting to control analytics data collection.
+• Refined ad timing to reduce interruptions during important actions.

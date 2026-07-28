@@ -1,4 +1,4 @@
-• Themenanpassung hinzugefügt
-• Schriftgrößenanpassung hinzugefügt (S/M/L)
-• Jetzt auf Deutsch verfügbar
-• Sprach- und Währungseinstellungen hinzugefügt
+• Wir haben eine optionale Aufforderung in der App hinzugefügt, um Feedback zu teilen.
+• Wir haben die Zuverlässigkeit beim Senden von Feedback und Supportanfragen verbessert.
+• Wir haben eine Einstellung zur Steuerung der Erfassung von Analysedaten hinzugefügt.
+• Wir haben die Ausspielung von Anzeigen zeitlich optimiert, damit wichtige Aktionen weniger unterbrochen werden.

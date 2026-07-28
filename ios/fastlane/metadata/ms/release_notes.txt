@@ -1,4 +1,4 @@
-• Penyesuaian tema ditambah
-• Pelarasan saiz fon ditambah (S/M/L)
-• Ditambah: Sepanyol, Poland, Ukraine, Czech, Jerman, Itali, Bulgaria, Romania, Slovakia
-• Tetapan bahasa dan mata wang ditambah
+• Menambahkan gesaan pilihan dalam aplikasi untuk berkongsi maklum balas.
+• Meningkatkan kebolehpercayaan penghantaran maklum balas dan pertanyaan sokongan.
+• Menambahkan tetapan untuk mengawal pengumpulan data analitik.
+• Menambah baik masa paparan iklan bagi mengurangkan gangguan semasa tindakan penting.

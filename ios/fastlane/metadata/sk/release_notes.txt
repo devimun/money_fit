@@ -1,4 +1,4 @@
-• Pridaná personalizácia témy
-• Pridaná úprava veľkosti písma (S/M/L)
-• Teraz dostupné po slovensky
-• Pridané nastavenie jazyka a meny
+• Pridali sme voliteľnú výzvu v aplikácii na zdieľanie spätnej väzby.
+• Zlepšili sme spoľahlivosť odosielania spätnej väzby a žiadostí o podporu.
+• Pridali sme nastavenie na kontrolu zhromažďovania analytických údajov.
+• Vylepšili sme načasovanie reklám, aby menej rušili pri dôležitých činnostiach.

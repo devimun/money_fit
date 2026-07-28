@@ -1,4 +1,4 @@
-• Přidána personalizace motivu
-• Přidána úprava velikosti písma (S/M/L)
-• Nyní dostupné v češtině
-• Přidáno nastavení jazyka a měny
+• Přidali jsme volitelnou výzvu v aplikaci pro sdílení zpětné vazby.
+• Zlepšili jsme spolehlivost odesílání zpětné vazby a požadavků na podporu.
+• Přidali jsme nastavení pro řízení shromažďování analytických dat.
+• Vylepšili jsme načasování reklam, aby méně rušily při důležitých činnostech.

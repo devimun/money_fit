@@ -1,4 +1,4 @@
-• Kustomisasi tema ditambahkan
-• Penyesuaian ukuran font ditambahkan (S/M/L)
-• Ditambahkan: Spanyol, Polandia, Ukraina, Ceko, Jerman, Italia, Bulgaria, Rumania, Slovakia
-• Pengaturan bahasa dan mata uang ditambahkan
+• Menambahkan ajakan opsional di dalam aplikasi untuk mengirimkan masukan.
+• Meningkatkan keandalan pengiriman masukan dan pertanyaan dukungan.
+• Menambahkan pengaturan untuk mengontrol pengumpulan data analitik.
+• Menyempurnakan waktu penayangan iklan agar tidak mengganggu tindakan penting.

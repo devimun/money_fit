@@ -1,4 +1,4 @@
-• Dodano personalizację motywu
-• Dodano regulację rozmiaru czcionki (S/M/L)
-• Teraz dostępne po polsku
-• Dodano ustawienia języka i waluty
+• Dodaliśmy opcjonalną zachętę w aplikacji do przesyłania opinii.
+• Poprawiliśmy niezawodność wysyłania opinii i zgłoszeń do pomocy technicznej.
+• Dodaliśmy ustawienie umożliwiające kontrolowanie zbierania danych analitycznych.
+• Dopracowaliśmy moment wyświetlania reklam, aby mniej przeszkadzały podczas ważnych działań.
