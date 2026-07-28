@@ -11,7 +11,10 @@ class AppShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: navigationShell,
+      // Every tab shares this shell. Consume the top system inset here so a
+      // screen cannot accidentally render under the status bar on edge-to-edge
+      // Android versions. The navigation bar owns its own bottom SafeArea.
+      body: SafeArea(bottom: false, child: navigationShell),
       bottomNavigationBar: MainBottomNavBar(navigationShell: navigationShell),
     );
   }
