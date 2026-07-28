@@ -5,6 +5,7 @@ import 'package:money_fit/app/composition/analytics_providers.dart';
 import 'package:money_fit/app/composition/engagement_providers.dart';
 import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/core/engagement/prompt_coordinator.dart';
+import 'package:money_fit/core/platform/remote_config.dart';
 import 'package:money_fit/core/providers/shared_preferences_provider.dart';
 import 'package:money_fit/features/monetization/application/ad_policy_service.dart';
 import 'package:money_fit/features/monetization/application/ad_telemetry.dart';
@@ -100,8 +101,8 @@ final monetizationSafePointProvider =
       final remoteConfig = ref.watch(remoteConfigReaderProvider);
       final gate = PromptCoordinatorInterstitialGate(
         ref.watch(promptCoordinatorProvider),
-        quietPeriod: _quietPeriod(
-          remoteConfig.intValue('proactive_fullscreen_quiet_seconds'),
+        quietPeriod: Duration(
+          seconds: readValidatedProactiveFullscreenQuietSeconds(remoteConfig),
         ),
       );
 
@@ -118,9 +119,6 @@ final monetizationSafePointProvider =
 final monetizationStateClearerProvider = Provider<Future<void> Function()>(
   (ref) => ref.read(adPolicyServiceProvider).clear,
 );
-
-Duration _quietPeriod(int seconds) =>
-    Duration(seconds: seconds.clamp(0, 86400).toInt());
 
 /// Ad adapter for the app-wide full-screen prompt arbiter.
 class PromptCoordinatorInterstitialGate implements FullscreenExperienceGate {

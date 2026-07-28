@@ -100,13 +100,7 @@ class FeedbackPromptConfig {
         lower: 7,
         upper: 365,
       ),
-      quietPeriodSeconds: _canonicalOrLegacyInt(
-        remote,
-        canonical: 'proactive_fullscreen_quiet_seconds',
-        legacy: 'feedback_prompt_quiet_period_seconds',
-        lower: 30,
-        upper: 600,
-      ),
+      quietPeriodSeconds: _canonicalOrLegacyQuietPeriodSeconds(remote),
       policyVersion: _canonicalPolicyVersion(
         remote,
         'feedback_prompt_policy_version',
@@ -168,6 +162,27 @@ class FeedbackPromptConfig {
     }
     return _defaultValue<int>(canonical);
   }
+
+  static int _canonicalOrLegacyQuietPeriodSeconds(RemoteConfigReader remote) {
+    if (remote.isRemoteValue(proactiveFullscreenQuietSecondsKey)) {
+      return _validatedQuietPeriodSeconds(
+        remote,
+        proactiveFullscreenQuietSecondsKey,
+      );
+    }
+    if (remote.isRemoteValue('feedback_prompt_quiet_period_seconds')) {
+      return _validatedQuietPeriodSeconds(
+        remote,
+        'feedback_prompt_quiet_period_seconds',
+      );
+    }
+    return proactiveFullscreenQuietSecondsDefault;
+  }
+
+  static int _validatedQuietPeriodSeconds(
+    RemoteConfigReader remote,
+    String remoteKey,
+  ) => readValidatedProactiveFullscreenQuietSeconds(remote, key: remoteKey);
 
   static int _validatedInt(
     RemoteConfigReader remote, {

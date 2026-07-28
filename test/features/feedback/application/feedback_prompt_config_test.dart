@@ -82,6 +82,20 @@ void main() {
     expect(config.engagementCooldownDays, 42);
     expect(config.quietPeriodSeconds, 90);
   });
+
+  test(
+    'uses the canonical quiet-period fallback for an invalid legacy value',
+    () {
+      final config = FeedbackPromptConfig.fromRemoteConfig(
+        _RemoteValues(
+          values: const {'feedback_prompt_quiet_period_seconds': 601},
+          remoteKeys: const {'feedback_prompt_quiet_period_seconds'},
+        ),
+      );
+
+      expect(config.quietPeriodSeconds, proactiveFullscreenQuietSecondsDefault);
+    },
+  );
 }
 
 class _RemoteValues implements RemoteConfigReader {
