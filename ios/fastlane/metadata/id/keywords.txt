@@ -1,1 +1,1 @@
-anggaran,pengeluaran,uang,hemat,tabungan,harian,bulanan,pencatat,kalender
+kalender,statistik,kategori,bulanan,sisa saldo,pengeluaran

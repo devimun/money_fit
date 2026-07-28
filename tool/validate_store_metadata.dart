@@ -58,52 +58,52 @@ const _androidLocaleMapping = <String, String>{
 
 const _iosCopy = <String, Map<String, String>>{
   'en-US': {
-    'name': 'MoneyFit - Expense Tracker',
+    'name': 'MoneyFit - Budget & Expenses',
     'subtitle': 'Know what you can spend today',
     'keywords':
-        'budget,spending,planner,money,savings,finance,calendar,simple,daily',
+        'calendar,statistics,categories,monthly,discretionary,remaining',
   },
   'en-GB': {
-    'name': 'MoneyFit - Expense Tracker',
+    'name': 'MoneyFit - Budget & Expenses',
     'subtitle': 'Know what you can spend today',
     'keywords':
-        'budget,spending,planner,money,savings,finance,calendar,simple,daily',
+        'calendar,statistics,categories,monthly,discretionary,remaining',
   },
   'ko': {
-    'name': 'MoneyFit - 하루 예산 가계부',
+    'name': 'MoneyFit - 예산 관리 가계부',
     'subtitle': '오늘 쓸 수 있는 금액을 한눈에',
-    'keywords': '지출관리,소비습관,돈관리,월예산,소비분석,용돈기입장',
+    'keywords': '지출관리,소비분석,생활비,월간통계,캘린더,필수비용,카테고리',
   },
   'es-ES': {
-    'name': 'MoneyFit - Control de gastos',
+    'name': 'MoneyFit - Presupuesto y gasto',
     'subtitle': 'Tu presupuesto diario simple',
     'keywords':
         'dinero,finanzas,ahorro,gestor,límite,mensual,seguimiento,calendario',
   },
   'pl': {
-    'name': 'MoneyFit - Kontrola wydatków',
+    'name': 'MoneyFit - Budżet i wydatki',
     'subtitle': 'Twój prosty budżet dzienny',
     'keywords':
         'finanse,pieniądze,oszczędności,limity,miesięczny,rejestr,portfel,kalendarz',
   },
   'uk': {
-    'name': 'MoneyFit - Облік витрат',
+    'name': 'MoneyFit - Бюджет і витрати',
     'subtitle': 'Твій простий щоденний бюджет',
     'keywords': 'фінанси,гроші,економія,ліміт,гаманець,місячний',
   },
   'cs': {
-    'name': 'MoneyFit - Sledování výdajů',
+    'name': 'MoneyFit - Rozpočet a výdaje',
     'subtitle': 'Jednoduchý denní rozpočet',
     'keywords': 'finance,peníze,úspory,limit,měsíční,evidence,kalendář',
   },
   'de-DE': {
-    'name': 'MoneyFit - Haushaltsbuch',
+    'name': 'MoneyFit - Budget und Ausgaben',
     'subtitle': 'Dein einfaches Tagesbudget',
     'keywords':
-        'ausgaben,tracker,finanzen,geld,sparen,limit,monatlich,kalender',
+        'kalender,statistik,kategorien,tageslimit,monatslimit,restbetrag',
   },
   'it': {
-    'name': 'MoneyFit - Gestione spese',
+    'name': 'MoneyFit - Budget e spese',
     'subtitle': 'Il tuo budget giornaliero',
     'keywords':
         'soldi,finanze,risparmio,limite,mensile,registro,semplice,calendario',
@@ -115,19 +115,19 @@ const _iosCopy = <String, Map<String, String>>{
         'bani,finanțe,economii,zilnic,lunar,monitorizare,simplu,personal',
   },
   'sk': {
-    'name': 'MoneyFit - Výdavky a rozpočet',
+    'name': 'MoneyFit - Rozpočet a výdavky',
     'subtitle': 'Koľko môžeš dnes minúť',
     'keywords':
         'financie,peniaze,úspory,denný,mesačný,sledovanie,kalendár,osobný',
   },
   'id': {
-    'name': 'MoneyFit - Catatan Keuangan',
+    'name': 'MoneyFit - Anggaran & Belanja',
     'subtitle': 'Tahu batas belanja hari ini',
     'keywords':
-        'anggaran,pengeluaran,uang,hemat,tabungan,harian,bulanan,pencatat,kalender',
+        'kalender,statistik,kategori,bulanan,sisa saldo,pengeluaran',
   },
   'ms': {
-    'name': 'MoneyFit - Rekod Perbelanjaan',
+    'name': 'MoneyFit - Bajet & Belanja',
     'subtitle': 'Bajet harian yang ringkas',
     'keywords': 'kewangan,wang,simpanan,had,bulanan,jejak,jimat,kalendar',
   },
@@ -135,41 +135,41 @@ const _iosCopy = <String, Map<String, String>>{
 
 const _androidCopy = <String, Map<String, String>>{
   'en-US': {
-    'title': 'MoneyFit - Expense Tracker',
+    'title': 'MoneyFit - Budget & Expenses',
     'short_description':
-        'See exactly how much you can safely spend today. Simple daily budget.',
+        'See your daily or monthly budget and spending flow at a glance.',
   },
   'ko-KR': {
-    'title': 'MoneyFit - 하루 예산 가계부',
-    'short_description': '오늘 얼마까지 써도 되는지 바로 확인하는 심플한 하루 예산 가계부',
+    'title': 'MoneyFit - 예산 관리 가계부',
+    'short_description': '오늘 쓸 수 있는 금액과 소비 흐름을 한눈에 확인하세요.',
   },
   'es-ES': {
-    'title': 'MoneyFit - Control de gastos',
+    'title': 'MoneyFit - Presupuesto y gasto',
     'short_description':
         'Descubre cuánto puedes gastar hoy con un presupuesto diario simple.',
   },
   'pl-PL': {
-    'title': 'MoneyFit - Kontrola wydatków',
+    'title': 'MoneyFit - Budżet i wydatki',
     'short_description':
         'Sprawdź, ile możesz dziś wydać. Prosty budżet dzienny i kontrola wydatków.',
   },
   'uk': {
-    'title': 'MoneyFit - Облік витрат',
+    'title': 'MoneyFit - Бюджет і витрати',
     'short_description':
         'Дізнайся, скільки можна витратити сьогодні. Простий щоденний бюджет.',
   },
   'cs-CZ': {
-    'title': 'MoneyFit - Sledování výdajů',
+    'title': 'MoneyFit - Rozpočet a výdaje',
     'short_description':
         'Hned víš, kolik můžeš dnes utratit. Jednoduchý denní rozpočet.',
   },
   'de-DE': {
-    'title': 'MoneyFit - Haushaltsbuch',
+    'title': 'MoneyFit - Budget und Ausgaben',
     'short_description':
         'Sieh sofort, wie viel du heute ausgeben kannst. Einfaches Tagesbudget.',
   },
   'it-IT': {
-    'title': 'MoneyFit - Gestione spese',
+    'title': 'MoneyFit - Budget e spese',
     'short_description':
         'Scopri quanto puoi spendere oggi con un budget giornaliero semplice.',
   },
@@ -179,27 +179,27 @@ const _androidCopy = <String, Map<String, String>>{
         'Vezi cât poți cheltui azi. Buget zilnic simplu și evidența cheltuielilor.',
   },
   'sk': {
-    'title': 'MoneyFit - Výdavky a rozpočet',
+    'title': 'MoneyFit - Rozpočet a výdavky',
     'short_description':
         'Hneď vieš, koľko môžeš dnes minúť. Jednoduchý denný rozpočet.',
   },
   'bg': {
-    'title': 'MoneyFit - Разходи и бюджет',
+    'title': 'MoneyFit - Бюджет и разходи',
     'short_description':
         'Виж колко можеш да похарчиш днес. Лесен дневен бюджет и следене на разходи.',
   },
   'id': {
-    'title': 'MoneyFit - Catatan Keuangan',
+    'title': 'MoneyFit - Anggaran & Belanja',
     'short_description':
         'Cek berapa yang aman dibelanjakan hari ini. Anggaran harian yang simpel.',
   },
   'ms-MY': {
-    'title': 'MoneyFit - Rekod Perbelanjaan',
+    'title': 'MoneyFit - Bajet & Belanja',
     'short_description':
         'Tahu jumlah yang boleh dibelanja hari ini. Bajet harian yang ringkas.',
   },
   'fil': {
-    'title': 'MoneyFit - Budget at Gastos',
+    'title': 'MoneyFit - Badyet at Gastos',
     'short_description':
         'Alamin kung magkano ang puwedeng gastusin ngayon. Simpleng budget araw-araw.',
   },

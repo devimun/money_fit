@@ -1,1 +1,1 @@
-ausgaben,tracker,finanzen,geld,sparen,limit,monatlich,kalender
+kalender,statistik,kategorien,tageslimit,monatslimit,restbetrag

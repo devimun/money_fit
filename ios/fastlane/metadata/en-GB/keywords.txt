@@ -1,1 +1,1 @@
-budget,spending,planner,money,savings,finance,calendar,simple,daily
+calendar,statistics,categories,monthly,discretionary,remaining
