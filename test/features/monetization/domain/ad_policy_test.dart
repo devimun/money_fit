@@ -14,6 +14,16 @@ void main() {
     expect(policy.appOpenEnabled, isFalse);
   });
 
+  test('accepts an 80-character canonical policy version', () {
+    final version = List.filled(80, 'p').join();
+    final policy = AdPolicy.fromReader(
+      _Reader(<String, String>{'ads_policy_version': version}),
+    );
+
+    expect(policy.version, version);
+    expect(policy.invalidKeys, isEmpty);
+  });
+
   test('falls back per invalid Remote Config key without disabling policy', () {
     final policy = AdPolicy.fromReader(
       _Reader(<String, String>{
@@ -59,5 +69,6 @@ class _Reader implements AdPolicyReader {
   final Map<String, String> _values;
 
   @override
-  String stringValue(String key) => _values[key] ?? '';
+  String stringValue(String key) =>
+      _values[key] ?? const DefaultAdPolicyReader().stringValue(key);
 }

@@ -87,6 +87,34 @@ void main() {
     expect(values['navigation_type'], 'branch_switch');
   });
 
+  test(
+    'sanitizer accepts 80-character policy versions only for policy keys',
+    () {
+      final version = List.filled(80, 'p').join();
+      final sanitizer = AnalyticsSanitizer();
+
+      expect(
+        sanitizer.sanitize(AnalyticsEvent.feedbackPromptShown, {
+          'policy_version': version,
+          'variant': List.filled(65, 'v').join(),
+        }),
+        {
+          'schema_version': analyticsSchemaVersion,
+          'analytics_env': 'dev',
+          'policy_version': version,
+        },
+      );
+      expect(
+        sanitizer.sanitize(AnalyticsEvent.adImpression, {
+          'ad_format': 'interstitial',
+          'placement': 'natural_break',
+          'ad_policy_version': version,
+        })['ad_policy_version'],
+        version,
+      );
+    },
+  );
+
   test('screen views dual-write custom and Firebase standard events', () async {
     final firebase = _FakeFirebaseAnalyticsClient();
     final tracker = DualAnalyticsTracker(

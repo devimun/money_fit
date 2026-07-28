@@ -250,6 +250,13 @@ class AnalyticsSanitizer {
   }
 
   Object? _sanitizeProperty(String key, Object value) {
+    if (key == 'policy_version' || key == 'ad_policy_version') {
+      return value is String &&
+              RegExp(r'^[A-Za-z0-9_.-]{1,80}$').hasMatch(value) &&
+              !_looksLikeUuid(value)
+          ? value
+          : null;
+    }
     if (key == 'category_key') {
       return value is String
           ? (categoryKeys.contains(value) ? value : 'custom')
