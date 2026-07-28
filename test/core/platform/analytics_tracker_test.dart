@@ -41,6 +41,33 @@ void main() {
     });
   });
 
+  test('update and delete telemetry reject transaction PII', () {
+    final sanitizer = AnalyticsSanitizer();
+    const privateValues = <String, Object>{
+      'transaction_type': 'essential',
+      'name': 'Private lunch note',
+      'amount': 18000,
+      'user_id': 'local-owner-42',
+      'id': 'expense-42',
+      'email': 'person@example.com',
+      'details': 'private details',
+    };
+
+    for (final event in [
+      AnalyticsEvent.transactionUpdated,
+      AnalyticsEvent.transactionDeleted,
+    ]) {
+      expect(
+        sanitizer.sanitize(event, privateValues, analyticsEnvironment: 'prod'),
+        {
+          'schema_version': analyticsSchemaVersion,
+          'analytics_env': 'prod',
+          'transaction_type': 'essential',
+        },
+      );
+    }
+  });
+
   test('feedback and contact telemetry keep only canonical non-PII fields', () {
     final sanitizer = AnalyticsSanitizer();
 
@@ -114,6 +141,20 @@ void main() {
       );
     },
   );
+
+  test('sanitizer rejects the removed app-open ad taxonomy', () {
+    expect(
+      AnalyticsSanitizer().sanitize(AnalyticsEvent.adImpression, const {
+        'ad_format': 'app_open',
+        'placement': 'natural_break',
+      }),
+      {
+        'schema_version': analyticsSchemaVersion,
+        'analytics_env': 'dev',
+        'placement': 'natural_break',
+      },
+    );
+  });
 
   test('screen views dual-write custom and Firebase standard events', () async {
     final firebase = _FakeFirebaseAnalyticsClient();
@@ -218,6 +259,40 @@ void main() {
   );
 
   test(
+    'local identity is applied only after consent and is cleared explicitly',
+    () async {
+      final firebase = _FakeFirebaseAnalyticsClient();
+      final tracker = DualAnalyticsTracker(
+        const AnalyticsConfiguration(),
+        firebase: firebase,
+        collectionEnabled: true,
+      );
+
+      await tracker.setUserId('device-local-owner');
+      expect(firebase.userIds, isEmpty);
+
+      await tracker.initialize();
+      await tracker.setUserId(null);
+
+      expect(firebase.userIds, ['device-local-owner', null]);
+    },
+  );
+
+  test('persisted opt-out never applies a local analytics identity', () async {
+    final firebase = _FakeFirebaseAnalyticsClient();
+    final tracker = DualAnalyticsTracker(
+      const AnalyticsConfiguration(),
+      firebase: firebase,
+    );
+
+    await tracker.setUserId('device-local-owner');
+    await tracker.initialize();
+
+    expect(firebase.collectionEnabled, [false]);
+    expect(firebase.userIds, isEmpty);
+  });
+
+  test(
     'reset clears identity without changing the explicit collection choice',
     () async {
       final firebase = _FakeFirebaseAnalyticsClient();
@@ -227,6 +302,7 @@ void main() {
         collectionEnabled: true,
       );
 
+      await tracker.setUserId('device-local-owner');
       await tracker.initialize();
       await tracker.setCollectionEnabled(false);
       await tracker.reset();
@@ -240,12 +316,13 @@ void main() {
       );
 
       expect(firebase.collectionEnabled, [true, false]);
+      expect(firebase.userIds, ['device-local-owner', null]);
       expect(firebase.events, isEmpty);
     },
   );
 
   test(
-    'Amplitude switch does not disable Firebase Analytics collection',
+    'Amplitude-only opt-out does not suppress the Firebase local identity',
     () async {
       final firebase = _FakeFirebaseAnalyticsClient();
       final tracker = DualAnalyticsTracker(
@@ -254,6 +331,7 @@ void main() {
         collectionEnabled: true,
       );
 
+      await tracker.setUserId('device-local-owner');
       await tracker.setCollectionEnabled(true);
       await tracker.setAmplitudeCollectionEnabled(false);
       await tracker.track(
@@ -267,6 +345,7 @@ void main() {
       await tracker.initialize();
 
       expect(firebase.collectionEnabled, [true]);
+      expect(firebase.userIds, ['device-local-owner']);
       expect(firebase.events.single.name, 'create_transaction');
     },
   );
@@ -274,6 +353,7 @@ void main() {
 
 class _FakeFirebaseAnalyticsClient implements FirebaseAnalyticsClient {
   final collectionEnabled = <bool>[];
+  final userIds = <String?>[];
   final events = <({String name, Map<String, Object>? parameters})>[];
   final screenViews = <({String? screenName, String? screenClass})>[];
 
@@ -296,5 +376,7 @@ class _FakeFirebaseAnalyticsClient implements FirebaseAnalyticsClient {
   }
 
   @override
-  Future<void> setUserId({String? id}) async {}
+  Future<void> setUserId({String? id}) async {
+    userIds.add(id);
+  }
 }

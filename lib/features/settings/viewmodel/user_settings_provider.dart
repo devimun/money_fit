@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/core/models/user_model.dart';
+import 'package:money_fit/core/platform/analytics_telemetry.dart';
 import 'package:money_fit/app/composition/repository_providers.dart';
 import 'package:money_fit/core/repositories/user_repository.dart';
 import 'package:money_fit/features/session/application/session_context.dart';
@@ -39,9 +40,11 @@ class UserSettingsNotifier extends AsyncNotifier<User> {
     }
   }
 
-  Future<void> updateBudget(BudgetType budgetType, double newBudget) async {
+  /// Returns whether the repository accepted the write. Telemetry is emitted
+  /// only after that durable write succeeds.
+  Future<bool> updateBudget(BudgetType budgetType, double newBudget) async {
     final currentUser = state.value;
-    if (currentUser == null) return;
+    if (currentUser == null) return false;
 
     final updatedUser = currentUser.copyWith(
       budgetType: budgetType,
@@ -56,7 +59,17 @@ class UserSettingsNotifier extends AsyncNotifier<User> {
       log('Failed to update user: $e', stackTrace: st);
       state = AsyncValue.error(e, st);
       state = AsyncValue.data(currentUser); // rollback
+      return false;
     }
+
+    await ref
+        .read(analyticsTrackerProvider)
+        .trackBudgetSetBestEffort(
+          isInitial: false,
+          budgetPeriod: budgetType,
+          previousBudgetPeriod: currentUser.budgetType,
+        );
+    return true;
   }
 
   // Note: toggleDarkMode has been moved to themeModeProvider in theme_provider.dart

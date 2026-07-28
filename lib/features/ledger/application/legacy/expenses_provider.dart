@@ -77,6 +77,7 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
       throw NotFoundFailure(resource: 'Expense', identifier: updated.id);
     }
     await repository.updateExpense(updated);
+    unawaited(_trackUpdatedExpense(updated));
     await _invalidateAndReload([
       _keyFor(existing.userId, existing.date),
       _keyFor(updated.userId, updated.date),
@@ -87,6 +88,7 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
     await ref
         .read(expenseRepositoryProvider)
         .deleteExpense(deleted.id, deleted.userId);
+    unawaited(_trackDeletedExpense(deleted));
     await _invalidateAndReload([_keyFor(deleted.userId, deleted.date)]);
   }
 
@@ -147,6 +149,31 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
           );
     } catch (_) {
       // Analytics is observational and must not reverse a committed expense.
+    }
+  }
+
+  /// The legacy presentation path is still the live ledger command boundary.
+  /// Keep telemetry immediately after the successful repository write, before
+  /// cache refresh can fail independently.  The event intentionally carries
+  /// only the canonical spending kind: names, amounts, owner IDs, and custom
+  /// category IDs are never observational data.
+  Future<void> _trackUpdatedExpense(Expense expense) =>
+      _trackTransaction(AnalyticsEvent.transactionUpdated, expense);
+
+  Future<void> _trackDeletedExpense(Expense expense) =>
+      _trackTransaction(AnalyticsEvent.transactionDeleted, expense);
+
+  Future<void> _trackTransaction(AnalyticsEvent event, Expense expense) async {
+    try {
+      await ref
+          .read(analyticsTrackerProvider)
+          .track(
+            event.canonicalName,
+            parameters: {'transaction_type': expense.type.name},
+          );
+    } catch (_) {
+      // A committed ledger command must remain successful when analytics is
+      // unavailable.
     }
   }
 

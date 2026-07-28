@@ -9,6 +9,7 @@ import 'package:money_fit/app/bootstrap/optional_remote_capabilities.dart';
 import 'package:money_fit/app/router/bootstrap_gate.dart';
 import 'package:money_fit/core/config/app_environment.dart';
 import 'package:money_fit/core/preferences/preferences_provider.dart';
+import 'package:money_fit/features/app_update/application/update_presentation.dart';
 import 'package:money_fit/features/app_update/application/update_service.dart';
 import 'package:money_fit/features/budget/application/current_budget_provider.dart';
 import 'package:money_fit/features/ledger/application/ledger_currency_provider.dart';
@@ -28,9 +29,16 @@ class BootstrapController {
   Future<BootstrapOutcome> _start() async {
     final gate = _ref.read(bootstrapGateProvider.notifier);
     gate.set(BootstrapGateState.checkingUpdate);
+    _ref.read(updateStatusProvider.notifier).set(UpdateStatus.none);
     final environment = _ref.read(appEnvironmentProvider);
     final outcome = await resolveBootstrapOutcome(
-      checkForUpdate: () => _checkForUpdate(environment),
+      checkForUpdate: () async {
+        final status = await _checkForUpdate(environment);
+        // Routing only needs the forced flag, while the usable shell needs the
+        // full recommended-update payload after local bootstrap has completed.
+        _ref.read(updateStatusProvider.notifier).set(status);
+        return status;
+      },
       initializeLocalData: () async {
         gate.set(BootstrapGateState.initializing);
         await initializeCriticalLocalState(
@@ -101,7 +109,17 @@ class BootstrapController {
   Future<void> _startRemoteCapabilities(AppEnvironment environment) async {
     await _ref.read(optionalRemoteCapabilitiesProvider).start(environment);
     await _ref.read(remoteConfigServiceProvider).initialize();
-    await _ref.read(analyticsRuntimeProvider).start();
+    // The local owner is a device-local pseudonymous identifier. Do not use
+    // SessionContext.remoteUserId here: linked remote accounts are not needed
+    // for local analytics and must not cross the platform boundary.
+    final localOwnerId = (await _ref.read(
+      sessionContextProvider.future,
+    )).ownerId;
+    await startAnalyticsForLocalOwner(
+      identity: _ref.read(analyticsLocalIdentitySynchronizerProvider),
+      runtime: _ref.read(analyticsRuntimeProvider),
+      localOwnerId: localOwnerId,
+    );
   }
 
   Future<void> _ignoreFailure(Future<void> Function() action) async {

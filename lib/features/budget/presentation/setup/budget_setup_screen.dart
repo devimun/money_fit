@@ -20,6 +20,7 @@ class _BudgetSetupScreenState extends ConsumerState<BudgetSetupScreen> {
   final TextEditingController _budgetController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   BudgetType _budgetType = BudgetType.daily;
+  bool _isSubmitting = false;
 
   @override
   void dispose() {
@@ -28,14 +29,17 @@ class _BudgetSetupScreenState extends ConsumerState<BudgetSetupScreen> {
   }
 
   Future<void> _submitBudget() async {
-    if (_formKey.currentState!.validate()) {
+    if (_isSubmitting || !_formKey.currentState!.validate()) return;
+
+    setState(() => _isSubmitting = true);
+    try {
       final newBudget = double.parse(_budgetController.text);
       await ref
           .read(currentBudgetCommandsProvider)
-          .save(CurrentBudget(amount: newBudget, type: _budgetType));
-
-      // Onboarding complete event log
-      await ref.read(analyticsTrackerProvider).track('first_budget_setting');
+          .saveInitialBudget(
+            CurrentBudget(amount: newBudget, type: _budgetType),
+            analytics: ref.read(analyticsTrackerProvider),
+          );
 
       // The router keeps setup routes fenced until bootstrap is ready. Once the
       // budget has been persisted, release that fence before navigating home;
@@ -50,6 +54,8 @@ class _BudgetSetupScreenState extends ConsumerState<BudgetSetupScreen> {
           ),
         );
       }
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
     }
   }
 
@@ -64,6 +70,7 @@ class _BudgetSetupScreenState extends ConsumerState<BudgetSetupScreen> {
               formKey: _formKey,
               budgetController: _budgetController,
               onSubmitted: _submitBudget,
+              isSubmitting: _isSubmitting,
               selectedType: _budgetType,
               onTypeChanged: (type) {
                 if (type != null) {

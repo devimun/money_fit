@@ -200,7 +200,7 @@ class AnalyticsSanitizer {
     },
     'result': {'success', 'failure'},
     'source': {'review_negative', 'proactive_prompt'},
-    'ad_format': {'banner', 'interstitial', 'app_open'},
+    'ad_format': {'banner', 'interstitial'},
     'placement': {
       'natural_break',
       'home',

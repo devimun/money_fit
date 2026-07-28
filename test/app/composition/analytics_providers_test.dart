@@ -35,6 +35,59 @@ void main() {
       await updates.close();
     },
   );
+
+  test(
+    'bootstrap synchronizes the local owner before optional analytics starts',
+    () async {
+      SharedPreferences.setMockInitialValues({});
+      final preferences = await SharedPreferences.getInstance();
+      final tracker = _RecordingAnalyticsTracker();
+      final updates = StreamController<void>.broadcast();
+      final runtime = AnalyticsRuntime(
+        tracker: tracker,
+        consent: AnalyticsConsentRepository(preferences),
+        remoteConfig: _RemoteReader(amplitudeEnabled: false),
+        remoteUpdates: updates.stream,
+      );
+
+      await startAnalyticsForLocalOwner(
+        identity: AnalyticsLocalIdentitySynchronizer(tracker),
+        runtime: runtime,
+        localOwnerId: 'device-local-owner',
+      );
+
+      expect(tracker.userIds, ['device-local-owner']);
+      expect(tracker.calls, [
+        'user:device-local-owner',
+        'collection:true',
+        'amplitude:false',
+        'initialize',
+      ]);
+      await runtime.dispose();
+      await updates.close();
+    },
+  );
+
+  test(
+    'local identity synchronizer clears stale IDs and remains fail-open',
+    () async {
+      final tracker = _RecordingAnalyticsTracker();
+      final synchronizer = AnalyticsLocalIdentitySynchronizer(tracker);
+
+      await synchronizer.synchronize('device-local-owner');
+      await synchronizer.synchronize('device-local-owner');
+      await synchronizer.synchronize(null);
+
+      expect(tracker.userIds, ['device-local-owner', null]);
+
+      tracker.throwOnSetUserId = true;
+      await expectLater(
+        synchronizer.synchronize('replacement-owner'),
+        completes,
+      );
+      expect(tracker.userIds, ['device-local-owner', null]);
+    },
+  );
 }
 
 class _RemoteReader implements RemoteConfigReader {
@@ -59,11 +112,15 @@ class _RemoteReader implements RemoteConfigReader {
 class _RecordingAnalyticsTracker implements AnalyticsTracker {
   final collectionEnabled = <bool>[];
   final amplitudeEnabled = <bool>[];
+  final userIds = <String?>[];
+  final calls = <String>[];
   var initializeCalls = 0;
+  var throwOnSetUserId = false;
 
   @override
   Future<void> initialize() async {
     initializeCalls += 1;
+    calls.add('initialize');
   }
 
   @override
@@ -72,15 +129,21 @@ class _RecordingAnalyticsTracker implements AnalyticsTracker {
   @override
   Future<void> setAmplitudeCollectionEnabled(bool enabled) async {
     amplitudeEnabled.add(enabled);
+    calls.add('amplitude:$enabled');
   }
 
   @override
   Future<void> setCollectionEnabled(bool enabled) async {
     collectionEnabled.add(enabled);
+    calls.add('collection:$enabled');
   }
 
   @override
-  Future<void> setUserId(String? userId) async {}
+  Future<void> setUserId(String? userId) async {
+    if (throwOnSetUserId) throw StateError('offline');
+    userIds.add(userId);
+    calls.add('user:$userId');
+  }
 
   @override
   Future<void> track(

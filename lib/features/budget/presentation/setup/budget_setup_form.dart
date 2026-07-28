@@ -11,6 +11,7 @@ class BudgetSetupForm extends ConsumerWidget {
   final GlobalKey<FormState> formKey;
   final TextEditingController budgetController;
   final VoidCallback onSubmitted;
+  final bool isSubmitting;
   final BudgetType selectedType;
   final ValueChanged<BudgetType?> onTypeChanged;
 
@@ -19,6 +20,7 @@ class BudgetSetupForm extends ConsumerWidget {
     required this.formKey,
     required this.budgetController,
     required this.onSubmitted,
+    required this.isSubmitting,
     required this.selectedType,
     required this.onTypeChanged,
   });
@@ -114,7 +116,7 @@ class BudgetSetupForm extends ConsumerWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: onSubmitted,
+              onPressed: isSubmitting ? null : onSubmitted,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 textStyle: context.textTheme.labelLarge,

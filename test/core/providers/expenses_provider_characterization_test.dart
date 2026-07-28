@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:money_fit/core/error/app_failure.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/core/models/user_model.dart';
 import 'package:money_fit/core/platform/analytics_event.dart';
@@ -87,6 +88,51 @@ void main() {
     );
 
     test(
+      'tracks an updated expense once after successful persistence',
+      () async {
+        final original = _expense(id: 'updated-expense');
+        final updated = original.copyWith(type: ExpenseType.discretionary);
+        final analytics = _RecordingAnalyticsTracker();
+        await repository.createExpense(original);
+        final container = _container(repository, analytics: analytics);
+        addTearDown(container.dispose);
+
+        await container.read(coreExpensesProvider.future);
+        await container
+            .read(coreExpensesProvider.notifier)
+            .updateExpense(updated);
+        await Future<void>.delayed(Duration.zero);
+
+        expect(analytics.events, hasLength(1));
+        expect(
+          analytics.events.single.name,
+          AnalyticsEvent.transactionUpdated.canonicalName,
+        );
+        expect(analytics.events.single.parameters, <String, Object>{
+          'transaction_type': 'discretionary',
+        });
+      },
+    );
+
+    test('does not track an update when persistence fails', () async {
+      final analytics = _RecordingAnalyticsTracker();
+      final container = _container(repository, analytics: analytics);
+      addTearDown(container.dispose);
+
+      await container.read(coreExpensesProvider.future);
+
+      await expectLater(
+        container
+            .read(coreExpensesProvider.notifier)
+            .updateExpense(_expense(id: 'missing-update')),
+        throwsA(isA<NotFoundFailure>()),
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      expect(analytics.events, isEmpty);
+    });
+
+    test(
       'analytics failure does not prevent committed state from updating',
       () async {
         final created = _expense(id: 'created-expense');
@@ -159,6 +205,50 @@ void main() {
         isEmpty,
       );
       expect(container.read(coreExpensesProvider).value, isEmpty);
+    });
+
+    test(
+      'tracks a deleted expense once after successful persistence',
+      () async {
+        final expense = _expense(id: 'tracked-deletion');
+        final analytics = _RecordingAnalyticsTracker();
+        await repository.createExpense(expense);
+        final container = _container(repository, analytics: analytics);
+        addTearDown(container.dispose);
+
+        await container.read(coreExpensesProvider.future);
+        await container
+            .read(coreExpensesProvider.notifier)
+            .deleteExpense(expense);
+        await Future<void>.delayed(Duration.zero);
+
+        expect(analytics.events, hasLength(1));
+        expect(
+          analytics.events.single.name,
+          AnalyticsEvent.transactionDeleted.canonicalName,
+        );
+        expect(analytics.events.single.parameters, <String, Object>{
+          'transaction_type': 'essential',
+        });
+      },
+    );
+
+    test('does not track a deletion when persistence fails', () async {
+      final analytics = _RecordingAnalyticsTracker();
+      final container = _container(repository, analytics: analytics);
+      addTearDown(container.dispose);
+
+      await container.read(coreExpensesProvider.future);
+
+      await expectLater(
+        container
+            .read(coreExpensesProvider.notifier)
+            .deleteExpense(_expense(id: 'missing-deletion')),
+        throwsA(isA<NotFoundFailure>()),
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      expect(analytics.events, isEmpty);
     });
   });
 }

@@ -1,9 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_fit/app/bootstrap/bootstrap_controller.dart';
 import 'package:money_fit/app/composition/database_providers.dart';
 import 'package:money_fit/app/composition/engagement_providers.dart';
 import 'package:money_fit/app/composition/feedback_providers.dart';
+import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/app/reset/engagement_reset.dart';
 import 'package:money_fit/core/preferences/preferences_provider.dart';
+import 'package:money_fit/core/platform/analytics_telemetry.dart';
 import 'package:money_fit/features/budget/application/current_budget_provider.dart';
 import 'package:money_fit/features/ledger/application/legacy/category_providers.dart';
 import 'package:money_fit/features/ledger/application/legacy/expenses_provider.dart';
@@ -43,21 +46,25 @@ void resetInProcessEngagement(Ref ref) {
 class ResetOperations {
   const ResetOperations({
     required this.resetLocalData,
+    required this.recordDataReset,
     required this.clearPreferences,
     required this.clearSession,
     required this.cancelNotifications,
     required this.clearEngagement,
     required this.resetInProcessEngagement,
     required this.invalidateDependentState,
+    required this.reenterBootstrap,
   });
 
   final ResetOperation resetLocalData;
+  final ResetOperation recordDataReset;
   final ResetOperation clearPreferences;
   final ResetOperation clearSession;
   final ResetOperation cancelNotifications;
   final ResetOperation clearEngagement;
   final ResetOperation resetInProcessEngagement;
   final ResetOperation invalidateDependentState;
+  final ResetOperation reenterBootstrap;
 }
 
 /// Runs exactly the work declared by [scope], then discards derived state.
@@ -72,6 +79,7 @@ Future<void> runResetScope({
   switch (scope) {
     case ResetScope.localData:
       await operations.resetLocalData();
+      await _runFailOpen(operations.recordDataReset);
       await operations.clearSession();
     case ResetScope.preferences:
       await operations.clearPreferences();
@@ -83,6 +91,7 @@ Future<void> runResetScope({
       await operations.clearEngagement();
     case ResetScope.all:
       await operations.resetLocalData();
+      await _runFailOpen(operations.recordDataReset);
       await operations.clearPreferences();
       await operations.cancelNotifications();
       await operations.clearEngagement();
@@ -90,6 +99,17 @@ Future<void> runResetScope({
       await operations.resetInProcessEngagement();
   }
   await operations.invalidateDependentState();
+  if (scope == ResetScope.all) {
+    await operations.reenterBootstrap();
+  }
+}
+
+Future<void> _runFailOpen(ResetOperation operation) async {
+  try {
+    await operation();
+  } catch (_) {
+    // Observational work must not leave a completed reset half-applied.
+  }
 }
 
 /// Applies a declared reset scope and invalidates every state holder whose
@@ -103,6 +123,8 @@ class ResetCoordinator {
     scope: scope,
     operations: ResetOperations(
       resetLocalData: () => _ref.read(appDatabaseProvider).reset(),
+      recordDataReset: () =>
+          trackLocalDataResetBestEffort(_ref.read(analyticsTrackerProvider)),
       clearPreferences: () =>
           _ref.read(appPreferencesProvider.notifier).clear(),
       clearSession: () => _ref.read(sessionProvider.notifier).clearLocalOwner(),
@@ -111,6 +133,7 @@ class ResetCoordinator {
       clearEngagement: () => _ref.read(engagementResetterProvider).clear(),
       resetInProcessEngagement: () async => resetInProcessEngagement(_ref),
       invalidateDependentState: () async => _invalidateDependentState(),
+      reenterBootstrap: () => _ref.read(bootstrapControllerProvider).retry(),
     ),
   );
 

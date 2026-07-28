@@ -39,6 +39,22 @@ void main() {
     expect(outcome, BootstrapOutcome.needsSetup);
   });
 
+  test(
+    'a recommended update still starts the ready local application',
+    () async {
+      var localInitialized = false;
+
+      final outcome = await resolveBootstrapOutcome(
+        checkForUpdate: () async => _recommendedUpdate(),
+        initializeLocalData: () async => localInitialized = true,
+        hasCurrentBudget: () async => true,
+      );
+
+      expect(outcome, BootstrapOutcome.ready);
+      expect(localInitialized, isTrue);
+    },
+  );
+
   test('a local initialization failure is recoverable', () async {
     var budgetChecked = false;
 
@@ -120,6 +136,14 @@ void main() {
 UpdateStatus _forceUpdate() => const UpdateStatus(
   isForceUpdateRequired: true,
   isUpdateRecommended: false,
+  messageToDisplay: '',
+  storeUri: null,
+  changelogLines: [],
+);
+
+UpdateStatus _recommendedUpdate() => const UpdateStatus(
+  isForceUpdateRequired: false,
+  isUpdateRecommended: true,
   messageToDisplay: '',
   storeUri: null,
   changelogLines: [],

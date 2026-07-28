@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_fit/core/platform/analytics_telemetry.dart';
+import 'package:money_fit/core/platform/analytics_tracker.dart';
 import 'package:money_fit/features/budget/domain/current_budget.dart';
 import 'package:money_fit/features/budget/domain/current_budget_repository.dart';
 
@@ -38,6 +40,19 @@ class CurrentBudgetCommands {
     final ownerId = await _ref.read(currentOwnerProvider).id;
     await _ref.read(currentBudgetRepositoryProvider).save(ownerId, budget);
     _ref.invalidate(currentBudgetProvider);
+  }
+
+  /// Persists the first budget before emitting its corresponding telemetry.
+  /// A failed write therefore cannot produce a setup-complete event.
+  Future<void> saveInitialBudget(
+    CurrentBudget budget, {
+    required AnalyticsTracker analytics,
+  }) async {
+    await save(budget);
+    await analytics.trackBudgetSetBestEffort(
+      isInitial: true,
+      budgetPeriod: budget.type,
+    );
   }
 }
 
