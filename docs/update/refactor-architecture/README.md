@@ -93,6 +93,10 @@ View
 5. [작업 진행 프롬프트](./05-execution-prompt.md)  
    첫 작업과 이후 작업에서 그대로 복사해 사용할 실행 지시문, 검증 규칙, 완료 보고 형식을 제공한다.
 
+6. [1.2.7 이식 추적표](./06-1.2.7-traceability-matrix.md) — 1.2.7 source release의 기능·테스트·배포 자산이 새 공개 소유자에 보존됐는지 전수 추적한다.
+
+7. [1.2.7 운영 결정 보존 런북](./07-1.2.7-operations-runbook.md) — Supabase/Slack, Analytics, UMP/광고, feedback, ASO/Fastlane의 외부 승인·검증·rollback 절차를 새 구조 기준으로 보존한다.
+
 ## 분석 기준선
 
 | 항목 | 결과 |
