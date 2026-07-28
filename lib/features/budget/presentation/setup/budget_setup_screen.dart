@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:money_fit/app/composition/platform_providers.dart';
+import 'package:money_fit/app/router/bootstrap_gate.dart';
 import 'package:money_fit/app/router/app_routes.dart';
 import 'package:money_fit/core/foundation/budget_type.dart';
 import 'package:money_fit/features/budget/application/current_budget_provider.dart';
@@ -35,6 +36,11 @@ class _BudgetSetupScreenState extends ConsumerState<BudgetSetupScreen> {
 
       // Onboarding complete event log
       await ref.read(analyticsTrackerProvider).track('first_budget_setting');
+
+      // The router keeps setup routes fenced until bootstrap is ready. Once the
+      // budget has been persisted, release that fence before navigating home;
+      // otherwise the redirect sends this successful setup straight back here.
+      ref.read(bootstrapGateProvider.notifier).set(BootstrapGateState.ready);
 
       // 홈으로 이동시키고 알림 설정 요청 다이얼로그 띄우기
       if (mounted) {
