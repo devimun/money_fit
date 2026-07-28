@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/core/models/user_model.dart';
+import 'package:money_fit/core/platform/analytics_event.dart';
 import 'package:money_fit/core/platform/analytics_tracker.dart';
 import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/app/composition/repository_providers.dart';
@@ -111,6 +112,37 @@ void main() {
       },
     );
 
+    test(
+      'tracks created expenses with canonical transaction properties',
+      () async {
+        final analytics = _RecordingAnalyticsTracker();
+        final container = _container(repository, analytics: analytics);
+        addTearDown(container.dispose);
+        final customCategoryExpense = _expense(
+          id: 'custom-category-expense',
+          categoryId: 'my-custom-category',
+        );
+
+        await container.read(coreExpensesProvider.future);
+        await container
+            .read(coreExpensesProvider.notifier)
+            .addExpense(customCategoryExpense, entryPoint: 'calendar');
+        await Future<void>.delayed(Duration.zero);
+
+        expect(analytics.events, hasLength(1));
+        expect(
+          analytics.events.single.name,
+          AnalyticsEvent.transactionCreated.canonicalName,
+        );
+        expect(analytics.events.single.parameters, {
+          'transaction_type': 'essential',
+          'category_key': 'my-custom-category',
+          'is_custom_category': true,
+          'entry_point': 'calendar',
+        });
+      },
+    );
+
     test('reloads the visible month after deletion', () async {
       final expense = _expense(id: 'deleted-expense');
       await repository.createExpense(expense);
@@ -161,18 +193,52 @@ class _TestUserSettingsNotifier extends UserSettingsNotifier {
   }
 }
 
-Expense _expense({required String id}) {
+Expense _expense({required String id, String categoryId = 'food'}) {
   return ExpenseSqliteFixture.expense(
     id: id,
     userId: 'first-user',
     name: 'Coffee',
     amount: 4,
     date: DateTime(2024, 1, 10),
-    categoryId: 'food',
+    categoryId: categoryId,
     type: ExpenseType.essential,
     createdAt: DateTime(2024, 1, 10, 9),
     updatedAt: DateTime(2024, 1, 10, 9),
   );
+}
+
+class _RecordingAnalyticsTracker implements AnalyticsTracker {
+  final events = <({String name, Map<String, Object> parameters})>[];
+
+  @override
+  Future<void> initialize() async {}
+
+  @override
+  Future<void> reset() async {}
+
+  @override
+  Future<void> setAmplitudeCollectionEnabled(bool enabled) async {}
+
+  @override
+  Future<void> setCollectionEnabled(bool enabled) async {}
+
+  @override
+  Future<void> setUserId(String? userId) async {}
+
+  @override
+  Future<void> track(
+    String name, {
+    Map<String, Object> parameters = const {},
+  }) async {
+    events.add((name: name, parameters: parameters));
+  }
+
+  @override
+  Future<void> trackScreenView({
+    required String screenName,
+    String? previousScreenName,
+    required String navigationType,
+  }) async {}
 }
 
 void _expectExpenseIds(

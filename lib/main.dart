@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:money_fit/app/app.dart';
+import 'package:money_fit/app/composition/analytics_providers.dart';
 import 'package:money_fit/app/composition/current_budget_providers.dart';
 import 'package:money_fit/app/composition/database_providers.dart';
+import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/core/config/app_environment.dart';
 import 'package:money_fit/core/providers/shared_preferences_provider.dart';
 import 'package:money_fit/features/budget/application/current_budget_provider.dart';
@@ -29,6 +31,9 @@ Future<void> main() async {
       overrides: [
         sharedPreferencesProvider.overrideWithValue(sharedPreferences),
         appEnvironmentProvider.overrideWithValue(environment),
+        analyticsTrackerProvider.overrideWith(
+          (ref) => ref.watch(configuredAnalyticsTrackerProvider),
+        ),
         currentOwnerProvider.overrideWith(SessionCurrentOwner.new),
         currentBudgetRepositoryProvider.overrideWith(
           (ref) =>

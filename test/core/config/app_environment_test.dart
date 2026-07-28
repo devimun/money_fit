@@ -66,5 +66,27 @@ void main() {
         RemoteCapabilityUnavailableReason.disabled,
       );
     });
+
+    test(
+      'Amplitude is enabled only by an explicit Dart-define configuration',
+      () {
+        final disabled = AppEnvironment.fromValues(
+          amplitudeApiKey: 'production-key',
+          amplitudeEnabled: 'false',
+        );
+        final enabled = AppEnvironment.fromValues(
+          amplitudeApiKey: 'production-key',
+          amplitudeEnabled: 'true',
+          analyticsEnvironment: 'prod',
+          amplitudeServerZone: 'eu',
+        );
+
+        expect(disabled.analytics.isAmplitudeEnabled, isFalse);
+        expect(enabled.analytics.isAmplitudeEnabled, isTrue);
+        expect(enabled.analytics.analyticsEnvironment, 'prod');
+        expect(enabled.analytics.amplitudeServerZone, 'eu');
+        expect(enabled.analytics.toString(), isNot(contains('production-key')));
+      },
+    );
   });
 }

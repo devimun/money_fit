@@ -20,12 +20,39 @@ class OptionalRemoteCapabilities {
 
   final FirebaseInitializer _initializeFirebase;
   final SupabaseInitializer _initializeSupabase;
+  Future<void>? _firebaseStart;
+  Future<void>? _supabaseStart;
+  CapabilityState<SupabaseConfiguration> _supabase =
+      CapabilityUnavailable<SupabaseConfiguration>(
+        RemoteCapability.supabase,
+        reason: RemoteCapabilityUnavailableReason.notInitialized,
+        message: 'Supabase initialization has not completed.',
+      );
+
+  /// The runtime result of optional Supabase initialization.
+  ///
+  /// A valid build configuration is not enough to safely read the SDK
+  /// singleton: feedback/contact composition must wait for this state to be
+  /// available, and otherwise use its local unavailable implementation.
+  CapabilityState<SupabaseConfiguration> get supabase => _supabase;
 
   Future<void> start(AppEnvironment environment) async {
-    await Future.wait([
-      _startFirebase(environment),
-      _startSupabase(environment),
-    ]);
+    await Future.wait([startFirebase(environment), startSupabase(environment)]);
+  }
+
+  /// Firebase can be needed for the update decision before other optional
+  /// capabilities are started. The same future is reused later by [start].
+  Future<void> startFirebase(AppEnvironment environment) =>
+      _firebaseStart ??= _startFirebase(environment);
+
+  /// Concurrent callers share one initialization attempt. A failed optional
+  /// attempt is deliberately not cached, so a later local retry can recover
+  /// without restarting the application.
+  Future<void> startSupabase(AppEnvironment environment) {
+    if (_supabase.isAvailable) return Future<void>.value();
+    return _supabaseStart ??= _startSupabase(
+      environment,
+    ).whenComplete(() => _supabaseStart = null);
   }
 
   Future<void> _startFirebase(AppEnvironment environment) async {
@@ -37,13 +64,25 @@ class OptionalRemoteCapabilities {
 
   Future<void> _startSupabase(AppEnvironment environment) async {
     final configuration = environment.supabase.value;
-    if (configuration == null) return;
-    await _ignoreFailure(
-      () => _initializeSupabase(
+    if (configuration == null) {
+      _supabase = environment.supabase;
+      return;
+    }
+    try {
+      await _initializeSupabase(
         url: configuration.url.toString(),
         anonKey: configuration.anonKey,
-      ),
-    );
+      );
+      _supabase = CapabilityAvailable<SupabaseConfiguration>(configuration);
+    } catch (error, stackTrace) {
+      _supabase = CapabilityUnavailable<SupabaseConfiguration>(
+        RemoteCapability.supabase,
+        reason: RemoteCapabilityUnavailableReason.initializationFailed,
+        message: 'Supabase initialization failed.',
+        cause: error,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   Future<void> _ignoreFailure(Future<void> Function() action) async {

@@ -12,6 +12,7 @@ class AppEnvironment {
     required this.local,
     required this.supabase,
     required this.firebase,
+    required this.analytics,
     this.iosAppId,
   });
 
@@ -27,6 +28,19 @@ class AppEnvironment {
         'FIREBASE_ENABLED',
         defaultValue: 'true',
       ),
+      amplitudeApiKey: const String.fromEnvironment('AMPLITUDE_API_KEY'),
+      amplitudeEnabled: const String.fromEnvironment(
+        'AMPLITUDE_ENABLED',
+        defaultValue: 'false',
+      ),
+      analyticsEnvironment: const String.fromEnvironment(
+        'ANALYTICS_ENV',
+        defaultValue: 'dev',
+      ),
+      amplitudeServerZone: const String.fromEnvironment(
+        'AMPLITUDE_SERVER_ZONE',
+        defaultValue: 'us',
+      ),
       iosAppId: const String.fromEnvironment('IOS_APP_ID'),
     );
   }
@@ -36,12 +50,22 @@ class AppEnvironment {
     String supabaseUrl = '',
     String supabaseAnonKey = '',
     String firebaseEnabled = 'true',
+    String amplitudeApiKey = '',
+    String amplitudeEnabled = 'false',
+    String analyticsEnvironment = 'dev',
+    String amplitudeServerZone = 'us',
     String iosAppId = '',
   }) {
     return AppEnvironment(
       local: LocalEnvironment.parse(flavor),
       supabase: _parseSupabase(supabaseUrl, supabaseAnonKey),
       firebase: _parseFirebase(firebaseEnabled),
+      analytics: AnalyticsConfiguration.fromValues(
+        amplitudeApiKey: amplitudeApiKey,
+        amplitudeEnabled: amplitudeEnabled,
+        analyticsEnvironment: analyticsEnvironment,
+        amplitudeServerZone: amplitudeServerZone,
+      ),
       iosAppId: iosAppId.trim().isEmpty ? null : iosAppId.trim(),
     );
   }
@@ -54,6 +78,10 @@ class AppEnvironment {
 
   /// The optional Firebase analytics and remote-config capability.
   final CapabilityState<FirebaseConfiguration> firebase;
+
+  /// Build-time analytics configuration. The key is supplied only by a Dart
+  /// define and never makes local bootstrap unavailable.
+  final AnalyticsConfiguration analytics;
 
   /// Optional App Store identifier used only when opening the iOS store page.
   final String? iosAppId;
@@ -137,6 +165,7 @@ class AppEnvironment {
             reason: RemoteCapabilityUnavailableReason.disabled,
             message: 'Firebase is disabled for this test.',
           ),
+      analytics: const AnalyticsConfiguration(),
       iosAppId: iosAppId,
     );
   }
@@ -185,6 +214,7 @@ enum RemoteCapabilityUnavailableReason {
   missingConfiguration,
   invalidConfiguration,
   disabled,
+  notInitialized,
   initializationFailed,
 }
 
@@ -259,6 +289,50 @@ class SupabaseConfiguration {
 /// initialized for the current build; it deliberately contains no credentials.
 class FirebaseConfiguration {
   const FirebaseConfiguration();
+}
+
+/// Analytics build settings. Supplying an API key alone never starts Amplitude:
+/// production builds must explicitly set `AMPLITUDE_ENABLED=true`.
+class AnalyticsConfiguration {
+  const AnalyticsConfiguration({
+    this.amplitudeApiKey = '',
+    this.amplitudeEnabled = false,
+    this.analyticsEnvironment = 'dev',
+    this.amplitudeServerZone = 'us',
+  });
+
+  factory AnalyticsConfiguration.fromValues({
+    required String amplitudeApiKey,
+    required String amplitudeEnabled,
+    required String analyticsEnvironment,
+    required String amplitudeServerZone,
+  }) {
+    final key = amplitudeApiKey.trim();
+    final enabled = amplitudeEnabled.trim().toLowerCase() == 'true';
+    return AnalyticsConfiguration(
+      amplitudeApiKey: key,
+      amplitudeEnabled: enabled,
+      analyticsEnvironment: analyticsEnvironment.trim().toLowerCase() == 'prod'
+          ? 'prod'
+          : 'dev',
+      amplitudeServerZone: amplitudeServerZone.trim().toLowerCase() == 'eu'
+          ? 'eu'
+          : 'us',
+    );
+  }
+
+  final String amplitudeApiKey;
+  final bool amplitudeEnabled;
+  final String analyticsEnvironment;
+  final String amplitudeServerZone;
+
+  bool get isAmplitudeEnabled => amplitudeEnabled && amplitudeApiKey.isNotEmpty;
+
+  @override
+  String toString() =>
+      'AnalyticsConfiguration(amplitudeEnabled: $isAmplitudeEnabled, '
+      'analyticsEnvironment: $analyticsEnvironment, '
+      'amplitudeServerZone: $amplitudeServerZone)';
 }
 
 final appEnvironmentProvider = Provider<AppEnvironment>(

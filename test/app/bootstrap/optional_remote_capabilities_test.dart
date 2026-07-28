@@ -26,6 +26,11 @@ void main() {
         'firebase',
         'supabase:https://money-fit.supabase.co:anon-key',
       ]);
+      expect(capabilities.supabase.isAvailable, isFalse);
+      expect(
+        capabilities.supabase.unavailable?.reason,
+        RemoteCapabilityUnavailableReason.initializationFailed,
+      );
     },
   );
 
@@ -41,6 +46,60 @@ void main() {
       await capabilities.start(AppEnvironment.test());
 
       expect(calls, 0);
+      expect(capabilities.supabase.isAvailable, isFalse);
+      expect(
+        capabilities.supabase.unavailable?.reason,
+        RemoteCapabilityUnavailableReason.disabled,
+      );
+    },
+  );
+
+  test(
+    'exposes Supabase only after optional initialization succeeds',
+    () async {
+      final capabilities = OptionalRemoteCapabilities(
+        initializeFirebase: (options) async {},
+        initializeSupabase: ({required url, required anonKey}) async {},
+      );
+      final environment = AppEnvironment.fromValues(
+        supabaseUrl: 'https://money-fit.supabase.co',
+        supabaseAnonKey: 'anon-key',
+      );
+
+      expect(capabilities.supabase.isAvailable, isFalse);
+      expect(
+        capabilities.supabase.unavailable?.reason,
+        RemoteCapabilityUnavailableReason.notInitialized,
+      );
+
+      await capabilities.startSupabase(environment);
+
+      expect(capabilities.supabase.isAvailable, isTrue);
+    },
+  );
+
+  test(
+    'permits a later retry after optional Supabase initialization fails',
+    () async {
+      var attempts = 0;
+      final capabilities = OptionalRemoteCapabilities(
+        initializeFirebase: (options) async {},
+        initializeSupabase: ({required url, required anonKey}) async {
+          attempts += 1;
+          if (attempts == 1) throw StateError('offline');
+        },
+      );
+      final environment = AppEnvironment.fromValues(
+        supabaseUrl: 'https://money-fit.supabase.co',
+        supabaseAnonKey: 'anon-key',
+      );
+
+      await capabilities.startSupabase(environment);
+      expect(capabilities.supabase.isAvailable, isFalse);
+
+      await capabilities.startSupabase(environment);
+      expect(attempts, 2);
+      expect(capabilities.supabase.isAvailable, isTrue);
     },
   );
 }

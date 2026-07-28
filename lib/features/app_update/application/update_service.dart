@@ -3,9 +3,9 @@ import 'dart:io';
 import 'dart:convert';
 import 'dart:ui' as ui;
 
-import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:money_fit/core/config/app_environment.dart';
+import 'package:money_fit/core/platform/remote_config.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UpdateStatus {
@@ -62,7 +62,7 @@ class UpdateService {
 
   static Future<UpdateStatus> fetchUpdateStatus({
     AppEnvironment? environment,
-    FirebaseRemoteConfig? remoteConfig,
+    RemoteConfigReader? remoteConfig,
   }) async {
     final activeEnvironment = environment ?? AppEnvironment.fromDartDefines();
     if (!activeEnvironment.firebase.isAvailable) {
@@ -78,38 +78,16 @@ class UpdateService {
     final config =
         remoteConfig ??
         (throw StateError(
-          'An update source must be supplied by app composition.',
+          'A RemoteConfigReader must be supplied by app composition.',
         ));
-    await config.setConfigSettings(
-      RemoteConfigSettings(
-        fetchTimeout: const Duration(seconds: 10),
-        minimumFetchInterval: const Duration(minutes: 30),
-      ),
-    );
-    await config.setDefaults(<String, dynamic>{
-      rcKeyLatestVersion: currentVersion,
-      rcKeyMinSupportedVersion: '',
-      rcKeyUpdateChangelog: '',
-    });
 
-    Object? remoteCheckError;
-    StackTrace? remoteCheckStackTrace;
-    try {
-      await config.fetchAndActivate();
-    } catch (error, stackTrace) {
-      // Cached/default values can still produce a valid update decision, but
-      // callers must be able to distinguish that from a successful refresh.
-      remoteCheckError = error;
-      remoteCheckStackTrace = stackTrace;
-    }
-
-    final latest = config.getString(rcKeyLatestVersion).trim();
+    final latest = config.stringValue(rcKeyLatestVersion).trim();
     log('latest: $latest');
-    final minSupported = config.getString(rcKeyMinSupportedVersion).trim();
+    final minSupported = config.stringValue(rcKeyMinSupportedVersion).trim();
     log('minSupported: $minSupported');
     // 메시지는 l10n에서 처리하고, Remote Config는 변경 내역만 관리
     final String message = '';
-    String changelogRaw = config.getString(rcKeyUpdateChangelog).trim();
+    String changelogRaw = config.stringValue(rcKeyUpdateChangelog).trim();
     List<String> changelogLines;
     if (changelogRaw.startsWith('{')) {
       try {
@@ -149,16 +127,7 @@ class UpdateService {
         _compareSemver(currentVersion, latest) < 0;
 
     if (!mustUpdate && !shouldUpdate) {
-      if (remoteCheckError == null) return UpdateStatus.none;
-      return UpdateStatus(
-        isForceUpdateRequired: false,
-        isUpdateRecommended: false,
-        messageToDisplay: '',
-        storeUri: null,
-        changelogLines: const [],
-        remoteCheckError: remoteCheckError,
-        remoteCheckStackTrace: remoteCheckStackTrace,
-      );
+      return UpdateStatus.none;
     }
 
     return UpdateStatus(
@@ -167,8 +136,6 @@ class UpdateService {
       messageToDisplay: message,
       storeUri: null,
       changelogLines: changelogLines,
-      remoteCheckError: remoteCheckError,
-      remoteCheckStackTrace: remoteCheckStackTrace,
     );
   }
 

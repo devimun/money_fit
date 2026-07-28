@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/error/app_failure.dart';
 import 'package:money_fit/core/foundation/year_month.dart';
+import 'package:money_fit/core/platform/analytics_event.dart';
+import 'package:money_fit/core/platform/analytics_sanitizer.dart';
 import 'package:money_fit/features/ledger/data/legacy/expense_model.dart';
 import 'package:money_fit/app/composition/platform_providers.dart';
 import 'package:money_fit/app/composition/repository_providers.dart';
@@ -62,10 +64,10 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
   List<Expense> getTodayExpense(DateTime today) =>
       (state.valueOrNull ?? {})[_stripTime(today)] ?? const [];
 
-  Future<void> addExpense(Expense expense) async {
+  Future<void> addExpense(Expense expense, {String entryPoint = 'home'}) async {
     await ref.read(expenseRepositoryProvider).createExpense(expense);
     await _invalidateAndReload([_keyFor(expense.userId, expense.date)]);
-    unawaited(_trackCreatedExpense(expense));
+    unawaited(_trackCreatedExpense(expense, entryPoint: entryPoint));
   }
 
   Future<void> updateExpense(Expense updated) async {
@@ -125,15 +127,22 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
     }
   }
 
-  Future<void> _trackCreatedExpense(Expense expense) async {
+  Future<void> _trackCreatedExpense(
+    Expense expense, {
+    required String entryPoint,
+  }) async {
     try {
       await ref
           .read(analyticsTrackerProvider)
           .track(
-            'create_transaction',
+            AnalyticsEvent.transactionCreated.canonicalName,
             parameters: {
-              'type': expense.type.name,
-              'category': expense.categoryId,
+              'transaction_type': expense.type.name,
+              'category_key': expense.categoryId,
+              'is_custom_category': !AnalyticsSanitizer.categoryKeys.contains(
+                expense.categoryId,
+              ),
+              'entry_point': entryPoint,
             },
           );
     } catch (_) {
