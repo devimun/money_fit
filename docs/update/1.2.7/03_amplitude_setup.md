@@ -241,7 +241,7 @@ SDK가 자동 제공하는 platform, OS, app version, device 정보는 같은 �
 | `Ad Request` | `ad_format:banner|interstitial|app_open`, `placement`, `platform` | SDK load 요청 |
 | `Ad Load Completed` | `ad_format`, `placement`, `result:success|failure`, `latency_ms`, `error_code?`, `error_domain?` | raw error message나 unit ID 금지 |
 | `Ad Displayed` | `ad_format`, `placement`, `trigger`, `ad_policy_version` | Google show callback에서 기록 |
-| `Ad Impression` | `ad_format`, `placement`, `ad_policy_version`, `experiment_variant` | SDK impression callback에서 기록 |
+| `Ad Impression` | `ad_format`, `placement`, `ad_policy_version` | SDK impression callback에서 기록 |
 | `Ad Clicked` | `ad_format`, `placement` | SDK click callback에서 기록 |
 | `Ad Dismissed` | `ad_format`, `placement`, `visible_duration_ms` | 전면 광고 이후 핵심 행동 이탈 분석 |
 | `Ad Display Failed` | `ad_format`, `placement`, `error_code` | 표시 실패 원인 분리 |

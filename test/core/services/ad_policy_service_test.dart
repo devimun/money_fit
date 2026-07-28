@@ -8,16 +8,16 @@ void main() {
     masterEnabled: true,
     bannerEnabled: true,
     interstitialEnabled: true,
-    actionsRequired: 12,
-    cooldown: Duration(seconds: 600),
+    actionsRequired: 6,
+    cooldown: Duration(seconds: 300),
     minSessionAge: Duration(seconds: 120),
-    newUserGraceSessions: 3,
+    newUserGraceSessions: 0,
     maxPerSession: 3,
     maxPer24Hours: 8,
     appOpenEnabled: false,
     appOpenMinBackground: Duration(seconds: 120),
     appOpenCooldown: Duration(hours: 4),
-    policyVersion: 'control_12_600_v1',
+    policyVersion: 'control_6_300_first_session_v1',
   );
 
   late DateTime now;
@@ -31,32 +31,34 @@ void main() {
     service = AdPolicyService(prefs, () => policy, now: () => now);
   });
 
-  Future<void> matureSession() async {
+  Future<void> eligibleSession() async {
     await service.initializeSession();
-    for (var i = 0; i < 3; i++) {
-      now = now.add(const Duration(minutes: 31));
-      await service.initializeSession();
-    }
     now = now.add(const Duration(seconds: 120));
   }
 
   test(
-    'requires three completed grace sessions, session age, and 12 actions',
+    'allows the first session after its age and 6-action thresholds',
     () async {
       await service.initializeSession();
       expect(
         service.interstitialEligibility(consentReady: true).reason,
-        AdSuppressionReason.newUserGrace,
+        AdSuppressionReason.sessionTooYoung,
       );
-      await matureSession();
+      now = now.add(const Duration(seconds: 120));
       expect(
         service.interstitialEligibility(consentReady: true).reason,
         AdSuppressionReason.actionThreshold,
       );
-      for (var i = 0; i < 12; i++) {
+      for (var i = 0; i < 5; i++) {
         now = now.add(const Duration(seconds: 3));
         expect(await service.recordMeaningfulAction('action_$i'), isTrue);
       }
+      expect(
+        service.interstitialEligibility(consentReady: true).reason,
+        AdSuppressionReason.actionThreshold,
+      );
+      now = now.add(const Duration(seconds: 3));
+      await service.recordMeaningfulAction('action_5');
       expect(
         service.interstitialEligibility(consentReady: true).allowed,
         isTrue,
@@ -75,8 +77,8 @@ void main() {
   test(
     'only an actual show consumes action, cooldown, session, and rolling caps',
     () async {
-      await matureSession();
-      for (var i = 0; i < 12; i++) {
+      await eligibleSession();
+      for (var i = 0; i < 6; i++) {
         now = now.add(const Duration(seconds: 3));
         await service.recordMeaningfulAction('action_$i');
       }
@@ -87,7 +89,7 @@ void main() {
       await service.recordFullscreenShown();
       expect(service.actionCount, 0);
       expect(service.shownThisSession, 1);
-      for (var i = 0; i < 12; i++) {
+      for (var i = 0; i < 6; i++) {
         now = now.add(const Duration(seconds: 3));
         await service.recordMeaningfulAction('cooldown_$i');
       }
@@ -95,8 +97,8 @@ void main() {
         service.interstitialEligibility(consentReady: true).reason,
         AdSuppressionReason.cooldown,
       );
-      now = now.add(const Duration(seconds: 600));
-      for (var i = 0; i < 12; i++) {
+      now = now.add(const Duration(seconds: 300));
+      for (var i = 0; i < 6; i++) {
         now = now.add(const Duration(seconds: 3));
         await service.recordMeaningfulAction('again_$i');
       }
@@ -108,7 +110,7 @@ void main() {
   );
 
   test('persisted rolling history survives a new policy service', () async {
-    await matureSession();
+    await eligibleSession();
     await prefs.setStringList(
       'ads_fullscreen_history',
       List<String>.generate(
@@ -116,7 +118,7 @@ void main() {
         (index) => now.subtract(Duration(hours: index)).toIso8601String(),
       ),
     );
-    for (var i = 0; i < 12; i++) {
+    for (var i = 0; i < 6; i++) {
       now = now.add(const Duration(seconds: 3));
       await service.recordMeaningfulAction('rolling_$i');
     }
@@ -133,7 +135,7 @@ void main() {
   });
 
   test('time moving backwards never opens a cap or cooldown bypass', () async {
-    await matureSession();
+    await eligibleSession();
     await service.recordFullscreenShown();
     now = now.subtract(const Duration(hours: 1));
     expect(

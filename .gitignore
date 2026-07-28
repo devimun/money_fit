@@ -47,6 +47,8 @@ app.*.map.json
 have_to_ignore.md
 # Secrets and environment variables
 .env
+.fastlane.env.local
+supabase/.temp/
 .kiro
 
 

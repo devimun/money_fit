@@ -135,7 +135,6 @@ class AnalyticsSanitizer {
       'ad_format',
       'placement',
       'ad_policy_version',
-      'experiment_variant',
     },
     AnalyticsEvent.adClicked: {'ad_format', 'placement'},
     AnalyticsEvent.adDismissed: {
@@ -219,6 +218,7 @@ class AnalyticsSanitizer {
       'not_required',
     },
     'navigation_type': {'push', 'replace', 'pop'},
+    'entry_point': {'home', 'calendar', 'expense_list'},
   };
   static const _boundedNumbers = <String, int>{
     'action_count': 1000,

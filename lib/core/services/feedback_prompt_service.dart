@@ -24,6 +24,8 @@ class FeedbackPromptService {
   final FeedbackPromptConfig _config;
   final DateTime Function() _now;
 
+  FeedbackPromptConfig get config => _config;
+
   FeedbackPromptDecision evaluate() {
     if (!_config.enabled) {
       return FeedbackPromptDecision.remoteDisabled;
@@ -63,12 +65,14 @@ class FeedbackPromptService {
     if (_state.showHistory
             .where((v) => now.difference(v).inDays <= 180)
             .length >=
-        3) {
+        _config.maxShowsPer180Days) {
       return FeedbackPromptDecision.rollingCap;
     }
     final engagement = _state.engagementShownAt;
     if (engagement != null &&
-        (now.isBefore(engagement) || now.difference(engagement).inDays < 30)) {
+        (now.isBefore(engagement) ||
+            now.difference(engagement).inDays <
+                _config.engagementCooldownDays)) {
       return FeedbackPromptDecision.reviewCooldown;
     }
     return FeedbackPromptDecision.eligible;
@@ -76,8 +80,12 @@ class FeedbackPromptService {
 
   Future<void> recordCreatedExpense() => _state.recordCreatedExpense();
   Future<void> markShown() => _state.markShown();
-  Future<void> later() => _state.snooze(const Duration(days: 30));
-  Future<void> dismiss() => _state.snooze(const Duration(days: 14));
-  Future<void> submitted() => _state.snooze(const Duration(days: 120));
+  Future<void> later() => _state.snooze(Duration(days: _config.laterDays));
+  Future<void> dismiss() => _state.snooze(Duration(days: _config.dismissDays));
+  Future<void> submitted() async {
+    await _state.markSubmitted();
+    await _state.snooze(Duration(days: _config.submittedDays));
+  }
+
   Future<void> never() => _state.setOptedOut();
 }

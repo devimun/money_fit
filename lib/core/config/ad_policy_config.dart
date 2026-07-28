@@ -54,14 +54,14 @@ class AdPolicyConfig {
       masterEnabled: config.boolValue('ads_master_enabled'),
       bannerEnabled: config.boolValue('ads_banner_enabled'),
       interstitialEnabled: config.boolValue('ads_interstitial_enabled'),
-      actionsRequired: bounded('ads_interstitial_actions_required', 12, 6, 30),
+      actionsRequired: bounded('ads_interstitial_actions_required', 6, 6, 30),
       cooldown: Duration(
-        seconds: bounded('ads_interstitial_cooldown_seconds', 600, 300, 86400),
+        seconds: bounded('ads_interstitial_cooldown_seconds', 300, 300, 86400),
       ),
       minSessionAge: Duration(
         seconds: bounded('ads_min_session_age_seconds', 120, 60, 3600),
       ),
-      newUserGraceSessions: bounded('ads_new_user_grace_sessions', 3, 2, 20),
+      newUserGraceSessions: bounded('ads_new_user_grace_sessions', 0, 0, 20),
       maxPerSession: bounded('ads_fullscreen_max_per_session', 3, 1, 4),
       maxPer24Hours: bounded('ads_fullscreen_max_per_24h', 8, 1, 12),
       appOpenEnabled: config.boolValue('ads_app_open_enabled'),
@@ -71,7 +71,9 @@ class AdPolicyConfig {
       appOpenCooldown: Duration(
         seconds: bounded('ads_app_open_cooldown_seconds', 14400, 300, 172800),
       ),
-      policyVersion: validPolicyVersion ? policyVersion : 'control_12_600_v1',
+      policyVersion: validPolicyVersion
+          ? policyVersion
+          : 'control_6_300_first_session_v1',
       invalidKeys: invalidKeys,
     );
   }

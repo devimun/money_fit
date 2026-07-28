@@ -33,9 +33,12 @@ class FeedbackRepository {
     if (detail.length < 3 || detail.length > 1000) {
       return const FeedbackSubmitFailure(FeedbackFailure.validation);
     }
-    final user = _client.auth.currentUser;
-    if (user == null) return const FeedbackSubmitFailure(FeedbackFailure.auth);
     try {
+      var user = _client.auth.currentUser;
+      user ??= (await _client.auth.signInAnonymously()).user;
+      if (user == null) {
+        return const FeedbackSubmitFailure(FeedbackFailure.auth);
+      }
       final info = await _packageInfo();
       final payload = <String, dynamic>{
         'p_detail': detail,

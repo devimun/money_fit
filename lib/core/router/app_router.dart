@@ -18,6 +18,9 @@ import 'package:money_fit/core/widgets/update_check_screen.dart';
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final goRouterProvider = Provider<GoRouter>((ref) {
+  final screenViewTracker = AnalyticsScreenViewTracker(
+    ref.read(analyticsProvider),
+  );
   return GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: '/update-check',
@@ -50,6 +53,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         ),
       ),
       ShellRoute(
+        observers: [AnalyticsNavigatorObserver(screenViewTracker)],
         builder: (context, state, child) {
           return ScaffoldWithNavBar(child: child);
         },
@@ -105,7 +109,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         ],
       ),
     ],
-    observers: [AnalyticsNavigatorObserver(ref.read(analyticsProvider))],
+    observers: [AnalyticsNavigatorObserver(screenViewTracker)],
   );
 });
 

@@ -105,20 +105,23 @@ class HomeActionButtons extends ConsumerWidget {
       'eligible': decision == FeedbackPromptDecision.eligible,
       if (decision != FeedbackPromptDecision.eligible)
         'suppress_reason': decision.name,
-      'policy_version': 'v1',
+      'policy_version': feedback.config.policyVersion,
       'trigger': 'expense_created',
     });
     if (decision == FeedbackPromptDecision.eligible) {
       final lease = ref
           .read(promptCoordinatorProvider)
-          .tryAcquire(PromptSurface.productFeedback);
+          .tryAcquire(
+            PromptSurface.productFeedback,
+            quietPeriod: feedback.config.quietPeriod,
+          );
       if (lease != null) {
         try {
           await feedback.markShown();
           if (!context.mounted) return;
           analytics.track(AnalyticsEvent.feedbackPromptShown, {
             'variant': 'proactive_prompt',
-            'policy_version': 'v1',
+            'policy_version': feedback.config.policyVersion,
           });
           final action = await showDialog<FeedbackPromptAction>(
             context: context,
@@ -135,7 +138,7 @@ class HomeActionButtons extends ConsumerWidget {
               FeedbackPromptAction.never => 'never',
               FeedbackPromptAction.dismissed || null => 'dismiss',
             },
-            'policy_version': 'v1',
+            'policy_version': feedback.config.policyVersion,
           });
           switch (action) {
             case FeedbackPromptAction.submitted:
@@ -157,12 +160,22 @@ class HomeActionButtons extends ConsumerWidget {
         }
       }
     }
-    // Control cohort keeps the existing review flow. It owns a coordinator
-    // lease and therefore cannot race with an ad.
-    final reviewShown = await ReviewPromptService.instance.maybePromptReview(
-      context,
-      coordinator: ref.read(promptCoordinatorProvider),
-    );
+    // Only the control cohort (or a remotely disabled experiment) can use the
+    // legacy review flow. A feedback user's snooze/dismiss must not turn into
+    // an immediate second engagement prompt.
+    final canOfferReview =
+        decision == FeedbackPromptDecision.controlCohort ||
+        decision == FeedbackPromptDecision.remoteDisabled;
+    final reviewShown = canOfferReview
+        ? await ReviewPromptService.instance.maybePromptReview(
+            context,
+            coordinator: ref.read(promptCoordinatorProvider),
+            engagementCooldown: Duration(
+              days: feedback.config.engagementCooldownDays,
+            ),
+            quietPeriod: feedback.config.quietPeriod,
+          )
+        : false;
     if (!reviewShown && context.mounted) {
       await InterstitialAdManager.instance.recordMeaningfulAction(
         'expense_created',

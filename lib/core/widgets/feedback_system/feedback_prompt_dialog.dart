@@ -56,6 +56,11 @@ class _FeedbackPromptDialogState extends State<FeedbackPromptDialog> {
         false;
   }
 
+  Future<void> _dismiss() async {
+    if (_submitting || !await _confirmDiscard() || !mounted) return;
+    Navigator.of(context).pop(FeedbackPromptAction.dismissed);
+  }
+
   Future<void> _submit() async {
     final l10n = AppLocalizations.of(context)!;
     final text = _controller.text.trim();
@@ -118,12 +123,11 @@ class _FeedbackPromptDialogState extends State<FeedbackPromptDialog> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return PopScope(
-      canPop: _controller.text.trim().isEmpty && !_submitting,
+      // Always intercept system back. If a draft exists, it must pass through
+      // the same confirmation as the explicit close affordance.
+      canPop: false,
       onPopInvokedWithResult: (didPop, _) async {
-        if (didPop || _submitting) return;
-        final shouldDiscard = await _confirmDiscard();
-        if (!mounted || !shouldDiscard) return;
-        Navigator.of(this.context).pop(FeedbackPromptAction.dismissed);
+        if (!didPop) await _dismiss();
       },
       child: Dialog(
         child: SafeArea(
@@ -149,6 +153,16 @@ class _FeedbackPromptDialogState extends State<FeedbackPromptDialog> {
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: IconButton(
+                        tooltip: MaterialLocalizations.of(
+                          context,
+                        ).closeButtonTooltip,
+                        onPressed: _submitting ? null : _dismiss,
+                        icon: const Icon(Icons.close),
+                      ),
+                    ),
                     const SizedBox(height: 12),
                     Text(l10n.feedback_prompt_body),
                     const SizedBox(height: 12),
@@ -164,7 +178,9 @@ class _FeedbackPromptDialogState extends State<FeedbackPromptDialog> {
                       maxLength: 1000,
                       textInputAction: TextInputAction.newline,
                       onChanged: (_) {
-                        if (_error != null) setState(() => _error = null);
+                        // Rebuild after every edit so the back/close flow
+                        // consistently recognizes a non-empty draft.
+                        setState(() => _error = null);
                       },
                       decoration: InputDecoration(
                         hintText: l10n.feedback_prompt_hint,

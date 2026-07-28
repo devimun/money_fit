@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_fit/core/providers/analytics_provider.dart';
-import 'package:money_fit/core/providers/prompt_providers.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/features/settings/widgets/settings_helpers.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 
-/// Explicit opt-in control. Remote Config remains a server-side kill switch.
+/// Collection is enabled for new installs and can be explicitly disabled here.
 class AnalyticsSetting extends ConsumerWidget {
   const AnalyticsSetting({super.key});
 
@@ -22,12 +21,7 @@ class AnalyticsSetting extends ConsumerWidget {
       context: context,
       onChanged: (enabled) async {
         await consent.setEnabled(enabled);
-        final remote = ref.read(remoteConfigServiceProvider);
-        await ref
-            .read(analyticsProvider)
-            .setCollectionEnabled(
-              enabled && remote.boolValue('amplitude_collection_enabled'),
-            );
+        await ref.read(analyticsProvider).setCollectionEnabled(enabled);
       },
     );
   }

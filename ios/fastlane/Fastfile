@@ -1,5 +1,10 @@
 require 'yaml'
 require 'base64'
+require 'dotenv'
+
+# Local developer override. CI-provided environment variables take precedence.
+local_fastlane_env = File.expand_path('../../.fastlane.env.local', __dir__)
+Dotenv.load(local_fastlane_env) if File.file?(local_fastlane_env)
 
 def analytics_dart_defines
   key = ENV.fetch('AMPLITUDE_PROD_API_KEY', '').strip

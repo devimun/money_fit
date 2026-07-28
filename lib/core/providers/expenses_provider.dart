@@ -8,6 +8,7 @@ import 'package:money_fit/core/providers/select_date_provider.dart';
 import 'package:money_fit/features/settings/viewmodel/user_settings_provider.dart';
 import 'package:money_fit/core/providers/analytics_provider.dart';
 import 'package:money_fit/core/analytics/analytics_event.dart';
+import 'package:money_fit/core/analytics/analytics_sanitizer.dart';
 
 // 앱 전역에서 지출 데이터를 관리하기 위한 프로버이더.
 class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
@@ -45,7 +46,7 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
   }
 
   ///  지출 추가
-  Future<void> addExpense(Expense expense) async {
+  Future<void> addExpense(Expense expense, {String entryPoint = 'home'}) async {
     final repo = ref.read(expenseRepositoryProvider);
     await repo.createExpense(expense);
 
@@ -53,6 +54,10 @@ class CoreExpensesNotifier extends AsyncNotifier<Map<DateTime, List<Expense>>> {
       ref.read(analyticsProvider).track(AnalyticsEvent.transactionCreated, {
         'transaction_type': expense.type.name,
         'category_key': expense.categoryId,
+        'is_custom_category': !AnalyticsSanitizer.categoryKeys.contains(
+          expense.categoryId,
+        ),
+        'entry_point': entryPoint,
       }),
     );
 

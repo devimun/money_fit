@@ -4,12 +4,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   test(
-    'analytics collection is opt-in and persists the consent version',
+    'analytics collection defaults to enabled and persists opt-out',
     () async {
       SharedPreferences.setMockInitialValues({});
       final prefs = await SharedPreferences.getInstance();
       final repository = AnalyticsConsentRepository(prefs);
-      expect(repository.isEnabled, isFalse);
+      expect(repository.isEnabled, isTrue);
 
       await repository.setEnabled(true, version: '1.2.7');
       expect(repository.isEnabled, isTrue);
@@ -17,6 +17,12 @@ void main() {
 
       await repository.setEnabled(false);
       expect(repository.isEnabled, isFalse);
+
+      SharedPreferences.setMockInitialValues({
+        AnalyticsConsentRepository.collectionKey: false,
+      });
+      final optedOutPrefs = await SharedPreferences.getInstance();
+      expect(AnalyticsConsentRepository(optedOutPrefs).isEnabled, isFalse);
     },
   );
 }

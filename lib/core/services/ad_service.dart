@@ -34,15 +34,28 @@ class AdService {
         (policy?.bannerEnabled ?? false);
   }
 
+  static AdSuppressionReason? get bannerSuppressionReason {
+    if (!_canRequestAds) return AdSuppressionReason.consentNotReady;
+    final policy = _policy?.call();
+    if (policy == null) return AdSuppressionReason.notConfigured;
+    if (!policy.masterEnabled) return AdSuppressionReason.masterDisabled;
+    if (!policy.bannerEnabled) return AdSuppressionReason.formatDisabled;
+    return null;
+  }
+
   static Future<bool> initialize() async {
     if (_initialized) return _canRequestAds;
+    var consentUpdateFailed = false;
     try {
       final consent = ConsentInformation.instance;
       final completion = Completer<void>();
       consent.requestConsentInfoUpdate(
         ConsentRequestParameters(),
         completion.complete,
-        (_) => completion.complete(),
+        (_) {
+          consentUpdateFailed = true;
+          completion.complete();
+        },
       );
       await completion.future;
       await ConsentForm.loadAndShowConsentFormIfRequired((_) {});
@@ -50,8 +63,27 @@ class AdService {
       if (_canRequestAds) await MobileAds.instance.initialize();
     } catch (_) {
       _canRequestAds = false;
+      consentUpdateFailed = true;
     } finally {
       _initialized = true;
+      final policy = _policy?.call();
+      final reason = !_canRequestAds
+          ? (consentUpdateFailed
+                ? 'ump_initialization_failed'
+                : AdSuppressionReason.consentNotReady.value)
+          : policy == null
+          ? AdSuppressionReason.notConfigured.value
+          : !policy.masterEnabled
+          ? AdSuppressionReason.masterDisabled.value
+          : null;
+      unawaited(
+        _analytics.track(AnalyticsEvent.adOpportunity, {
+          'opportunity': 'sdk_initialization',
+          'eligible': reason == null,
+          if (reason != null) 'suppress_reason': reason,
+          if (policy != null) 'ad_policy_version': policy.policyVersion,
+        }),
+      );
     }
     return _canRequestAds;
   }

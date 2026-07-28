@@ -17,18 +17,34 @@ abstract interface class PromptLease {
 }
 
 class PromptCoordinator {
+  PromptCoordinator({DateTime Function()? now}) : _now = now ?? DateTime.now;
+
+  final DateTime Function() _now;
   PromptSurface? _active;
+  DateTime? _lastReleasedAt;
 
   PromptSurface? get activeSurface => _active;
 
-  PromptLease? tryAcquire(PromptSurface surface) {
+  PromptLease? tryAcquire(
+    PromptSurface surface, {
+    Duration quietPeriod = Duration.zero,
+  }) {
     if (_active != null) return null;
+    final lastReleasedAt = _lastReleasedAt;
+    final now = _now();
+    if (lastReleasedAt != null &&
+        now.isBefore(lastReleasedAt.add(quietPeriod))) {
+      return null;
+    }
     _active = surface;
     return _Lease(this, surface);
   }
 
   void _release(PromptSurface surface) {
-    if (_active == surface) _active = null;
+    if (_active == surface) {
+      _active = null;
+      _lastReleasedAt = _now();
+    }
   }
 }
 

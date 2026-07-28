@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Reasons an opportunity did not become a full-screen ad. Keep these stable:
 /// they are sent to the analytics facade and used by rollout dashboards.
 enum AdSuppressionReason {
+  notConfigured('not_configured'),
   masterDisabled('master_disabled'),
   formatDisabled('format_disabled'),
   consentNotReady('consent_not_ready'),

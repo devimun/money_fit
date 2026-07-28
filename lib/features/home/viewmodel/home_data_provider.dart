@@ -246,8 +246,10 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
     );
   }
 
-  Future<void> addExpense(Expense expense) async {
-    await ref.read(coreExpensesProvider.notifier).addExpense(expense);
+  Future<void> addExpense(Expense expense, {String entryPoint = 'home'}) async {
+    await ref
+        .read(coreExpensesProvider.notifier)
+        .addExpense(expense, entryPoint: entryPoint);
   }
 
   Future<void> updateExpense(Expense expense) async {

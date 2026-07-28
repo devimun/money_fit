@@ -42,6 +42,17 @@ void main() {
     expect(result.containsKey('screen_name'), isFalse);
   });
 
+  test('does not retain retired ad experiment properties', () {
+    final result = sanitizer.sanitize(AnalyticsEvent.adImpression, {
+      'ad_format': 'interstitial',
+      'placement': 'natural_break',
+      'ad_policy_version': 'control_6_300_v1',
+      'experiment_variant': 'candidate_fast',
+    });
+
+    expect(result.containsKey('experiment_variant'), isFalse);
+  });
+
   test(
     'canonicalizes route and category values while rejecting raw routes',
     () {
@@ -62,4 +73,16 @@ void main() {
       expect(category['source_screen'], 'settings');
     },
   );
+
+  test('allows only stable transaction entry points', () {
+    final safe = sanitizer.sanitize(AnalyticsEvent.transactionCreated, {
+      'entry_point': 'expense_list',
+    });
+    final unsafe = sanitizer.sanitize(AnalyticsEvent.transactionCreated, {
+      'entry_point': '/expense_list?draft=coffee',
+    });
+
+    expect(safe['entry_point'], 'expense_list');
+    expect(unsafe.containsKey('entry_point'), isFalse);
+  });
 }

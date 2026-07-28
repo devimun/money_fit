@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:amplitude_flutter/amplitude.dart';
 import 'package:amplitude_flutter/configuration.dart';
 import 'package:amplitude_flutter/constants.dart';
@@ -16,18 +18,63 @@ abstract interface class AnalyticsService {
   ]);
   Future<void> setUserId(String? userId);
   Future<void> setCollectionEnabled(bool enabled);
+  Future<void> setAmplitudeCollectionEnabled(bool enabled);
+  Future<void> trackScreenView({
+    required String screenName,
+    String? previousScreenName,
+    required String navigationType,
+  });
   Future<void> reset();
 }
 
+abstract interface class FirebaseAnalyticsClient {
+  Future<void> setAnalyticsCollectionEnabled(bool enabled);
+  Future<void> setUserId({String? id});
+  Future<void> logEvent({
+    required String name,
+    Map<String, Object>? parameters,
+  });
+  Future<void> logScreenView({String? screenName, String? screenClass});
+}
+
+class FirebaseAnalyticsSdkClient implements FirebaseAnalyticsClient {
+  FirebaseAnalyticsSdkClient(this._analytics);
+
+  final FirebaseAnalytics _analytics;
+
+  @override
+  Future<void> setAnalyticsCollectionEnabled(bool enabled) =>
+      _analytics.setAnalyticsCollectionEnabled(enabled);
+
+  @override
+  Future<void> setUserId({String? id}) => _analytics.setUserId(id: id);
+
+  @override
+  Future<void> logEvent({
+    required String name,
+    Map<String, Object>? parameters,
+  }) => _analytics.logEvent(name: name, parameters: parameters);
+
+  @override
+  Future<void> logScreenView({String? screenName, String? screenClass}) =>
+      _analytics.logScreenView(
+        screenName: screenName,
+        screenClass: screenClass,
+      );
+}
+
 class DualAnalyticsService implements AnalyticsService {
-  DualAnalyticsService(this._config, {FirebaseAnalytics? firebase})
-    : _firebase = firebase ?? FirebaseAnalytics.instance;
+  DualAnalyticsService(this._config, {FirebaseAnalyticsClient? firebase})
+    : _firebase =
+          firebase ?? FirebaseAnalyticsSdkClient(FirebaseAnalytics.instance);
 
   final AnalyticsConfig _config;
-  final FirebaseAnalytics _firebase;
+  final FirebaseAnalyticsClient _firebase;
   final _sanitizer = AnalyticsSanitizer();
   Amplitude? _amplitude;
   bool _enabled = false;
+  bool _amplitudeCollectionEnabled = true;
+  String? _userId;
 
   @override
   Future<void> initialize() async {
@@ -36,7 +83,7 @@ class DualAnalyticsService implements AnalyticsService {
         final amplitude = Amplitude(
           Configuration(
             apiKey: _config.apiKey,
-            optOut: !_enabled,
+            optOut: !_isAmplitudeEnabled,
             serverZone: _config.serverZone == 'eu'
                 ? ServerZone.eu
                 : ServerZone.us,
@@ -59,18 +106,34 @@ class DualAnalyticsService implements AnalyticsService {
       await _firebase.setAnalyticsCollectionEnabled(enabled);
     } catch (_) {}
     try {
-      await _amplitude?.setOptOut(!enabled);
+      await _amplitude?.setOptOut(!_isAmplitudeEnabled);
     } catch (_) {}
   }
 
   @override
+  Future<void> setAmplitudeCollectionEnabled(bool enabled) async {
+    _amplitudeCollectionEnabled = enabled;
+    try {
+      await _amplitude?.setOptOut(!_isAmplitudeEnabled);
+      if (_isAmplitudeEnabled && _userId != null) {
+        await _amplitude?.setUserId(_userId);
+      }
+    } catch (_) {}
+  }
+
+  bool get _isAmplitudeEnabled => _enabled && _amplitudeCollectionEnabled;
+
+  @override
   Future<void> setUserId(String? userId) async {
+    _userId = userId;
     if (!_enabled) return;
     try {
       await _firebase.setUserId(id: userId);
     } catch (_) {}
     try {
-      await _amplitude?.setUserId(userId);
+      if (_amplitudeCollectionEnabled) {
+        await _amplitude?.setUserId(userId);
+      }
     } catch (_) {}
   }
 
@@ -96,7 +159,30 @@ class DualAnalyticsService implements AnalyticsService {
       await _firebase.logEvent(name: legacy, parameters: values);
     } catch (_) {}
     try {
-      await _amplitude?.track(BaseEvent(event.name, eventProperties: values));
+      if (_amplitudeCollectionEnabled) {
+        await _amplitude?.track(BaseEvent(event.name, eventProperties: values));
+      }
+    } catch (_) {}
+  }
+
+  @override
+  Future<void> trackScreenView({
+    required String screenName,
+    String? previousScreenName,
+    required String navigationType,
+  }) async {
+    if (!_enabled) return;
+    await track(AnalyticsEvent.screenViewed, {
+      'screen_name': screenName,
+      if (previousScreenName != null)
+        'previous_screen_name': previousScreenName,
+      'navigation_type': navigationType,
+    });
+    try {
+      await _firebase.logScreenView(
+        screenName: screenName,
+        screenClass: 'moneyfit_$screenName',
+      );
     } catch (_) {}
   }
 
@@ -121,7 +207,15 @@ class NoopAnalyticsService implements AnalyticsService {
   @override
   Future<void> setCollectionEnabled(bool enabled) async {}
   @override
+  Future<void> setAmplitudeCollectionEnabled(bool enabled) async {}
+  @override
   Future<void> setUserId(String? userId) async {}
+  @override
+  Future<void> trackScreenView({
+    required String screenName,
+    String? previousScreenName,
+    required String navigationType,
+  }) async {}
   @override
   Future<void> track(
     AnalyticsEvent event, [
@@ -132,30 +226,54 @@ class NoopAnalyticsService implements AnalyticsService {
 /// Route tracking must use the same consent-aware facade as all other events.
 /// This prevents a Firebase navigator observer from writing screen views while
 /// the user has opted out.
-class AnalyticsNavigatorObserver extends NavigatorObserver {
-  AnalyticsNavigatorObserver(this._analytics);
+class AnalyticsScreenViewTracker {
+  AnalyticsScreenViewTracker(this._analytics);
 
   final AnalyticsService _analytics;
+  String? _currentScreenName;
+
+  void trackRoute(Route<dynamic> route, {required String navigationType}) {
+    final screenName = AnalyticsNavigatorObserver.canonicalRouteName(
+      route.settings.name,
+    );
+    if (screenName == null || screenName == _currentScreenName) return;
+    final previousScreenName = _currentScreenName;
+    _currentScreenName = screenName;
+    unawaited(
+      _analytics.trackScreenView(
+        screenName: screenName,
+        previousScreenName: previousScreenName,
+        navigationType: navigationType,
+      ),
+    );
+  }
+}
+
+class AnalyticsNavigatorObserver extends NavigatorObserver {
+  AnalyticsNavigatorObserver(this._screenViewTracker);
+
+  final AnalyticsScreenViewTracker _screenViewTracker;
 
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    _trackRoute(route, navigationType: 'push');
+    _screenViewTracker.trackRoute(route, navigationType: 'push');
     super.didPush(route, previousRoute);
   }
 
   @override
   void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
-    if (newRoute != null) _trackRoute(newRoute, navigationType: 'replace');
+    if (newRoute != null) {
+      _screenViewTracker.trackRoute(newRoute, navigationType: 'replace');
+    }
     super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
   }
 
-  void _trackRoute(Route<dynamic> route, {required String navigationType}) {
-    final name = _canonicalRouteName(route.settings.name);
-    if (name == null) return;
-    _analytics.track(AnalyticsEvent.screenViewed, {
-      'screen_name': name,
-      'navigation_type': navigationType,
-    });
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    if (previousRoute != null) {
+      _screenViewTracker.trackRoute(previousRoute, navigationType: 'pop');
+    }
+    super.didPop(route, previousRoute);
   }
 
   static const _routes = <String, String>{
@@ -177,6 +295,6 @@ class AnalyticsNavigatorObserver extends NavigatorObserver {
     'SettingsScreen': 'settings',
   };
 
-  String? _canonicalRouteName(String? name) =>
+  static String? canonicalRouteName(String? name) =>
       name == null ? null : _routes[name];
 }

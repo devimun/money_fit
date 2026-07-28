@@ -3,6 +3,7 @@ import 'package:money_fit/core/providers/database_provider.dart';
 import 'package:money_fit/core/repositories/category_repository.dart';
 import 'package:money_fit/core/repositories/expense_repository.dart';
 import 'package:money_fit/core/repositories/user_repository.dart';
+import 'package:money_fit/features/settings/repository/contact_repository.dart';
 
 /// UserRepository 인스턴스를 제공하는 Provider입니다.
 final userRepositoryProvider = Provider<UserRepository>((ref) {
@@ -20,4 +21,8 @@ final categoryRepositoryProvider = Provider<CategoryRepository>((ref) {
 final expenseRepositoryProvider = Provider<ExpenseRepository>((ref) {
   final dbHelper = ref.read(databaseHelperProvider);
   return ExpenseRepository(dbHelper: dbHelper);
+});
+
+final contactRepositoryProvider = Provider<ContactSubmissionRepository>((ref) {
+  return ContactRepository();
 });

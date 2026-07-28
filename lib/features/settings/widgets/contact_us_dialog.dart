@@ -3,16 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:money_fit/core/analytics/analytics_event.dart';
 import 'package:money_fit/core/providers/analytics_provider.dart';
+import 'package:money_fit/core/providers/repository_providers.dart';
 import 'package:money_fit/core/theme/theme_extensions.dart';
 import 'package:money_fit/core/widgets/responsive_text/responsive_text.dart';
 import 'package:money_fit/l10n/app_localizations.dart';
 import 'package:money_fit/features/settings/model/inquiry_type.dart';
 import 'package:money_fit/features/settings/repository/contact_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-final contactRepositoryProvider = Provider<ContactRepository>(
-  (ref) => ContactRepository(),
-);
 
 class ContactUsDialog extends ConsumerStatefulWidget {
   const ContactUsDialog({super.key});
@@ -180,8 +177,8 @@ class _ContactUsDialogState extends ConsumerState<ContactUsDialog> {
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value != null &&
-                        value.isNotEmpty &&
-                        !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                        value.trim().isNotEmpty &&
+                        !ContactRepository.isValidEmail(value.trim())) {
                       return l10n.invalidEmail;
                     }
                     return null;
@@ -199,7 +196,7 @@ class _ContactUsDialogState extends ConsumerState<ContactUsDialog> {
                   maxLines: 5,
                   maxLength: 500,
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (value == null || value.trim().isEmpty) {
                       return l10n.fieldRequired;
                     }
                     return null;

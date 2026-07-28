@@ -21,8 +21,11 @@ alter table public.user_contact add column if not exists slack_last_error_code t
 -- Existing rows must never be replayed when delivery is enabled.
 update public.user_contact set slack_status = 'suppressed'
 where slack_status is null;
+update public.user_contact set slack_attempts = 0 where slack_attempts is null;
 alter table public.user_contact alter column slack_status set default 'pending';
 alter table public.user_contact alter column slack_status set not null;
+alter table public.user_contact alter column slack_attempts set default 0;
+alter table public.user_contact alter column slack_attempts set not null;
 create index if not exists user_contact_slack_retry_idx
   on public.user_contact (slack_status, slack_next_retry_at, created_at);
 create index if not exists user_contact_uid_created_idx
@@ -42,8 +45,11 @@ alter table public.app_feedback add column if not exists slack_notified_at times
 alter table public.app_feedback add column if not exists slack_next_retry_at timestamptz;
 alter table public.app_feedback add column if not exists slack_last_error_code text;
 update public.app_feedback set slack_status = 'suppressed' where slack_status is null;
+update public.app_feedback set slack_attempts = 0 where slack_attempts is null;
 alter table public.app_feedback alter column slack_status set default 'pending';
 alter table public.app_feedback alter column slack_status set not null;
+alter table public.app_feedback alter column slack_attempts set default 0;
+alter table public.app_feedback alter column slack_attempts set not null;
 create unique index if not exists app_feedback_uid_submission_id_idx
   on public.app_feedback (uid, client_submission_id) where client_submission_id is not null;
 create index if not exists app_feedback_slack_retry_idx
@@ -60,6 +66,10 @@ begin
   if auth.uid() is null then raise exception 'authentication required'; end if;
   if char_length(trim(p_detail)) not between 3 and 1000 then raise exception 'invalid detail'; end if;
   if p_source not in ('review_negative', 'proactive_prompt') then raise exception 'invalid source'; end if;
+  if p_platform not in ('ios', 'android', 'other') then raise exception 'invalid platform'; end if;
+  if p_locale not in ('ko', 'en', 'es', 'pl', 'uk', 'cs', 'de', 'it', 'ro', 'sk', 'bg', 'id', 'ms', 'fil') then
+    raise exception 'invalid locale';
+  end if;
   insert into app_feedback (uid, detail, source, client_submission_id, locale, platform, app_version, build_number)
   values (auth.uid(), trim(p_detail), p_source, p_client_submission_id, left(p_locale, 16), left(p_platform, 16), left(p_app_version, 40), left(p_build_number, 40))
   on conflict (uid, client_submission_id) where client_submission_id is not null do update set client_submission_id = excluded.client_submission_id
@@ -71,3 +81,6 @@ grant execute on function public.submit_app_feedback(text,text,uuid,text,text,te
 
 -- Do not add guessed RLS policies here. Production policy/column grants must
 -- first be exported and reviewed to preserve the 1.2.6 direct INSERT path.
+-- The required reviewed end state is documented in supabase/README.md:
+-- authenticated may INSERT only its own user_contact row, may not read or
+-- mutate either table, and may only EXECUTE submit_app_feedback for feedback.

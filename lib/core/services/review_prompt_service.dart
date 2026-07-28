@@ -21,6 +21,8 @@ class ReviewPromptService {
   static const String _kLastPromptAt = 'review_last_prompt_at';
   static const String _kPromptCount = 'review_prompt_count';
   static const String _kSnoozeUntil = 'review_snooze_until';
+  static const String _kEngagementPromptLastShownAt =
+      'engagement_prompt_last_shown_at';
 
   Duration minInstallAge = const Duration(days: 2);
   bool _requestedThisSession = false;
@@ -42,9 +44,21 @@ class ReviewPromptService {
     await prefs.setBool(_kOptedOut, value);
   }
 
-  Future<bool> get isEligible async {
+  Future<bool> isEligibleWithEngagementCooldown(
+    Duration engagementCooldown,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
     if (await isOptedOut) return false;
+
+    final engagement = DateTime.tryParse(
+      prefs.getString(_kEngagementPromptLastShownAt) ?? '',
+    )?.toUtc();
+    final now = DateTime.now().toUtc();
+    if (engagement != null &&
+        (now.isBefore(engagement) ||
+            now.difference(engagement) < engagementCooldown)) {
+      return false;
+    }
 
     final firstRunStr = prefs.getString(_kFirstRunAt);
     if (firstRunStr == null) return false;
@@ -67,6 +81,9 @@ class ReviewPromptService {
     return true;
   }
 
+  Future<bool> get isEligible =>
+      isEligibleWithEngagementCooldown(const Duration(days: 30));
+
   Future<void> _markPrompted() async {
     final prefs = await SharedPreferences.getInstance();
     final promptedAt = DateTime.now().toUtc().toIso8601String();
@@ -81,11 +98,18 @@ class ReviewPromptService {
   Future<bool> maybePromptReview(
     BuildContext context, {
     PromptCoordinator? coordinator,
+    Duration engagementCooldown = const Duration(days: 30),
+    Duration quietPeriod = Duration.zero,
   }) async {
     await ensureFirstRunTimestamp();
-    if (!await isEligible) return false;
+    if (!await isEligibleWithEngagementCooldown(engagementCooldown)) {
+      return false;
+    }
     if (_requestedThisSession) return false;
-    final lease = coordinator?.tryAcquire(PromptSurface.review);
+    final lease = coordinator?.tryAcquire(
+      PromptSurface.review,
+      quietPeriod: quietPeriod,
+    );
     if (coordinator != null && lease == null) return false;
     _requestedThisSession = true;
     var shown = false;

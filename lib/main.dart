@@ -39,14 +39,14 @@ Future<void> main() async {
   await remoteConfig.initialize();
   final analytics = DualAnalyticsService(AnalyticsConfig.fromEnvironment());
   final consent = AnalyticsConsentRepository(sharedPreferences);
-  await analytics.setCollectionEnabled(
-    consent.isEnabled && remoteConfig.boolValue('amplitude_collection_enabled'),
+  await analytics.setCollectionEnabled(consent.isEnabled);
+  await analytics.setAmplitudeCollectionEnabled(
+    remoteConfig.boolValue('amplitude_collection_enabled'),
   );
   await analytics.initialize();
   remoteConfig.updates.listen((_) {
-    analytics.setCollectionEnabled(
-      consent.isEnabled &&
-          remoteConfig.boolValue('amplitude_collection_enabled'),
+    analytics.setAmplitudeCollectionEnabled(
+      remoteConfig.boolValue('amplitude_collection_enabled'),
     );
   });
 

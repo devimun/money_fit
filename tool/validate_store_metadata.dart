@@ -3,6 +3,58 @@ import 'dart:io';
 
 const _iosMetadataRoot = 'ios/fastlane/metadata';
 const _androidMetadataRoot = 'android/fastlane/metadata/android';
+const _appL10nRoot = 'lib/l10n';
+
+const _appLocales = <String>{
+  'bg',
+  'cs',
+  'de',
+  'en',
+  'es',
+  'fil',
+  'id',
+  'it',
+  'ko',
+  'ms',
+  'pl',
+  'ro',
+  'sk',
+  'uk',
+};
+
+const _iosLocaleMapping = <String, Set<String>>{
+  'bg': {'en-GB'},
+  'cs': {'cs'},
+  'de': {'de-DE'},
+  'en': {'en-US', 'en-GB'},
+  'es': {'es-ES'},
+  'fil': {'en-GB'},
+  'id': {'id'},
+  'it': {'it'},
+  'ko': {'ko'},
+  'ms': {'ms'},
+  'pl': {'pl'},
+  'ro': {'ro'},
+  'sk': {'sk'},
+  'uk': {'uk'},
+};
+
+const _androidLocaleMapping = <String, String>{
+  'bg': 'bg',
+  'cs': 'cs-CZ',
+  'de': 'de-DE',
+  'en': 'en-US',
+  'es': 'es-ES',
+  'fil': 'fil',
+  'id': 'id',
+  'it': 'it-IT',
+  'ko': 'ko-KR',
+  'ms': 'ms-MY',
+  'pl': 'pl-PL',
+  'ro': 'ro',
+  'sk': 'sk',
+  'uk': 'uk',
+};
 
 const _iosCopy = <String, Map<String, String>>{
   'en-US': {
@@ -187,6 +239,7 @@ class _Validator {
   final metrics = <_Metric>[];
 
   void validateIos() {
+    _validateAppLocaleMappings();
     _checkExactLocaleSet(_iosMetadataRoot, _iosCopy.keys.toSet(), 'iOS');
     for (final entry in _iosCopy.entries) {
       final locale = entry.key;
@@ -217,6 +270,12 @@ class _Validator {
         _error('iOS/$locale keywords must be at most 100 UTF-8 bytes');
       }
       _validateKeywords(keywords, 'iOS/$locale');
+      _warnKeywordOverlap(
+        locale,
+        entry.value['name']!,
+        entry.value['subtitle']!,
+        keywords,
+      );
       _validateForbidden(locale, 'iOS', <String>[
         entry.value['name']!,
         entry.value['subtitle']!,
@@ -343,6 +402,67 @@ class _Validator {
     final normalized = tokens.map((token) => token.toLowerCase()).toList();
     if (normalized.toSet().length != normalized.length) {
       _error('$label keywords contain duplicates.');
+    }
+  }
+
+  void _warnKeywordOverlap(
+    String locale,
+    String name,
+    String subtitle,
+    String keywords,
+  ) {
+    final indexedCopy = '${name.toLowerCase()} ${subtitle.toLowerCase()}';
+    for (final keyword in keywords.split(',')) {
+      if (indexedCopy.contains(keyword.toLowerCase())) {
+        warnings.add(
+          'iOS/$locale keyword "$keyword" is already used in the name or subtitle.',
+        );
+      }
+    }
+  }
+
+  void _validateAppLocaleMappings() {
+    final directory = Directory(_appL10nRoot);
+    if (!directory.existsSync()) {
+      _error('Missing app localization directory: $_appL10nRoot.');
+      return;
+    }
+    final actualAppLocales = directory
+        .listSync()
+        .whereType<File>()
+        .map((file) => file.uri.pathSegments.last)
+        .where((name) => name.startsWith('app_') && name.endsWith('.arb'))
+        .map((name) => name.substring(4, name.length - 4))
+        .toSet();
+    _checkSet(actualAppLocales, _appLocales, 'App localization ARB locales');
+    _checkSet(
+      _iosLocaleMapping.keys.toSet(),
+      _appLocales,
+      'iOS app-locale mapping keys',
+    );
+    _checkSet(
+      _androidLocaleMapping.keys.toSet(),
+      _appLocales,
+      'Android app-locale mapping keys',
+    );
+    _checkSet(
+      _iosLocaleMapping.values.expand((locales) => locales).toSet(),
+      _iosCopy.keys.toSet(),
+      'iOS store locale mapping',
+    );
+    _checkSet(
+      _androidLocaleMapping.values.toSet(),
+      _androidCopy.keys.toSet(),
+      'Android store locale mapping',
+    );
+  }
+
+  void _checkSet(Set<String> actual, Set<String> expected, String context) {
+    for (final value in expected.difference(actual)) {
+      _error('$context: missing $value.');
+    }
+    for (final value in actual.difference(expected)) {
+      _error('$context: unsupported $value.');
     }
   }
 

@@ -1,20 +1,20 @@
 # MoneyFit 1.2.7 광고 노출 빈도 개선 계획
 
 - 작성일: 2026-07-21
-- 범위: 광고 빈도·지면·정책 설정, 계측, 실험, 테스트, 롤백 계획
+- 범위: 광고 빈도·지면·정책 설정, 계측, 테스트, 롤백 계획
 - 비범위: 이 문서에서는 앱 코드나 AdMob/Firebase 콘솔 설정을 실제로 변경하지 않는다.
 
 ## 1. 결론
 
 MoneyFit의 광고 수익을 안전하게 높이는 1차안은 다음과 같다.
 
-1. 현재 전면 광고의 하드코딩된 `12회 액션 + 10분 쿨다운`을 Remote Config 정책으로 옮긴다.
+1. 전면 광고 기본값을 Remote Config 정책의 `6회 의미 행동 + 300초 쿨다운`으로 둔다.
 2. 행동을 세는 시점과 광고를 띄우는 시점을 분리한다. 캘린더 셀 선택이나 필터 적용 중에는 행동만 기록하고, 저장 완료나 상위 화면 전환 같은 자연스러운 중단점에서만 광고를 검토한다.
-3. 첫 실험은 기존 정책을 대조군으로 유지하고 `8회 액션 + 8분 쿨다운` 후보군과 비교한다. 신규 사용자 보호, 세션/24시간 상한, 개인정보 동의, 전면 UI 충돌 방지는 두 군 모두 동일하게 적용한다.
+3. 광고 빈도는 모든 사용자에게 동일한 단일 정책으로 적용한다. 첫 세션도 120초·6회 행동·300초 쿨다운·상한을 충족할 때만 대상이며, 개인정보 동의와 전면 UI 충돌 방지도 동일하게 적용한다.
 4. 배너는 이미 5개 주요 화면에 있으므로 개수를 더 늘리지 않는다. 고정 320×50을 적응형 배너로 개선하고 AdMob의 Google 최적화 자동 새로고침을 켜는 것이 우선이다.
-5. 앱 오프닝 광고 코드는 존재하지만 현재 꺼져 있다. 전면 광고 빈도 실험과 동시에 켜지 말고, 1차 실험의 승자 확정 뒤 별도 실험으로 진행한다.
+5. 앱 오프닝 광고 코드는 존재하지만 현재 꺼져 있다. 별도 정책 검토와 승인 전까지 활성화하지 않는다.
 
-권장 1.2.7 기본값은 **현재 수준을 보존하는 안전한 오프라인 폴백**이다. 서버에서 실험군에만 빈도를 올리고, 문제가 생기면 앱 업데이트 없이 즉시 기존 값 또는 전체 비활성화로 돌아갈 수 있어야 한다.
+권장 1.2.7 기본값은 **6회/300초의 보수적 하한값**이다. 문제가 생기면 앱 업데이트 없이 Remote Config kill switch로 전체 비활성화할 수 있어야 한다.
 
 ## 2. 저장소 현황 조사
 
@@ -65,18 +65,18 @@ MoneyFit의 광고 수익을 안전하게 높이는 1차안은 다음과 같다.
 
 `InterstitialAdManager`의 현재 정책은 다음과 같다(`lib/core/services/ad_service.dart:90-178`).
 
-- 프로세스 메모리의 `_actionCount`가 12에 도달해야 한다.
-- 마지막 노출 후 최소 10분이 지나야 한다.
+- 유효 의미 행동이 6회에 도달해야 한다.
+- 마지막 노출 후 최소 300초가 지나야 한다.
 - 광고가 실제 표시되면 시각과 액션 카운터를 초기화한다.
 - 닫힘 또는 표시 실패 후 다음 광고를 선로딩한다.
-- 앱 재시작 시 액션 수와 마지막 노출 시각이 모두 초기화된다.
-- 로드/표시/노출/클릭/수익/억제 사유 이벤트가 없다.
+- 최근 노출 시각과 rolling 24시간 이력은 영속화한다.
+- 로드/표시/노출/클릭/수익/억제 사유를 계측한다.
 
 현재 `logActionAndShowAd()` 호출 표현식은 8개이며 실제 사용자 맥락은 다음과 같다.
 
 | 호출 위치 | 현재 트리거 | 판정 |
 |---|---|---|
-| `lib/widgets/bottom_nav_bar.dart:125-153` | 캘린더·통계·지출 목록 탭으로 이동 | 자연스러운 화면 전환 후보지만, 현재는 광고 호출을 기다리지 않고 곧바로 라우팅함 |
+| `lib/widgets/bottom_nav_bar.dart:125-153` | 캘린더·통계·지출 목록 탭으로 이동 | 자연스러운 화면 전환 지점이지만, 현재는 광고 호출을 기다리지 않고 곧바로 라우팅함 |
 | `lib/features/calendar/view/widgets/calendar_cell.dart:23-37` | 날짜 셀을 눌러 상세 바텀시트 열기 | 사용자가 기대한 콘텐츠를 막으므로 노출 지점으로 부적합; 행동 누적만 가능 |
 | `lib/features/calendar/view/widgets/calendar_header.dart:43-59` | 이전 달 데이터 조회 성공 | 탐색 중단 위험; 행동 누적만 가능 |
 | `lib/features/calendar/view/widgets/calendar_header.dart:71-87` | 다음 달 데이터 조회 성공 | 탐색 중단 위험; 행동 누적만 가능 |
@@ -104,7 +104,7 @@ MoneyFit의 광고 수익을 안전하게 높이는 1차안은 다음과 같다.
 - 최초 라우트 `/update-check`에서 `UpdateService.fetchUpdateStatus()`가 `fetchAndActivate()`를 실행하므로 정상 시작 경로에서는 광고 초기화 전 서버 값이 활성화될 수 있다.
 - 반면 `appInitializerProvider`는 Remote Config settings만 설정하고 defaults/fetch/activate는 하지 않는다(`lib/core/services/app_initializer.dart:17-26`). 딥링크, 테스트, 향후 라우터 변경에서는 광고 값이 준비되었다고 보장할 수 없다.
 - `UpdateService`가 Remote Config 전역 설정과 업데이트 도메인을 함께 소유한다. 광고 도메인을 직접 추가하기보다 공용 `RemoteConfigService`가 settings/defaults/fetch/activate를 한 번 수행하고, 업데이트와 광고 설정이 그 값을 읽게 하는 편이 안전하다.
-- Firebase Analytics가 이미 있으므로 Firebase Remote Config A/B Testing을 사용할 수 있다. 향후 Amplitude를 추가해도 Firebase A/B Testing을 쓰는 동안 Firebase Analytics는 제거하지 않는다.
+- Firebase Analytics는 광고 이벤트 계측에 사용한다. 광고 빈도는 단일 Remote Config 정책으로만 운영한다.
 
 ### 2.6 출시 전 차단해야 할 위험
 
@@ -112,7 +112,7 @@ MoneyFit의 광고 수익을 안전하게 높이는 1차안은 다음과 같다.
 2. **iOS 테스트 ID 오류:** 배너·전면·앱 오프닝 테스트 ID가 Android 값 하나씩으로 공용 처리된다(`ad_service.dart:33-43`). 공식 iOS 테스트 ID로 플랫폼 분기해야 iOS 검증이 신뢰 가능하다.
 3. **비동기 저장 완료 보장 없음:** `ExpenseAddForm.onSubmit` 타입은 `void Function`인데 실제 콜백은 `async`이다(`expense_add_form.dart:15-24`, `home_action_buttons.dart:59-66`). 폼은 이를 await하지 않고 리뷰 프롬프트와 pop을 진행한다. 광고 eligibility는 저장 성공 이후에만 평가되도록 콜백 타입을 `Future<void> Function`으로 바꾸고 await해야 한다.
 4. **전면 UI 충돌:** 저장 흐름에는 이미 리뷰 프롬프트가 있고, 1.2.7에는 의견 모달도 추가될 예정이다. 동의 폼, 리뷰, 의견, 업데이트, 광고가 동시에 경쟁하지 않도록 한 번에 하나만 허용하는 전면 UI 게이트가 필요하다.
-5. **프로세스 재시작 우회:** 10분 쿨다운과 상한이 메모리에만 있어 앱을 재시작하면 리셋된다. 마지막 노출과 rolling 24시간 노출 이력은 영속화한다.
+5. **프로세스 재시작 우회:** 300초 쿨다운과 상한은 앱 재시작에도 유지한다. 마지막 노출과 rolling 24시간 노출 이력을 영속화한다.
 
 ## 3. 목표와 비목표
 
@@ -120,7 +120,7 @@ MoneyFit의 광고 수익을 안전하게 높이는 1차안은 다음과 같다.
 
 - 광고 수익/DAU와 광고 수익/1,000 세션을 유의미하게 높인다.
 - 사용자가 작업 도중 갑자기 막혔다고 느끼는 노출을 줄인다.
-- 빈도와 형식을 앱 업데이트 없이 실험·중단·롤백한다.
+- 빈도와 형식을 앱 업데이트 없이 조정·중단·롤백한다.
 - Android/iOS, 14개 로케일, 신규/기존 사용자에서 일관된 정책을 보장한다.
 - 광고 요청부터 실제 수익까지 원인을 추적할 수 있게 한다.
 
@@ -144,7 +144,7 @@ recordMeaningfulAction(trigger)
 
 maybeShowInterstitial(opportunity)
   -> 자연스러운 중단점에서 호출
-  -> 동의, 신규 유예, 세션 시간, 액션 수, 쿨다운,
+  -> 동의, 세션 시간, 액션 수, 쿨다운,
      세션/24시간 상한, 다른 전면 UI, 광고 준비 상태를 모두 통과할 때만 표시
 ```
 
@@ -165,24 +165,22 @@ maybeShowInterstitial(opportunity)
 | 폼 검증 실패, 네트워크/DB 실패 | 아니오 | 아니오 | 실패한 핵심 작업으로 수익화하지 않음 |
 | 문의, 의견 작성, 개인정보 설정 | 아니오 | 아니오 | 신뢰·지원 흐름에는 광고 금지 |
 
-연타 방지를 위해 동일 trigger는 최소 2초 debounce하고, 같은 상태값을 다시 선택한 행동은 카운트하지 않는다. 액션 가중치는 1로 시작한다. 지면별 가중치를 처음부터 다르게 두면 실험 해석이 어려워진다.
+연타 방지를 위해 동일 trigger는 최소 2초 debounce하고, 같은 상태값을 다시 선택한 행동은 카운트하지 않는다. 액션 가중치는 1로 시작한다. 지면별 가중치는 처음부터 다르게 두지 않는다.
 
-### 4.3 제안 기본값과 실험값
+### 4.3 제안 기본값
 
-앱 내 defaults는 네트워크 실패 시에도 안전한 대조군이어야 한다.
+앱 내 defaults는 네트워크 실패 시에도 같은 단일 정책을 유지해야 한다.
 
-| 정책 | 앱 내 기본값/대조군 A | 1차 후보군 B | 하드 안전 범위 |
-|---|---:|---:|---:|
-| 전면 광고 활성화 | `true` | `true` | kill switch 지원 |
-| 필요한 의미 행동 수 | 12 | 8 | 6~30 |
-| 전면 광고 최소 간격 | 600초 | 480초 | 최소 300초 |
-| 세션 시작 후 최초 광고 유예 | 120초 | 120초 | 최소 60초 |
-| 신규 사용자 유예 | 완료된 3세션 | 완료된 3세션 | 최소 2세션 |
-| 세션당 전면 광고 상한 | 3회 | 3회 | 최대 4회 |
-| rolling 24시간 전면 광고 상한 | 8회 | 8회 | 최대 12회 |
-| 앱 오프닝 광고 | `false` | `false` | 별도 실험 전까지 off |
-
-`8회 + 8분`은 시작 후보이지 영구 확정값이 아니다. 현재 사용자별 세션 길이·행동 수 분포가 없으므로, 먼저 7일 이상 baseline을 수집해 후보군에서 실제 광고/DAU가 얼마나 늘어나는지 시뮬레이션한다. p50 세션이 8회 행동보다 짧으면 10→8→6처럼 단계적으로 내리고, 반대로 사용자 이탈이 보이면 간격 또는 신규 유예를 늘린다.
+| 정책 | 앱 내 기본값 | 하드 안전 범위 |
+|---|---:|---|
+| 전면 광고 활성화 | `true` | kill switch 지원 |
+| 필요한 의미 행동 수 | 6 | 6~30 |
+| 전면 광고 최소 간격 | 300초 | 최소 300초 |
+| 세션 시작 후 최초 광고 유예 | 120초 | 최소 60초 |
+| 신규 사용자 유예 | 없음 (`0` 세션) | `0` 세션 |
+| 세션당 전면 광고 상한 | 3회 | 최대 4회 |
+| rolling 24시간 전면 광고 상한 | 8회 | 최대 12회 |
+| 앱 오프닝 광고 | `false` | 별도 승인 전까지 off |
 
 세션은 앱 foreground 진입부터 30분 이상 background 또는 프로세스 종료까지로 정의한다. 쿨다운과 rolling 24시간 상한은 앱 재시작에도 유지되도록 `SharedPreferences`에 실제 **노출 성공 시각**만 저장한다. 로드 실패나 eligibility만으로 상한을 소비하지 않는다.
 
@@ -191,7 +189,7 @@ maybeShowInterstitial(opportunity)
 클라이언트 정책만 믿지 않고 AdMob 콘솔에도 방어선을 둔다.
 
 - 앱 수준 cap: 초기에는 모든 interstitial/app open을 합쳐 사용자당 `3 impressions / 30 minutes`를 제안한다.
-- 광고 단위 수준 cap: 앱 오프닝 실험을 시작할 때 app-open에 더 엄격한 별도 cap을 둔다.
+- 광고 단위 수준 cap: 향후 앱 오프닝을 승인해 활성화할 경우 app-open에 더 엄격한 별도 cap을 둔다.
 - 클라이언트: 5분 이상 최소 간격, 세션/rolling 24시간 상한을 별도로 적용한다.
 - 실제 cap 변경은 적용에 최대 24시간 걸릴 수 있으므로 rollout 전날 설정한다.
 
@@ -200,21 +198,21 @@ AdMob은 앱 수준과 광고 단위 수준 cap 중 먼저 도달한 제한을 �
 ### 4.5 배너 전략
 
 1. 다섯 지면의 AdMob 콘솔 자동 새로고침 상태를 먼저 확인한다.
-2. 꺼져 있으면 코드에서 수동 타이머를 만들지 않고 **Google optimized auto refresh**를 사용한다. 비교 실험이 꼭 필요하면 60초 이상 custom을 후보로 두되 Google 최적화를 우선한다.
+2. 꺼져 있으면 코드에서 수동 타이머를 만들지 않고 **Google optimized auto refresh**를 사용한다. 1.2.7에서는 비교 정책을 두지 않는다.
 3. 캘린더처럼 화면 상단에 계속 보이는 지면은 anchored adaptive banner를 사용한다.
 4. 홈·통계·설정처럼 스크롤 콘텐츠 안에 있는 지면은 inline adaptive 또는 명확히 상단 고정된 anchored adaptive 중 레이아웃 테스트 결과로 결정한다.
 5. 같은 광고 단위를 화면 왕복 때 60초 이내 재요청하지 않도록 화면 수명/캐시를 검토한다. 숨겨진 탭의 배너가 계속 refresh되지 않게 실제 visible 상태에서만 요청한다.
 6. 광고와 내비게이션·필터·버튼 사이에 비클릭 여백/구분선을 둔다. 로드 전후 레이아웃 shift가 없어야 한다.
-7. collapsible banner는 1.2.7 범위에서 제외한다. 시야 점유가 커 별도 실험과 정책 검증이 필요하다.
+7. collapsible banner는 1.2.7 범위에서 제외한다. 시야 점유가 커 별도 정책 검증이 필요하다.
 
-### 4.6 앱 오프닝 광고 2차 실험
+### 4.6 앱 오프닝 광고
 
-1차 전면 광고 실험 승자 확정 후에만 시작한다.
+1.2.7에서는 비활성으로 유지한다. 향후 별도 정책 승인 후에만 검토한다.
 
 - `app_open_enabled=false`를 기본값으로 둔다.
-- 최소 3개 완료 세션을 지난 사용자만 대상이다.
+- 앱 오프닝은 별도 승인 전까지 비활성으로 유지한다.
 - background가 2분 이상이었다가 foreground로 돌아오는 경우만 기회로 본다.
-- 마지막 interstitial/app-open 노출 후 최소 4시간을 둔 보수적 후보로 시작한다.
+- 마지막 interstitial/app-open 노출 후 최소 4시간을 둔다.
 - cold start에서는 `/update-check` 또는 splash 로딩 화면 동안 준비된 광고만 표시한다. 앱 콘텐츠로 진입한 뒤 로드가 끝났다면 그 세션에서는 건너뛴다.
 - 현재 `_deferShowUntilLoaded`처럼 늦게 도착한 광고를 콘텐츠 위에 표시하지 않는다.
 - 폼, 문의, 의견, 리뷰, 동의, 업데이트 다이얼로그가 열려 있으면 표시하지 않는다.
@@ -231,16 +229,16 @@ AdMob은 앱 수준과 광고 단위 수준 cap 중 먼저 도달한 제한을 �
 | `ads_master_enabled` | bool | `true` | 모든 광고 요청 kill switch |
 | `ads_banner_enabled` | bool | `true` | 배너 별도 kill switch |
 | `ads_interstitial_enabled` | bool | `true` | 전면 광고 별도 kill switch |
-| `ads_interstitial_actions_required` | int | `12` | 의미 행동 임계값 |
-| `ads_interstitial_cooldown_seconds` | int | `600` | 전면 광고 최소 간격 |
+| `ads_interstitial_actions_required` | int | `6` | 의미 행동 임계값 |
+| `ads_interstitial_cooldown_seconds` | int | `300` | 전면 광고 최소 간격 |
 | `ads_min_session_age_seconds` | int | `120` | 세션 초반 유예 |
-| `ads_new_user_grace_sessions` | int | `3` | 신규 사용자 유예 |
+| `ads_new_user_grace_sessions` | int | `0` | 신규 사용자 세션 유예 없음 |
 | `ads_fullscreen_max_per_session` | int | `3` | interstitial+app-open 세션 상한 |
 | `ads_fullscreen_max_per_24h` | int | `8` | interstitial+app-open rolling 상한 |
 | `ads_app_open_enabled` | bool | `false` | 앱 오프닝 별도 kill switch |
 | `ads_app_open_min_background_seconds` | int | `120` | 짧은 앱 전환 제외 |
 | `ads_app_open_cooldown_seconds` | int | `14400` | app-open 보수적 최소 간격 |
-| `ads_policy_version` | string | `control_12_600_v1` | 모든 이벤트에 붙일 정책 식별자 |
+| `ads_policy_version` | string | `control_6_300_first_session_v1` | 모든 이벤트에 붙일 정책 식별자 |
 
 Remote Config 값은 신뢰 입력으로 보지 않는다. 앱에서 최소/최대 범위를 clamp하고, 파싱 실패·0·음수·비정상 조합은 앱 기본값으로 되돌린 뒤 `Ad Config Invalid`를 기록한다. 광고 단위 ID와 비밀값은 Remote Config에 넣지 않는다.
 
@@ -259,7 +257,7 @@ Firebase.initializeApp
 
 - fetch 실패 시 캐시된 활성값, 그마저 없으면 앱 내 기본값을 쓴다.
 - 광고 초기화가 Remote Config 네트워크 완료 때문에 무한 대기하지 않도록 기존 10초 timeout을 유지하고 폴백한다.
-- 운영 kill switch 반영을 빠르게 하기 위해 `onConfigUpdated`를 구독하되, A/B experiment parameter는 실시간 Remote Config 대상이 아니라는 점을 고려한다.
+- 운영 kill switch 반영을 빠르게 하기 위해 `onConfigUpdated`를 구독한다. 광고 빈도에는 단일 정책 파라미터만 사용한다.
 - 세션 중 임계값이 변경돼도 이미 표시 중인 광고에는 영향을 주지 않고 다음 opportunity부터 적용한다.
 - `UpdateService`와 광고 서비스가 각자 `setConfigSettings()`를 덮어쓰지 않게 공용 초기화 지점을 하나로 만든다.
 
@@ -286,11 +284,11 @@ Google은 interstitial을 자연스러운 전환점에 배치하고 매 행동�
 - 광고 로드로 콘텐츠가 움직여 원래 누르려던 위치에 광고가 들어오는 layout shift
 - 문의, 의견, 개인정보/동의, 데이터 삭제, 강제 업데이트 화면의 광고
 
-high-engagement ads는 닫기까지 더 긴 시간이 걸릴 수 있으므로 초기 빈도 상향과 동시에 새로 켜지 않는다. 현재 콘솔 상태를 기록하고, 별도 실험 없이 변경하지 않는다.
+high-engagement ads는 닫기까지 더 긴 시간이 걸릴 수 있으므로 초기 빈도 상향과 동시에 새로 켜지 않는다. 현재 콘솔 상태를 기록하고, 별도 검토 없이 변경하지 않는다.
 
 ## 7. 이벤트 계측
 
-광고 실험은 “요청 수”가 아니라 실제 노출·수익과 사용자 행동을 함께 봐야 한다. Firebase Analytics와 1.2.7에서 추가될 Amplitude가 같은 이벤트 이름/속성 계약을 사용하도록 공용 tracker 인터페이스를 둔다. Firebase A/B Testing을 사용하는 동안 실험군 판정의 원본은 Firebase로 유지한다.
+광고 정책 평가는 “요청 수”가 아니라 실제 노출·수익과 사용자 행동을 함께 본다. Firebase Analytics와 1.2.7에서 추가될 Amplitude가 같은 이벤트 이름/속성 계약을 사용하도록 공용 tracker 인터페이스를 둔다. 광고 빈도는 단일 정책으로 운영한다.
 
 ### 7.1 필수 이벤트
 
@@ -301,7 +299,7 @@ high-engagement ads는 닫기까지 더 긴 시간이 걸릴 수 있으므로 �
 | `Ad Request` | SDK load 요청 | `ad_format`, `placement`, `platform` |
 | `Ad Load Completed` | load 성공 또는 실패 | `ad_format`, `placement`, `result:success\|failure`, `latency_ms`, `error_code?`, `error_domain?` |
 | `Ad Displayed` | full screen show callback | `ad_format`, `trigger`, `action_count`, `seconds_since_last_fullscreen`, `ad_policy_version` |
-| `Ad Impression` | SDK impression callback | `ad_format`, `placement`, `ad_policy_version`, `experiment_variant` |
+| `Ad Impression` | SDK impression callback | `ad_format`, `placement`, `ad_policy_version` |
 | `Ad Clicked` | SDK click callback | `ad_format`, `placement` |
 | `Ad Dismissed` | 닫힘 | `ad_format`, `visible_duration_ms` |
 | `Ad Display Failed` | 표시 실패 | `ad_format`, `placement`, `error_code` |
@@ -317,7 +315,7 @@ cooldown, session_cap, rolling_24h_cap, fullscreen_ui_busy,
 ad_not_ready, app_background, stale_app_open, duplicate_trigger
 ```
 
-공통 속성은 `platform`, `app_version`, `build_number`, `locale`, `session_id`, `ad_policy_version`, `experiment_variant`이다. 문의 내용, 지출명/금액, 이메일, 광고 ID 등 개인정보·민감 금융 데이터는 광고 이벤트에 넣지 않는다. `error.message` 전문도 전송 전 민감정보 포함 가능성을 검토하고 code/domain 위주로 보낸다.
+공통 속성은 `platform`, `app_version`, `build_number`, `locale`, `session_id`, `ad_policy_version`이다. 문의 내용, 지출명/금액, 이메일, 광고 ID 등 개인정보·민감 금융 데이터는 광고 이벤트에 넣지 않는다. `error.message` 전문도 전송 전 민감정보 포함 가능성을 검토하고 code/domain 위주로 보낸다.
 
 ### 7.2 핵심 지표와 가드레일
 
@@ -338,7 +336,7 @@ ad_not_ready, app_background, stale_app_open, duplicate_trigger
 - crash-free sessions 및 ANR
 - AdMob Policy center 경고, confirmed click, invalid traffic 변화
 
-승자 기준 초안은 다음과 같다. 실험 시작 전 baseline 분산과 표본 크기로 다시 고정한다.
+정책 변경 기준은 다음과 같다. 변경 전 baseline 분산과 표본 크기로 다시 고정한다.
 
 - 광고 수익/DAU 또는 광고 수익/1,000 세션이 10% 이상 개선
 - D1 retention 하락이 2%p 이내
@@ -347,43 +345,34 @@ ad_not_ready, app_background, stale_app_open, duplicate_trigger
 - crash-free sessions 하락이 0.2%p 이내
 - 정책 경고 0건
 
-## 8. A/B 및 점진 배포 계획
+## 8. 점진 배포 계획
 
 ### 단계 0: 계측-only 기준선
 
-- 코드 정책은 12회/10분 그대로 둔다.
+- 코드 정책은 6회/300초를 사용한다.
 - UMP, 영속 cap, Remote Config defaults, 이벤트, 테스트 ID 분리, 전면 UI 게이트만 먼저 배포한다.
 - 최소 7일과 한 번의 완전한 주말을 포함해 행동 수/세션, opportunity, 억제 사유, 광고 수익 기준선을 수집한다.
 - 기존 메모리 정책과 새 eligibility engine의 결정을 shadow mode로 함께 계산해 불일치를 확인한다.
 
-### 단계 1: 전면 광고 빈도 실험
+### 단계 1: 전면 광고 정책 적용
 
-| 군 | 정책 | 비율 |
-|---|---|---:|
-| A 대조군 | 12회 + 10분 | 50% |
-| B 후보군 | 8회 + 8분 | 50% |
-
-- 신규 사용자 유예와 모든 hard cap은 동일하다.
-- 먼저 내부/테스트 기기에서 검증한 뒤 운영 노출을 5%로 24시간 시작한다.
-- 치명 가드레일이 없으면 25%로 72시간, 이후 목표 100% 실험 모집단으로 늘린다.
-- 최소 7일, 요일 효과 포함, 사전 계산한 표본 수를 만족하기 전 승자를 선언하지 않는다.
-- 트래픽이 너무 적어 유의성 도달이 현실적으로 어렵다면 14~28일 방향성 자료와 사용자별 session replay가 아닌 집계 지표로 판단하되, 더 공격적인 값으로 자동 승격하지 않는다.
+- 모든 사용자에게 6회/300초 정책을 적용한다. 자동 빈도 승격은 사용하지 않는다.
+- 내부/테스트 기기 확인 뒤 운영에 단계적으로 배포하고, 세션 시간·행동 수·쿨다운과 모든 hard cap은 동일하게 유지한다.
 
 ### 단계 2: 배너 최적화
 
-- 전면 광고 실험과 지표가 섞이지 않게 별도 기간에 진행한다.
-- 기존 fixed banner + 현재 refresh를 대조군으로, adaptive banner + Google optimized refresh를 후보로 비교한다.
+- 전면 광고 정책과 지표가 섞이지 않게 별도 기간에 진행한다.
+- 기존 fixed banner에서 adaptive banner + Google optimized refresh로 전환할 때는 단일 변경으로 운영 지표를 확인한다.
 - 화면별 광고 수익, layout shift, screen render 오류, accidental click/CTR 급증을 확인한다.
 - CTR 급증은 성공으로 간주하지 않고 배치 오류부터 조사한다.
 
 ### 단계 3: 앱 오프닝 광고
 
-- 1차 전면 광고 승자 정책을 모든 군에 고정한 뒤 eligible 기존 사용자 일부만 대상으로 한다.
-- A: app-open off, B: 3세션 이후 + 2분 background + 4시간 cooldown.
-- cold start와 resume을 분리 분석한다.
-- B군의 interstitial+app-open 통합 상한은 A군 interstitial 상한과 동일하게 유지한다.
+- app-open은 별도 승인 전까지 off로 유지한다.
+- 향후 활성화가 승인되면 cold start와 resume을 분리 분석한다.
+- 향후 app-open의 interstitial 통합 상한도 현재 interstitial 상한보다 엄격하게 유지한다.
 
-한 실험에서 threshold, cooldown, app-open, banner refresh를 동시에 바꾸지 않는다. 그래야 수익/이탈 변화의 원인을 알 수 있다.
+한 변경에서 threshold, cooldown, app-open, banner refresh를 동시에 바꾸지 않는다. 그래야 수익/이탈 변화의 원인을 알 수 있다.
 
 ## 9. 구현 파일 계획
 
@@ -397,7 +386,7 @@ ad_not_ready, app_background, stale_app_open, duplicate_trigger
 - 신규 `lib/core/config/ad_policy_config.dart`
   - Remote Config key, defaults, clamp, 불변 policy snapshot
 - 신규 `lib/core/services/ad_policy_service.dart`
-  - 의미 행동, session age, 신규 유예, cooldown, rolling cap, suppress reason 판정
+  - 의미 행동, session age, cooldown, rolling cap, suppress reason 판정
   - clock과 storage를 주입해 단위 테스트 가능하게 구성
 - 신규 `lib/core/services/ad_event_tracker.dart`
   - Firebase/Amplitude 양쪽에 동일 계약 전송
@@ -455,9 +444,9 @@ ad_not_ready, app_background, stale_app_open, duplicate_trigger
 
 fake clock, fake storage, fake Remote Config, fake ad gateway를 사용한다.
 
-- 11번째/12번째, 7번째/8번째 행동 경계
-- 599/600초 및 479/480초 쿨다운 경계
-- 신규 2/3세션, session age 119/120초 경계
+- 5번째/6번째 행동 경계
+- 299/300초 쿨다운 경계
+- 신규 사용자 첫 세션, session age 119/120초 경계
 - 세션/rolling 24시간 상한과 정확한 만료
 - 프로세스 재시작 후 마지막 노출/cap 유지
 - 기기 시간 역행·시간대 변경에서도 음수 duration으로 광고가 열리지 않음
@@ -488,7 +477,7 @@ fake clock, fake storage, fake Remote Config, fake ad gateway를 사용한다.
 - EEA 동의 필요, 동의 불필요, 동의 철회/privacy options 시나리오
 - 강제 업데이트, 알림 권한, 리뷰 프롬프트, 의견 모달과 광고 충돌
 - dark/light theme, 소형/대형 화면, 가로 회전 허용 iOS 레이아웃
-- Analytics DebugView와 Amplitude live event에서 이벤트 중복·속성·실험군 확인
+- Analytics DebugView와 Amplitude live event에서 이벤트 중복·속성 확인
 
 운영 광고를 개발자가 직접 클릭하지 않는다. 운영형 creative 검증이 필요하면 테스트 기기를 명시적으로 등록한다.
 
@@ -501,7 +490,7 @@ fake clock, fake storage, fake Remote Config, fake ad gateway를 사용한다.
 - Remote Config 앱 내 defaults와 서버 defaults가 동일한지 확인한다.
 - `ads_app_open_enabled=false`를 확인한다.
 - UMP 메시지, privacy policy, App Store privacy label, Play Data safety를 함께 검토한다.
-- Policy center에 기존 이슈가 있으면 빈도 실험 전에 해결한다.
+- Policy center에 기존 이슈가 있으면 빈도 변경 전에 해결한다.
 
 ### 실시간 모니터링
 
@@ -512,7 +501,7 @@ fake clock, fake storage, fake Remote Config, fake ad gateway를 사용한다.
 
 ### 자동/수동 중단 기준
 
-다음 중 하나면 후보군을 즉시 중지한다.
+다음 중 하나면 정책을 즉시 비활성화한다.
 
 - crash-free sessions 0.5%p 이상 하락 또는 광고 관련 크래시 급증
 - 지출 저장 완료율 10% 이상 상대 하락
@@ -523,12 +512,11 @@ fake clock, fake storage, fake Remote Config, fake ad gateway를 사용한다.
 
 ### 롤백 순서
 
-1. Firebase A/B experiment를 중지하고 모든 사용자를 control 값으로 돌린다.
-2. 긴급하면 `ads_interstitial_enabled=false`, `ads_app_open_enabled=false`를 publish한다.
-3. 더 넓은 문제면 `ads_master_enabled=false`로 모든 새 광고 요청을 막는다.
-4. AdMob 콘솔에서 해당 광고 단위를 pause하거나 cap을 더 엄격하게 적용한다.
-5. 이미 로드된 광고도 show 시점에 최신 kill switch를 다시 확인해 늦게 표시되지 않게 한다.
-6. Remote Config 장애 시 앱 내 control defaults로 돌아가므로 별도 긴급 앱 심사가 필요 없어야 한다.
+1. 긴급하면 `ads_interstitial_enabled=false`, `ads_app_open_enabled=false`를 publish한다.
+2. 더 넓은 문제면 `ads_master_enabled=false`로 모든 새 광고 요청을 막는다.
+3. AdMob 콘솔에서 해당 광고 단위를 pause하거나 cap을 더 엄격하게 적용한다.
+4. 이미 로드된 광고도 show 시점에 최신 kill switch를 다시 확인해 늦게 표시되지 않게 한다.
+5. Remote Config 장애 시 앱 내 control defaults로 돌아가므로 별도 긴급 앱 심사가 필요 없어야 한다.
 
 롤백 후에도 원인 분석용 이벤트는 유지하되 광고 SDK 요청은 발생시키지 않는다.
 
@@ -543,8 +531,8 @@ fake clock, fake storage, fake Remote Config, fake ad gateway를 사용한다.
 - [ ] session/rolling 24시간 cap이 앱 재시작 후에도 유지된다.
 - [ ] 광고 lifecycle·paid·suppress 이벤트가 Firebase/Amplitude에서 중복 없이 보인다.
 - [ ] 14개 로케일, 큰 글꼴, 작은 화면에서 배너·동의 UI가 깨지지 않는다.
-- [ ] 전면 광고 대조군/후보군 실험과 가드레일 대시보드가 준비되었다.
-- [ ] app-open은 1차 실험 종료 전까지 off다.
+- [ ] 6회/300초 단일 정책과 가드레일 대시보드가 준비되었다.
+- [ ] app-open은 별도 승인 전까지 off다.
 - [ ] Remote Config와 AdMob 양쪽 롤백 리허설을 완료했다.
 
 ## 14. 공식 참고자료
@@ -560,4 +548,3 @@ fake clock, fake storage, fake Remote Config, fake ad gateway를 사용한다.
 - [Google Mobile Ads Flutter: Enable test ads](https://developers.google.com/admob/flutter/test-ads)
 - [Google Mobile Ads Flutter: UMP privacy setup](https://developers.google.com/admob/flutter/privacy)
 - [Firebase Remote Config for Flutter](https://firebase.google.com/docs/remote-config/flutter/get-started)
-- [Firebase Remote Config A/B Testing](https://firebase.google.com/docs/ab-testing/abtest-config)

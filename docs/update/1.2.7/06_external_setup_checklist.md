@@ -46,8 +46,8 @@
 - [ ] AdMob UMP privacy message와 대상 지역, privacy options entry point를 설정한다. `canRequestAds` 전 SDK 초기화/광고 요청이 0건인지 Android/iOS 테스트 기기에서 확인한다.
 - [ ] iOS ATT 필요 여부, personalized/non-personalized ads 정책, privacy manifest 및 store privacy disclosure를 법적 판단과 함께 확정한다.
 - [ ] AdMob Policy Center, app-ads.txt, 테스트 광고 단위 ID, production ad unit ID를 확인한다. 테스트 빌드에서 production 광고를 클릭하지 않는다.
-- [ ] Remote Config 기본값과 담당자를 등록한다: `ads_master_enabled=false`(긴급 kill switch), interstitial control `12 actions / 600 seconds`, 후보 `8 / 480`, app-open 기본 false, feedback rollout 기본 off 또는 승인된 5% cohort.
-- [ ] Remote Config A/B parameter, fetch/cache 정책, staged rollout과 rollback 담당자를 정한다. 장애 시 로컬 보수적 기본값으로 돌아가는지 확인한다.
+- [ ] Remote Config 기본값과 담당자를 등록한다: `ads_master_enabled=false`(긴급 kill switch), interstitial control `6 actions / 300 seconds`, 신규 사용자 세션 유예 `0`, app-open 기본 false, feedback rollout 기본 off 또는 승인된 5% cohort. 광고 빈도는 단일 정책으로 운영한다.
+- [ ] Remote Config 정책 파라미터, fetch/cache 정책, staged rollout과 rollback 담당자를 정한다. 장애 시 로컬 보수적 기본값으로 돌아가는지 확인한다.
 - [ ] frequency cap(신규 사용자/세션/24시간), protected screen suppression, 광고·리뷰·의견·동의·업데이트의 단일 전면 UI coordinator를 실제 기기에서 확인한다.
 
 ## 4. 브랜드·ASO·스토어 draft

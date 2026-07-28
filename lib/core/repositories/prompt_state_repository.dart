@@ -20,6 +20,7 @@ class PromptStateRepository {
   static const _optedOut = 'feedback_prompt_opted_out';
   static const _snoozeUntil = 'feedback_prompt_snooze_until';
   static const _shownAt = 'feedback_prompt_last_shown_at';
+  static const _submittedAt = 'feedback_prompt_last_submitted_at';
   static const _history = 'feedback_prompt_show_history';
   static const _engagementShownAt = 'engagement_prompt_last_shown_at';
 
@@ -45,6 +46,7 @@ class PromptStateRepository {
   DateTime? get engagementShownAt =>
       _date(_prefs.getString(_engagementShownAt));
   DateTime? get lastShownAt => _date(_prefs.getString(_shownAt));
+  DateTime? get lastSubmittedAt => _date(_prefs.getString(_submittedAt));
   String? get lastOpportunityDay => _prefs.getString(_opportunityDay);
 
   int bucket() {
@@ -60,7 +62,10 @@ class PromptStateRepository {
     await _prefs.setInt(_actions, actions + 1);
     final days = _stringList(_actionDays).toSet()..add(_day(now));
     final retained = days.toList()..sort();
-    await _prefs.setString(_actionDays, jsonEncode(retained.take(30).toList()));
+    // Keep the newest local days so a long-lived install does not retain
+    // obsolete history forever while still bounding preference storage.
+    final start = retained.length > 30 ? retained.length - 30 : 0;
+    await _prefs.setString(_actionDays, jsonEncode(retained.sublist(start)));
   }
 
   int get activeDays => _stringList(_actionDays).toSet().length;
@@ -78,6 +83,7 @@ class PromptStateRepository {
             .toList()
           ..add(now);
     await _prefs.setString(_shownAt, now.toIso8601String());
+    await _prefs.setString(_opportunityDay, _day(now));
     await _prefs.setString(
       _history,
       jsonEncode(history.map((v) => v.toIso8601String()).toList()),
@@ -92,6 +98,8 @@ class PromptStateRepository {
     _now().toUtc().add(duration).toIso8601String(),
   );
   Future<void> setOptedOut() => _prefs.setBool(_optedOut, true);
+  Future<void> markSubmitted() =>
+      _prefs.setString(_submittedAt, _now().toUtc().toIso8601String());
 
   static DateTime? _date(String? value) =>
       value == null ? null : DateTime.tryParse(value)?.toUtc();

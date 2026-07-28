@@ -24,4 +24,26 @@ void main() {
     expect(update, isNotNull);
     update!.release();
   });
+
+  test('respects a requested quiet period after a surface is dismissed', () {
+    var now = DateTime.utc(2026, 7, 21, 12);
+    final coordinator = PromptCoordinator(now: () => now);
+    final review = coordinator.tryAcquire(PromptSurface.review);
+    review!.release();
+
+    expect(
+      coordinator.tryAcquire(
+        PromptSurface.productFeedback,
+        quietPeriod: const Duration(seconds: 120),
+      ),
+      isNull,
+    );
+    now = now.add(const Duration(seconds: 120));
+    final feedback = coordinator.tryAcquire(
+      PromptSurface.productFeedback,
+      quietPeriod: const Duration(seconds: 120),
+    );
+    expect(feedback, isNotNull);
+    feedback!.release();
+  });
 }

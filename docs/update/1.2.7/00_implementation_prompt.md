@@ -110,7 +110,7 @@ docs/update/1.2.7/05_aso_localization.md
 
 1. `recordMeaningfulAction()`과 `maybeShowInterstitial()`을 분리한다.
 2. control 기본값은 기존과 같은 **12회 행동 + 600초**로 유지하고, 후보 **8회 + 480초**는 Remote Config/A-B 값으로만 둔다.
-3. 신규 사용자 3세션 유예, 세션 120초 유예, 세션 최대 3회, rolling 24시간 최대 8회와 interstitial/app-open 공용 cap을 영속화한다.
+3. 신규 사용자 세션 유예 없이 첫 세션부터 세션 120초 유예, 세션 최대 3회, rolling 24시간 최대 8회와 interstitial/app-open 공용 cap을 영속화한다.
 4. Android/iOS 공식 테스트 ID를 플랫폼별로 분리한다. 테스트 빌드에서 운영 광고를 클릭하지 않는다.
 5. UMP `canRequestAds` 전에는 SDK 초기화/요청을 하지 않고 privacy options 진입점을 제공한다.
 6. 앱 오프닝 광고는 기본 `false`로 유지한다. 늦게 로드된 광고가 이미 진입한 콘텐츠 위에 뜨지 않게 한다.
