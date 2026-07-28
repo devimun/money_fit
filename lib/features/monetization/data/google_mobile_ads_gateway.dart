@@ -118,9 +118,16 @@ class AdService {
   static GoogleMobileAdsGateway _gateway = GoogleMobileAdsGateway();
   static AdPolicy Function() _policy = () => AdPolicy.defaults;
   static AdTelemetry _telemetry = const NoopAdTelemetry();
+  static final ValueNotifier<int> _bannerAvailabilityRevision =
+      ValueNotifier<int>(0);
 
   static bool get canRequestAds => _gateway.canRequestAds;
   static GoogleMobileAdsGateway get gateway => _gateway;
+
+  /// Signals banner widgets to retry immediately after consent, SDK, or
+  /// policy availability changes instead of waiting for their retry timer.
+  static ValueListenable<int> get bannerAvailabilityRevision =>
+      _bannerAvailabilityRevision;
 
   static void configure({
     required GoogleMobileAdsGateway gateway,
@@ -144,7 +151,12 @@ class AdService {
         'suppress_reason': AdSuppressionReason.masterDisabled.value,
       'ad_policy_version': policy.version,
     });
+    announceBannerAvailabilityChanged();
     return canRequestAds;
+  }
+
+  static void announceBannerAvailabilityChanged() {
+    _bannerAvailabilityRevision.value++;
   }
 
   static Future<void> showPrivacyOptions() => _gateway.showPrivacyOptions();

@@ -91,6 +91,9 @@ final monetizationStartupProvider = Provider<Future<void> Function()>((ref) {
       );
     }
     await manager.initialize();
+    // The shell can render before the optional consent/SDK startup finishes.
+    // Wake every visible banner immediately once it is safe to request ads.
+    AdService.announceBannerAvailabilityChanged();
   }();
 });
 

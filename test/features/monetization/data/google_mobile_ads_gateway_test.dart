@@ -43,6 +43,23 @@ void main() {
     expect(await gateway.initialize(), isFalse);
     expect(sdk.mobileAdsInitialized, isFalse);
   });
+
+  test('announces when banner availability changes', () {
+    final revisions = <int>[];
+    void recordRevision() {
+      revisions.add(AdService.bannerAvailabilityRevision.value);
+    }
+
+    final initialRevision = AdService.bannerAvailabilityRevision.value;
+    AdService.bannerAvailabilityRevision.addListener(recordRevision);
+    addTearDown(
+      () => AdService.bannerAvailabilityRevision.removeListener(recordRevision),
+    );
+
+    AdService.announceBannerAvailabilityChanged();
+
+    expect(revisions, [initialRevision + 1]);
+  });
 }
 
 class _FakeConsentSdk implements MobileAdsConsentSdk {
