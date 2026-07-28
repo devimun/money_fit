@@ -13,6 +13,36 @@ abstract interface class RemoteConfigReader {
   bool isRemoteValue(String key);
 }
 
+/// Canonical policy for spacing proactive full-screen experiences. The
+/// feedback and monetization features deliberately share this value because
+/// both acquire the same app-wide prompt lease.
+const proactiveFullscreenQuietSecondsKey = 'proactive_fullscreen_quiet_seconds';
+const proactiveFullscreenQuietSecondsDefault = 120;
+const proactiveFullscreenQuietSecondsMinimum = 30;
+const proactiveFullscreenQuietSecondsMaximum = 600;
+
+/// Falls back to the canonical local policy instead of coercing an invalid
+/// Remote Config experiment into a different quiet period.
+int validatedProactiveFullscreenQuietSeconds(int seconds) {
+  return seconds >= proactiveFullscreenQuietSecondsMinimum &&
+          seconds <= proactiveFullscreenQuietSecondsMaximum
+      ? seconds
+      : proactiveFullscreenQuietSecondsDefault;
+}
+
+/// Reads any published alias for the shared quiet-period policy while keeping
+/// its fallback anchored to the canonical local default.
+int readValidatedProactiveFullscreenQuietSeconds(
+  RemoteConfigReader remoteConfig, {
+  String key = proactiveFullscreenQuietSecondsKey,
+}) {
+  try {
+    return validatedProactiveFullscreenQuietSeconds(remoteConfig.intValue(key));
+  } catch (_) {
+    return proactiveFullscreenQuietSecondsDefault;
+  }
+}
+
 /// Small SDK seam so the Remote Config lifecycle remains independently
 /// testable and a Firebase failure can fall back to local defaults.
 abstract interface class RemoteConfigClient {
@@ -111,7 +141,7 @@ const remoteConfigDefaults = <String, Object>{
   'feedback_prompt_dismiss_days': 14,
   'feedback_prompt_submitted_days': 120,
   'feedback_prompt_max_shows_180d': 3,
-  'proactive_fullscreen_quiet_seconds': 120,
+  proactiveFullscreenQuietSecondsKey: proactiveFullscreenQuietSecondsDefault,
   // Backward-compatible reads for published templates. Canonical keys above
   // always remain the local source of truth.
   'feedback_prompt_max_shows_180_days': 3,

@@ -5,6 +5,43 @@ import 'package:money_fit/core/platform/remote_config.dart';
 
 void main() {
   test(
+    'proactive full-screen quiet seconds use the canonical bounded fallback',
+    () {
+      expect(
+        validatedProactiveFullscreenQuietSeconds(
+          proactiveFullscreenQuietSecondsMinimum,
+        ),
+        proactiveFullscreenQuietSecondsMinimum,
+      );
+      expect(
+        validatedProactiveFullscreenQuietSeconds(
+          proactiveFullscreenQuietSecondsMaximum,
+        ),
+        proactiveFullscreenQuietSecondsMaximum,
+      );
+      expect(
+        validatedProactiveFullscreenQuietSeconds(
+          proactiveFullscreenQuietSecondsMinimum - 1,
+        ),
+        proactiveFullscreenQuietSecondsDefault,
+      );
+      expect(
+        validatedProactiveFullscreenQuietSeconds(
+          proactiveFullscreenQuietSecondsMaximum + 1,
+        ),
+        proactiveFullscreenQuietSecondsDefault,
+      );
+    },
+  );
+
+  test('quiet-period reader uses the canonical fallback when a key fails', () {
+    expect(
+      readValidatedProactiveFullscreenQuietSeconds(_ThrowingRemoteReader()),
+      proactiveFullscreenQuietSecondsDefault,
+    );
+  });
+
+  test(
     'one owner installs canonical defaults and falls back per failed key',
     () async {
       final client = _FakeRemoteConfigClient(
@@ -101,4 +138,18 @@ class _FakeRemoteConfigClient implements RemoteConfigClient {
     if (throwFor.contains(key)) throw StateError(key);
     return values[key] as T? ?? fallback;
   }
+}
+
+class _ThrowingRemoteReader implements RemoteConfigReader {
+  @override
+  bool boolValue(String key) => throw UnimplementedError();
+
+  @override
+  int intValue(String key) => throw StateError(key);
+
+  @override
+  bool isRemoteValue(String key) => throw UnimplementedError();
+
+  @override
+  String stringValue(String key) => throw UnimplementedError();
 }
