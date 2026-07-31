@@ -1,3 +1,5 @@
 source "https://rubygems.org"
 
 gem "fastlane"
+# Ruby 4 no longer ships ostruct as a default gem; Fastlane loads it at startup.
+gem "ostruct"
